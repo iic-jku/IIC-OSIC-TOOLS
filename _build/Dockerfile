@@ -390,6 +390,17 @@ COPY images/rftoolkit/scripts/install.sh install.sh
 RUN bash install.sh
 
 #######################################################################
+# Compile BAG2
+#######################################################################
+FROM base as bag2
+# FIXME using a forked PDK since a few changes needed
+ARG BAG2_REPO_URL="https://gitlab.com/mosaic_group/mosaic_BAG/opensource_db_template.git"
+ARG BAG2_REPO_COMMIT="v1.2.1-iic-osic"
+ARG BAG2_NAME="bag2"
+COPY images/bag2/scripts/install.sh install.sh
+RUN bash install.sh
+
+#######################################################################
 # Final output container
 #######################################################################
 FROM basepkg as iic-osic-tools
@@ -452,6 +463,7 @@ COPY --from=yosys                        ${TOOLS}/              ${TOOLS}/
 COPY --from=ghdl-yosys-plugin            ${TOOLS}_add/          ${TOOLS}/
 COPY --from=align                        ${TOOLS}/              ${TOOLS}/
 COPY --from=align-pdk-sky130             ${TOOLS}/              ${TOOLS}/
+COPY --from=bag2                         ${TOOLS}/              ${TOOLS}/
 
 # Add design scripts and examples
 ADD images/align-utils ${TOOLS}/align-utils

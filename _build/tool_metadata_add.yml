@@ -1,3 +1,6 @@
+- name: bag2
+  repo: https://gitlab.com/mosaic_group/mosaic_BAG/opensource_db_template.git
+  commit: v1.2.1-iic-osic
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9

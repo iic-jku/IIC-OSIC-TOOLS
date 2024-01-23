@@ -100,6 +100,8 @@ export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=sky130_fd_sc_hd
 export ALIGN_PDKPATH=${TOOLS}/align-pdk-sky130/SKY130_PDK
 
+# setup BAG2 environment
+source $TOOLS/bag2/sourceme.sh
 
 # FIXME: this gets rid of a few libGL errors
 # https://unix.stackexchange.com/questions/589236/libgl-error-no-matching-fbconfigs-or-visuals-found-glxgears-error-docker-cu

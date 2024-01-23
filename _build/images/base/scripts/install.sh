@@ -30,6 +30,19 @@ pip3 install --upgrade --no-cache-dir \
 	jupyter-collaboration \
 	jupyterlab-night
 
+# additional requirements for BAG2
+pip3 install --upgrade --no-cache-dir \
+  forallpeople \
+  GitPython \
+  h5py \
+  IPython \
+  jinja2 \
+  klayout \
+  openmdao \
+  rtree \
+  python-gitlab \
+  sphinx_rtd_theme \
+  zmq
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
