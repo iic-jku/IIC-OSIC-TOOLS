@@ -75,6 +75,17 @@ COPY images/open_pdks/scripts/install_ihp.sh install_ihp.sh
 RUN bash install_ihp.sh 
 
 #######################################################################
+# Install ICPS PDK
+#######################################################################
+FROM base as icps
+ARG ICPS_REPO_URL="https://github.com/mineda-support/ICPS2023_5.git"
+ARG ICPS_REPO_COMMIT="46777431c951df99138d292db8fa5be1c74762c0"
+ARG ANAGIXLOADER_REPO_URL="https://github.com/mineda-support/AnagixLoader.git"
+ARG ANAGIXLOADER_REPO_COMMIT="6176890a4311afd6583cb253d6b63e1b33f349a2"
+COPY images/open_pdks/scripts/install_icps.sh install_icps.sh
+RUN bash install_icps.sh
+
+#######################################################################
 # Compile covered 
 #######################################################################
 FROM base as covered
@@ -416,6 +427,8 @@ ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
 
 # Copy all layers into the final container
 COPY --from=open_pdks                    ${PDK_ROOT}/           ${PDK_ROOT}/
+COPY --from=icps                         ${PDK_ROOT}/           ${PDK_ROOT}/
+COPY --from=icps                         /headless/             /headless/
 COPY --from=covered                      ${TOOLS}/              ${TOOLS}/
 COPY --from=cvc_rv                       ${TOOLS}/              ${TOOLS}/
 COPY --from=fault                        ${TOOLS}/              ${TOOLS}/
