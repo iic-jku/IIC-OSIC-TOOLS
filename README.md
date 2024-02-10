@@ -55,6 +55,7 @@ Below is a list of the current tools already installed and ready to use (note th
 
 * [align](https://github.com/ALIGN-analoglayout/ALIGN-public) automatic layout generation for analog circuits (only on `amd64` and for `sky130` PDK)
 * [amaranth](https://github.com/amaranth-lang/amaranth) a Python-based HDL toolchain
+* [bag2](https://gitlab.com/mosaic_group/mosaic_BAG/opensource_db_template) Python-based analog layout generation and schematic transformation
 * [cocotb](https://github.com/cocotb/cocotb) simulation library for writing VHDL and Verilog test benches in Python
 * [covered](https://github.com/hpretl/verilog-covered) Verilog code coverage
 * [cvc](https://github.com/d-m-bailey/cvc) circuit validity checker (ERC)
