@@ -7,20 +7,15 @@ set -e
 #python3 -m pip install --upgrade pip
 
 echo "[INFO] Install support packages via PIP"
-pip3 install --upgrade --no-cache-dir \
+pip3 install --upgrade --no-cache-dir --break-system-packages \
 	control \
 	gobject \
 	ipympl \
 	libparse \
-	maturin \
-	meson \
 	ninja \
 	panda \
-	pathspec \
 	prettyprinttree \
-	prettytable \
 	pyyaml \
-	scikit-build \
 	simanneal \
 	svgutils \
 	torch_geometric

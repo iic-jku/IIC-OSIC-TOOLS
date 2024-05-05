@@ -1,7 +1,7 @@
 #######################################################################
 # Setup base image
 #######################################################################
-ARG BASE_IMAGE=ubuntu:jammy
+ARG BASE_IMAGE=ubuntu:noble
 FROM ${BASE_IMAGE} as base
 ARG CONTAINER_TAG=unknown
 ENV IIC_OSIC_TOOLS_VERSION=${CONTAINER_TAG} \
@@ -229,8 +229,8 @@ FROM base as padring
 ARG PADRING_REPO_URL="https://github.com/donn/padring"
 ARG PADRING_REPO_COMMIT="b2a64abcc8561d758c0bcb3945117dcb13bd9dca"
 ARG PADRING_NAME="padring"
-RUN --mount=type=bind,source=images/padring,target=/images/padring \
-    bash /images/padring/scripts/install.sh
+#FIXME RUN --mount=type=bind,source=images/padring,target=/images/padring \
+#    bash /images/padring/scripts/install.sh
 
 #######################################################################
 # Compile pyopus
@@ -307,8 +307,8 @@ FROM xyce as xyce-xdm
 ARG XYCE_XDM_REPO_URL="https://github.com/Xyce/XDM"
 ARG XYCE_XDM_REPO_COMMIT="Release-2.7.0"
 ARG XYCE_XDM_NAME="xyce-xdm"
-RUN --mount=type=bind,source=images/xyce-xdm,target=/images/xyce-xdm \
-    bash /images/xyce-xdm/scripts/install.sh
+#FIXME RUN --mount=type=bind,source=images/xyce-xdm,target=/images/xyce-xdm \
+#    bash /images/xyce-xdm/scripts/install.sh
 
 #######################################################################
 # Compile yosys & ghdl plugin & synlig plugin
@@ -355,8 +355,8 @@ ARG RFTK_FASTHENRY_REPO_URL="https://github.com/ediloren/FastHenry2"
 ARG RFTK_FASTHENRY_REPO_COMMIT="363e43ed57ad3b9affa11cba5a86624fad0edaa9"
 ARG RFTK_FASTERCAP_REPO_URL="https://github.com/ediloren/FasterCap.git"
 ARG RFTK_FASTERCAP_REPO_COMMIT="b42179a8fdd25ab42fe45527282b4a738d7e7f87"
-RUN --mount=type=bind,source=images/rftoolkit,target=/images/rftoolkit \
-    bash /images/rftoolkit/scripts/install.sh
+#FIXME RUN --mount=type=bind,source=images/rftoolkit,target=/images/rftoolkit \
+#    bash /images/rftoolkit/scripts/install.sh
 
 #######################################################################
 # Final output container
@@ -404,16 +404,16 @@ COPY --from=ngspyce                      ${TOOLS}/              ${TOOLS}/
 COPY --from=openroad_app                 ${TOOLS}/              ${TOOLS}/
 COPY --from=osic-multitool               ${TOOLS}/              ${TOOLS}/
 COPY --from=openvaf                      ${TOOLS}/              ${TOOLS}/
-COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
+#FIXME COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
 COPY --from=pyopus                       ${TOOLS}/              ${TOOLS}/
 COPY --from=qflow                        ${TOOLS}/              ${TOOLS}/
 COPY --from=qucs-s                       ${TOOLS}/              ${TOOLS}/
-COPY --from=rftoolkit                    ${TOOLS}/              ${TOOLS}/
+#FIXME COPY --from=rftoolkit                    ${TOOLS}/              ${TOOLS}/
 COPY --from=slang                        ${TOOLS}/              ${TOOLS}/
 COPY --from=verilator                    ${TOOLS}/              ${TOOLS}/
 COPY --from=xschem                       ${TOOLS}/              ${TOOLS}/
 COPY --from=xyce                         ${TOOLS}/              ${TOOLS}/
-COPY --from=xyce-xdm                     ${TOOLS}/              ${TOOLS}/
+#FIXME COPY --from=xyce-xdm                     ${TOOLS}/              ${TOOLS}/
 COPY --from=yosys                        ${TOOLS}/              ${TOOLS}/
 COPY --from=ghdl-yosys-plugin            ${TOOLS}_add/          ${TOOLS}/
 COPY --from=synlig-yosys-plugin          ${TOOLS}_add/          ${TOOLS}/

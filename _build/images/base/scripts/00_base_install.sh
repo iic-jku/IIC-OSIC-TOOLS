@@ -52,6 +52,7 @@ apt -y install \
 	lcov \
 	libasound2-dev \
 	libblas-dev \
+	libboost-all-dev \
 	libbz2-dev \
 	libc6-dev \
 	libcairo2-dev \
@@ -66,7 +67,6 @@ apt -y install \
 	libfindbin-libs-perl \
 	libfl-dev \
 	libgcc-11-dev \
-	libgconf2-dev \
 	libgettextpo-dev \
 	libgirepository1.0-dev \
 	libgit2-dev \
@@ -88,10 +88,9 @@ apt -y install \
 	libnss-wrapper \
 	libomp-dev \
 	libopenmpi-dev \
-	libpcre++-dev \
 	libpcre2-dev \
 	libpcre3-dev \
-	libpython3.10 \
+	libpython3.12 \
 	libqhull-dev \
 	libqt5multimediawidgets5 \
 	libqt5svg5-dev \
@@ -106,7 +105,7 @@ apt -y install \
 	libsuitesparse-dev \
 	libtcl \
 	libtool \
-	libwxgtk3.0-gtk3-dev \
+	libwxgtk3.2-dev \
 	libx11-dev \
 	libx11-xcb-dev \
 	libxaw7-dev \
@@ -191,6 +190,7 @@ apt -y install \
 	python3-lxml \
 	python3-matplotlib \
 	python3-matplotlib-inline \
+	python3-maturin \
 	python3-mistune \
 	python3-mpi4py \
 	python3-nbclient \
@@ -205,6 +205,7 @@ apt -y install \
 	python3-pandas \
 	python3-pandocfilters \
 	python3-parso \
+	python3-pathspec \
 	python3-pexpect \
 	python3-pickleshare \
 	python3-pip \
@@ -231,6 +232,7 @@ apt -y install \
 	python3-requests \
 	python3-rich \
 	python3-rtree \
+	python3-scikit-build-core \
 	python3-scipy \
 	python3-send2trash \
 	python3-setuptools \
@@ -249,7 +251,6 @@ apt -y install \
 	python3-tk \
 	python3-tomli \
 	python3-toolz \
-	python3-torch \
 	python3-tornado \
 	python3-tqdm \
 	python3-traitlets \

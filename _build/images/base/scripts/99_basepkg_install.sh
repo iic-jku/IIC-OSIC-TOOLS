@@ -5,7 +5,7 @@ set -e
 #FIXME pinning gdsfactory to 7.10, as otherwise build of gdstks fails on aarch64 (such adding gdstk as well)
 
 echo "[INFO] Install EDA packages via PIP"
-pip3 install --upgrade --no-cache-dir \
+pip3 install --upgrade --no-cache-dir --break-system-packages \
 	amaranth \
 	cace \
 	cocotb \
@@ -23,12 +23,11 @@ pip3 install --upgrade --no-cache-dir \
 	scikit-rf \
 	siliconcompiler \
 	spyci \
-	vlsirtools \
 	volare
 
-#FIXME: temporary remove hdl21
+#FIXME: temporary remove hdl21 and vlsirtools
 
-pip3 install --upgrade --no-cache-dir \
+pip3 install --upgrade --no-cache-dir --break-system-packages \
 	jupyter \
 	jupyterlab \
 	jupyter-collaboration \
