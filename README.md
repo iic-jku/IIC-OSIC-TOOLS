@@ -4,22 +4,44 @@ This environment is based on the [efabless.com FOSS-ASIC-TOOLS](https://github.c
 
 **IIC-OSIC-TOOLS** is an all-in-one Docker container for open-source-based integrated circuit designs for analog and digital circuit flows. The CPU architectures `x86_64/amd64` and `aarch64/arm64` are natively supported based on Ubuntu 22.04LTS (since release `2022.12`). This collection of tools is curated by the [**Institute for Integrated Circuits (IIC), Johannes Kepler University (JKU)**](https://iic.jku.at).
 
+**Table of Contents**
+
+- [1. How to Use These Open-Source (and Free) IC Design Tools](#1-how-to-use-these-open-source-and-free-ic-design-tools)
+  - [1.1 Step 1: Clone/download this GitHub repository onto your computer](#11-step-1-clonedownload-this-github-repository-onto-your-computer)
+  - [1.2 Step 2: Install Docker on your computer](#12-step-2-install-docker-on-your-computer)
+  - [1.3 Step 3: Start and Use a Docker Container based on our IIC-OSIC-TOOLS Image](#13-step-3-start-and-use-a-docker-container-based-on-our-iic-osic-tools-image)
+- [2. Installed PDKs](#2-installed-pdks)
+- [3. Installed Tools](#3-installed-tools)
+- [4. Quick Launch for Designers](#4-quick-launch-for-designers)
+  - [4.1 Customizing Environment](#41-customizing-environment)
+  - [4.2 Using VNC and noVNC](#42-using-vnc-and-novnc)
+    - [4.2.1 Variables for VNC](#421-variables-for-vnc)
+  - [4.3 Using a Local X-Server](#43-using-a-local-x-server)
+    - [4.3.1 Variables for X11](#431-variables-for-x11)
+    - [4.3.2 macOS and Windows-specific Variables](#432-macos-and-windows-specific-variables)
+    - [4.3.3 Linux-specific Variables](#433-linux-specific-variables)
+    - [4.3.4 Installing X11-Server](#434-installing-x11-server)
+  - [4.4 Overwriting Shell Variables](#44-overwriting-shell-variables)
+    - [4.4.1 For the Linux/macOS Bash Scripts](#441-for-the-linuxmacos-bash-scripts)
+    - [4.4.2 For the Windows Batch Scripts](#442-for-the-windows-batch-scripts)
+- [5. Support with Issues/Problems/Bugs](#5-support-with-issuesproblemsbugs)
+
+## 1. How to Use These Open-Source (and Free) IC Design Tools
+
 It supports two *modes of operation*:
 
 1. Using a complete desktop environment (XFCE) in `Xvnc` (a VNC server), either directly accessing it with a VNC client of your choice or the integrated [noVNC](https://novnc.com) server that runs in your browser.
 2. Using a local X11 server and directly showing the application windows on your desktop.
 
-## How to Use These Open-Source (and Free) IC Design Tools
-
-### Step 1: Clone/download this GitHub repository onto your computer
+### 1.1 Step 1: Clone/download this GitHub repository onto your computer
 
 Use the green **Code** button, and either download the zip file or do a `git clone --depth=1 https://github.com/iic-jku/iic-osic-tools.git`.
 
-### Step 2: Install Docker on your computer
+### 1.2 Step 2: Install Docker on your computer
 
 See instructions on how to do this in the section [**Quick Launch for Designers**](#quick-launch-for-designers) further down in this `README`.
 
-### Step 3: Start and Use a Docker Container based on our IIC-OSIC-TOOLS Image
+### 1.3 Step 3: Start and Use a Docker Container based on our IIC-OSIC-TOOLS Image
 
 Enter the directory of this repository on your computer, and use one of the methods described in the section [**Quick Launch for Designers**](#quick-launch-for-designers) to start up and run a Docker container based on our image. The easiest way is probably to use the **VNC** mode.
 
@@ -27,7 +49,7 @@ If you do this the first time, or we have pushed an updated image to DockerHub, 
 
 If you know what you are doing and want full root access without a graphical interface, please use `./start_shell.sh`.
 
-## Installed PDKs
+## 2. Installed PDKs
 
 As of the `2022.12` tag, the following open-source process-development kits (PDKs) are pre-installed, and the table shows how to switch by setting environment variables (you can do this per project by putting this into `.designinit` as explained below):
 
@@ -49,7 +71,7 @@ As of the `2022.12` tag, the following open-source process-development kits (PDK
 
 More options for selecting digital standard cell libraries are available; please check the PDK directories.
 
-## Installed Tools
+## 3. Installed Tools
 
 Below is a list of the current tools already installed and ready to use (note there are some adaptions in our container vs. efabless.com):
 
@@ -108,7 +130,7 @@ Below is a list of the current tools already installed and ready to use (note th
 
 The tool versions used for `OpenLane2` (and other tools) are documented in `tool_metadata.yml`. In addition to the EDA tools above, further valuable tools (like `git`) and editors (like `gvim`) are installed. If something useful is missing, please let us know!
 
-## Quick Launch for Designers
+## 4. Quick Launch for Designers
 
 Download and install **Docker** for your operating system:
 
@@ -121,13 +143,13 @@ Note for Linux: Do not run docker commands or the start scripts as root (`sudo`)
 
 The following start scripts are intended as helper scripts for local or small-scale (single instance) deployment. Consider starting the containers with a custom start script if you need to run many instances.
 
-### Customizing Environment
+### 4.1 Customizing Environment
 
 All user data is persistently placed in the directory pointed to by the environment variable `DESIGNS` (the default is `$HOME/eda/designs` for Linux/macOS and `%USERPROFILE%\eda\designs` for Windows, respectively).
 
 If a file `.designinit` is put in this directory, it is sourced last when starting the Docker environment. In this way, users can adapt settings to their needs.
 
-### Using VNC and noVNC
+### 4.2 Using VNC and noVNC
 
 This mode is recommended for remote operation on a separate server or if you prefer the convenience of a full desktop environment. To start it up, you can use (in a Bash/Unix shell):
 
@@ -143,7 +165,7 @@ On Windows, you can use the equivalent batch script (if the defaults are accepta
 
 You can now access the Desktop Environment through your browser ([http://localhost](http://localhost)). The default password is `abc123`.
 
-#### Variables for VNC
+#### 4.2.1 Variables for VNC
 
 Both scripts will use default settings, which you can tweak by settings shell variables (`VARIABLE=default` is shown):
 
@@ -160,7 +182,7 @@ Both scripts will use default settings, which you can tweak by settings shell va
 
 To overwrite the default settings, see [Overwriting Shell Variables](#overwriting-shell-variables)
 
-### Using a Local X-Server
+### 4.3 Using a Local X-Server
 
 This mode is recommended if the container is run on the local machine. It is significantly faster than VNC (as it renders the graphics locally), is more lightweight (no complete desktop environment is running), and integrates with the desktop (copy-paste, etc.). To start the container, run the following:
 
@@ -178,7 +200,7 @@ or
 
 **Attention macOS users:** Please disable the *Enable VirtioFS accelerated directory sharing* setting available as "Beta Setting," as this will cause issues accessing the mounted drives! However, enabling the *VirtioFS* general setting works in Docker >v4.15.0!
 
-#### Variables for X11
+#### 4.3.1 Variables for X11
 
 The following environment variables are used for configuration:
 
@@ -191,7 +213,7 @@ The following environment variables are used for configuration:
 * `CONTAINER_GROUP=$(id -g)` (the current user's group ID, `CONTAINER_GROUP=1000` for `.bat`)
 * `CONTAINER_NAME="iic-osic-tools_xserver_uid_"$(id -u)` (attaches the executing user's id to the name on Unix, or only `CONTAINER_NAME="iic-osic-tools_xserver` for `.bat`) is the name that is assigned to the container for easy identification. It is used to identify if a container exists and is running.
 
-#### macOS and Windows-specific Variables
+#### 4.3.2 macOS and Windows-specific Variables
 
 For Mac and Windows, the X11 server is accessed through TCP (`:0`, aka port 6000). To control the server's address, you can set the following variable:
 
@@ -199,7 +221,7 @@ For Mac and Windows, the X11 server is accessed through TCP (`:0`, aka port 6000
 
 If the executable `xauth` is in `PATH`, the startup script automatically disables access control for localhost, so the X11 server is open for connections from the container. A warning will be shown if not, and you must disable access control.
 
-#### Linux-specific Variables
+#### 4.3.3 Linux-specific Variables
 
 For Linux, the local X11 server is accessed through a Unix socket. There are multiple variables to control:
 
@@ -209,7 +231,7 @@ For Linux, the local X11 server is accessed through a Unix socket. There are mul
 
 The defaults for these variables are tested on native X11 servers, X2Go sessions, and Wayland. The script copies and modifies the cookie from the`.Xauthority` file into a separate, temporary file. This file is then mounted into the container.
 
-#### Installing X11-Server
+#### 4.3.4 Installing X11-Server
 
 Everything should be ready on Linux with a desktop environment / UI (this setup has been tested on X11 and XWayland). For Windows and macOS, the installation of an X11 server is typically required. Due to the common protocol, every X11-server should work, although the following are tested:
 
@@ -226,9 +248,9 @@ For both X-Servers, it is strongly recommended to enable OpenGL:
   * Start no client
   * Tick all `Extra settings`: `Clipboard`, `Primary selection`, `Native opengl`, and `Disable access control`
 
-### Overwriting Shell Variables
+### 4.4 Overwriting Shell Variables
 
-#### For the Linux/macOS Bash Scripts
+#### 4.4.1 For the Linux/macOS Bash Scripts
 
 There are multiple ways to configure the start scripts using Bash. Two of them are shown here. First, the variables can be set directly for each run of the script; they are not saved in the active session:
 
@@ -244,7 +266,7 @@ export DOCKER_USERNAME=another_user
 
 As those variables are stored in your current shell session, you only have to set them once. After setting, you can directly run the scripts.
 
-#### For the Windows Batch Scripts
+#### 4.4.2 For the Windows Batch Scripts
 
 In `CMD` you can't set the variables directly when running the script. So for the `.bat` scripts, it is like the second variant for Bash scripts:
 
@@ -254,7 +276,7 @@ SET DOCKER_USERNAME=another_user
 .\start_x.bat
 ```
 
-## Support with Issues/Problems/Bugs
+## 5. Support with Issues/Problems/Bugs
 
 We are open to your questions about this container and are very thankful for your input! If you run into a problem and you are sure it is a bug, please let us know by following this routine:
 

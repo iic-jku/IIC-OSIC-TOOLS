@@ -33,7 +33,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM basepkg as magic
 ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic"
-ARG MAGIC_REPO_COMMIT="8.3.475"
+ARG MAGIC_REPO_COMMIT="8.3.483"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
@@ -65,7 +65,7 @@ RUN --mount=type=bind,source=images/osic-multitool,target=/images/osic-multitool
 #######################################################################
 FROM osic-multitool as open_pdks
 ARG OPEN_PDKS_REPO_URL="https://github.com/RTimothyEdwards/open_pdks"
-ARG OPEN_PDKS_REPO_COMMIT="6d4d11780c40b20ee63cc98e645307a9bf2b2ab8"
+ARG OPEN_PDKS_REPO_COMMIT="bdc9412b3e468c102d01b7cf6337be06ec6e9c9a"
 ARG OPEN_PDKS_NAME="open_pdks"
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_volare.sh
@@ -117,7 +117,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base as ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="0d97a760fe3744aaf4a58e898481a37427a2349b"
+ARG GHDL_REPO_COMMIT="dc17919eb3d401da6843cb4e298b9005d36d93e9"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -127,7 +127,7 @@ RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
 #######################################################################
 FROM base as gtkwave
 ARG GTKWAVE_REPO_URL="https://github.com/gtkwave/gtkwave"
-ARG GTKWAVE_REPO_COMMIT="cca09d4befcc7e7b56d817535bc623d7d19c9b1d"
+ARG GTKWAVE_REPO_COMMIT="2072f1859bef073c6377ea20b826396082464acb"
 ARG GTKWAVE_NAME="gtkwave"
 RUN --mount=type=bind,source=images/gtkwave,target=/images/gtkwave \
     bash /images/gtkwave/scripts/install.sh
@@ -147,7 +147,7 @@ RUN --mount=type=bind,source=images/irsim,target=/images/irsim \
 #######################################################################
 FROM base as iverilog
 ARG IVERILOG_REPO_URL="https://github.com/steveicarus/iverilog.git"
-ARG IVERILOG_REPO_COMMIT="615a01c6cd3150bec5c94776a17381fe5bb328de"
+ARG IVERILOG_REPO_COMMIT="94d9d195191d3c8a2f8a3c3a6d218d30e4c13e53"
 ARG IVERILOG_NAME="iverilog"
 RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
     bash /images/iverilog/scripts/install.sh
@@ -157,7 +157,7 @@ RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
 #######################################################################
 FROM basepkg as klayout
 ARG KLAYOUT_REPO_URL="https://github.com/KLayout/klayout"
-ARG KLAYOUT_REPO_COMMIT="v0.29.0"
+ARG KLAYOUT_REPO_COMMIT="v0.29.1"
 ARG KLAYOUT_NAME="klayout"
 RUN --mount=type=bind,source=images/klayout,target=/images/klayout \
     bash /images/klayout/scripts/install.sh
@@ -177,7 +177,7 @@ RUN --mount=type=bind,source=images/libman,target=/images/libman \
 #######################################################################
 FROM base as netgen
 ARG NETGEN_REPO_URL="https://github.com/rtimothyedwards/netgen"
-ARG NETGEN_REPO_COMMIT="1.5.273"
+ARG NETGEN_REPO_COMMIT="1.5.276"
 ARG NETGEN_NAME="netgen"
 RUN --mount=type=bind,source=images/netgen,target=/images/netgen \
     bash /images/netgen/scripts/install.sh
@@ -207,7 +207,7 @@ RUN --mount=type=bind,source=images/ngspyce,target=/images/ngspyce \
 #######################################################################
 FROM base as nvc
 ARG NVC_REPO_URL="https://github.com/nickg/nvc"
-ARG NVC_REPO_COMMIT="r1.12.0"
+ARG NVC_REPO_COMMIT="r1.12.2"
 ARG NVC_NAME="nvc"
 RUN --mount=type=bind,source=images/nvc,target=/images/nvc \
     bash /images/nvc/scripts/install.sh
@@ -217,7 +217,7 @@ RUN --mount=type=bind,source=images/nvc,target=/images/nvc \
 #######################################################################
 FROM base as openroad_app
 ARG OPENROAD_APP_REPO_URL="https://github.com/The-OpenROAD-Project/OpenROAD.git"
-ARG OPENROAD_APP_REPO_COMMIT="88e1db3ae437374034626b3327d4156e856e2b4b"
+ARG OPENROAD_APP_REPO_COMMIT="d423155d69de7f683a23f6916ead418a615ad4ad"
 ARG OPENROAD_APP_NAME="openroad"
 RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
     bash /images/openroad/scripts/install.sh
@@ -247,7 +247,7 @@ RUN --mount=type=bind,source=images/pyopus,target=/images/pyopus \
 #######################################################################
 FROM base as qflow
 ARG QFLOW_REPO_URL="https://github.com/RTimothyEdwards/qflow.git"
-ARG QFLOW_REPO_COMMIT="7314066deb9543436c76c817015f8554f09efdb0"
+ARG QFLOW_REPO_COMMIT="c270a66de59507ac0e0ace7fd79e91a1b9d1dbb2"
 ARG QFLOW_NAME="qflow"
 RUN --mount=type=bind,source=images/qflow,target=/images/qflow \
     bash /images/qflow/scripts/install.sh
@@ -267,7 +267,7 @@ RUN --mount=type=bind,source=images/qucs-s,target=/images/qucs-s \
 #######################################################################
 FROM base as slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="f56f4b786cf769fe2a1fff4de5cb83d26bff878d"
+ARG SLANG_REPO_COMMIT="e342f51565c8869b60847ee734b9808f027d286f"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -287,7 +287,7 @@ RUN --mount=type=bind,source=images/verilator,target=/images/verilator \
 #######################################################################
 FROM base as xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="43c7e085212d8f0950217cbee3b2419b82666600"
+ARG XSCHEM_REPO_COMMIT="747652ffe184246edcacfc072834583efcbf84a8"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -315,16 +315,13 @@ ARG XYCE_XDM_NAME="xyce-xdm"
 #######################################################################
 FROM base as yosys
 ARG YOSYS_REPO_URL="https://github.com/YosysHQ/yosys"
-ARG YOSYS_REPO_COMMIT="yosys-0.40"
+ARG YOSYS_REPO_COMMIT="yosys-0.41"
 ARG YOSYS_NAME="yosys"
 ARG YOSYS_EQY_REPO_URL="https://github.com/YosysHQ/eqy.git"
-ARG YOSYS_EQY_REPO_COMMIT="eeb03760a9caaf10edff3cfc707a17b20453b7ae"
 ARG YOSYS_EQY_NAME="yosys_eqy"
 ARG YOSYS_SBY_REPO_URL="https://github.com/YosysHQ/sby.git"
-ARG YOSYS_SBY_REPO_COMMIT="7dd287f287a4e6ed5ea37026df90276b360482b8"
 ARG YOSYS_SBY_NAME="yosys_sby"
 ARG YOSYS_MCY_REPO_URL="https://github.com/YosysHQ/mcy.git"
-ARG YOSYS_MCY_REPO_COMMIT="9142c9369d76f90a78d8bcb46ca7c2a631d49c03"
 ARG YOSYS_MCY_NAME="yosys_mcy"
 RUN --mount=type=bind,source=images/yosys,target=/images/yosys \
     bash /images/yosys/scripts/install.sh

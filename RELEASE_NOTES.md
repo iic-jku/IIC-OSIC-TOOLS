@@ -4,8 +4,16 @@ This document summarizes the most important changes of the individual releases o
 
 ## 2024.05
 
-* Changing from OpenLane(1) to OpenLane2. OpenLane(1) is removed from the image. The tool versions of OpenLane2 are now set to latest release, instead of pinned (older) versions.
+* Changing from OpenLane(1) to OpenLane2! OpenLane(1) is removed from the image. The tool versions used by OpenLane2 are now set to latest release (or if necessary the version required by OL2), instead of pinned (older) versions. This impacts the following tools:
+	* Magic
+	* Netgen
+	* OpenROAD
+	* OpenSTA
+	* Yosys
+	* PDK version
+	* Padring
 * Remove ALIGN (has only been included in `amd64` version, not in `arm64`).
+* Update various tool versions.
 
 ## 2024.04
 
