@@ -6,27 +6,30 @@ This environment is based on the [efabless.com FOSS-ASIC-TOOLS](https://github.c
 
 **Table of Contents**
 
-- [1. How to Use These Open-Source (and Free) IC Design Tools](#1-how-to-use-these-open-source-and-free-ic-design-tools)
-  - [1.1 Step 1: Clone/download this GitHub repository onto your computer](#11-step-1-clonedownload-this-github-repository-onto-your-computer)
-  - [1.2 Step 2: Install Docker on your computer](#12-step-2-install-docker-on-your-computer)
-  - [1.3 Step 3: Start and Use a Docker Container based on our IIC-OSIC-TOOLS Image](#13-step-3-start-and-use-a-docker-container-based-on-our-iic-osic-tools-image)
-- [2. Installed PDKs](#2-installed-pdks)
-- [3. Installed Tools](#3-installed-tools)
-- [4. Quick Launch for Designers](#4-quick-launch-for-designers)
-  - [4.1 Customizing Environment](#41-customizing-environment)
-  - [4.2 Using VNC and noVNC](#42-using-vnc-and-novnc)
-    - [4.2.1 Variables for VNC](#421-variables-for-vnc)
-  - [4.3 Using a Local X-Server](#43-using-a-local-x-server)
-    - [4.3.1 Variables for X11](#431-variables-for-x11)
-    - [4.3.2 macOS and Windows-specific Variables](#432-macos-and-windows-specific-variables)
-    - [4.3.3 Linux-specific Variables](#433-linux-specific-variables)
-    - [4.3.4 Installing X11-Server](#434-installing-x11-server)
-  - [4.4 Overwriting Shell Variables](#44-overwriting-shell-variables)
-    - [4.4.1 For the Linux/macOS Bash Scripts](#441-for-the-linuxmacos-bash-scripts)
-    - [4.4.2 For the Windows Batch Scripts](#442-for-the-windows-batch-scripts)
-- [5. Support with Issues/Problems/Bugs](#5-support-with-issuesproblemsbugs)
+- [IIC-OSIC-TOOLS](#iic-osic-tools)
+  - [1. How to Use These Open-Source (and Free) IC Design Tools](#1-how-to-use-these-open-source-and-free-ic-design-tools)
+    - [1.1 Step 1: Clone/download this GitHub repository onto your computer](#11-step-1-clonedownload-this-github-repository-onto-your-computer)
+    - [1.2 Step 2: Install Docker on your computer](#12-step-2-install-docker-on-your-computer)
+    - [1.3 Step 3: Start and Use a Docker Container based on our IIC-OSIC-TOOLS Image](#13-step-3-start-and-use-a-docker-container-based-on-our-iic-osic-tools-image)
+  - [2. Installed PDKs](#2-installed-pdks)
+  - [3. Installed Tools](#3-installed-tools)
+  - [4. Quick Launch for Designers](#4-quick-launch-for-designers)
+    - [4.1 Customizing Environment](#41-customizing-environment)
+    - [4.2 Using VNC and noVNC](#42-using-vnc-and-novnc)
+      - [4.2.1 Variables for VNC](#421-variables-for-vnc)
+    - [4.3 Using a Local X-Server](#43-using-a-local-x-server)
+      - [4.3.1 Variables for X11](#431-variables-for-x11)
+      - [4.3.2 macOS and Windows-specific Variables](#432-macos-and-windows-specific-variables)
+      - [4.3.3 Linux-specific Variables](#433-linux-specific-variables)
+      - [4.3.4 Installing X11-Server](#434-installing-x11-server)
+    - [4.4 Overwriting Shell Variables](#44-overwriting-shell-variables)
+      - [4.4.1 For the Linux/macOS Bash Scripts](#441-for-the-linuxmacos-bash-scripts)
+      - [4.4.2 For the Windows Batch Scripts](#442-for-the-windows-batch-scripts)
+  - [5. Support with Issues/Problems/Bugs](#5-support-with-issuesproblemsbugs)
 
 ## 1. How to Use These Open-Source (and Free) IC Design Tools
+
+**For great step-to-step instructions of installation and operation of our tool collection, please checkout Kwantae Kim's [Setting Up Open Source Tools with Docker](https://kwantaekim.github.io/2024/05/25/OSE-Docker/)!**
 
 It supports two *modes of operation*:
 
@@ -110,6 +113,7 @@ Below is a list of the current tools already installed and ready to use (note th
 * [pyopus](https://fides.fe.uni-lj.si/pyopus/index.html) simulation runner and optimization tool for analog circuits
 * [pyrtl](https://github.com/UCSBarchlab/PyRTL) collection of classes for pythonic RTL design
 * [pyspice](https://github.com/PySpice-org/PySpice) interface `ngspice` and `xyce` from Python
+* [pyuvm](https://github.com/pyuvm/pyuvm) Universal Verification Methodology implemented in Python (instead of SystemVerilog) using `cocotb`
 * [pyverilog](https://github.com/PyHDI/Pyverilog) Python toolkit for Verilog
 * RF toolkit with [FastHenry2](https://github.com/ediloren/FastHenry2), [FasterCap](https://github.com/ediloren/FasterCap), [openEMS](https://github.com/thliebig/openEMS), and [scikit-rf](https://github.com/scikit-rf/scikit-rf).
 * [qucs-s](https://github.com/ra3xdh/qucs_s) simulation environment with RF emphasis

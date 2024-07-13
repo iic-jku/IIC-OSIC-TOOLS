@@ -12,10 +12,18 @@ pip3 install --upgrade --no-cache-dir --break-system-packages \
 	gobject \
 	ipympl \
 	libparse \
+	matplotlib \
+	matplotlib-inline \
+	maturin \
+	meson \
 	ninja \
 	panda \
+	pathspec \
+	pipdeptree \
 	prettyprinttree \
 	pyyaml \
+	scikit-build \
+	scikit-image \
 	simanneal \
 	svgutils \
 	torch_geometric

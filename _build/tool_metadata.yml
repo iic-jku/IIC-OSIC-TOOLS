@@ -9,31 +9,31 @@
   commit: 640c672e1ad768b92eb6a15943459a1d2214e1dc
 - name: gds3d
   repo: https://github.com/trilomix/GDS3D.git
-  commit: 173da0cc2f3804984b7e77862fbb0c3f4e308a4b
+  commit: 970d11ef4bba553f8b2e3100a93fe3d050f9fdf4
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: dc17919eb3d401da6843cb4e298b9005d36d93e9
+  commit: abe642a3c770ae2d3983cba5604b35c24fdcc6be
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
-  commit: 0c4740a4f8f1e615cc587b3cd3849fa23a623862
+  commit: 511412f984d64ed7c46c4bdbd839f4b3c48f6fa5
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave
-  commit: 2072f1859bef073c6377ea20b826396082464acb
+  commit: e9b5cce38c5c5272d60ff9baf71df027b3607ebd
 - name: irsim
   repo: https://github.com/rtimothyedwards/irsim
   commit: a7884acc04cd94017779893d381b7e93d8895587
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 94d9d195191d3c8a2f8a3c3a6d218d30e4c13e53
+  commit: cb6544fac3404cea6a5c204ac1cef93bfebcf919
 - name: klayout
   repo: https://github.com/KLayout/klayout
-  commit: v0.29.1
+  commit: v0.29.4
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan
   commit: a4537c1fba19966e80408a7b224001d5697ff1e6
 - name: magic
   repo: https://github.com/rtimothyedwards/magic
-  commit: 8.3.483
+  commit: 8.3.486
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen
   commit: 1.5.276
@@ -54,7 +54,7 @@
   commit: d423155d69de7f683a23f6916ead418a615ad4ad
 - name: osic-multitool
   repo: https://github.com/iic-jku/osic-multitool.git
-  commit: d78ceaac44cf771a17f7007039ead8bada634488
+  commit: 40edf1e66a5054ca1f332a3b59a1aa51db7839aa
 - name: padring
   repo: https://github.com/donn/padring
   commit: b2a64abcc8561d758c0bcb3945117dcb13bd9dca
@@ -63,10 +63,10 @@
   commit: "0.11"
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: e342f51565c8869b60847ee734b9808f027d286f
+  commit: 1b3255e68318a1a0ae6b9281c5c19f5e5b6cbc63
 - name: synlig-yosys-plugin
   repo: https://github.com/chipsalliance/synlig.git
-  commit: d844d8d88520e07fa8c6e400ce5a117f7afee700
+  commit: 320e2fdec5d37bf7acf2c1a5b6578997dd536f5f
 - name: qflow
   repo: https://github.com/RTimothyEdwards/qflow.git
   commit: c270a66de59507ac0e0ace7fd79e91a1b9d1dbb2
@@ -75,13 +75,13 @@
   commit: "24.2.1"
 - name: verilator
   repo: https://github.com/verilator/verilator
-  commit: v5.024
+  commit: v5.026
 - name: vlogtoverilog
   repo: https://github.com/RTimothyEdwards/qflow
   commit: 1.4.103
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 747652ffe184246edcacfc072834583efcbf84a8
+  commit: 28bef9b06e657c69ec9f5e52fe9665d4d4c133ba
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.8.0
@@ -90,7 +90,7 @@
   commit: Release-2.7.0
 - name: yosys
   repo: https://github.com/YosysHQ/yosys
-  commit: yosys-0.41
+  commit: yosys-0.43
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
 - name: yosys_sby

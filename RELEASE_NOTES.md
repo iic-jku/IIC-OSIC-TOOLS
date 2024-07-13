@@ -2,6 +2,14 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2024.07
+
+* Bump various tool versions.
+* Include an example for `cace`.
+* Add `pyuvm`.
+* Adding BSIMCMG model for `ngspice`.
+* Remove `gdstk` due to build issues.
+
 ## 2024.05
 
 * Changing from OpenLane(1) to OpenLane2! OpenLane(1) is removed from the image. The tool versions used by OpenLane2 are now set to latest release (or if necessary the version required by OL2), instead of pinned (older) versions. This impacts the following tools:
