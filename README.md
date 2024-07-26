@@ -84,6 +84,7 @@ Below is a list of the current tools already installed and ready to use (note th
 * [covered](https://github.com/hpretl/verilog-covered) Verilog code coverage
 * [cvc](https://github.com/d-m-bailey/cvc) circuit validity checker (ERC)
 * [edalize](https://github.com/olofk/edalize) Python abstraction library for EDA tools
+* [fault](https://github.com/AUCOHL/Fault) design-for-test (DFT) solution
 * [fusesoc](https://github.com/olofk/fusesoc) package manager and build tools for SoC
 * [gaw3-xschem](https://github.com/StefanSchippers/xschem-gaw.git) waveform plot tool for `xschem`
 * [gaw3-xschem](https://github.com/StefanSchippers/xschem-gaw) waveform plot tool for `xschem`

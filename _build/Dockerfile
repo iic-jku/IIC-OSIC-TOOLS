@@ -93,6 +93,19 @@ RUN --mount=type=bind,source=images/cvc_rv,target=/images/cvc_rv \
     bash /images/cvc_rv/scripts/install.sh
 
 #######################################################################
+# Compile fault
+#######################################################################
+# FIXME build dependencies clean as stand-alone stages
+FROM base as fault
+ARG FAULT_REPO_URL="https://github.com/AUCOHL/Fault.git"
+ARG FAULT_REPO_COMMIT="0d42398b287fa8ed755f8f5bb518c14b65be4d52"
+ARG FAULT_NAME="fault"
+RUN --mount=type=bind,source=images/fault,target=/images/fault \
+    bash /images/fault/scripts/dependencies.sh
+RUN --mount=type=bind,source=images/fault,target=/images/fault \
+    bash /images/fault/scripts/install.sh
+
+#######################################################################
 # Compile gaw3-xschem
 #######################################################################
 FROM base AS gaw3-xschem
@@ -422,6 +435,7 @@ ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
 COPY --from=open_pdks                    ${PDK_ROOT}/           ${PDK_ROOT}/
 COPY --from=covered                      ${TOOLS}/              ${TOOLS}/
 COPY --from=cvc_rv                       ${TOOLS}/              ${TOOLS}/
+COPY --from=fault                        ${TOOLS}/              ${TOOLS}/
 COPY --from=gaw3-xschem                  ${TOOLS}/              ${TOOLS}/
 COPY --from=gds3d                        ${TOOLS}/              ${TOOLS}/
 COPY --from=gds3d                        ${PDK_ROOT}/           ${PDK_ROOT}/

@@ -39,6 +39,7 @@ function _path_add_tool_python() {
 if [ -z ${FOSS_PATH_SET+x} ]; then
         _path_add_tool_bin      "covered"
         _path_add_tool_bin      "cvc_rv"
+        _path_add_tool          "fault"
         _path_add_tool_bin      "gaw3-xschem"
         _path_add_tool_bin      "gds3d"
         _path_add_tool_bin      "ghdl"
