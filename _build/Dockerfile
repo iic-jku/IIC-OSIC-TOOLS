@@ -96,7 +96,7 @@ RUN --mount=type=bind,source=images/cvc_rv,target=/images/cvc_rv \
 # Compile fault
 #######################################################################
 # FIXME build dependencies clean as stand-alone stages
-FROM base as fault
+FROM base AS fault
 ARG FAULT_REPO_URL="https://github.com/AUCOHL/Fault.git"
 ARG FAULT_REPO_COMMIT="0d42398b287fa8ed755f8f5bb518c14b65be4d52"
 ARG FAULT_NAME="fault"
