@@ -12,7 +12,7 @@
   commit: 970d11ef4bba553f8b2e3100a93fe3d050f9fdf4
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: abe642a3c770ae2d3983cba5604b35c24fdcc6be
+  commit: 5b5a300dacbac9658fefb4d2cada8ba1e67c331e
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 511412f984d64ed7c46c4bdbd839f4b3c48f6fa5
@@ -24,7 +24,7 @@
   commit: a7884acc04cd94017779893d381b7e93d8895587
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: cb6544fac3404cea6a5c204ac1cef93bfebcf919
+  commit: 676b36e4554f119d0606ade79db2fba6834d3445
 - name: klayout
   repo: https://github.com/KLayout/klayout
   commit: v0.29.4
@@ -39,13 +39,13 @@
   commit: 1.5.276
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror
-  commit: ngspice-42
+  commit: ngspice-43
 - name: ngspyce
   repo: https://github.com/ignamv/ngspyce
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
 - name: nvc
   repo: https://github.com/nickg/nvc
-  commit: r1.12.2
+  commit: r1.13.0
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks
   commit: bdc9412b3e468c102d01b7cf6337be06ec6e9c9a
@@ -61,27 +61,36 @@
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: "0.11"
+- name: riscv-gnu-toolchain
+  repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
+  commit: "2024.04.12"
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 1b3255e68318a1a0ae6b9281c5c19f5e5b6cbc63
+  commit: 928045a4da4e1239831b2d0cbd75f25b63ee07d5
+- name: surelog
+  repot: https://github.com/chipsalliance/Surelog
+  commit: "v1.83"
 - name: synlig-yosys-plugin
   repo: https://github.com/chipsalliance/synlig.git
-  commit: 320e2fdec5d37bf7acf2c1a5b6578997dd536f5f
+  commit: 3e3cdc33140edfd25cca5229555dcd6dc9d14468
 - name: qflow
   repo: https://github.com/RTimothyEdwards/qflow.git
   commit: c270a66de59507ac0e0ace7fd79e91a1b9d1dbb2
 - name: qucs-s
   repo: https://github.com/ra3xdh/qucs_s
-  commit: "24.2.1"
+  commit: "24.3.0"
 - name: verilator
   repo: https://github.com/verilator/verilator
   commit: v5.026
 - name: vlogtoverilog
   repo: https://github.com/RTimothyEdwards/qflow
   commit: 1.4.103
+- name: xcircuit
+  repo: https://github.com/RTimothyEdwards/XCircuit
+  commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 28bef9b06e657c69ec9f5e52fe9665d4d4c133ba
+  commit: 8b5ed3f32ed77b67044b7097376e845be518cdc2
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.8.0

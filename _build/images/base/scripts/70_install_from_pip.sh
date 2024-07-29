@@ -8,16 +8,21 @@ set -e
 
 echo "[INFO] Install support packages via PIP"
 pip3 install --upgrade --no-cache-dir \
+	bottleneck \
 	control \
 	gobject \
 	ipympl \
+	jupyterlab \
 	libparse \
 	matplotlib \
 	matplotlib-inline \
 	maturin \
 	meson \
 	ninja \
+	numexpr \
+	numpy \
 	panda \
+	pandas \
 	pathspec \
 	pipdeptree \
 	prettyprinttree \
@@ -25,6 +30,7 @@ pip3 install --upgrade --no-cache-dir \
 	pyyaml \
 	scikit-build \
 	scikit-image \
+	scipy \
 	simanneal \
 	svgutils \
 	torch_geometric

@@ -1,6 +1,5 @@
 #!/bin/bash
-
-REPO_COMMIT_SHORT=$(echo "$NGSPICE_REPO_COMMIT" | cut -c 1-10)
+cd /tmp || exit 1
 
 git clone --filter=blob:none "${NGSPICE_REPO_URL}" "${NGSPICE_NAME}"
 cd "${NGSPICE_NAME}"
@@ -11,10 +10,10 @@ set -e
 ./autogen.sh
 
 # Define common compile options
-NGSPICE_COMPILE_OPTS=("--disable-debug" "--enable-openmp" "--with-x" "--with-readline=yes" "--enable-pss" "--enable-xspice" "--with-fftw3=yes" "--enable-osdi" "--enable-klu")
+NGSPICE_COMPILE_OPTS=("--with-x" "--enable-pss" "--with-fftw3=yes" )
 
 # Compile ngspice executable
-./configure "${NGSPICE_COMPILE_OPTS[@]}" --prefix="${TOOLS}/${NGSPICE_NAME}/${REPO_COMMIT_SHORT}"
+./configure "${NGSPICE_COMPILE_OPTS[@]}" --prefix="${TOOLS}/${NGSPICE_NAME}"
 make -j"$(nproc)"
 make install
 
@@ -22,12 +21,12 @@ make install
 make distclean
 
 # Now compile lib
-./configure "${NGSPICE_COMPILE_OPTS[@]}" --with-ngshared --prefix="${TOOLS}/${NGSPICE_NAME}/${REPO_COMMIT_SHORT}"
+./configure "${NGSPICE_COMPILE_OPTS[@]}" --with-ngshared --prefix="${TOOLS}/${NGSPICE_NAME}"
 make -j"$(nproc)"
 make install
 
 # Enable OSDI for IHP PDK
-FNAME="${TOOLS}/${NGSPICE_NAME}/${REPO_COMMIT_SHORT}"/share/ngspice/scripts/spinit
+FNAME="${TOOLS}/${NGSPICE_NAME}/share/ngspice/scripts/spinit"
 if [ -f "$PDK_ROOT"/sg13g2/libs.tech/ngspice/openvaf/psp103_nqs.osdi ]; then
     cp "$FNAME" "$FNAME".bak
     sed -i "s/unset osdi_enabled/* unset osdi_enabled/g" "$FNAME"
@@ -41,16 +40,13 @@ if [ -f "$PDK_ROOT"/sg13g2/libs.tech/ngspice/openvaf/psp103_nqs.osdi ]; then
     sed -i "/vbic_4T_et_cf.osdi/s/^/#/" "$FNAME"
 
     # Copy OSDI PSP model for IHP
-    cp "$PDK_ROOT"/sg13g2/libs.tech/ngspice/openvaf/psp103_nqs.osdi "${TOOLS}"/"${NGSPICE_NAME}"/"${REPO_COMMIT_SHORT}"/lib/ngspice/psp103.osdi
+    cp "$PDK_ROOT/sg13g2/libs.tech/ngspice/openvaf/psp103_nqs.osdi" "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/psp103_nqs.osdi"
 fi
-
-# Find OpenVAF version
-OPENVAF_VERSION=$(ls "$TOOLS/$OPENVAF_NAME")
 
 # Add BSIMCMG model, required for ASAP7
 git clone --depth=1 https://github.com/dwarning/VA-Models.git vamodels
 MODEL=bsimcmg
-cd vamodels/code/$MODEL/vacode
-"$TOOLS/$OPENVAF_NAME/$OPENVAF_VERSION"/bin/openvaf $MODEL.va
-cp $MODEL.osdi "${TOOLS}"/"${NGSPICE_NAME}"/"${REPO_COMMIT_SHORT}"/lib/ngspice/$MODEL.osdi
-echo "osdi ${TOOLS}/${NGSPICE_NAME}/${REPO_COMMIT_SHORT}/lib/ngspice/$MODEL.osdi" >> "$FNAME"
+cd vamodels/code/$MODEL/vacode || exit 1
+"$TOOLS/$OPENVAF_NAME/bin/openvaf" $MODEL.va
+cp $MODEL.osdi "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi"
+echo "osdi ${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi" >> "$FNAME"

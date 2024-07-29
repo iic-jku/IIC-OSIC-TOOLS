@@ -40,7 +40,7 @@ if [ -z ${DOCKER_TAGS+z} ]; then
 fi
 
 if [ -z ${DOCKER_PLATFORMS+z} ]; then
-	DOCKER_PLATFORMS="linux/amd64,linux/arm64/v8"
+	DOCKER_PLATFORMS="linux/amd64,linux/arm64"
 fi
 
 if [ -z ${DOCKER_LOAD+z} ]; then
@@ -51,7 +51,8 @@ fi
 
 if [ -z ${BUILDER_STRS+z} ]; then
 	echo "Defining builder strs"
-	BUILDER_STRS="host=ssh://pretl@buildx86,host=unix:///var/run/docker.sock"
+	#BUILDER_STRS="host=ssh://pretl@buildx86,host=unix:///var/run/docker.sock"
+	BUILDER_STRS="host=ssh://pretl@buildx86,host=ssh://pretl@buildaarch"
 fi
 
 if [ -z ${BUILDER_NAME+z} ]; then

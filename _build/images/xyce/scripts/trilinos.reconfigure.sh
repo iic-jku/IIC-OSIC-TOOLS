@@ -1,7 +1,7 @@
 #!/bin/sh
 
-SRCDIR=/$XYCE_NAME/trilinos
-ARCHDIR=/$XYCE_NAME/XyceLibs/Parallel
+SRCDIR="/tmp/$XYCE_NAME/trilinos"
+ARCHDIR="/tmp/$XYCE_NAME/xycelibs/parallel"
 FLAGS="-O3 -fPIC"
 PATH=$PATH:/usr/lib64/openmpi/bin
 

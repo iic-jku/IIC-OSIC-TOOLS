@@ -1,10 +1,8 @@
 #!/bin/sh
 
-REPO_COMMIT_SHORT=$(echo "$XYCE_REPO_COMMIT" | cut -c 1-7)
-
 ../configure \
 	CXXFLAGS="-O3" \
-	ARCHDIR="/$XYCE_NAME/XyceLibs/Parallel" \
+	ARCHDIR="/tmp/$XYCE_NAME/xycelibs/parallel" \
 	CPPFLAGS="-I/usr/include/suitesparse" \
 	--enable-mpi \
 	CXX=mpicxx \
@@ -13,4 +11,4 @@ REPO_COMMIT_SHORT=$(echo "$XYCE_REPO_COMMIT" | cut -c 1-7)
 	--enable-stokhos \
 	--enable-amesos2 \
 	--verbose \
-	--prefix="${TOOLS}/${XYCE_NAME}/Parallel/${REPO_COMMIT_SHORT}"
+	--prefix="${TOOLS}/${XYCE_NAME}"

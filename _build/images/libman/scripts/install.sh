@@ -1,11 +1,9 @@
 #!/bin/bash
-
 set -e
-
-REPO_COMMIT_SHORT=$(echo "$LIBMAN_REPO_COMMIT" | cut -c 1-7)
+cd /tmp || exit 1 
 
 git clone --filter=blob:none "${LIBMAN_REPO_URL}" "${LIBMAN_NAME}"
-cd "${LIBMAN_NAME}"
+cd "${LIBMAN_NAME}" || exit 1
 git checkout "${LIBMAN_REPO_COMMIT}"
 qmake libman.pro
 make

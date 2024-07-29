@@ -127,8 +127,6 @@ apt -y install \
 	llvm-15-dev \
 	make \
 	ninja-build \
-	nodejs \
-	npm \
 	openmpi-bin \
 	openssl \
 	patch \
@@ -172,42 +170,25 @@ apt -y install \
 	python3-httpcore \
 	python3-httpx \
 	python3-immutabledict \
-	python3-ipykernel \
-	python3-ipython \
-	python3-ipywidgets \
 	python3-iso8601 \
 	python3-isodate \
 	python3-jedi \
-	python3-joblib \
 	python3-json5 \
 	python3-jsonschema \
-	python3-jupyter-client \
-	python3-jupyter-console \
-	python3-jupyter-core \
-	python3-jupyter-server \
-	python3-jupyterlab-server \
 	python3-linecache2 \
 	python3-loguru \
 	python3-lxml \
 	python3-mistune \
 	python3-mpi4py \
-	python3-nbclient \
-	python3-nbconvert \
-	python3-nbformat \
 	python3-nest-asyncio \
 	python3-netifaces \
-	python3-networkx \
-	python3-notebook \
-	python3-numpy \
 	python3-orderedmultidict \
-	python3-pandas \
 	python3-pandocfilters \
 	python3-parso \
 	python3-pexpect \
 	python3-pickleshare \
 	python3-pip \
 	python3-plotly \
-	python3-prettytable \
 	python3-prometheus-client \
 	python3-prompt-toolkit \
 	python3-protobuf \
@@ -229,7 +210,6 @@ apt -y install \
 	python3-requests \
 	python3-rich \
 	python3-rtree \
-	python3-scipy \
 	python3-send2trash \
 	python3-setuptools \
 	python3-setuptools-rust \
@@ -264,7 +244,6 @@ apt -y install \
 	python3-wcwidth \
 	python3-webcolors \
 	python3-wheel \
-	python3-widgetsnbextension \
 	python3-wrapt \
 	python3-xlsxwriter \
 	python3-xmltodict \

@@ -1,13 +1,10 @@
 #!/bin/bash
-
 set -e
-
-REPO_COMMIT_SHORT=$(echo "$GTKWAVE_REPO_COMMIT" | cut -c 1-7)
+cd /tmp || exit 1
 
 git clone --filter=blob:none "${GTKWAVE_REPO_URL}" "${GTKWAVE_NAME}"
-cd "${GTKWAVE_NAME}"
+cd "${GTKWAVE_NAME}" || exit 1
 git checkout "${GTKWAVE_REPO_COMMIT}"
-
 
 # FIXME Remove the parameter that declares a missing include directory as an error 
 # because the build fails otherwise (hopefully PR will be merged at some time).
@@ -27,6 +24,6 @@ index c99f728..931d461 100644
      '-Werror=parenthesis',
 EOF
 
-meson setup build --prefix="${TOOLS}/${GTKWAVE_NAME}/${REPO_COMMIT_SHORT}"
+meson setup build --prefix="${TOOLS}/${GTKWAVE_NAME}"
 meson compile -C build
 meson install -C build

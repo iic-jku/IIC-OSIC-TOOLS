@@ -2,6 +2,17 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2024.08
+
+* Add required tools for PULP-platform (morty, bender, svase, sv2v, verible).
+* Add `surelog`.
+* Add `pygmid`.
+* Add `xcircuit`.
+* Bump various tools versions.
+* Fixed VHDL usage in OpenLane.
+* Simplified tools paths by removing tool version.
+* Remove `netlistsvg`, as it is requiring the large node.js package.
+
 ## 2024.07
 
 * Bump various tool versions.
