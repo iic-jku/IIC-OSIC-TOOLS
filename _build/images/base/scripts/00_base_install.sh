@@ -65,7 +65,6 @@ apt -y install \
 	libfindbin-libs-perl \
 	libfl-dev \
 	libgcc-11-dev \
-	libgconf2-dev \
 	libgettextpo-dev \
 	libgirepository1.0-dev \
 	libgit2-dev \
@@ -87,10 +86,8 @@ apt -y install \
 	libnss-wrapper \
 	libomp-dev \
 	libopenmpi-dev \
-	libpcre++-dev \
 	libpcre2-dev \
 	libpcre3-dev \
-	libpython3.10 \
 	libqhull-dev \
 	libqt5multimediawidgets5 \
 	libqt5svg5-dev \
@@ -105,7 +102,6 @@ apt -y install \
 	libsuitesparse-dev \
 	libtcl \
 	libtool \
-	libwxgtk3.0-gtk3-dev \
 	libx11-dev \
 	libx11-xcb-dev \
 	libxaw7-dev \
