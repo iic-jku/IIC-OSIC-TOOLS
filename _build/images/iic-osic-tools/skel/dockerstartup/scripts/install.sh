@@ -1,11 +1,9 @@
 #!/bin/bash
-
 set -e
 set -u
 
 #UBUNTU_VERSION=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
 UBUNTU_CODENAME=$(awk -F= '/^VERSION_CODENAME/{print $2}' /etc/os-release | sed 's/"//g')
-
 
 echo "[INFO] Adding repositories and installing misc. packages"
 
@@ -54,7 +52,6 @@ apt install -y \
         nmap \
         novnc \
         openems \
-        python3-openems \
         parallel \
         sudo \
         tigervnc-standalone-server \

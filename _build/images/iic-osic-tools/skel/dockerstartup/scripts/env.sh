@@ -2,7 +2,7 @@
 
 function _path_add_tool_bin() {
         tool_name=$1
-        for d in "$TOOLS/$tool_name"/*/ ; do
+        for d in $TOOLS/$tool_name ; do
                 if [ -d "${d}bin" ]; then
                         export PATH=$PATH:${d}bin
                 fi
@@ -11,7 +11,7 @@ function _path_add_tool_bin() {
 
 function _path_add_tool() {
         tool_name=$1
-        for d in "$TOOLS/$tool_name"/*/ ; do
+        for d in $TOOLS/$tool_name ; do
                 if [ -d "${d}" ]; then
                         export PATH=$PATH:${d%/}
                 fi
@@ -29,7 +29,7 @@ function _path_add_tool_custom() {
 
 function _path_add_tool_python() {
         tool_name=$1
-        for d in "$TOOLS/$tool_name"/*/local/lib/python3*/dist-packages ; do
+        for d in "$TOOLS/$tool_name"/local/lib/python3*/dist-packages ; do
                 if [ -d "${d}" ]; then
                         export PYTHONPATH=$PYTHONPATH:${d}
                 fi
@@ -63,7 +63,7 @@ if [ -z ${FOSS_PATH_SET+x} ]; then
         _path_add_tool_bin      "slang"
         _path_add_tool_bin      "verilator"
         _path_add_tool_bin      "xschem"
-        _path_add_tool_bin      "xyce/Parallel"
+        _path_add_tool_bin      "xyce"
         _path_add_tool_bin      "yosys"
         _path_add_tool_custom   "yosys/bin"
 	
@@ -75,7 +75,7 @@ if [ -z ${FOSS_PATH_SET+x} ]; then
         _path_add_tool_python "ngspyce"
         _path_add_tool_python "pyopus"
         export PYTHONPATH=$PYTHONPATH:$TOOLS/yosys/share/yosys/python3
-        KLAYOUT_PYTHON=("$TOOLS"/klayout/*/pymod)
+        KLAYOUT_PYTHON=("$TOOLS"/klayout/pymod)
         export PYTHONPATH=$PYTHONPATH:${KLAYOUT_PYTHON[*]}
         
         echo "[INFO] Final PATH variable: $PATH"
@@ -84,7 +84,7 @@ if [ -z ${FOSS_PATH_SET+x} ]; then
 fi
 
 # shellcheck disable=SC2086
-LD_LIBRARY_PATH="$(realpath ${TOOLS}/klayout/*/ ):${TOOLS}/ngspice/ngspice/lib" && export LD_LIBRARY_PATH
+LD_LIBRARY_PATH="$(realpath ${TOOLS}/klayout ):${TOOLS}/ngspice/lib" && export LD_LIBRARY_PATH
 export XDG_RUNTIME_DIR=/tmp/runtime-default
 export EDITOR='gedit'
 export PYTHONPYCACHEPREFIX="/tmp/pycache"
@@ -108,7 +108,7 @@ if [ ! -d $XDG_RUNTIME_DIR ]; then
         chmod 700 $XDG_RUNTIME_DIR
 fi
 
-# Add local directories in /headless to path so that user can upgrade PIP packages
+# Add local directories in /headless to the path so that the user can upgrade PIP packages
 export PATH=/headless/.local/bin:$PATH
 export PYTHONPATH=/headless/.local/lib/python3.10/site-packages:$PYTHONPATH
 
@@ -127,7 +127,7 @@ alias xschem='xschem -b --rcfile $PDKPATH/libs.tech/xschem/xschemrc'
 alias xschemtcl='\xschem --rcfile $PDKPATH/libs.tech/xschem/xschemrc'
 
 #alias openlane='openlane --manual-pdk'
-#FIXME WA for OpenLane2 until ticket is merged into OpenROAD, see https://github.com/efabless/openlane2/issues/440
+#FIXME WA for OpenLane2 until the ticket is merged into OpenROAD, see https://github.com/efabless/openlane2/issues/440
 alias openlane='openlane --manual-pdk --skip Odb.CheckDesignAntennaProperties --skip Odb.CheckMacroAntennaProperties'
 
 #FIXME Show hint that OpenLane(1) has been removed

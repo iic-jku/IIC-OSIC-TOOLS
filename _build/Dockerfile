@@ -117,7 +117,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="abe642a3c770ae2d3983cba5604b35c24fdcc6be"
+ARG GHDL_REPO_COMMIT="5b5a300dacbac9658fefb4d2cada8ba1e67c331e"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -147,7 +147,7 @@ RUN --mount=type=bind,source=images/irsim,target=/images/irsim \
 #######################################################################
 FROM base AS iverilog
 ARG IVERILOG_REPO_URL="https://github.com/steveicarus/iverilog.git"
-ARG IVERILOG_REPO_COMMIT="cb6544fac3404cea6a5c204ac1cef93bfebcf919"
+ARG IVERILOG_REPO_COMMIT="676b36e4554f119d0606ade79db2fba6834d3445"
 ARG IVERILOG_NAME="iverilog"
 RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
     bash /images/iverilog/scripts/install.sh
@@ -187,7 +187,7 @@ RUN --mount=type=bind,source=images/netgen,target=/images/netgen \
 #######################################################################
 FROM open_pdks AS ngspice
 ARG NGSPICE_REPO_URL="https://github.com/danchitnis/ngspice-sf-mirror"
-ARG NGSPICE_REPO_COMMIT="ngspice-42"
+ARG NGSPICE_REPO_COMMIT="ngspice-43"
 ARG NGSPICE_NAME="ngspice"
 RUN --mount=type=bind,source=images/ngspice,target=/images/ngspice \
     bash /images/ngspice/scripts/install.sh
@@ -207,7 +207,7 @@ RUN --mount=type=bind,source=images/ngspyce,target=/images/ngspyce \
 #######################################################################
 FROM base AS nvc
 ARG NVC_REPO_URL="https://github.com/nickg/nvc"
-ARG NVC_REPO_COMMIT="r1.12.2"
+ARG NVC_REPO_COMMIT="r1.13.0"
 ARG NVC_NAME="nvc"
 RUN --mount=type=bind,source=images/nvc,target=/images/nvc \
     bash /images/nvc/scripts/install.sh
@@ -233,6 +233,14 @@ ARG PADRING_NAME="padring"
 #    bash /images/padring/scripts/install.sh
 
 #######################################################################
+# Compile pulp platform tools
+#######################################################################
+FROM base AS pulp-tools
+ARG PULP_NAME="pulp"
+RUN --mount=type=bind,source=images/pulp-tools,target=/images/pulp-tools \
+    bash /images/pulp-tools/scripts/install.sh
+
+#######################################################################
 # Compile pyopus
 #######################################################################
 FROM basepkg AS pyopus
@@ -241,6 +249,16 @@ ARG PYOPUS_REPO_COMMIT="0.11"
 ARG PYOPUS_NAME="pyopus"
 RUN --mount=type=bind,source=images/pyopus,target=/images/pyopus \
     bash /images/pyopus/scripts/install.sh
+
+#######################################################################
+# Compile surelog
+#######################################################################
+FROM base AS surelog
+ARG SURELOG_REPO_URL="https://github.com/chipsalliance/Surelog"
+ARG SURELOG_REPO_COMMIT="v1.83"
+ARG SURELOG_NAME="surelog"
+RUN --mount=type=bind,source=images/surelog,target=/images/surelog \
+    bash /images/surelog/scripts/install.sh
 
 #######################################################################
 # Compile qflow helper files
@@ -257,17 +275,27 @@ RUN --mount=type=bind,source=images/qflow,target=/images/qflow \
 #######################################################################
 FROM base AS qucs-s
 ARG QUCS_S_REPO_URL="https://github.com/ra3xdh/qucs_s"
-ARG QUCS_S_REPO_COMMIT="24.2.1"
+ARG QUCS_S_REPO_COMMIT="24.3.0"
 ARG QUCS_S_NAME="qucs-s"
 RUN --mount=type=bind,source=images/qucs-s,target=/images/qucs-s \
     bash /images/qucs-s/scripts/install.sh
+
+#######################################################################
+# Compile riscv-gnu-toolchain
+#######################################################################
+FROM base AS riscv-gnu-toolchain
+ARG RISCV_GNU_TOOLCHAIN_REPO_URL="https://github.com/riscv-collab/riscv-gnu-toolchain.git"
+ARG RISCV_GNU_TOOLCHAIN_REPO_COMMIT="2024.04.12"
+ARG RISCV_GNU_TOOLCHAIN_NAME="riscv-gnu-toolchain"
+COPY images/riscv-gnu-toolchain/scripts/install.sh install.sh
+RUN bash install.sh
 
 #######################################################################
 # Compile slang
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="1b3255e68318a1a0ae6b9281c5c19f5e5b6cbc63"
+ARG SLANG_REPO_COMMIT="928045a4da4e1239831b2d0cbd75f25b63ee07d5"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -283,11 +311,21 @@ RUN --mount=type=bind,source=images/verilator,target=/images/verilator \
     bash /images/verilator/scripts/install.sh
 
 #######################################################################
+# Compile xcircuit
+#######################################################################
+FROM base AS xcircuit
+ARG XCIRCUIT_REPO_URL="https://github.com/RTimothyEdwards/XCircuit"
+ARG XCIRCUIT_REPO_COMMIT="b6d0b096a6a4730a4255efb50191e03cfa9b5496"
+ARG XCIRCUIT_NAME="xcircuit"
+RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
+    bash /images/xcircuit/scripts/install.sh
+
+#######################################################################
 # Compile xschem
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="28bef9b06e657c69ec9f5e52fe9665d4d4c133ba"
+ARG XSCHEM_REPO_COMMIT="8b5ed3f32ed77b67044b7097376e845be518cdc2"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -337,7 +375,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS synlig-yosys-plugin
 ARG SYNLIG_YOSYS_PLUGIN_REPO_URL="https://github.com/chipsalliance/synlig.git"
-ARG SYNLIG_YOSYS_PLUGIN_REPO_COMMIT="320e2fdec5d37bf7acf2c1a5b6578997dd536f5f"
+ARG SYNLIG_YOSYS_PLUGIN_REPO_COMMIT="3e3cdc33140edfd25cca5229555dcd6dc9d14468"
 ARG SYNLIG_YOSYS_PLUGIN_NAME="synlig-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/synlig-yosys-plugin,target=/images/synlig-yosys-plugin \
@@ -401,16 +439,20 @@ COPY --from=ngspyce                      ${TOOLS}/              ${TOOLS}/
 COPY --from=openroad_app                 ${TOOLS}/              ${TOOLS}/
 COPY --from=osic-multitool               ${TOOLS}/              ${TOOLS}/
 COPY --from=openvaf                      ${TOOLS}/              ${TOOLS}/
-#FIXME COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
+COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
+COPY --from=pulp-tools                   ${TOOLS}/              ${TOOLS}/
 COPY --from=pyopus                       ${TOOLS}/              ${TOOLS}/
 COPY --from=qflow                        ${TOOLS}/              ${TOOLS}/
 COPY --from=qucs-s                       ${TOOLS}/              ${TOOLS}/
-#FIXME COPY --from=rftoolkit                    ${TOOLS}/              ${TOOLS}/
+COPY --from=rftoolkit                    ${TOOLS}/              ${TOOLS}/
+COPY --from=riscv-gnu-toolchain          ${TOOLS}/              ${TOOLS}/
 COPY --from=slang                        ${TOOLS}/              ${TOOLS}/
+COPY --from=surelog                      ${TOOLS}/              ${TOOLS}/
 COPY --from=verilator                    ${TOOLS}/              ${TOOLS}/
+COPY --from=xcircuit                     ${TOOLS}/              ${TOOLS}/
 COPY --from=xschem                       ${TOOLS}/              ${TOOLS}/
 COPY --from=xyce                         ${TOOLS}/              ${TOOLS}/
-#FIXME COPY --from=xyce-xdm                     ${TOOLS}/              ${TOOLS}/
+COPY --from=xyce-xdm                     ${TOOLS}/              ${TOOLS}/
 COPY --from=yosys                        ${TOOLS}/              ${TOOLS}/
 COPY --from=ghdl-yosys-plugin            ${TOOLS}_add/          ${TOOLS}/
 COPY --from=synlig-yosys-plugin          ${TOOLS}_add/          ${TOOLS}/

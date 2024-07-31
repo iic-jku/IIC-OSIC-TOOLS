@@ -1,6 +1,6 @@
 [worker.oci]
   # limit the number of parallel build steps that can run at the same time
-  max-parallelism = 2
+  max-parallelism = 6
   gc = true
   gckeepstorage = 60000
   [[worker.oci.gcpolicy]]

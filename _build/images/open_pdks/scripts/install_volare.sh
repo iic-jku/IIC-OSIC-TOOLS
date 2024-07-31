@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 export SCRIPT_DIR=$TOOLS/osic-multitool

@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 mkdir -p $PDK_ROOT 

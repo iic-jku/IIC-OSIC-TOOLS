@@ -1,11 +1,10 @@
 #!/bin/bash
 
 set -e
-
-REPO_COMMIT_SHORT=$(echo "$OPENVAF_REPO_COMMIT" | cut -c 1-7)
+cd /tmp || exit 1
 
 git clone --filter=blob:none "${OPENVAF_REPO_URL}" "${OPENVAF_NAME}"
-cd "${OPENVAF_NAME}"
+cd "${OPENVAF_NAME}" || exit 1
 git checkout "${OPENVAF_REPO_COMMIT}"
 
 # LLVM compile (needs LLVM 15 or 16)
@@ -27,7 +26,7 @@ index 13db6e5..dada68e 100644
      .expect("ucrt compilation succeeds");
 EOF
 
-cargo build --release --bin openvaf
+cargo build --release --bin openvaf -j$(nproc)
 
-mkdir -p  "/${TOOLS}/${OPENVAF_NAME}/${REPO_COMMIT_SHORT}/bin"
-cp target/release/openvaf "/${TOOLS}/${OPENVAF_NAME}/${REPO_COMMIT_SHORT}/bin"
+mkdir -p  "/${TOOLS}/${OPENVAF_NAME}/bin"
+cp target/release/openvaf "/${TOOLS}/${OPENVAF_NAME}/bin"
