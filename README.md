@@ -25,6 +25,8 @@ This environment is based on the [efabless.com FOSS-ASIC-TOOLS](https://github.c
     - [4.4 Overwriting Shell Variables](#44-overwriting-shell-variables)
       - [4.4.1 For the Linux/macOS Bash Scripts](#441-for-the-linuxmacos-bash-scripts)
       - [4.4.2 For the Windows Batch Scripts](#442-for-the-windows-batch-scripts)
+    - [4.5 Using as devcontainer](#45-using-as-devcontainer)
+      - [4.5.1 Add it to project](#451-add-it-to-project)
   - [5. Support with Issues/Problems/Bugs](#5-support-with-issuesproblemsbugs)
 
 ## 1. How to Use These Open-Source (and Free) IC Design Tools
@@ -35,6 +37,7 @@ It supports two *modes of operation*:
 
 1. Using a complete desktop environment (XFCE) in `Xvnc` (a VNC server), either directly accessing it with a VNC client of your choice or the integrated [noVNC](https://novnc.com) server that runs in your browser.
 2. Using a local X11 server and directly showing the application windows on your desktop.
+3. Using it as a development container in Visual Studio Code (or other IDEs)
 
 ### 1.1 Step 1: Clone/download this GitHub repository onto your computer
 
@@ -283,6 +286,24 @@ SET DESIGNS=\my\design\directory
 SET DOCKER_USERNAME=another_user
 .\start_x.bat
 ```
+### 4.5 Using as devcontainer
+
+This is a new usage mode, that might not fit your needs. [Devcontainers](https://code.visualstudio.com/docs/devcontainers/containers) are a great way to provide a working build environment along your own project. It is supported by the [devcontainer](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension in Visual Studio Code.
+
+#### 4.5.1 Add it to project
+
+Option 1: In Visual Studio, click the remote window icon on the left and then "Reopen in Container", "Add configuration to workspace". Enter "ghcr.io/iic-jku/iic-osic-tools/devcontainer" as template, choose the version of the container and add more features (probably not needed). It will then restart the IDE, download the image and start a terminal and mount the work folder into the image.
+
+Option 2: Alternatively you can directly just create the configuration file `.devcontainer/devcontainer.json`:
+
+```json
+{
+	"name": "IIC-OSIC-TOOLS",
+	"image": "ghcr.io/iic-jku/iic-osic-tools-devcontainer:2024.09"
+}
+```
+
+Either way, the great thing is that you can now commit the file to repository and all developers will be asked if they want to reopen their development in this container, all they need is Docker and VSCode.
 
 ## 5. Support with Issues/Problems/Bugs
 
