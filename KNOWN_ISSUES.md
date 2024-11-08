@@ -10,24 +10,26 @@ Example:
 
 ```DOCKER_EXTRA_PARAMS='--security-opt seccomp=unconfined' ./start_x.sh```
 
-### OpenLane2
+### Issues with OpenGL on some environments
 
-The usage of `openlane --smoke-test` currently fails with an error message at a late step since there are compatibility issues between OpenLane2 and OpenROAD. Normal usage of OpenLane2 is not affected.
+A few applications are using OpenGL graphics, which can lead to issues on some computing environments. A (potential) remedy is to enable SW-rendering with can be achieved by setting the following environment variable inside the Docker VM:
+
+`LIBGL_ALWAYS_INDIRECT=0`
 
 ### OpenEMS
 
 The visualization tool "AppCSXCAD" will not work in the container with our default settings (`vtkXOpenGLRenderWindow (0x....): Cannot create GLX context.  Aborting.`). The issue has been located to be connected with the environment variable "LIBGL_ALWAYS_INDIRECT". As a workaround, we suggest either unsetting the variable or setting it to 0 (`unset LIBGL_ALWAYS_INDIRECT` or `export LIBGL_ALWAYS_INDIRECT=0`) which is persistent for the running terminal or run AppCSXCAD with the variable set to zero inline: `LIBGL_ALWAYS_INDIRECT=0 AppCSXCAD`.
 
-### matplotlib
+### Hdl21/Vlsirtools
 
-The Python package `matplotlib.pyplot` throws a warning about Axes3D. This needs to be resolved in a future release.
+We (temporarily) removed `Hdl21` and `Vlsirtools`, as they force `numpy` to version 1. All other packages allow `numpy` 2, so this removal, until the dependencies are fixed.
 
-### gdsfactory
+### Scikit-RF on `aarch64`
 
-There is a python inconsistency between `gdsfactory` and `openlane`. Currently, `openlane` is priorized. If `gdsfactory` is needed do a `pip3 install --upgrade gdsfactory`.
+Importing `skrf` in Python throws an error due to `bottleneck`; this does not happen on `amd64`.
 
 ## Build
 
 ### Boost
 
-Boost is currently installed from the package sources of Ubuntu and a manual install/build. This is currently required, as there are some dependencies from packages, but also, some of the manually built tools require a newer boost version. This issue will be resolved in the future when switching to a more modern Ubuntu release.
+Boost is currently installed from the package sources of Ubuntu and a manual install/build. This is currently required, as there are some dependencies from packages, but also, some manually built tools require a newer boost version. This issue will be resolved in the future when switching to a more modern Ubuntu release.

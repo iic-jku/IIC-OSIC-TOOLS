@@ -1,0 +1,24 @@
+* old binned models
+*.lib /foss/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+* new continuous models
+.lib /foss/pdks/sky130A/libs.tech/combined/sky130.lib.spice tt
+
+.param mc_mm_switch=0
+.param lx=0.15 wx=162.5 nfx=40 idx=0.5m
+.save @m.xm1a.msky130_fd_pr__nfet_01v8_lvt
+
+XM1a d g s 0 sky130_fd_pr__nfet_01v8_lvt L={lx} W={wx} nf={nfx} ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM1b d g s 0 sky130_fd_pr__nfet_01v8_lvt L={lx} W={wx} nf={nfx} ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+vg  g  0  1
+vd  d  0  1
+is  s  0  {2*idx}
+
+.control
+  op
+  *show
+  print @m.xm1a.msky130_fd_pr__nfet_01v8_lvt[gm]
+  print @m.xm1a.msky130_fd_pr__nfet_01v8_lvt[cgg]
+.endc
+.end

@@ -1,0 +1,19 @@
+** sch_path: /foss/pdks/sg13g2/libs.tech/xschem/sg13g2_tests/dc_lv_pmos.sch
+**.subckt dc_lv_pmos
+Vgs net1 GND -0.75
+Vds net3 GND -1.5
+XM1 net2 net1 GND GND sg13_lv_pmos w=1.0u l=0.45u ng=1 m=1
+Vd net3 net2 0
+.save i(vd)
+**** begin user architecture code
+.lib cornerMOSlv.lib mos_tt
+.param temp=27
+.control
+dc Vds 0 -1.2 -0.01 Vgs -0.35 -1.1 -0.05
+write /tmp/dc_lv_pmos.raw
+quit
+.endc
+**** end user architecture code
+**.ends
+.GLOBAL GND
+.end

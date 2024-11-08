@@ -1,0 +1,19 @@
+{
+    "id": "devcontainer",
+    "version": "1.0.0",
+    "name": "IIC-OSIC-TOOLS",
+    "description": "IIC-OSIC-TOOLS is an all-in-one Docker image for SKY130/GF180/IHP130-based analog and digital chip design. AMD64 and ARM64 are natively supported.",
+    "licenseURL": "https://github.com/iic-jku/IIC-OSIC-TOOLS/blob/main/LICENSE",
+    "platforms": [
+        "ARM64", "AMD64"
+    ],
+    "options": {
+        "version": {
+          "type": "string",
+          "description": "Version",
+          "proposals": ["2024.09", "2024.08"],
+          "default": "2024.09"
+        }
+    }
+
+}

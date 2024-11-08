@@ -39,7 +39,7 @@ echo '#!/bin/bash
 if [[ $1 == "-h" ]]; then
     exec -a "$0" "$TOOLS/yosys/bin/yosys" "$@"
 else
-    exec -a "$0" "$TOOLS/yosys/bin/yosys" -m ghdl -m systemverilog "$@"
+    exec -a "$0" "$TOOLS/yosys/bin/yosys" -m ghdl -m slang "$@"
 fi' > yosys
 chmod +x yosys
 

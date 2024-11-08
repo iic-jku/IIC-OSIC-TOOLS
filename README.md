@@ -25,6 +25,8 @@ This environment is based on the [efabless.com FOSS-ASIC-TOOLS](https://github.c
     - [4.4 Overwriting Shell Variables](#44-overwriting-shell-variables)
       - [4.4.1 For the Linux/macOS Bash Scripts](#441-for-the-linuxmacos-bash-scripts)
       - [4.4.2 For the Windows Batch Scripts](#442-for-the-windows-batch-scripts)
+    - [4.5 Using as devcontainer](#45-using-as-devcontainer)
+      - [4.5.1 Add it to project](#451-add-it-to-project)
   - [5. Support with Issues/Problems/Bugs](#5-support-with-issuesproblemsbugs)
 
 ## 1. How to Use These Open-Source (and Free) IC Design Tools
@@ -35,6 +37,7 @@ It supports two *modes of operation*:
 
 1. Using a complete desktop environment (XFCE) in `Xvnc` (a VNC server), either directly accessing it with a VNC client of your choice or the integrated [noVNC](https://novnc.com) server that runs in your browser.
 2. Using a local X11 server and directly showing the application windows on your desktop.
+3. Using it as a development container in Visual Studio Code (or other IDEs)
 
 ### 1.1 Step 1: Clone/download this GitHub repository onto your computer
 
@@ -85,7 +88,6 @@ Below is a list of the current tools already installed and ready to use (note th
 * [cvc](https://github.com/d-m-bailey/cvc) circuit validity checker (ERC)
 * [edalize](https://github.com/olofk/edalize) Python abstraction library for EDA tools
 * [fusesoc](https://github.com/olofk/fusesoc) package manager and build tools for SoC
-* [gaw3-xschem](https://github.com/StefanSchippers/xschem-gaw.git) waveform plot tool for `xschem`
 * [gaw3-xschem](https://github.com/StefanSchippers/xschem-gaw) waveform plot tool for `xschem`
 * [gdsfactory](https://github.com/gdsfactory/gdsfactory) Python library for GDS generation
 * [gdspy](https://github.com/heitzmann/gdspy) Python module for the creation and manipulation of GDS files
@@ -95,7 +97,6 @@ Below is a list of the current tools already installed and ready to use (note th
 * [gtkwave](https://github.com/gtkwave/gtkwave) waveform plot tool for digital simulation
 * [sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
 * [irsim](https://github.com/rtimothyedwards/irsim) switch-level digital simulator
-* [iverilog](https://github.com/steveicarus/iverilog.git) Verilog simulator
 * [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
 * [hdl21](https://github.com/dan-fritchman/Hdl21) analog hardware description library
 * [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS
@@ -108,8 +109,6 @@ Below is a list of the current tools already installed and ready to use (note th
 * [open_pdks](https://github.com/RTimothyEdwards/open_pdks) PDK setup scripts
 * [openlane2](https://github.com/efabless/openlane2) rewrite of OpenLane in Python, 2nd generation
 * [openram](https://github.com/VLSIDA/OpenRAM) OpenRAM Python library
-* [openroad](https://github.com/The-OpenROAD-Project/OpenROAD.git) RTL2GDS engine used by `openlane2`
-* [osic-multitool](https://github.com/iic-jku/osic-multitool.git) collection of useful scripts and documentation
 * [openroad](https://github.com/The-OpenROAD-Project/OpenROAD) RTL2GDS engine used by `openlane2`
 * [osic-multitool](https://github.com/iic-jku/osic-multitool) collection of useful scripts and documentation
 * [padring](https://github.com/donn/padring) padring generation tool
@@ -122,23 +121,21 @@ Below is a list of the current tools already installed and ready to use (note th
 * [pyverilog](https://github.com/PyHDI/Pyverilog) Python toolkit for Verilog
 * RF toolkit with [FastHenry2](https://github.com/ediloren/FastHenry2), [FasterCap](https://github.com/ediloren/FasterCap), [openEMS](https://github.com/thliebig/openEMS), and [scikit-rf](https://github.com/scikit-rf/scikit-rf).
 * [qucs-s](https://github.com/ra3xdh/qucs_s) simulation environment with RF emphasis
+* [riscv-pk](https://github.com/riscv-software-src/riscv-pk) RISC-V proxy kernel and boot loader
 * [rggen](https://github.com/rggen/rggen) code generation tool for configuration and status registers
 * [schemdraw](https://github.com/cdelker/schemdraw) Python package for drawing electrical schematics
 * [slang](https://github.com/MikePopoloski/slang) SystemVerilog parsing and translation (e.g. to Verilog)
+* [spike](https://github.com/riscv-software-src/riscv-isa-sim) Spike RISC-V ISA simulator
 * [spyci](https://github.com/gmagno/spyci) analyze/plot `ngspice`/`xyce` output data with Python
 * [surelog](https://github.com/chipsalliance/Surelog) SystemVerilog parser, elaborator, and UHDM compiler
-* [synlig](https://github.com/chipsalliance/synlig) SystemVerilog plugin for `yosys`
-* [vlog2verilog](https://github.com/RTimothyEdwards/qflow.git) Verilog file conversion
 * [vlog2verilog](https://github.com/RTimothyEdwards/qflow) Verilog file conversion
 * [volare](https://github.com/efabless/volare) version manager (and builder) for open-source PDKs
 * [risc-v toolchain](https://github.com/riscv/riscv-gnu-toolchain) GNU compiler toolchain for RISC-V cores
 * [siliconcompiler](https://github.com/siliconcompiler/siliconcompiler) modular build system for hardware
-* [sky130](https://github.com/google/skywater-pdk.git) SkyWater Technologies 130nm CMOS PDK
 * [sky130](https://github.com/google/skywater-pdk) SkyWater Technologies 130nm CMOS PDK
 * [verilator](https://github.com/verilator/verilator) fast Verilog simulator
 * [vlsirtools](https://github.com/Vlsir/Vlsir) interchange formats for chip design.
-* [xschem](https://github.com/StefanSchippers/xschem.git) schematic editor
-* [xyce](https://github.com/Xyce/Xyce.git) fast parallel SPICE simulator (incl. `xdm` netlist conversion tool)
+* [xschem](https://github.com/StefanSchippers/xschem) schematic editor
 * [xyce](https://github.com/Xyce/Xyce) fast parallel SPICE simulator (incl. `xdm` netlist conversion tool)
 * [yosys](https://github.com/YosysHQ/yosys) Verilog synthesis tool (with GHDL plugin for VHDL synthesis), incl. `eqy` (equivalence checker), `sby` (formal verification), and `mcy` (mutation coverage)
 
@@ -289,6 +286,24 @@ SET DESIGNS=\my\design\directory
 SET DOCKER_USERNAME=another_user
 .\start_x.bat
 ```
+### 4.5 Using as devcontainer
+
+This is a new usage mode, that might not fit your needs. [Devcontainers](https://code.visualstudio.com/docs/devcontainers/containers) are a great way to provide a working build environment along your own project. It is supported by the [devcontainer](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension in Visual Studio Code.
+
+#### 4.5.1 Add it to project
+
+Option 1: In Visual Studio, click the remote window icon on the left and then "Reopen in Container", "Add configuration to workspace". Enter "ghcr.io/iic-jku/iic-osic-tools/devcontainer" as template, choose the version of the container and add more features (probably not needed). It will then restart the IDE, download the image and start a terminal and mount the work folder into the image.
+
+Option 2: Alternatively you can directly just create the configuration file `.devcontainer/devcontainer.json`:
+
+```json
+{
+	"name": "IIC-OSIC-TOOLS",
+	"image": "ghcr.io/iic-jku/iic-osic-tools-devcontainer:2024.09"
+}
+```
+
+Either way, the great thing is that you can now commit the file to repository and all developers will be asked if they want to reopen their development in this container, all they need is Docker and VSCode.
 
 ## 5. Support with Issues/Problems/Bugs
 

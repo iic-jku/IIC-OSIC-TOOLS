@@ -1,0 +1,57 @@
+** sch_path: /foss/pdks/sky130A/libs.tech/xschem/sky130_tests/test_analog.sch
+**.subckt test_analog
+x1 OUT OUT IN BIAS n_diffamp
+x2 OUT2 OUT2 IN2 BIAS2 n_diffamp
+V1 IN GND 1.2
+V2 BIAS GND 1.1
+V3 VDD GND 1.8
+V4 IN2 GND 1.0
+V5 BIAS2 GND 1.0
+XR1 GND OUT2 GND sky130_fd_pr__res_xhigh_po_0p35 L=50 mult=1 m=1
+XR2 GND OUT GND sky130_fd_pr__res_xhigh_po_0p35 L=50 mult=1 m=1
+**** begin user architecture code
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include /foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice
+.include /foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice
+.include /foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice
+.include /foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice
+**** end user architecture code
+**.ends
+
+* expanding   symbol:  sky130_tests/n_diffamp.sym # of pins=4
+** sym_path: /foss/pdks/sky130A/libs.tech/xschem/sky130_tests/n_diffamp.sym
+** sch_path: /foss/pdks/sky130A/libs.tech/xschem/sky130_tests/n_diffamp.sch
+.subckt n_diffamp OUT MINUS PLUS NBIAS
+*.ipin PLUS
+*.ipin MINUS
+*.opin OUT
+*.ipin NBIAS
+XM1 net1 PLUS S GND sky130_fd_pr__nfet_01v8_lvt L=0.3 W=2 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM2 OUT MINUS S GND sky130_fd_pr__nfet_01v8_lvt L=0.3 W=2 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM3 OUT net1 VDD VDD sky130_fd_pr__pfet_01v8_lvt L=0.8 W=4 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM4 net1 net1 VDD VDD sky130_fd_pr__pfet_01v8_lvt L=0.8 W=4 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29'
++ pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM5 net2 NBIAS GND GND sky130_fd_pr__nfet_01v8 L=1.2 W=0.7 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XR1 GND S GND sky130_fd_pr__res_xhigh_po_0p35 L=50 mult=1 m=1
+V5 S net2 0
+.save i(v5)
+.ends
+
+.GLOBAL GND
+.GLOBAL VDD
+**** begin user architecture code
+* ngspice commands
+.options savecurrents
+.control
+save all
+op
+write /tmp/test_analog.raw
+quit
+.endc
+**** end user architecture code
+.end

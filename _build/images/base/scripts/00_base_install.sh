@@ -27,7 +27,9 @@ apt -y install \
 	debhelper \
 	default-jre \
 	desktop-file-utils \
+	device-tree-compiler \
 	devscripts \
+	dos2unix \
 	doxygen \
 	expat \
 	flex \
@@ -45,7 +47,6 @@ apt -y install \
 	gperf \
 	gpg \
 	graphviz \
-	gtk2-engines-pixbuf \
 	help2man \
 	language-pack-en-base \
 	lcov \
@@ -73,7 +74,7 @@ apt -y install \
 	libgomp1 \
 	libgoogle-perftools-dev \
 	libgtk-3-dev \
-	libgtk2.0-dev \
+	libgtk-4-dev \
 	libjpeg-dev \
 	libjudy-dev \
 	liblapack-dev \
@@ -89,6 +90,7 @@ apt -y install \
 	libpcre2-dev \
 	libpcre3-dev \
 	libqhull-dev \
+	libqt5charts5-dev \
 	libqt5multimediawidgets5 \
 	libqt5svg5-dev \
 	libqt5xmlpatterns5-dev \

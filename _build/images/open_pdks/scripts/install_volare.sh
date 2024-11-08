@@ -14,15 +14,13 @@ fi
 echo "[INFO] Installing SKY130 PDK."
 volare enable "${OPEN_PDKS_REPO_COMMIT}" --pdk sky130
 
-# remove version sky130B to save space (efabless TO use mostly sky130A)
 rm -rf "$PDK_ROOT"/volare/sky130/versions/*/sky130B
 rm -rf "$PDK_ROOT"/sky130B
 
 if [ -d "$PDK_ROOT/sky130A" ]; then
-	# apply SPICE mode file reduction (for the variants that exist)
-	# add custom IIC bind keys to magicrc
 
     cd "$PDK_ROOT/sky130A/libs.tech/ngspice" || exit 1
+
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice tt
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice ss
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice ff
@@ -41,10 +39,9 @@ if [ -d "$PDK_ROOT/sky130A" ]; then
 fi
 
 if [ -d "$PDK_ROOT/sky130B" ]; then
-	# apply SPICE mode file reduction (for the variants that exist)
-	# add custom IIC bind keys to magicrc
 
 	cd "$PDK_ROOT/sky130B/libs.tech/ngspice" || exit 1
+	
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice tt
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice ss
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice ff
@@ -71,8 +68,21 @@ volare enable "${OPEN_PDKS_REPO_COMMIT}" --pdk gf180mcu
 #FIXME maybe need to run spice model file reduction here as well
 #FIXME need to define a magic bindkeys for gf180mcu
 
-# remove version gf180mcuA/B to save space (efabless TO use gf180mcuC, Chipathon use gf180mcuD)
 rm -rf "$PDK_ROOT"/volare/gf180mcu/versions/*/gf180mcuA
 rm -rf "$PDK_ROOT"/volare/gf180mcu/versions/*/gf180mcuB
 rm -rf "$PDK_ROOT"/gf180mcuA
 rm -rf "$PDK_ROOT"/gf180mcuB
+
+if [ -d "$PDK_ROOT/gf180mcuC" ]; then
+	cd "$PDK_ROOT/gf180mcuC/libs.tech/ngspice" || exit 1
+	
+	# Setup empty .spiceinit (harmonize with SG13G2)
+	touch .spiceinit
+fi
+
+if [ -d "$PDK_ROOT/gf180mcuD" ]; then
+	cd "$PDK_ROOT/gf180mcuD/libs.tech/ngspice" || exit 1
+	
+	# Setup empty .spiceinit (harmonize with SG13G2)
+	touch .spiceinit
+fi

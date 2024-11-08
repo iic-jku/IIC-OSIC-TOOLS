@@ -1,0 +1,84 @@
+** sch_path: /foss/pdks/sky130A/libs.tech/xschem/sky130_tests/test_pmos.sch
+**.subckt test_pmos G1v8 D1v8 B
+*.ipin G1v8
+*.ipin D1v8
+*.ipin B
+Vd1 net1 D1v8 0
+.save i(vd1)
+Vd2 net2 D1v8 0
+.save i(vd2)
+E1 D5v0 0 D1v8 0 '5/1.8'
+E2 D3v3 0 D1v8 0 '3.3/1.8'
+E3 G5v0 0 G1v8 0 '5/1.8'
+E4 G3v3 0 G1v8 0 '3.3/1.8'
+E5 D10v5 0 D1v8 0 '10.5/1.8'
+Vd3 net3 D1v8 0
+.save i(vd3)
+XM3 net3 G1v8 S B sky130_fd_pr__pfet_01v8_hvt L=0.15 W=1 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+Vd4 net4 D10v5 0
+.save i(vd4)
+XM4 net4 G5v0 S B sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=1 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM1 net1 G1v8 S B sky130_fd_pr__pfet_01v8_lvt L=0.35 W=1 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM2 net2 G1v8 S B sky130_fd_pr__pfet_01v8 L=0.15 W=1 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+Vd5 net5 D16v0 0
+.save i(vd5)
+XM5 net5 G5v0 S B sky130_fd_pr__pfet_g5v0d16v0 L=0.66 W=5.0 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29'
++ pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+E6 D16v0 0 D1v8 0 '16.0/1.8'
+E7 D20v0 0 D1v8 0 '20.0/1.8'
+XM6 net6 G5v0 S B sky130_fd_pr__pfet_20v0 L=0.5 W=30 m=1
+Vd6 net6 D20v0 0
+.save i(vd6)
+Vd7 net7 D1v8 0
+.save i(vd7)
+Vd8 net8 D1v8 0
+.save i(vd8)
+Vd9 net9 D1v8 0
+.save i(vd9)
+XM9 net9 G1v8 S B sky130_fd_pr__pfet_01v8_hvt L=0.15 W=1 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+Vd10 net10 D10v5 0
+.save i(vd10)
+XM10 net10 G5v0 S B sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=1 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM7 net7 G1v8 S B sky130_fd_pr__pfet_01v8_lvt L=0.35 W=1 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM8 net8 G1v8 S B sky130_fd_pr__pfet_01v8 L=0.15 W=1 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+Vd11 net11 D16v0 0
+.save i(vd11)
+XM11 net11 G5v0 S B sky130_fd_pr__pfet_g5v0d16v0 L=0.66 W=5.0 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29'
++ pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM12 net12 G5v0 S B sky130_fd_pr__pfet_20v0 L=0.5 W=30 m=1
+Vd12 net12 D20v0 0
+.save i(vd12)
+**** begin user architecture code
+* this option enables mos model bin
+* selection based on W/NF instead of W
+.opton wnflag=1
+.option savecurrents
+vg G1v8 0 -1.8
+vs s 0 0
+vd D1v8 0 -1.8
+vb b 0 0
+.control
+save all
+dc vd 0 -1.8 -0.1 vg 0 -1.8 -0.2
+write /tmp/test_pmos.raw
+set appendwrite
+op
+write /tmp/test_pmos.raw
+.endc
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.include /foss/pdks/sky130A/libs.tech/ngspice/corners/tt.spice
+.include /foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical.spice
+.include /foss/pdks/sky130A/libs.tech/ngspice/r+c/res_typical__cap_typical__lin.spice
+.include /foss/pdks/sky130A/libs.tech/ngspice/corners/tt/specialized_cells.spice
+**** end user architecture code
+**.ends
+.end

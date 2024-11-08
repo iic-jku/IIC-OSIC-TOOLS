@@ -2,7 +2,7 @@
 # ========================================================================
 # Spins up multiple IIC-OSIC-TOOLS containers for many EDA users
 #
-# SPDX-FileCopyrightText: 2023 Harald Pretl
+# SPDX-FileCopyrightText: 2023-2024 Harald Pretl
 # Johannes Kepler University, Institute for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -154,7 +154,8 @@ _write_credentials () {
 	# $1 = username
 	# $2 = passwd
 	# $3 = webserver port
-	# $4 = credentials file
+	# $4 = user data directory
+	# $5 = credentials file
 
 	# get the local IP of the server
 	if [[ "$OSTYPE" == "linux"* ]]; then
@@ -167,8 +168,8 @@ _write_credentials () {
 	fi
 
 	# write a JSON file
-	jq ". + [{ \"user\": \"$1\", \"password\": \"$2\", \"port\": $3, \"url\": \"http://$HOSTIP:$3/?password=$2\", \"prefix\": \"$EDA_CONTAINER_PREFIX\" }]" "$4" > "$4.tmp"
-	mv "$4.tmp" "$4"
+	jq ". + [{ \"user\": \"$1\", \"password\": \"$2\", \"port\": $3, \"url\": \"http://$HOSTIP:$3/?password=$2\", \"dockervm\": \"$EDA_CONTAINER_PREFIX-$1\", \"datadir\": \"$4\" }]" "$5" > "$5.tmp"
+	mv "$5.tmp" "$5"
 }
 
 # sanitize input parameters
@@ -253,7 +254,7 @@ do
 
 	[ $DEBUG = 1 ] && echo "[INFO] Creating container with user=$USERNAME, using port=$PORTNO, with password=$PASSWD."
 	
-	_write_credentials $USERNAME "$PASSWD" $PORTNO "$EDA_CREDENTIAL_FILE"
+	_write_credentials $USERNAME "$PASSWD" $PORTNO "$EDA_USER_HOME/$USERNAME" "$EDA_CREDENTIAL_FILE"
 	_spin_up_server "$USERNAME" "$PASSWD" "$PORTNO"
 done
 

@@ -1,0 +1,19 @@
+** sch_path: /foss/pdks/sg13g2/libs.tech/xschem/sg13g2_tests/dc_hv_nmos.sch
+**.subckt dc_hv_nmos
+Vgs net1 GND 0.75
+Vds net3 GND 1.5
+Vd net3 net2 0
+.save i(vd)
+XM1 net2 net1 GND GND sg13_hv_nmos w=1.0u l=0.45u ng=1 m=1
+**** begin user architecture code
+.lib cornerMOShv.lib mos_tt
+.param temp=27
+.control
+dc Vds 0 3.0 0.01 Vgs 0.3 1.5 0.05
+write /tmp/dc_hv_nmos.raw
+quit
+.endc
+**** end user architecture code
+**.ends
+.GLOBAL GND
+.end

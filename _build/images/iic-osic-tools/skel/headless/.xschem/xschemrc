@@ -1,0 +1,2 @@
+# Source the PDK xschemrc file
+source $env(PDK_ROOT)/$env(PDK)/libs.tech/xschem/xschemrc

@@ -1,0 +1,6 @@
+{
+    "DESIGN_NAME": "counter",
+    "VHDL_FILES": "dir::counter.vhdl",
+    "CLOCK_PORT": "clk_i",
+    "CLOCK_PERIOD": 20
+}

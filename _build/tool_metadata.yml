@@ -1,105 +1,111 @@
 - name: covered
-  repo: https://github.com/iic-jku/verilog-covered
+  repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
 - name: cvc_rv
-  repo: https://github.com/d-m-bailey/cvc
-  commit: v1.1.5
+  repo: https://github.com/d-m-bailey/cvc.git
+  commit: "v1.1.5"
 - name: gaw3-xschem
   repo: https://github.com/StefanSchippers/xschem-gaw.git
-  commit: 640c672e1ad768b92eb6a15943459a1d2214e1dc
+  commit: d41828de08eef29c2f937d363bc2ecdc2687bfae
 - name: gds3d
   repo: https://github.com/trilomix/GDS3D.git
-  commit: 970d11ef4bba553f8b2e3100a93fe3d050f9fdf4
+  commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 5b5a300dacbac9658fefb4d2cada8ba1e67c331e
+  commit: a938ee87eccdfeba400ae10ecd4e9a2b2438d1e3
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 511412f984d64ed7c46c4bdbd839f4b3c48f6fa5
 - name: gtkwave
-  repo: https://github.com/gtkwave/gtkwave
-  commit: e9b5cce38c5c5272d60ff9baf71df027b3607ebd
+  repo: https://github.com/gtkwave/gtkwave.git
+  commit: 491f24d7e8619cfc1fcc65704ee5c967d1083c18
 - name: irsim
-  repo: https://github.com/rtimothyedwards/irsim
+  repo: https://github.com/rtimothyedwards/irsim.git
   commit: a7884acc04cd94017779893d381b7e93d8895587
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 676b36e4554f119d0606ade79db2fba6834d3445
+  commit: d8c3c51ab1190ed3fb26540d7de6177f83e0e75b
 - name: klayout
-  repo: https://github.com/KLayout/klayout
-  commit: v0.29.4
+  repo: https://github.com/KLayout/klayout.git
+  commit: "v0.29.8"
 - name: libman
-  repo: https://github.com/IHP-GmbH/LibMan
+  repo: https://github.com/IHP-GmbH/LibMan.git
   commit: a4537c1fba19966e80408a7b224001d5697ff1e6
 - name: magic
-  repo: https://github.com/rtimothyedwards/magic
-  commit: 8.3.486
+  repo: https://github.com/rtimothyedwards/magic.git
+  commit: "8.3.497"
 - name: netgen
-  repo: https://github.com/rtimothyedwards/netgen
-  commit: 1.5.276
+  repo: https://github.com/rtimothyedwards/netgen.git
+  commit: "1.5.286"
 - name: ngspice
-  repo: https://github.com/danchitnis/ngspice-sf-mirror
-  commit: ngspice-43
+  repo: https://github.com/danchitnis/ngspice-sf-mirror.git
+  commit: "ngspice-43"
 - name: ngspyce
-  repo: https://github.com/ignamv/ngspyce
+  repo: https://github.com/ignamv/ngspyce.git
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
 - name: nvc
-  repo: https://github.com/nickg/nvc
-  commit: r1.13.0
+  repo: https://github.com/nickg/nvc.git
+  commit: "r1.14.1"
 - name: open_pdks
-  repo: https://github.com/RTimothyEdwards/open_pdks
-  commit: bdc9412b3e468c102d01b7cf6337be06ec6e9c9a
+  repo: https://github.com/RTimothyEdwards/open_pdks.git
+  commit: 0fe599b2afb6708d281543108caf8310912f54af
 - name: openroad_app
-  repo: https://github.com/The-OpenROAD-Project/OpenROAD
-  commit: d423155d69de7f683a23f6916ead418a615ad4ad
+  repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
+  commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
+- name: openvaf
+  repo: https://github.com/dwarning/OpenVAF.git
+  commit: 2ab0d05fcf9ffd21cc5f49022b7624224cb96b1f
 - name: osic-multitool
   repo: https://github.com/iic-jku/osic-multitool.git
-  commit: 40edf1e66a5054ca1f332a3b59a1aa51db7839aa
+  commit: c980bb34cac11f22ba4cf16a94919ea61899d62d 
 - name: padring
-  repo: https://github.com/donn/padring
+  repo: https://github.com/donn/padring.git
   commit: b2a64abcc8561d758c0bcb3945117dcb13bd9dca
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: "0.11"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2024.04.12"
+  commit: "2024.10.28"
+- name: riscv-pk
+  repo: https://github.com/riscv-software-src/riscv-pk.git
+  commit: abadfdc507d5a75b6272dc360e70a80a510c758a
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 928045a4da4e1239831b2d0cbd75f25b63ee07d5
+  commit: bad0d6ba3dec20355b0156c535bbddf2f926ab37
+- name: slang-yosys-plugin
+  repo: https://github.com/povik/yosys-slang.git
+  commit: 5bec681761236fa85cd97fec3bfcc6494b7979d0
+- name: spike
+  repo: https://github.com/riscv-software-src/riscv-isa-sim.git
+  commit: f0d4d42913d5a5555848fa32cc68783c2000b3e1
 - name: surelog
-  repot: https://github.com/chipsalliance/Surelog
-  commit: "v1.83"
-- name: synlig-yosys-plugin
-  repo: https://github.com/chipsalliance/synlig.git
-  commit: 3e3cdc33140edfd25cca5229555dcd6dc9d14468
+  repot: https://github.com/chipsalliance/Surelog.git
+  commit: "v1.84"
 - name: qflow
   repo: https://github.com/RTimothyEdwards/qflow.git
-  commit: c270a66de59507ac0e0ace7fd79e91a1b9d1dbb2
+  commit: 52ecda1053bcbd2f6ec88b8379c8179e2a849f7a
 - name: qucs-s
-  repo: https://github.com/ra3xdh/qucs_s
-  commit: "24.3.0"
+  repo: https://github.com/ra3xdh/qucs_s.git
+  commit: "24.4.0"
 - name: verilator
-  repo: https://github.com/verilator/verilator
-  commit: v5.026
-- name: vlogtoverilog
-  repo: https://github.com/RTimothyEdwards/qflow
-  commit: 1.4.103
+  repo: https://github.com/verilator/verilator.git
+  commit: "v5.030"
 - name: xcircuit
-  repo: https://github.com/RTimothyEdwards/XCircuit
+  repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 8b5ed3f32ed77b67044b7097376e845be518cdc2
+  commit: 65bd4ce7669c2d8f12b977318da4e4ddd0164b4c
 - name: xyce
-  repo: https://github.com/Xyce/Xyce.git
-  commit: Release-7.8.0
+  repo: https://xyce.sandia.gov/files/xyce
+  commit: "Xyce-7.8"
 - name: xyce-xdm
-  repo: https://github.com/Xyce/XDM
-  commit: Release-2.7.0
+  repo: https://github.com/Xyce/XDM.git
+  commit: "Release-2.7.0"
 - name: yosys
-  repo: https://github.com/YosysHQ/yosys
-  commit: yosys-0.43
+  repo: https://github.com/YosysHQ/yosys.git
+  commit: "0.46"
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
 - name: yosys_sby

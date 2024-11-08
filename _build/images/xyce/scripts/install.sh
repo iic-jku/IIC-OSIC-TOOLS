@@ -2,9 +2,14 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${XYCE_REPO_URL}" "${XYCE_NAME}"
+#git clone --filter=blob:none "${XYCE_REPO_URL}" "${XYCE_NAME}"
+FILE=${XYCE_REPO_COMMIT}.tar.gz
+wget --no-verbose --no-hsts "$XYCE_REPO_URL/$FILE"
+tar xfz "$FILE"
+rm -f "$FILE"
+mv "$XYCE_REPO_COMMIT" "$XYCE_NAME"
 cd "${XYCE_NAME}" || exit 1
-git checkout "${XYCE_REPO_COMMIT}"
+#git checkout "${XYCE_REPO_COMMIT}"
 ./bootstrap
 
 git clone --filter=blob:none https://github.com/trilinos/Trilinos trilinos

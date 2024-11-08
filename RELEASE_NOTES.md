@@ -2,16 +2,43 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2024.10
+
+* Adding support for devcontainers (for use of the image inside VSCode).
+* Enable `pyosys` when building `yosys` (for use with OpenLane2).
+* Adding `pytest` (for, e.g., `cocotb`).
+* Add writing the users' data directory to `eda_server_start.sh`, and write the full VM name in the json file.
+* Bump various tool versions.
+* Get `xyce` sourcecode from Sandia homepage instead of GitHub.
+
+## 2024.09
+
+* Add `slang` plugin for `yosys` for direct SystemVerilog read-in.
+* Add `spike` RISC-V ISA simulator.
+* Add `riscv-pk` proxy kernel and boot loader.
+* Add `jq` for CLI JSON processing.
+* Bump various tool versions.
+* Fixed `ngspice` simulation issue with `sky130A`.
+* Remove a few outdated WA.
+* Remove `synlig` `yosys` plugin (depreciated).
+
 ## 2024.08
 
-* Add required tools for PULP-platform (morty, bender, svase, sv2v, verible).
+* Add testsuite for image release testing (very basic at this stage).
+* Add required tools for PULP-platform (`morty`, `bender`, `svase`, `sv2v`, `verible`).
+* Add RISC-V GNU tool chain back in, as the PULP-platform is using it.
 * Add `surelog`.
 * Add `pygmid`.
 * Add `xcircuit`.
-* Bump various tools versions.
-* Fixed VHDL usage in OpenLane.
-* Simplified tools paths by removing tool version.
+* Bump various tool and PDK versions.
+* Fix VHDL flow in OpenLane2.
+* Simplify tool directory structure by removing the tool GitHub hashes from the directory tree (the original intention was to be able to install different tool versions in parallel, but this was never really used).
+* Adapt the Docker build script to use our new ARM build server. Now we build the image in parallel on two 100+ cores `aarch64` and `amd64` machines.
+* Adapt all tool build scripts to work in `/tmp`.
+* Move install for as many Python packages as possible from APT to PIP (to enable newer versions).
+* Remove alias for `xschem` and `magic`, instead properly install RC files in `/headless`.
 * Remove `netlistsvg`, as it is requiring the large node.js package.
+* Remove `hdl21` and `vlsirtools` to allow `numpy` 2.
 
 ## 2024.07
 
@@ -24,13 +51,14 @@ This document summarizes the most important changes of the individual releases o
 ## 2024.05
 
 * Changing from OpenLane(1) to OpenLane2! OpenLane(1) is removed from the image. The tool versions used by OpenLane2 are now set to latest release (or if necessary the version required by OL2), instead of pinned (older) versions. This impacts the following tools:
-	* Magic
-	* Netgen
-	* OpenROAD
-	* OpenSTA
-	* Yosys
-	* PDK version
-	* Padring
+
+  * Magic
+  * Netgen
+  * OpenROAD
+  * OpenSTA
+  * Yosys
+  * PDK version
+  * Padring
 * Remove ALIGN (has only been included in `amd64` version, not in `arm64`).
 * Update various tool versions.
 

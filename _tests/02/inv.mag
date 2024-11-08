@@ -1,0 +1,59 @@
+magic
+tech sky130A
+magscale 1 2
+timestamp 1640640991
+<< nwell >>
+rect 86 1006 122 1120
+rect 402 1006 438 1120
+<< pwell >>
+rect 174 -918 208 -806
+<< viali >>
+rect 32 1116 492 1152
+rect 118 -954 422 -916
+<< metal1 >>
+rect -126 1152 650 1230
+rect -126 1116 32 1152
+rect 492 1116 650 1152
+rect -126 1090 650 1116
+rect 80 992 128 1090
+rect 196 204 206 1002
+rect 322 204 332 1002
+rect 396 992 444 1090
+rect 212 134 304 162
+rect 212 116 316 134
+rect 224 -336 316 116
+rect 300 -420 402 -404
+rect 300 -802 310 -420
+rect 392 -802 402 -420
+rect 168 -898 214 -802
+rect -126 -916 650 -898
+rect -126 -954 118 -916
+rect 422 -954 650 -916
+rect -126 -1038 650 -954
+<< via1 >>
+rect 206 204 322 1002
+rect 310 -802 392 -420
+<< metal2 >>
+rect 206 1002 322 1012
+rect 322 204 392 348
+rect 206 194 392 204
+rect 310 -420 392 194
+rect 310 -812 392 -802
+use sky130_fd_pr__nfet_g5v0d10v5_H9JWFY  sky130_fd_pr__nfet_g5v0d10v5_H9JWFY_0
+timestamp 1639595562
+transform 1 0 270 0 1 -573
+box -278 -427 278 427
+use sky130_fd_pr__pfet_g5v0d10v5_5AEDG4  sky130_fd_pr__pfet_g5v0d10v5_5AEDG4_0
+timestamp 1639595562
+transform -1 0 262 0 1 567
+box -387 -662 387 662
+<< labels >>
+rlabel metal1 -126 1152 650 1230 1 VDD
+port 3 n default input
+rlabel metal1 -126 -1038 650 -954 1 VSS
+port 4 n
+rlabel metal1 224 -336 316 134 1 in
+port 1 n
+rlabel metal2 310 -420 392 204 1 out
+port 2 n
+<< end >>

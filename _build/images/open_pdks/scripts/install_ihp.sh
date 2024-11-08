@@ -21,10 +21,6 @@ cd ihp || exit 1
 git checkout dev
 git submodule update --init --recursive
 
-# Some modifications/cleanup needed of stock IHP PDK
-# 1) Remove the `pre_osdi` line from the examples
-find . -name "*.sch" -exec sed -i '/pre_osdi/d' {} \;
-
 # Now move to the proper location
 if [ -d $IHP_PDK ]; then
 	mv $IHP_PDK "$PDK_ROOT/$MY_PDK"
@@ -35,5 +31,4 @@ fi
 ####################
 cd "$PDK_ROOT"/"$MY_PDK"/libs.tech/ngspice/openvaf || exit 1
 
-# Compile the PSP model
-"$TOOLS/$OPENVAF_NAME/bin/openvaf" psp103_nqs.va
+"$TOOLS/$OPENVAF_NAME/bin/openvaf" --target_cpu generic psp103_nqs.va

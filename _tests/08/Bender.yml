@@ -1,0 +1,22 @@
+# Copyright 2024 ETH Zurich and University of Bologna
+# Solderpad Hardware License, Version 0.51, see LICENSE for details.
+# SPDX-License-Identifier: SHL-0.51
+
+package:
+  name: smoke_test
+  authors:
+    - "Philippe Sauter <phsauter@iis.ee.ethz.ch>"
+
+dependencies:
+  common_cells: { git: "https://github.com/pulp-platform/common_cells.git", rev: 10dac0ff3387e14b1129be33cad1e9a7d71aed7f }
+
+sources:
+  # Level 0
+  - target: not(test_target)
+    files:
+      - error.sv
+
+    # RTL
+  - target: test_target
+    files:
+      - top.sv

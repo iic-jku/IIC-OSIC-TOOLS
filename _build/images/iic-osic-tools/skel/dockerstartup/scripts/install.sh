@@ -46,6 +46,7 @@ apt install -y \
         gnuplot \
         htop \
         hub \
+        jq \
         meld \
         nano \
         net-tools \
