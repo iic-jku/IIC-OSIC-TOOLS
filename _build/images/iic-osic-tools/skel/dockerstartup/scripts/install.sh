@@ -52,7 +52,6 @@ apt install -y \
         net-tools \
         nmap \
         novnc \
-        openems \
         parallel \
         sudo \
         tigervnc-standalone-server \
