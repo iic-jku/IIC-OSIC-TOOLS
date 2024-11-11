@@ -91,8 +91,8 @@ FROM base AS cvc_rv
 ARG CVC_RV_REPO_URL="https://github.com/d-m-bailey/cvc.git"
 ARG CVC_RV_REPO_COMMIT="v1.1.5"
 ARG CVC_RV_NAME="cvc_rv"
-RUN --mount=type=bind,source=images/cvc_rv,target=/images/cvc_rv \
-    bash /images/cvc_rv/scripts/install.sh
+#FIXME RUN --mount=type=bind,source=images/cvc_rv,target=/images/cvc_rv \
+#    bash /images/cvc_rv/scripts/install.sh
 
 #######################################################################
 # Compile gaw3-xschem
@@ -131,8 +131,8 @@ FROM base AS gtkwave
 ARG GTKWAVE_REPO_URL="https://github.com/gtkwave/gtkwave.git"
 ARG GTKWAVE_REPO_COMMIT="491f24d7e8619cfc1fcc65704ee5c967d1083c18"
 ARG GTKWAVE_NAME="gtkwave"
-RUN --mount=type=bind,source=images/gtkwave,target=/images/gtkwave \
-    bash /images/gtkwave/scripts/install.sh
+#FIXME RUN --mount=type=bind,source=images/gtkwave,target=/images/gtkwave \
+#    bash /images/gtkwave/scripts/install.sh
 
 #######################################################################
 # Compile irsim
@@ -221,8 +221,8 @@ FROM base AS openroad_app
 ARG OPENROAD_APP_REPO_URL="https://github.com/The-OpenROAD-Project/OpenROAD.git"
 ARG OPENROAD_APP_REPO_COMMIT="edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6"
 ARG OPENROAD_APP_NAME="openroad"
-RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
-    bash /images/openroad/scripts/install.sh
+#FIXME RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
+#    bash /images/openroad/scripts/install.sh
 
 #######################################################################
 # Compile padring
@@ -239,8 +239,8 @@ ARG PADRING_NAME="padring"
 #######################################################################
 FROM base AS pulp-tools
 ARG PULP_NAME="pulp"
-RUN --mount=type=bind,source=images/pulp-tools,target=/images/pulp-tools \
-    bash /images/pulp-tools/scripts/install.sh
+#FIXME RUN --mount=type=bind,source=images/pulp-tools,target=/images/pulp-tools \
+#    bash /images/pulp-tools/scripts/install.sh
 
 #######################################################################
 # Compile pyopus
@@ -249,8 +249,8 @@ FROM basepkg AS pyopus
 ARG PYOPUS_REPO_URL="https://fides.fe.uni-lj.si/pyopus/download"
 ARG PYOPUS_REPO_COMMIT="0.11"
 ARG PYOPUS_NAME="pyopus"
-RUN --mount=type=bind,source=images/pyopus,target=/images/pyopus \
-    bash /images/pyopus/scripts/install.sh
+#FIXME RUN --mount=type=bind,source=images/pyopus,target=/images/pyopus \
+#    bash /images/pyopus/scripts/install.sh
 
 #######################################################################
 # Compile surelog
@@ -446,12 +446,12 @@ ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
 # Copy all layers into the final container
 COPY --from=open_pdks                    ${PDK_ROOT}/           ${PDK_ROOT}/
 COPY --from=covered                      ${TOOLS}/              ${TOOLS}/
-COPY --from=cvc_rv                       ${TOOLS}/              ${TOOLS}/
+#FIXME COPY --from=cvc_rv                       ${TOOLS}/              ${TOOLS}/
 COPY --from=gaw3-xschem                  ${TOOLS}/              ${TOOLS}/
 COPY --from=gds3d                        ${TOOLS}/              ${TOOLS}/
 COPY --from=gds3d                        ${PDK_ROOT}/           ${PDK_ROOT}/
 COPY --from=ghdl                         ${TOOLS}/              ${TOOLS}/
-COPY --from=gtkwave                      ${TOOLS}/              ${TOOLS}/
+#FIXME COPY --from=gtkwave                      ${TOOLS}/              ${TOOLS}/
 COPY --from=irsim                        ${TOOLS}/              ${TOOLS}/
 COPY --from=iverilog                     ${TOOLS}/              ${TOOLS}/
 COPY --from=klayout                      ${TOOLS}/              ${TOOLS}/
@@ -461,15 +461,15 @@ COPY --from=netgen                       ${TOOLS}/              ${TOOLS}/
 COPY --from=nvc                          ${TOOLS}/              ${TOOLS}/
 COPY --from=ngspice                      ${TOOLS}/              ${TOOLS}/
 COPY --from=ngspyce                      ${TOOLS}/              ${TOOLS}/
-COPY --from=openroad_app                 ${TOOLS}/              ${TOOLS}/
+#FIXME COPY --from=openroad_app                 ${TOOLS}/              ${TOOLS}/
 COPY --from=osic-multitool               ${TOOLS}/              ${TOOLS}/
 COPY --from=openvaf                      ${TOOLS}/              ${TOOLS}/
-COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
-COPY --from=pulp-tools                   ${TOOLS}/              ${TOOLS}/
-COPY --from=pyopus                       ${TOOLS}/              ${TOOLS}/
+#FIXME COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
+#FIXME COPY --from=pulp-tools                   ${TOOLS}/              ${TOOLS}/
+#FIXME COPY --from=pyopus                       ${TOOLS}/              ${TOOLS}/
 COPY --from=qflow                        ${TOOLS}/              ${TOOLS}/
 COPY --from=qucs-s                       ${TOOLS}/              ${TOOLS}/
-COPY --from=rftoolkit                    ${TOOLS}/              ${TOOLS}/
+#FIXME COPY --from=rftoolkit                    ${TOOLS}/              ${TOOLS}/
 COPY --from=riscv-gnu-toolchain          ${TOOLS}/              ${TOOLS}/
 COPY --from=riscv-pk                     ${TOOLS}/              ${TOOLS}/
 COPY --from=slang                        ${TOOLS}/              ${TOOLS}/
