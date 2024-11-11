@@ -17,13 +17,13 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	maturin \
 	meson \
 	ninja \
+	orderedmultidict \
 	panda \
 	pathspec \
 	pipdeptree \
 	prettyprinttree \
 	prettytable \
 	pytest \
-	pyyaml \
 	scikit-build \
 	scikit-image \
 	simanneal \
