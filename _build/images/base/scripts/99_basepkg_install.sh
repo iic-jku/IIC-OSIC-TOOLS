@@ -3,7 +3,7 @@
 set -e
 
 echo "[INFO] Install Jupyter packages via PIP"
-pip3 install --upgrade --no-cache-dir \
+pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	jupyter \
 	jupyterlab \
 	jupyter-collaboration \
@@ -11,7 +11,7 @@ pip3 install --upgrade --no-cache-dir \
 
 #FIXME gdfsfactory >= 8.8.6 requires Python 3.11
 echo "[INFO] Install EDA packages via PIP"
-pip3 install --upgrade --no-cache-dir \
+pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	amaranth==0.5.3 \
 	cace==2.5.3 \
 	cocotb==1.9.2 \
