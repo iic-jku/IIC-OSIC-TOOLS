@@ -21,6 +21,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/31_install_or-tools.sh && \
     bash /images/base/scripts/32_install_cudd.sh && \
     bash /images/base/scripts/33_install_gtest.sh && \
+    bash /images/base/scripts/34_install_spdlog.sh && \
     bash /images/base/scripts/70_install_from_pip.sh
 
 #######################################################################
