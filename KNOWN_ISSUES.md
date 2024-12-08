@@ -16,6 +16,16 @@ A few applications are using OpenGL graphics, which can lead to issues on some c
 
 `LIBGL_ALWAYS_INDIRECT=0`
 
+### The OpenROAD Flow Scripts (ORFS)
+
+The ORFS required a recent version of `openroad`. Since image tag `2024.12` a recent version is installed alongside the OpenROAD version required by `openlane`. In order to use the ORFS, before calling the `make` script make sure to set the following env vars:
+
+`
+export YOSYS_EXE=$TOOLS/yosys/bin/yosys
+export OPENROAD_EXE=$TOOLS/openroad-latest/bin/openroad
+export OPENSTA_EXE=$TOOLS/openroad-latest/bin/sta
+`
+
 ### OpenEMS
 
 The visualization tool "AppCSXCAD" will not work in the container with our default settings (`vtkXOpenGLRenderWindow (0x....): Cannot create GLX context.  Aborting.`). The issue has been located to be connected with the environment variable "LIBGL_ALWAYS_INDIRECT". As a workaround, we suggest either unsetting the variable or setting it to 0 (`unset LIBGL_ALWAYS_INDIRECT` or `export LIBGL_ALWAYS_INDIRECT=0`) which is persistent for the running terminal or run AppCSXCAD with the variable set to zero inline: `LIBGL_ALWAYS_INDIRECT=0 AppCSXCAD`.
