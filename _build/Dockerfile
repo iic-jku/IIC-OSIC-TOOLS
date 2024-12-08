@@ -246,12 +246,12 @@ RUN --mount=type=bind,source=images/pulp-tools,target=/images/pulp-tools \
 #######################################################################
 # Compile pyopus
 #######################################################################
-FROM basepkg AS pyopus
-ARG PYOPUS_REPO_URL="https://fides.fe.uni-lj.si/pyopus/download"
-ARG PYOPUS_REPO_COMMIT="0.11.2"
-ARG PYOPUS_NAME="pyopus"
-RUN --mount=type=bind,source=images/pyopus,target=/images/pyopus \
-    bash /images/pyopus/scripts/install.sh
+#FROM basepkg AS pyopus
+#ARG PYOPUS_REPO_URL="https://fides.fe.uni-lj.si/pyopus/download"
+#ARG PYOPUS_REPO_COMMIT="0.11.2"
+#ARG PYOPUS_NAME="pyopus"
+#RUN --mount=type=bind,source=images/pyopus,target=/images/pyopus \
+#    bash /images/pyopus/scripts/install.sh
 
 #######################################################################
 # Compile surelog
@@ -467,7 +467,7 @@ COPY --from=osic-multitool               ${TOOLS}/              ${TOOLS}/
 COPY --from=openvaf                      ${TOOLS}/              ${TOOLS}/
 COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
 COPY --from=pulp-tools                   ${TOOLS}/              ${TOOLS}/
-COPY --from=pyopus                       ${TOOLS}/              ${TOOLS}/
+#COPY --from=pyopus                       ${TOOLS}/              ${TOOLS}/
 COPY --from=qflow                        ${TOOLS}/              ${TOOLS}/
 COPY --from=qucs-s                       ${TOOLS}/              ${TOOLS}/
 COPY --from=rftoolkit                    ${TOOLS}/              ${TOOLS}/

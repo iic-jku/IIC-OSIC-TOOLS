@@ -24,7 +24,9 @@ The visualization tool "AppCSXCAD" will not work in the container with our defau
 
 We (temporarily) removed `Hdl21` and `Vlsirtools`, as they force `numpy` to version 1. All other packages allow `numpy` 2, so this removal, until the dependencies are fixed.
 
+### PyOPUS
 
+`PyOPUS` is removed, as build fails, and it forces `numpy` to version 1.
 
 ## Build
 
