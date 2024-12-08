@@ -24,9 +24,7 @@ The visualization tool "AppCSXCAD" will not work in the container with our defau
 
 We (temporarily) removed `Hdl21` and `Vlsirtools`, as they force `numpy` to version 1. All other packages allow `numpy` 2, so this removal, until the dependencies are fixed.
 
-### Scikit-RF on `aarch64`
 
-Importing `skrf` in Python throws an error due to `bottleneck`; this does not happen on `amd64`.
 
 ## Build
 
