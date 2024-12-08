@@ -21,9 +21,9 @@ cp $DIR/counter.* /tmp/ol2_gf180mcu
 openlane --manual-pdk /tmp/ol2_gf180mcu/counter.json > $RESULT
 # Check if there is an error in the log
 if grep -q "ERROR" "$RESULT"; then
-    echo "[ERROR] Test <OpenLane gf180mcuD> FAILED."
+    echo "[ERROR] Test <OpenLane smoke-test with gf180mcuD> FAILED."
     exit 1
 else
-    echo "[INFO] Test <OpenLane gf180mcuD> passed."
+    echo "[INFO] Test <OpenLane smoke-test with gf180mcuD> passed."
     exit 0
 fi

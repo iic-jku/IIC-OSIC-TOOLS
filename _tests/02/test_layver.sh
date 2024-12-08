@@ -17,9 +17,9 @@ iic-drc.sh -w /tmp -b "$DIR/inv.mag" > /dev/null || ERROR=1
 iic-lvs.sh -w /tmp -s "$DIR/inv.sch" -l "$DIR/inv.mag" -c inv > /dev/null || ERROR=1
 # Check if there is an error in the log
 if [ $ERROR -eq 1 ]; then
-    echo "[ERROR] Test <LayVer> FAILED."
+    echo "[ERROR] Test <LayVer of sky130 inv> FAILED."
     exit 1
 else
-    echo "[INFO] Test <LayVer> passed."
+    echo "[INFO] Test <LayVer of sky130 inv> passed."
     exit 0
 fi
