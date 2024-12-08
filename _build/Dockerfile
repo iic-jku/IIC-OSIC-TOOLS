@@ -13,7 +13,6 @@ ENV IIC_OSIC_TOOLS_VERSION=${CONTAINER_TAG} \
     PDK_ROOT=/foss/pdks \
     DESIGNS=/foss/designs \
     EXAMPLES=/foss/examples
-#COPY images/base/scripts/* /
 RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/00_base_install.sh && \
     bash /images/base/scripts/01_base_setup.sh && \
@@ -36,7 +35,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM basepkg AS magic
 ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic.git"
-ARG MAGIC_REPO_COMMIT="8.3.501"
+ARG MAGIC_REPO_COMMIT="8.3.504"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
@@ -120,7 +119,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="8798f11954971b26382191b85c683f8953124216"
+ARG GHDL_REPO_COMMIT="fab8510d6f245810e62713409e5e5a22218567f1"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -150,7 +149,7 @@ RUN --mount=type=bind,source=images/irsim,target=/images/irsim \
 #######################################################################
 FROM base AS iverilog
 ARG IVERILOG_REPO_URL="https://github.com/steveicarus/iverilog.git"
-ARG IVERILOG_REPO_COMMIT="62727e8b2e989b744e297a8f4c475634c14c4c67"
+ARG IVERILOG_REPO_COMMIT="b7451197467a28165bdcc2d2c399caa3e71c19db"
 ARG IVERILOG_NAME="iverilog"
 RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
     bash /images/iverilog/scripts/install.sh
@@ -160,7 +159,7 @@ RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
 #######################################################################
 FROM basepkg AS klayout
 ARG KLAYOUT_REPO_URL="https://github.com/KLayout/klayout.git"
-ARG KLAYOUT_REPO_COMMIT="v0.29.8"
+ARG KLAYOUT_REPO_COMMIT="v0.29.10"
 ARG KLAYOUT_NAME="klayout"
 RUN --mount=type=bind,source=images/klayout,target=/images/klayout \
     bash /images/klayout/scripts/install.sh
@@ -210,7 +209,7 @@ RUN --mount=type=bind,source=images/ngspyce,target=/images/ngspyce \
 #######################################################################
 FROM base AS nvc
 ARG NVC_REPO_URL="https://github.com/nickg/nvc.git"
-ARG NVC_REPO_COMMIT="r1.14.1"
+ARG NVC_REPO_COMMIT="r1.14.2"
 ARG NVC_NAME="nvc"
 RUN --mount=type=bind,source=images/nvc,target=/images/nvc \
     bash /images/nvc/scripts/install.sh
@@ -248,7 +247,7 @@ RUN --mount=type=bind,source=images/pulp-tools,target=/images/pulp-tools \
 #######################################################################
 FROM basepkg AS pyopus
 ARG PYOPUS_REPO_URL="https://fides.fe.uni-lj.si/pyopus/download"
-ARG PYOPUS_REPO_COMMIT="0.11"
+ARG PYOPUS_REPO_COMMIT="0.11.2"
 ARG PYOPUS_NAME="pyopus"
 RUN --mount=type=bind,source=images/pyopus,target=/images/pyopus \
     bash /images/pyopus/scripts/install.sh
@@ -288,7 +287,7 @@ RUN --mount=type=bind,source=images/qucs-s,target=/images/qucs-s \
 #######################################################################
 FROM base AS riscv-gnu-toolchain
 ARG RISCV_GNU_TOOLCHAIN_REPO_URL="https://github.com/riscv-collab/riscv-gnu-toolchain.git"
-ARG RISCV_GNU_TOOLCHAIN_REPO_COMMIT="2024.10.28"
+ARG RISCV_GNU_TOOLCHAIN_REPO_COMMIT="2024.11.22"
 ARG RISCV_GNU_TOOLCHAIN_NAME="riscv-gnu-toolchain"
 RUN --mount=type=bind,source=images/riscv-gnu-toolchain,target=/images/riscv-gnu-toolchain \
     bash /images/riscv-gnu-toolchain/scripts/install.sh
@@ -309,7 +308,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="142cda7418cea80ad8ca2ecec3eaa2acc1beb63a"
+ARG SLANG_REPO_COMMIT="f384536e1d7feb52538231c426de82a28fd14174"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -319,7 +318,7 @@ RUN --mount=type=bind,source=images/slang,target=/images/slang \
 #######################################################################
 FROM riscv-gnu-toolchain AS spike
 ARG SPIKE_REPO_URL="https://github.com/riscv-software-src/riscv-isa-sim.git"
-ARG SPIKE_REPO_COMMIT="eb0a3e2b0a7c57522928be39de95cd9f8c6dc636"
+ARG SPIKE_REPO_COMMIT="7812eabb441eaf2067d07636a382eca622e48814"
 ARG SPIKE_NAME="spike"
 RUN --mount=type=bind,source=images/spike,target=/images/spike \
     bash /images/spike/scripts/install.sh
@@ -349,7 +348,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="893bd209010d32f192bdea1bccb3afa3f921191b"
+ARG XSCHEM_REPO_COMMIT="2ec8c61757c7f0d3eb6121f5747942171fba9729"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -441,7 +440,7 @@ ENV HOME=/headless \
     VNC_RESOLUTION=1680x1050 \
     VNC_PW=abc123 \
     VNC_VIEW_ONLY=false
-# FIXME workaround for OpenMPI throwing errors when run inside a container without Capability "SYS_PTRACE".
+#FIXME workaround for OpenMPI throwing errors when run inside a container without Capability "SYS_PTRACE".
 ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
 
 # Copy all layers into the final container
