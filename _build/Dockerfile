@@ -28,7 +28,8 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM base AS basepkg
 RUN --mount=type=bind,source=images/base,target=/images/base \
-    bash /images/base/scripts/99_basepkg_install.sh
+    bash /images/base/scripts/90_basepkg_install.sh && \
+    bash /images/base/scripts/91_install_bottleneck.sh
 
 #######################################################################
 # Compile magic
