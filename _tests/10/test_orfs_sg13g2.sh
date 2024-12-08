@@ -17,7 +17,7 @@ cd $FLOW_HOME || exit 1
 # prepare environment for ORFS
 export YOSYS_EXE=$TOOLS/yosys/bin/yosys
 export OPENROAD_EXE=$TOOLS/openroad-latest/bin/openroad
-export OPENSTA_EXE=$TOOLS/openroad-latest/bin/opensta
+export OPENSTA_EXE=$TOOLS/openroad-latest/bin/sta
 export FLOW_HOME
 
 # FIXME this is need to run w/o errors
