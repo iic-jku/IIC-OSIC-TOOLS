@@ -20,7 +20,7 @@ export OPENROAD_EXE=$TOOLS/openroad-latest/bin/openroad
 export OPENSTA_EXE=$TOOLS/openroad-latest/bin/sta
 export FLOW_HOME
 
-# FIXME this is need to run w/o errors
+# FIXME this is needed to run flow w/o errors
 export GDS_ALLOW_EMPTY=spi_DEF_FILL
 
 # run ORFS with IHP130 SG13G2

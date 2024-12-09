@@ -20,14 +20,14 @@ cat <<EOF >> /etc/apt/sources.list
 deb [signed-by=/etc/apt/keyrings/mozillateam.gpg] http://ppa.launchpad.net/mozillateam/ppa/ubuntu $UBUNTU_CODENAME main
 EOF
 
-# Add PPA to apt preferences list, so PPA > snap
+# add PPA to apt preferences list, so PPA > snap
 cat <<EOF >> /etc/apt/preferences.d/mozilla-firefox
 Package: *
 Pin: release o=LP-PPA-mozillateam
 Pin-Priority: 1001
 EOF
 
-# Preparations for adding VS Code
+# preparations for adding VS Code
 echo "[INFO] Adding Microsoft Repo for VS Code"
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
 install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
@@ -64,16 +64,16 @@ apt install -y \
         xfce4-terminal \
         xterm
 
-# Remove light-locker and other power management stuff, otherwise VNC session locks up
+# remove light-locker and other power management stuff, otherwise VNC session locks up
 apt purge -y light-locker pm-utils *screensaver*
 apt autoremove -y
 
 # FIXME rm /etc/xdg/autostart/polkit*
 /bin/dbus-uuidgen > /etc/machine-id
 
-## create index.html to forward automatically to `vnc_lite.html`
+# create index.html to forward automatically to `vnc_lite.html`
 ln -s "$NO_VNC_HOME"/vnc_lite.html "$NO_VNC_HOME"/index.html
 
 
-#clean up afterwards
+# clean up afterwards
 rm -rf /tmp/*

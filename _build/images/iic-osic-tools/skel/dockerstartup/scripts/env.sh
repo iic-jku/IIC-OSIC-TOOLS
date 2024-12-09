@@ -90,7 +90,7 @@ export EDITOR="gedit"
 export PYTHONPYCACHEPREFIX="/tmp/pycache"
 export KLAYOUT_HOME="/headless/.klayout"
 
-# Setting default PDK
+# setting default PDK
 export PDK=sky130A
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=sky130_fd_sc_hd
@@ -109,12 +109,12 @@ if [ ! -d $XDG_RUNTIME_DIR ]; then
         chmod 700 $XDG_RUNTIME_DIR
 fi
 
-# Add local directories in $HOME to the path so that the user can upgrade PIP packages
+# add local directories in $HOME to the path so that the user can upgrade PIP packages
 export PATH=$HOME/.local/bin:$PATH
 export PYTHONPATH=$HOME/.local/lib/python3.10/site-packages:$PYTHONPATH
 
 #----------------------------------------
-# Tool Aliases
+# tool aliases
 #----------------------------------------
 
 alias mmagic='MAGTYPE=mag magic'
@@ -156,7 +156,7 @@ alias m='less'
 alias term='xfce4-terminal'
 
 #----------------------------------------
-# Git
+# git
 #----------------------------------------
 
 alias gcl='git clone'
@@ -173,13 +173,13 @@ alias gln='git log --name-status'
 alias gsss='git submodule status'
 
 #----------------------------------------
-# Adapt user prompt
+# adapt user prompt
 #----------------------------------------
 
 export PS1='\[\033[0;32m\]\w >\[\033[0;38m\] '
 
 #----------------------------------------
-# Source user configs from $DESIGNS
+# source user configs from $DESIGNS
 #----------------------------------------
 
 if [ -f "$DESIGNS/.designinit" ]; then

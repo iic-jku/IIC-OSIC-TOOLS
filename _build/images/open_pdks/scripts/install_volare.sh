@@ -65,9 +65,6 @@ fi
 echo "[INFO] Installing GF180 PDK."
 volare enable "${OPEN_PDKS_REPO_COMMIT}" --pdk gf180mcu
 
-#FIXME maybe need to run spice model file reduction here as well
-#FIXME need to define a magic bindkeys for gf180mcu
-
 rm -rf "$PDK_ROOT"/volare/gf180mcu/versions/*/gf180mcuA
 rm -rf "$PDK_ROOT"/volare/gf180mcu/versions/*/gf180mcuB
 rm -rf "$PDK_ROOT"/gf180mcuA
@@ -76,13 +73,13 @@ rm -rf "$PDK_ROOT"/gf180mcuB
 if [ -d "$PDK_ROOT/gf180mcuC" ]; then
 	cd "$PDK_ROOT/gf180mcuC/libs.tech/ngspice" || exit 1
 	
-	# Setup empty .spiceinit (harmonize with SG13G2)
+	# setup empty .spiceinit (harmonize with SG13G2)
 	touch .spiceinit
 fi
 
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	cd "$PDK_ROOT/gf180mcuD/libs.tech/ngspice" || exit 1
 	
-	# Setup empty .spiceinit (harmonize with SG13G2)
+	# setup empty .spiceinit (harmonize with SG13G2)
 	touch .spiceinit
 fi
