@@ -94,6 +94,20 @@ if [ "$start_x" != true ] && [ "$start_vnc" != true ]; then
 fi
 
 if [ "$start_vnc" = true ]; then
+  # more (higher) display resolutions for VNC
+  _add_resolution () {
+        # $1 = X, $2 = Y
+        MLINE=$(cvt "$1" "$2" 60)
+        # shellcheck disable=SC2001
+        MLINE_TRIM=$(echo "$MLINE" | sed 's/^[^"]*"[^"]*"//')
+        MLINE="$1x$2 $MLINE_TRIM"
+        xrandr --newmode "$1x$2 $MLINE"
+        xrandr --addmode VNC-0 "$1x$2"
+  }
+  _add_resolution 2048 1152
+  _add_resolution 2560 1440
+  _add_resolution 3840 2160
+
   # resolve_vnc_connection
   VNC_IP=$(hostname -i)
 
