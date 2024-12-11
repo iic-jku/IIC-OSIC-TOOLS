@@ -103,7 +103,10 @@ fi
 
 # add additional display resolutions (for VNC mode)
 _add_resolution 2048 1152
+_add_resolution 2560 1080
 _add_resolution 2560 1440
+_add_resolution 2560 1600
+_add_resolution 3440 1440
 _add_resolution 3840 2160
 
 # shellcheck disable=SC2086
