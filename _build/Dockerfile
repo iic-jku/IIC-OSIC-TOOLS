@@ -36,7 +36,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM basepkg AS magic
 ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic.git"
-ARG MAGIC_REPO_COMMIT="8.3.504"
+ARG MAGIC_REPO_COMMIT="8.3.505"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
@@ -120,7 +120,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="fab8510d6f245810e62713409e5e5a22218567f1"
+ARG GHDL_REPO_COMMIT="8b80536b2c0980dd347d648154300659dae88ad3"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -150,7 +150,7 @@ RUN --mount=type=bind,source=images/irsim,target=/images/irsim \
 #######################################################################
 FROM base AS iverilog
 ARG IVERILOG_REPO_URL="https://github.com/steveicarus/iverilog.git"
-ARG IVERILOG_REPO_COMMIT="b7451197467a28165bdcc2d2c399caa3e71c19db"
+ARG IVERILOG_REPO_COMMIT="06077ed026b4d8498d9129a6acfb0b44d0b51f18"
 ARG IVERILOG_NAME="iverilog"
 RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
     bash /images/iverilog/scripts/install.sh
@@ -319,7 +319,7 @@ RUN --mount=type=bind,source=images/slang,target=/images/slang \
 #######################################################################
 FROM riscv-gnu-toolchain AS spike
 ARG SPIKE_REPO_URL="https://github.com/riscv-software-src/riscv-isa-sim.git"
-ARG SPIKE_REPO_COMMIT="7812eabb441eaf2067d07636a382eca622e48814"
+ARG SPIKE_REPO_COMMIT="a2dcf1fd70f359e2cf0a953986c9fe222a6d53c2"
 ARG SPIKE_NAME="spike"
 RUN --mount=type=bind,source=images/spike,target=/images/spike \
     bash /images/spike/scripts/install.sh
@@ -349,7 +349,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="2ec8c61757c7f0d3eb6121f5747942171fba9729"
+ARG XSCHEM_REPO_COMMIT="a97b47623f1265b2e6b3f3ad1d4ecc4b40fafaa6"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -379,7 +379,7 @@ RUN --mount=type=bind,source=images/xyce-xdm,target=/images/xyce-xdm \
 #######################################################################
 FROM base AS yosys
 ARG YOSYS_REPO_URL="https://github.com/YosysHQ/yosys.git"
-ARG YOSYS_REPO_COMMIT="0.47"
+ARG YOSYS_REPO_COMMIT="0.48"
 ARG YOSYS_NAME="yosys"
 ARG YOSYS_EQY_REPO_URL="https://github.com/YosysHQ/eqy.git"
 ARG YOSYS_EQY_NAME="yosys_eqy"
@@ -401,7 +401,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="a2c832f72c796572dfb355af1b9f5c81bdea5cdd"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="8b1577b665a241da9034d340779fcb834d62c63f"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \

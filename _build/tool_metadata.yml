@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: fab8510d6f245810e62713409e5e5a22218567f1
+  commit: 8b80536b2c0980dd347d648154300659dae88ad3
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 511412f984d64ed7c46c4bdbd839f4b3c48f6fa5
@@ -24,7 +24,7 @@
   commit: a7884acc04cd94017779893d381b7e93d8895587
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: b7451197467a28165bdcc2d2c399caa3e71c19db
+  commit: 06077ed026b4d8498d9129a6acfb0b44d0b51f18
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.29.10"
@@ -33,7 +33,7 @@
   commit: a4537c1fba19966e80408a7b224001d5697ff1e6
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.504"
+  commit: "8.3.505"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.287"
@@ -75,10 +75,10 @@
   commit: f384536e1d7feb52538231c426de82a28fd14174
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: a2c832f72c796572dfb355af1b9f5c81bdea5cdd
+  commit: 8b1577b665a241da9034d340779fcb834d62c63f
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 7812eabb441eaf2067d07636a382eca622e48814
+  commit: a2dcf1fd70f359e2cf0a953986c9fe222a6d53c2
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
@@ -99,7 +99,7 @@
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 2ec8c61757c7f0d3eb6121f5747942171fba9729
+  commit: a97b47623f1265b2e6b3f3ad1d4ecc4b40fafaa6
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.8.0"
@@ -108,7 +108,7 @@
   commit: "Release-2.7.0"
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: "0.47"
+  commit: "0.48"
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
 - name: yosys_sby
