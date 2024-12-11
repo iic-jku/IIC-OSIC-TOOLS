@@ -40,29 +40,29 @@ rm -f packages.microsoft.gpg
 
 apt update
 apt install -y \
-        code \
-        firefox \
-        gedit \
-        gnuplot \
-        htop \
-        hub \
-        jq \
-        meld \
-        nano \
-        net-tools \
-        nmap \
-        novnc \
-        openems \
-        parallel \
-        sudo \
-        tigervnc-standalone-server \
-        vim \
-        vim-gtk3 \
-        websockify \
-        xarchiver \
-        xfce4 \
-        xfce4-terminal \
-        xterm
+    code \
+    firefox \
+    gedit \
+    gnuplot \
+    htop \
+    hub \
+    jq \
+    meld \
+    nano \
+    net-tools \
+    nmap \
+    novnc \
+    openems \
+    parallel \
+    sudo \
+    tigervnc-standalone-server \
+    vim \
+    vim-gtk3 \
+    websockify \
+    xarchiver \
+    xfce4 \
+    xfce4-terminal \
+    xterm
 
 # remove light-locker and other power management stuff, otherwise VNC session locks up
 apt purge -y light-locker pm-utils *screensaver*
@@ -73,7 +73,6 @@ apt autoremove -y
 
 # create index.html to forward automatically to `vnc_lite.html`
 ln -s "$NO_VNC_HOME"/vnc_lite.html "$NO_VNC_HOME"/index.html
-
 
 # clean up afterwards
 rm -rf /tmp/*
