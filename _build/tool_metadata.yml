@@ -108,7 +108,7 @@
   commit: "Release-2.7.0"
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: "0.48"
+  commit: "v0.48"
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
 - name: yosys_sby
