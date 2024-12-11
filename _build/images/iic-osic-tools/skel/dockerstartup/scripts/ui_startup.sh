@@ -21,7 +21,7 @@ OPTIONS:
                 example: docker run hpretl/iic-osic-tools --skip bash
 -h, --help      print out this help
 
-For source, information see: https://github.com/hpretl/iic-osic-tools
+For source, information see: https://github.com/iic-jku/iic-osic-tools
 "
 }
 
@@ -41,37 +41,37 @@ fi
 
 while :
 do
-        case "$1" in
-                -X | --x11 )
-                        start_x=true
-                        shift 1
-                        ;;
-                -V | --vnc )
-                        start_vnc=true
-                        shift 1
-                        ;;
-                -w | --wait )
-                        par_wait=true
-                        shift 1
-                        ;;
-                -h | --help )
-                        help
-                        exit 0
-                        ;;
-                -- | "")
-                        break
-                        ;;
-                *)
-                        echo "[ERROR] Unexpected option \"$1\""
-                        help
-                        exit 1
-                        ;;
-        esac
+    case "$1" in
+        -X | --x11 )
+            start_x=true
+            shift 1
+            ;;
+        -V | --vnc )
+            start_vnc=true
+            shift 1
+            ;;
+        -w | --wait )
+            par_wait=true
+            shift 1
+            ;;
+        -h | --help )
+            help
+            exit 0
+            ;;
+        -- | "")
+            break
+            ;;
+        *)
+            echo "[ERROR] Unexpected option \"$1\""
+            help
+            exit 1
+            ;;
+    esac
 done
 
 # correct forwarding of shutdown signal
 cleanup () {
-    echo -e "Cleanup called, exiting..."
+    echo -e "[INFO] Cleanup called, exiting..."
     kill -s SIGTERM $!
     exit 0
 }
@@ -81,82 +81,66 @@ cleanup () {
 tag() { stdbuf -oL sed "s%^%$1 %"; }
 
 if [ "$start_x" != true ] && [ "$start_vnc" != true ]; then
-  if [ -z ${DISPLAY+x} ]; then
+    if [ -z ${DISPLAY+x} ]; then
         # DISPLAY is not set, so set it and run the startup script.
         start_vnc=true
-	      export DISPLAY=:1
+        export DISPLAY=:1
         echo -e "[INFO] Auto-selected VNC"
-  else
+    else
         start_x=true
         echo -e "[INFO] Auto-selected local X11"
-  fi
-
+    fi
 fi
 
 if [ "$start_vnc" = true ]; then
-  # more (higher) display resolutions for VNC
-  _add_resolution () {
-        # $1 = X, $2 = Y
-        MLINE=$(cvt "$1" "$2" 60)
-        # shellcheck disable=SC2001
-        MLINE_TRIM=$(echo "$MLINE" | sed 's/^[^"]*"[^"]*"//')
-        MLINE="$1x$2 $MLINE_TRIM"
-        xrandr --newmode "$1x$2 $MLINE"
-        xrandr --addmode VNC-0 "$1x$2"
-  }
-  _add_resolution 2048 1152
-  _add_resolution 2560 1440
-  _add_resolution 3840 2160
+    # resolve_vnc_connection
+    VNC_IP=$(hostname -i)
 
-  # resolve_vnc_connection
-  VNC_IP=$(hostname -i)
+    # change the vnc password
+    echo -e "[INFO] Change VNC password"
+    # first entry is control, second is the view (if only one is valid for both)
+    mkdir -p "$HOME/.vnc"
+    PASSWD_PATH="$HOME/.vnc/passwd"
+    echo "$VNC_PW" | vncpasswd -f > "$PASSWD_PATH"
+    chmod 600 "$PASSWD_PATH"
 
-  # change the vnc password
-  echo -e "[INFO] Change VNC password"
-  # first entry is control, second is the view (if only one is valid for both)
-  mkdir -p "$HOME/.vnc"
-  PASSWD_PATH="$HOME/.vnc/passwd"
-  echo "$VNC_PW" | vncpasswd -f > "$PASSWD_PATH"
-  chmod 600 "$PASSWD_PATH"
+    # start vncserver and noVNC webclient
+    echo -e "[INFO] Start noVNC"
 
-  # start vncserver and noVNC webclient
-  echo -e "[INFO] Start noVNC"
+    "$NO_VNC_HOME"/utils/launch.sh --vnc localhost:"$VNC_PORT" --listen "$NO_VNC_PORT" 2>&1 | tag "[NOVNC]" &
 
-  "$NO_VNC_HOME"/utils/launch.sh --vnc localhost:"$VNC_PORT" --listen "$NO_VNC_PORT" 2>&1 | tag "[NOVNC]" &
+    echo -e "[INFO] Starting vncserver and window manager with param: VNC_COL_DEPTH=$VNC_COL_DEPTH, VNC_RESOLUTION=$VNC_RESOLUTION"
 
-  echo -e "[INFO] Starting vncserver and window manager with param: VNC_COL_DEPTH=$VNC_COL_DEPTH, VNC_RESOLUTION=$VNC_RESOLUTION"
+    # workaround, lock files are not removed if the container is re-run otherwise which makes vncserver unaccessible
+    rm -rf /tmp/.X1-lock
+    rm -rf /tmp/.X11-unix/X1
 
-  # workaround, lock files are not removed if the container is re-run otherwise which makes vncserver unaccessible
-  rm -rf /tmp/.X1-lock
-  rm -rf /tmp/.X11-unix/X1
+    if [ "$(arch)" == "aarch64" ]; then  
+        OLD_LD_PRELOAD=$LD_PRELOAD
+        export LD_PRELOAD="/lib/aarch64-linux-gnu/libgcc_s.so.1 ${LD_PRELOAD}"
+    fi
 
-  if [ "$(arch)" == "aarch64" ]; then  
-    OLD_LD_PRELOAD=$LD_PRELOAD
-    export LD_PRELOAD="/lib/aarch64-linux-gnu/libgcc_s.so.1 ${LD_PRELOAD}"
-  fi
-
-  vncserver "$DISPLAY" -depth "$VNC_COL_DEPTH" -geometry "$VNC_RESOLUTION" -localhost no -fg -xstartup startxfce4 2>&1 | tag "[VNC]" &
+    vncserver "$DISPLAY" -depth "$VNC_COL_DEPTH" -geometry "$VNC_RESOLUTION" -localhost no -fg -xstartup startxfce4 2>&1 | tag "[VNC]" &
   
-  if [ "$(arch)" == "aarch64" ]; then
-    export LD_PRELOAD=$OLD_LD_PRELOAD
-  fi
+    if [ "$(arch)" == "aarch64" ]; then
+        export LD_PRELOAD=$OLD_LD_PRELOAD
+    fi
 
-  # log connect options
-  echo -e "[INFO] VNC environment started"
-  echo -e "[INFO] VNCSERVER started on DISPLAY= $DISPLAY \n\t=> connect via VNC viewer with $VNC_IP:$VNC_PORT"
-  echo -e "[INFO] noVNC HTML client started:\n\t=> connect via http://localhost/?password=$VNC_PW\n"
-
+    # log connect options
+    echo -e "[INFO] VNC environment started"
+    echo -e "[INFO] VNCSERVER started on DISPLAY= $DISPLAY \n\t=> connect via VNC viewer with $VNC_IP:$VNC_PORT"
+    echo -e "[INFO] noVNC HTML client started:\n\t=> connect via http://localhost/?password=$VNC_PW\n"
 fi
 
 if [ "$start_x" = true ]; then
-  xfce4-terminal | tag "[TERM]" &
-  # add an empty newline so one can see that this script is done.
-  echo
+    xfce4-terminal | tag "[TERM]" &
+    # add an empty newline so one can see that this script is done.
+    echo
 fi
 
 if [ "$par_wait" = true ]; then
-  trap cleanup SIGINT SIGTERM
-  echo -e "[INFO] Waiting until one of the sub-processes stops..."
-  wait -n
-  echo -e "[INFO] One sub process stopped, exiting..."
+    trap cleanup SIGINT SIGTERM
+    echo -e "[INFO] Waiting until one of the sub-processes stops..."
+    wait -n
+    echo -e "[INFO] One sub process stopped, exiting..."
 fi
