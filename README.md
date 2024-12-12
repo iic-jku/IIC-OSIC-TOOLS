@@ -104,6 +104,7 @@ Below is a list of the current tools already installed and ready to use (note th
 * [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
 * [hdl21](https://github.com/dan-fritchman/Hdl21) analog hardware description library
 * [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS
+* [lctime](https://codeberg.org/librecell/lctime) Characterization kit for CMOS cells
 * [libman](https://github.com/IHP-GmbH/LibMan) design library manager to manage cells and views
 * [magic](https://github.com/rtimothyedwards/magic) layout editor with DRC and PEX
 * [netgen](https://github.com/rtimothyedwards/netgen) netlist comparison (LVS)

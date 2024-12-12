@@ -2,6 +2,10 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2025.01
+
+* Adding `lctime` CMOS cell characterization kit.
+
 ## 2024.12
 
 * Install OpenROAD twice: The required version for OpenLane2, and the latest version to be used for the OpenROAD Flow Scripts (ORFS). The `PATH` points to the OL2 version.

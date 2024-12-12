@@ -18,6 +18,7 @@ pip3 install --upgrade --no-cache-dir \
 	fusesoc==2.4 \
 	gdsfactory==8.23.0 \
 	gdspy==1.6.13 \
+	lctime==0.0.24 \
 	openlane==2.2.9 \
 	openram==1.2.48 \
 	pygmid==1.2.12 \
