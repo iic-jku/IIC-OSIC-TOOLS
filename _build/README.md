@@ -60,7 +60,9 @@ The following command line arguments are supported:
 
 As some examples already show, these parameters can be passed to the container via Docker:
 
-`docker run -it hpretl/iic-osic-tools:latest --wait --vnc`
+```bash
+docker run -it hpretl/iic-osic-tools:latest --wait --vnc
+```
 
 ## Notes
 
