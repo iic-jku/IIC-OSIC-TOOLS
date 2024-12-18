@@ -43,7 +43,11 @@ It supports two *modes of operation*:
 
 ### 1.1 Step 1: Clone/download this GitHub repository onto your computer
 
-Use the green **Code** button, and either download the zip file or do a `git clone --depth=1 https://github.com/iic-jku/iic-osic-tools.git`.
+Use the green **Code** button, and either download the zip file or do a
+
+```bash
+git clone --depth=1 https://github.com/iic-jku/iic-osic-tools.git
+```
 
 ### 1.2 Step 2: Install Docker on your computer
 
@@ -55,7 +59,11 @@ Enter the directory of this repository on your computer, and use one of the meth
 
 If you do this the first time, or we have pushed an updated image to DockerHub, this can take a while since the image is pulled (loaded) automatically from DockerHub. Since this image is ca. 4GB, this takes time, depending on your internet speed. Please note that this compressed image will be extracted on your drive, so please provide at least **20GB of free drive space**. If, after a while, the consumed space gets larger, this may be due to unused images piling up. In this case, delete old ones; please consult the internet for instructions on operating Docker.
 
-If you know what you are doing and want full root access without a graphical interface, please use `./start_shell.sh`.
+If you know what you are doing and want full root access without a graphical interface, please use
+
+```bash
+./start_shell.sh
+```
 
 ## 2. Installed PDKs
 
@@ -63,21 +71,42 @@ As of the `2022.12` tag, the following open-source process-development kits (PDK
 
 | SkyWater Technologies `sky130A` |
 |---|
-| `export PDK=sky130A` |
-| `export PDKPATH=$PDK_ROOT/$PDK` |
-| `export STD_CELL_LIBRARY=sky130_fd_sc_hd` |
+
+```bash
+export PDK=sky130A
+export PDKPATH=$PDK_ROOT/$PDK
+export STD_CELL_LIBRARY=sky130_fd_sc_hd
+export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
+```
 
 | Global Foundries `gf180mcuC` |
 |---|
-| `export PDK=gf180mcuC` |
-| `export PDKPATH=$PDK_ROOT/$PDK` |
-| `export STD_CELL_LIBRARY=gf180mcu_fd_sc_mcu7t5v0` |
+
+```bash
+export PDK=gf180mcuC
+export PDKPATH=$PDK_ROOT/$PDK
+export STD_CELL_LIBRARY=gf180mcu_fd_sc_mcu7t5v0
+export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
+```
 
 | IHP Microelectronics `sg13g2` |
 |---|
-| `export PDK=sg13g2` |
-| `export PDKPATH=$PDK_ROOT/$PDK` |
-| `export STD_CELL_LIBRARY=sg13g2_stdcell` |
+
+```bash
+export PDK=sg13g2
+export PDKPATH=$PDK_ROOT/$PDK
+export STD_CELL_LIBRARY=sg13g2_stdcell
+export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
+```
+
+The probably best way to switch between PDKs is to use the command `iic-pdk`. When called without arguments a list of installed PDKs is shown. To e.g. switch to IHP enter
+
+```bash
+iic-pdk sg13g2
+```
 
 More options for selecting digital standard cell libraries are available; please check the PDK directories.
 
@@ -269,7 +298,9 @@ For both X-Servers, it is strongly recommended to enable OpenGL:
 
 There are multiple ways to configure the start scripts using Bash. Two of them are shown here. First, the variables can be set directly for each run of the script; they are not saved in the active session:
 
-`DESIGNS=/my/design/directory DOCKER_USERNAME=another_user ./start_x.sh`
+```bash
+DESIGNS=/my/design/directory DOCKER_USERNAME=another_user ./start_x.sh
+```
 
 The second variant is to set the variables in the current shell session (not persistent between shell restarts or shared between sessions):
 
@@ -290,6 +321,7 @@ SET DESIGNS=\my\design\directory
 SET DOCKER_USERNAME=another_user
 .\start_x.bat
 ```
+
 ### 4.5 Using as devcontainer
 
 This is a new usage mode, that might not fit your needs. [Devcontainers](https://code.visualstudio.com/docs/devcontainers/containers) are a great way to provide a working build environment along your own project. It is supported by the [devcontainer](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension in Visual Studio Code.
@@ -303,7 +335,7 @@ Option 2: Alternatively you can directly just create the configuration file `.de
 ```json
 {
 	"name": "IIC-OSIC-TOOLS",
-	"image": "ghcr.io/iic-jku/iic-osic-tools-devcontainer:2024.09"
+	"image": "ghcr.io/iic-jku/iic-osic-tools-devcontainer:2024.12"
 }
 ```
 
