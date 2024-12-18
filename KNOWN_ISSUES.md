@@ -8,7 +8,9 @@ If you run into problems when starting the container (mostly in combination with
 
 Example:
 
-```DOCKER_EXTRA_PARAMS='--security-opt seccomp=unconfined' ./start_x.sh```
+```bash
+DOCKER_EXTRA_PARAMS='--security-opt seccomp=unconfined' ./start_x.sh
+```
 
 ### Issues with OpenGL on some environments
 
@@ -20,11 +22,11 @@ A few applications are using OpenGL graphics, which can lead to issues on some c
 
 The ORFS required a recent version of `openroad`. Since image tag `2024.12` a recent version is installed alongside the OpenROAD version required by `openlane`. In order to use the ORFS, before calling the `make` script make sure to set the following env vars:
 
-`
+```bash
 export YOSYS_EXE=$TOOLS/yosys/bin/yosys
 export OPENROAD_EXE=$TOOLS/openroad-latest/bin/openroad
 export OPENSTA_EXE=$TOOLS/openroad-latest/bin/sta
-`
+```
 
 ### OpenEMS
 
