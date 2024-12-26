@@ -21,9 +21,9 @@ cp $DIR/counter.* /tmp/ol2_sky130
 openlane --manual-pdk /tmp/ol2_sky130/counter.json > $RESULT
 # Check if there is an error in the log
 if grep -q "ERROR" "$RESULT"; then
-    echo "[ERROR] Test <OpenLane sky130A> FAILED."
+    echo "[ERROR] Test <OpenLane smoke-test with sky130A> FAILED."
     exit 1
 else
-    echo "[INFO] Test <OpenLane sk130A> passed."
+    echo "[INFO] Test <OpenLane smoke-test with sk130A> passed."
     exit 0
 fi

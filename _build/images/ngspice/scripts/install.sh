@@ -5,11 +5,11 @@ git clone --filter=blob:none "${NGSPICE_REPO_URL}" "${NGSPICE_NAME}"
 cd "${NGSPICE_NAME}"
 git checkout "${NGSPICE_REPO_COMMIT}"
 ./autogen.sh
-#FIXME 2nd run of autogen needed
+# 2nd run of autogen needed
 set -e
 ./autogen.sh
 
-# Define common compile options
+# define common compile options
 NGSPICE_VERSION=${NGSPICE_REPO_COMMIT##*-}
 if [ "$NGSPICE_VERSION" -lt 43 ]; then
     echo "[INFO] We are building ngspice version 42 or lower."
@@ -19,20 +19,20 @@ else
     NGSPICE_COMPILE_OPTS=("--with-x" "--enable-pss" "--with-fftw3=yes" )
 fi
 
-# Compile ngspice executable
+# compile ngspice executable
 ./configure "${NGSPICE_COMPILE_OPTS[@]}" --prefix="${TOOLS}/${NGSPICE_NAME}"
 make -j"$(nproc)"
 make install
 
-# Cleanup between builds to prevent strange missing symbols in libngspice
+# cleanup between builds to prevent strange missing symbols in libngspice
 make distclean
 
-# Now compile lib
+# now compile lib
 ./configure "${NGSPICE_COMPILE_OPTS[@]}" --with-ngshared --prefix="${TOOLS}/${NGSPICE_NAME}"
 make -j"$(nproc)"
 make install
 
-# Enable OSDI for IHP PDK
+# enable OSDI for IHP PDK
 FNAME="${TOOLS}/${NGSPICE_NAME}/share/ngspice/scripts/spinit"
 if [ -f "$PDK_ROOT"/sg13g2/libs.tech/ngspice/openvaf/psp103_nqs.osdi ]; then
     cp "$FNAME" "$FNAME".bak
@@ -46,11 +46,11 @@ if [ -f "$PDK_ROOT"/sg13g2/libs.tech/ngspice/openvaf/psp103_nqs.osdi ]; then
     sed -i "/r2_cmc.osdi/s/^/#/" "$FNAME"
     sed -i "/vbic_4T_et_cf.osdi/s/^/#/" "$FNAME"
 
-    # Copy OSDI PSP model for IHP
+    # copy OSDI PSP model for IHP
     cp "$PDK_ROOT/sg13g2/libs.tech/ngspice/openvaf/psp103_nqs.osdi" "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/psp103_nqs.osdi"
 fi
 
-# Add BSIMCMG model, required for ASAP7
+# add BSIMCMG model, required for ASAP7
 git clone --depth=1 https://github.com/dwarning/VA-Models.git vamodels
 MODEL=bsimcmg
 cd vamodels/code/$MODEL/vacode || exit 1

@@ -13,7 +13,6 @@ ENV IIC_OSIC_TOOLS_VERSION=${CONTAINER_TAG} \
     PDK_ROOT=/foss/pdks \
     DESIGNS=/foss/designs \
     EXAMPLES=/foss/examples
-#COPY images/base/scripts/* /
 RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/00_base_install.sh && \
     bash /images/base/scripts/01_base_setup.sh && \
@@ -21,6 +20,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/31_install_or-tools.sh && \
     bash /images/base/scripts/32_install_cudd.sh && \
     bash /images/base/scripts/33_install_gtest.sh && \
+    bash /images/base/scripts/34_install_spdlog.sh && \
     bash /images/base/scripts/70_install_from_pip.sh
 
 #######################################################################
@@ -28,14 +28,15 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM base AS basepkg
 RUN --mount=type=bind,source=images/base,target=/images/base \
-    bash /images/base/scripts/99_basepkg_install.sh
+    bash /images/base/scripts/90_basepkg_install.sh && \
+    bash /images/base/scripts/91_install_bottleneck.sh
 
 #######################################################################
 # Compile magic
 #######################################################################
 FROM basepkg AS magic
 ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic.git"
-ARG MAGIC_REPO_COMMIT="8.3.497"
+ARG MAGIC_REPO_COMMIT="8.3.505"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
@@ -57,7 +58,7 @@ RUN --mount=type=bind,source=images/openvaf,target=/images/openvaf \
 #######################################################################
 FROM openvaf AS osic-multitool
 ARG OSIC_MULTITOOL_REPO_URL="https://github.com/iic-jku/osic-multitool.git"
-ARG OSIC_MULTITOOL_REPO_COMMIT="c980bb34cac11f22ba4cf16a94919ea61899d62d"
+ARG OSIC_MULTITOOL_REPO_COMMIT="cc61d2dcad01491a6256097761b6c25f2809be63"
 ARG OSIC_MULTITOOL_NAME="osic-multitool"
 RUN --mount=type=bind,source=images/osic-multitool,target=/images/osic-multitool \
     bash /images/osic-multitool/scripts/install.sh
@@ -119,7 +120,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="a938ee87eccdfeba400ae10ecd4e9a2b2438d1e3"
+ARG GHDL_REPO_COMMIT="8b80536b2c0980dd347d648154300659dae88ad3"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -149,7 +150,7 @@ RUN --mount=type=bind,source=images/irsim,target=/images/irsim \
 #######################################################################
 FROM base AS iverilog
 ARG IVERILOG_REPO_URL="https://github.com/steveicarus/iverilog.git"
-ARG IVERILOG_REPO_COMMIT="d8c3c51ab1190ed3fb26540d7de6177f83e0e75b"
+ARG IVERILOG_REPO_COMMIT="06077ed026b4d8498d9129a6acfb0b44d0b51f18"
 ARG IVERILOG_NAME="iverilog"
 RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
     bash /images/iverilog/scripts/install.sh
@@ -159,7 +160,7 @@ RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
 #######################################################################
 FROM basepkg AS klayout
 ARG KLAYOUT_REPO_URL="https://github.com/KLayout/klayout.git"
-ARG KLAYOUT_REPO_COMMIT="v0.29.8"
+ARG KLAYOUT_REPO_COMMIT="v0.29.10"
 ARG KLAYOUT_NAME="klayout"
 RUN --mount=type=bind,source=images/klayout,target=/images/klayout \
     bash /images/klayout/scripts/install.sh
@@ -179,7 +180,7 @@ RUN --mount=type=bind,source=images/libman,target=/images/libman \
 #######################################################################
 FROM base AS netgen
 ARG NETGEN_REPO_URL="https://github.com/rtimothyedwards/netgen.git"
-ARG NETGEN_REPO_COMMIT="1.5.286"
+ARG NETGEN_REPO_COMMIT="1.5.287"
 ARG NETGEN_NAME="netgen"
 RUN --mount=type=bind,source=images/netgen,target=/images/netgen \
     bash /images/netgen/scripts/install.sh
@@ -209,7 +210,7 @@ RUN --mount=type=bind,source=images/ngspyce,target=/images/ngspyce \
 #######################################################################
 FROM base AS nvc
 ARG NVC_REPO_URL="https://github.com/nickg/nvc.git"
-ARG NVC_REPO_COMMIT="r1.14.1"
+ARG NVC_REPO_COMMIT="r1.14.2"
 ARG NVC_NAME="nvc"
 RUN --mount=type=bind,source=images/nvc,target=/images/nvc \
     bash /images/nvc/scripts/install.sh
@@ -245,11 +246,11 @@ ARG PULP_NAME="pulp"
 #######################################################################
 # Compile pyopus
 #######################################################################
-FROM basepkg AS pyopus
-ARG PYOPUS_REPO_URL="https://fides.fe.uni-lj.si/pyopus/download"
-ARG PYOPUS_REPO_COMMIT="0.11"
-ARG PYOPUS_NAME="pyopus"
-#FIXME RUN --mount=type=bind,source=images/pyopus,target=/images/pyopus \
+#FROM basepkg AS pyopus
+#ARG PYOPUS_REPO_URL="https://fides.fe.uni-lj.si/pyopus/download"
+#ARG PYOPUS_REPO_COMMIT="0.11.2"
+#ARG PYOPUS_NAME="pyopus"
+#RUN --mount=type=bind,source=images/pyopus,target=/images/pyopus \
 #    bash /images/pyopus/scripts/install.sh
 
 #######################################################################
@@ -277,7 +278,7 @@ RUN --mount=type=bind,source=images/qflow,target=/images/qflow \
 #######################################################################
 FROM base AS qucs-s
 ARG QUCS_S_REPO_URL="https://github.com/ra3xdh/qucs_s.git"
-ARG QUCS_S_REPO_COMMIT="24.4.0"
+ARG QUCS_S_REPO_COMMIT="24.4.1"
 ARG QUCS_S_NAME="qucs-s"
 RUN --mount=type=bind,source=images/qucs-s,target=/images/qucs-s \
     bash /images/qucs-s/scripts/install.sh
@@ -287,7 +288,7 @@ RUN --mount=type=bind,source=images/qucs-s,target=/images/qucs-s \
 #######################################################################
 FROM base AS riscv-gnu-toolchain
 ARG RISCV_GNU_TOOLCHAIN_REPO_URL="https://github.com/riscv-collab/riscv-gnu-toolchain.git"
-ARG RISCV_GNU_TOOLCHAIN_REPO_COMMIT="2024.10.28"
+ARG RISCV_GNU_TOOLCHAIN_REPO_COMMIT="2024.11.22"
 ARG RISCV_GNU_TOOLCHAIN_NAME="riscv-gnu-toolchain"
 RUN --mount=type=bind,source=images/riscv-gnu-toolchain,target=/images/riscv-gnu-toolchain \
     bash /images/riscv-gnu-toolchain/scripts/install.sh
@@ -308,7 +309,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="bad0d6ba3dec20355b0156c535bbddf2f926ab37"
+ARG SLANG_REPO_COMMIT="f384536e1d7feb52538231c426de82a28fd14174"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -318,7 +319,7 @@ RUN --mount=type=bind,source=images/slang,target=/images/slang \
 #######################################################################
 FROM riscv-gnu-toolchain AS spike
 ARG SPIKE_REPO_URL="https://github.com/riscv-software-src/riscv-isa-sim.git"
-ARG SPIKE_REPO_COMMIT="f0d4d42913d5a5555848fa32cc68783c2000b3e1"
+ARG SPIKE_REPO_COMMIT="a2dcf1fd70f359e2cf0a953986c9fe222a6d53c2"
 ARG SPIKE_NAME="spike"
 RUN --mount=type=bind,source=images/spike,target=/images/spike \
     bash /images/spike/scripts/install.sh
@@ -348,7 +349,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="65bd4ce7669c2d8f12b977318da4e4ddd0164b4c"
+ARG XSCHEM_REPO_COMMIT="a97b47623f1265b2e6b3f3ad1d4ecc4b40fafaa6"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -356,12 +357,12 @@ RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
 #######################################################################
 # Compile xyce & xyce-xdm
 #######################################################################
-# FIXME build trilinos as own image, clean with commit etc.
 FROM base AS xyce
-#ARG XYCE_REPO_URL="https://github.com/Xyce/Xyce.git"
-ARG XYCE_REPO_URL="https://xyce.sandia.gov/files/xyce"
-#ARG XYCE_REPO_COMMIT="Release-7.8.0"
-ARG XYCE_REPO_COMMIT="Xyce-7.8"
+ARG XYCE_TRILINOS_REPO_URL="https://github.com/trilinos/Trilinos.git"
+ARG XYCE_TRILINOS_REPO_COMMIT="trilinos-release-12-12-1"
+ARG XYCE_TRILINOS_NAME="trilinos"
+ARG XYCE_REPO_URL="https://github.com/Xyce/Xyce.git"
+ARG XYCE_REPO_COMMIT="Release-7.8.0"
 ARG XYCE_NAME="xyce"
 RUN --mount=type=bind,source=images/xyce,target=/images/xyce \
     bash /images/xyce/scripts/install.sh
@@ -378,7 +379,7 @@ ARG XYCE_XDM_NAME="xyce-xdm"
 #######################################################################
 FROM base AS yosys
 ARG YOSYS_REPO_URL="https://github.com/YosysHQ/yosys.git"
-ARG YOSYS_REPO_COMMIT="0.46"
+ARG YOSYS_REPO_COMMIT="v0.48"
 ARG YOSYS_NAME="yosys"
 ARG YOSYS_EQY_REPO_URL="https://github.com/YosysHQ/eqy.git"
 ARG YOSYS_EQY_NAME="yosys_eqy"
@@ -400,7 +401,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="5bec681761236fa85cd97fec3bfcc6494b7979d0"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="8b1577b665a241da9034d340779fcb834d62c63f"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \
@@ -440,7 +441,7 @@ ENV HOME=/headless \
     VNC_RESOLUTION=1680x1050 \
     VNC_PW=abc123 \
     VNC_VIEW_ONLY=false
-# FIXME workaround for OpenMPI throwing errors when run inside a container without Capability "SYS_PTRACE".
+#FIXME workaround for OpenMPI throwing errors when run inside a container without Capability "SYS_PTRACE".
 ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
 
 # Copy all layers into the final container

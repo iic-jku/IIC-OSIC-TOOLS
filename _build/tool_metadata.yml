@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: a938ee87eccdfeba400ae10ecd4e9a2b2438d1e3
+  commit: 8b80536b2c0980dd347d648154300659dae88ad3
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 511412f984d64ed7c46c4bdbd839f4b3c48f6fa5
@@ -24,19 +24,19 @@
   commit: a7884acc04cd94017779893d381b7e93d8895587
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: d8c3c51ab1190ed3fb26540d7de6177f83e0e75b
+  commit: 06077ed026b4d8498d9129a6acfb0b44d0b51f18
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
-  commit: "v0.29.8"
+  commit: "v0.29.10"
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
   commit: a4537c1fba19966e80408a7b224001d5697ff1e6
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.497"
+  commit: "8.3.505"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.286"
+  commit: "1.5.287"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-43"
@@ -45,7 +45,7 @@
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
 - name: nvc
   repo: https://github.com/nickg/nvc.git
-  commit: "r1.14.1"
+  commit: "r1.14.2"
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
   commit: 0fe599b2afb6708d281543108caf8310912f54af
@@ -57,37 +57,40 @@
   commit: 2ab0d05fcf9ffd21cc5f49022b7624224cb96b1f
 - name: osic-multitool
   repo: https://github.com/iic-jku/osic-multitool.git
-  commit: c980bb34cac11f22ba4cf16a94919ea61899d62d 
+  commit: cc61d2dcad01491a6256097761b6c25f2809be63
 - name: padring
   repo: https://github.com/donn/padring.git
   commit: b2a64abcc8561d758c0bcb3945117dcb13bd9dca
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
-  commit: "0.11"
+  commit: "0.11.2"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2024.10.28"
+  commit: "2024.11.22"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: abadfdc507d5a75b6272dc360e70a80a510c758a
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: bad0d6ba3dec20355b0156c535bbddf2f926ab37
+  commit: f384536e1d7feb52538231c426de82a28fd14174
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 5bec681761236fa85cd97fec3bfcc6494b7979d0
+  commit: 8b1577b665a241da9034d340779fcb834d62c63f
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: f0d4d42913d5a5555848fa32cc68783c2000b3e1
+  commit: a2dcf1fd70f359e2cf0a953986c9fe222a6d53c2
 - name: surelog
-  repot: https://github.com/chipsalliance/Surelog.git
+  repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
+- name: trilinos
+  repo: https://github.com/trilinos/Trilinos.git
+  commit: "trilinos-release-12-12-1"
 - name: qflow
   repo: https://github.com/RTimothyEdwards/qflow.git
   commit: 52ecda1053bcbd2f6ec88b8379c8179e2a849f7a
 - name: qucs-s
   repo: https://github.com/ra3xdh/qucs_s.git
-  commit: "24.4.0"
+  commit: "24.4.1"
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: "v5.030"
@@ -96,16 +99,16 @@
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 65bd4ce7669c2d8f12b977318da4e4ddd0164b4c
+  commit: a97b47623f1265b2e6b3f3ad1d4ecc4b40fafaa6
 - name: xyce
-  repo: https://xyce.sandia.gov/files/xyce
-  commit: "Xyce-7.8"
+  repo: https://github.com/Xyce/Xyce.git
+  commit: "Release-7.8.0"
 - name: xyce-xdm
   repo: https://github.com/Xyce/XDM.git
   commit: "Release-2.7.0"
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: "0.46"
+  commit: "v0.48"
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
 - name: yosys_sby

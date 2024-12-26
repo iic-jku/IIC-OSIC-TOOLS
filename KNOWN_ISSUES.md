@@ -8,13 +8,25 @@ If you run into problems when starting the container (mostly in combination with
 
 Example:
 
-```DOCKER_EXTRA_PARAMS='--security-opt seccomp=unconfined' ./start_x.sh```
+```bash
+DOCKER_EXTRA_PARAMS='--security-opt seccomp=unconfined' ./start_x.sh
+```
 
 ### Issues with OpenGL on some environments
 
 A few applications are using OpenGL graphics, which can lead to issues on some computing environments. A (potential) remedy is to enable SW-rendering with can be achieved by setting the following environment variable inside the Docker VM:
 
 `LIBGL_ALWAYS_INDIRECT=0`
+
+### The OpenROAD Flow Scripts (ORFS)
+
+The ORFS required a recent version of `openroad`. Since image tag `2024.12` a recent version is installed alongside the OpenROAD version required by `openlane`. In order to use the ORFS, before calling the `make` script make sure to set the following env vars:
+
+```bash
+export YOSYS_EXE=$TOOLS/yosys/bin/yosys
+export OPENROAD_EXE=$TOOLS/openroad-latest/bin/openroad
+export OPENSTA_EXE=$TOOLS/openroad-latest/bin/sta
+```
 
 ### OpenEMS
 
@@ -24,9 +36,9 @@ The visualization tool "AppCSXCAD" will not work in the container with our defau
 
 We (temporarily) removed `Hdl21` and `Vlsirtools`, as they force `numpy` to version 1. All other packages allow `numpy` 2, so this removal, until the dependencies are fixed.
 
-### Scikit-RF on `aarch64`
+### PyOPUS
 
-Importing `skrf` in Python throws an error due to `bottleneck`; this does not happen on `amd64`.
+`PyOPUS` is removed, as build fails, and it forces `numpy` to version 1.
 
 ## Build
 

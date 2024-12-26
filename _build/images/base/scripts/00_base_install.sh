@@ -105,7 +105,6 @@ apt -y install \
 	libre2-dev \
 	libreadline-dev \
 	libsm-dev \
-	libspdlog-dev \
 	libsqlite3-dev \
 	libssl-dev \
 	libstdc++-11-dev \

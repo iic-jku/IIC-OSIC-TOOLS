@@ -9,9 +9,9 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if ! python "$DIR/pkgs.py" 
 then
-    echo "[ERROR] Test <Python-Packages> FAILED."
+    echo "[ERROR] Test <Loading Python-packages> FAILED."
     exit 1
 else
-    echo "[INFO] Test <Python-Packages> passed."
+    echo "[INFO] Test <Loading Python-packages> passed."
     exit 0
 fi

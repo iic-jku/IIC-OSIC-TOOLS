@@ -6,9 +6,7 @@ if [ ! -d "$PDK_ROOT" ]; then
     mkdir -p "$PDK_ROOT"
 fi
 
-####################
-# INSTALL IHP-SG13G2
-####################
+# install IHP-SG13G2
 
 IHP_PDK="ihp-sg13g2"
 MY_PDK="sg13g2"
@@ -21,14 +19,13 @@ cd ihp || exit 1
 git checkout dev
 git submodule update --init --recursive
 
-# Now move to the proper location
+# now move to the proper location
 if [ -d $IHP_PDK ]; then
 	mv $IHP_PDK "$PDK_ROOT/$MY_PDK"
 fi
 
-####################
-# Compile .va models
-####################
+# compile .va models
+
 cd "$PDK_ROOT"/"$MY_PDK"/libs.tech/ngspice/openvaf || exit 1
 
 "$TOOLS/$OPENVAF_NAME/bin/openvaf" --target_cpu generic psp103_nqs.va

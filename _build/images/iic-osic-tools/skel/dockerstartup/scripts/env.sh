@@ -1,95 +1,122 @@
 # shellcheck shell=bash
 
 function _path_add_tool_bin() {
-        tool_name=$1
-        for d in $TOOLS/$tool_name ; do
-                if [ -d "${d}bin" ]; then
-                        export PATH=$PATH:${d}bin
-                fi
-        done
+    tool_name=$1
+    for d in $TOOLS/$tool_name ; do
+        if [ -d "${d}bin" ]; then
+            export PATH=$PATH:${d}bin
+        fi
+    done
 }
 
 function _path_add_tool() {
-        tool_name=$1
-        for d in $TOOLS/$tool_name ; do
-                if [ -d "${d}" ]; then
-                        export PATH=$PATH:${d%/}
-                fi
-        done
+    tool_name=$1
+    for d in $TOOLS/$tool_name ; do
+        if [ -d "${d}" ]; then
+            export PATH=$PATH:${d%/}
+        fi
+    done
 }
 
 function _path_add_tool_custom() {
-        custom_path=$1
-        for d in $TOOLS/$custom_path/ ; do
-                if [ -d "${d}" ]; then
-                        export PATH=$PATH:${d%/}
-                fi
-        done
+    custom_path=$1
+    for d in $TOOLS/$custom_path/ ; do
+        if [ -d "${d}" ]; then
+            export PATH=$PATH:${d%/}
+        fi
+    done
 }
 
 function _path_add_tool_python() {
-        tool_name=$1
-        for d in "$TOOLS/$tool_name"/local/lib/python3*/dist-packages ; do
-                if [ -d "${d}" ]; then
-                        export PYTHONPATH=$PYTHONPATH:${d}
-                fi
-        done
+    tool_name=$1
+    for d in "$TOOLS/$tool_name"/local/lib/python3*/dist-packages ; do
+        if [ -d "${d}" ]; then
+            export PYTHONPATH=$PYTHONPATH:${d}
+        fi
+    done
 }
 
-if [ -z ${FOSS_PATH_SET+x} ]; then
-        _path_add_tool_bin      "covered"
-        _path_add_tool_bin      "cvc_rv"
-        _path_add_tool_bin      "gaw3-xschem"
-        _path_add_tool_bin      "gds3d"
-        _path_add_tool_bin      "ghdl"
-        _path_add_tool_bin      "gtkwave"
-        _path_add_tool_bin      "irsim"
-        _path_add_tool_bin      "iverilog"
-        _path_add_tool          "klayout"
-        _path_add_tool_custom   "libman"
-        _path_add_tool_bin      "magic"
-        _path_add_tool_bin      "netgen"
-        _path_add_tool_bin      "ngspice"
-        _path_add_tool_bin      "nvc"
-        _path_add_tool_bin      "openroad"
-        _path_add_tool_bin      "opensta"
-	_path_add_tool_bin	"openvaf"
-        _path_add_tool_custom   "osic-multitool"
-        _path_add_tool_bin      "padring"
-        _path_add_tool_bin      "pyopus"
-        _path_add_tool_bin      "qflow"
-        _path_add_tool_bin      "qucs-s"
-        _path_add_tool_custom   "rftoolkit/bin"
-        _path_add_tool_bin      "slang"
-        _path_add_tool_bin      "verilator"
-        _path_add_tool_bin      "xschem"
-        _path_add_tool_bin      "xyce"
-        _path_add_tool_bin      "yosys"
-        _path_add_tool_custom   "yosys/bin"
-	
-        export SAK=$TOOLS/sak/
-        export PATH=$TOOLS/bin:$SAK:/usr/local/sbin:$PATH
+function _add_resolution () {
+    # $1=X, $2=Y
+    # do only in VNC mode
+    if [ -v VNCDESKTOP ]; then
+        # and only when resolution not yet available
+        # shellcheck disable=SC2143 disable=SC2086
+        if [ -z "$(xrandr 2> /dev/null | awk '{print $1}' | grep $1x$2)" ]; then
+            #echo "[INFO] Set VNC mode $1x$2"
+            MLINE=$(cvt $1 $2 60  | grep -oP '(?<=Modeline ).*')
+            # shellcheck disable=SC2001
+            MLINE_TRIM=$(echo "$MLINE" | sed 's/^[^"]*"[^"]*"//')
+            xrandr --newmode $1x$2 $MLINE_TRIM
+            xrandr --addmode VNC-0 $1x$2
+        fi
+    fi
+}
 
-        # OpenROAD in Ubuntu 22.04 does not find the PIP modules, so use PYTHONPATH
-        PYTHONPATH=$(python -c "import sys; print(':'.join(x for x in sys.path if x))") && export PYTHONPATH 
-        _path_add_tool_python "ngspyce"
-        _path_add_tool_python "pyopus"
-        export PYTHONPATH=$PYTHONPATH:$TOOLS/yosys/share/yosys/python3
-        KLAYOUT_PYTHON=("$TOOLS"/klayout/pymod)
-        export PYTHONPATH=$PYTHONPATH:${KLAYOUT_PYTHON[*]}
-        
-        echo "[INFO] Final PATH variable: $PATH"
-        echo "[INFO] Final PYTHONPATH variable: $PYTHONPATH"
-        export FOSS_PATH_SET=1
+if [ -z ${FOSS_INIT_DONE+x} ]; then
+    _path_add_tool_bin      "covered"
+    _path_add_tool_bin      "cvc_rv"
+    _path_add_tool_bin      "gaw3-xschem"
+    _path_add_tool_bin      "gds3d"
+    _path_add_tool_bin      "ghdl"
+    _path_add_tool_bin      "gtkwave"
+    _path_add_tool_bin      "irsim"
+    _path_add_tool_bin      "iverilog"
+    _path_add_tool          "klayout"
+    _path_add_tool_custom   "libman"
+    _path_add_tool_bin      "magic"
+    _path_add_tool_bin      "netgen"
+    _path_add_tool_bin      "ngspice"
+    _path_add_tool_bin      "nvc"
+    _path_add_tool_bin      "openroad"
+    _path_add_tool_bin      "opensta"
+	_path_add_tool_bin	"openvaf"
+    _path_add_tool_custom   "osic-multitool"
+    _path_add_tool_bin      "padring"
+    _path_add_tool_bin      "pyopus"
+    _path_add_tool_bin      "qflow"
+    _path_add_tool_bin      "qucs-s"
+    _path_add_tool_custom   "rftoolkit/bin"
+    _path_add_tool_bin      "slang"
+    _path_add_tool_bin      "verilator"
+    _path_add_tool_bin      "xschem"
+    _path_add_tool_bin      "xyce"
+    _path_add_tool_bin      "yosys"
+    _path_add_tool_custom   "yosys/bin"
+	
+    export SAK=$TOOLS/sak/
+    export PATH=$TOOLS/bin:$SAK:/usr/local/sbin:$PATH
+
+    # OpenROAD in Ubuntu 22.04 does not find the PIP modules, so use PYTHONPATH
+    PYTHONPATH=$(python -c "import sys; print(':'.join(x for x in sys.path if x))") && export PYTHONPATH 
+    _path_add_tool_python "ngspyce"
+    _path_add_tool_python "pyopus"
+    export PYTHONPATH=$PYTHONPATH:$TOOLS/yosys/share/yosys/python3
+    KLAYOUT_PYTHON=("$TOOLS"/klayout/pymod)
+    export PYTHONPATH=$PYTHONPATH:${KLAYOUT_PYTHON[*]}
+    
+    echo "[INFO] Final PATH variable: $PATH"
+    echo "[INFO] Final PYTHONPATH variable: $PYTHONPATH"
+
+    export FOSS_INIT_DONE=1
 fi
+
+# add additional display resolutions (for VNC mode)
+_add_resolution 2048 1152
+_add_resolution 2560 1080
+_add_resolution 2560 1440
+_add_resolution 2560 1600
+_add_resolution 3440 1440
+_add_resolution 3840 2160
 
 # shellcheck disable=SC2086
 LD_LIBRARY_PATH="$(realpath ${TOOLS}/klayout ):${TOOLS}/ngspice/lib" && export LD_LIBRARY_PATH
 export XDG_RUNTIME_DIR=/tmp/runtime-default
-export EDITOR='gedit'
+export EDITOR="gedit"
 export PYTHONPYCACHEPREFIX="/tmp/pycache"
+export KLAYOUT_HOME="/headless/.klayout"
 
-# Setting default PDK
+# setting default PDK
 export PDK=sky130A
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=sky130_fd_sc_hd
@@ -104,16 +131,16 @@ export LIBGL_ALWAYS_INDIRECT=1
 export NO_AT_BRIDGE=1
 
 if [ ! -d $XDG_RUNTIME_DIR ]; then
-        mkdir -p $XDG_RUNTIME_DIR
-        chmod 700 $XDG_RUNTIME_DIR
+    mkdir -p $XDG_RUNTIME_DIR
+    chmod 700 $XDG_RUNTIME_DIR
 fi
 
-# Add local directories in $HOME to the path so that the user can upgrade PIP packages
+# add local directories in $HOME to the path so that the user can upgrade PIP packages
 export PATH=$HOME/.local/bin:$PATH
 export PYTHONPATH=$HOME/.local/lib/python3.10/site-packages:$PYTHONPATH
 
 #----------------------------------------
-# Tool Aliases
+# tool aliases
 #----------------------------------------
 
 alias mmagic='MAGTYPE=mag magic'
@@ -155,7 +182,7 @@ alias m='less'
 alias term='xfce4-terminal'
 
 #----------------------------------------
-# Git
+# git
 #----------------------------------------
 
 alias gcl='git clone'
@@ -172,16 +199,16 @@ alias gln='git log --name-status'
 alias gsss='git submodule status'
 
 #----------------------------------------
-# Adapt user prompt
+# adapt user prompt
 #----------------------------------------
 
 export PS1='\[\033[0;32m\]\w >\[\033[0;38m\] '
 
 #----------------------------------------
-# Source user configs from $DESIGNS
+# source user configs from $DESIGNS
 #----------------------------------------
 
 if [ -f "$DESIGNS/.designinit" ]; then
-        # shellcheck source=/dev/null
-        source "$DESIGNS/.designinit"
+    # shellcheck source=/dev/null
+    source "$DESIGNS/.designinit"
 fi

@@ -2,6 +2,18 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2024.12
+
+* Install OpenROAD twice: The required version for OpenLane2, and the latest version to be used for the OpenROAD Flow Scripts (ORFS). The `PATH` points to the OL2 version.
+* Locally build `spdlog` (for OpenROAD) and `bottleneck` to fix warning in `gdsfactory` and `scikit-rf`.
+* Added additional high display resolutions for VNC mode.
+* Bump various tool versions.
+
+## 2024.11
+
+* Add useful keybindings to KLayout, set `KLAYOUT_PATH` properly.
+* Bump various tool versions.
+
 ## 2024.10
 
 * Adding support for devcontainers (for use of the image inside VSCode).

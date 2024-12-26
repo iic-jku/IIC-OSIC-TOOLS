@@ -6,7 +6,6 @@ GROUP_ID=$(id -g)
 echo "[INFO] USER_ID: $USER_ID, GROUP_ID: $GROUP_ID"
 
 if [ x"$USER_ID" != x"0" ]; then
-
     NSS_WRAPPER_PASSWD=/tmp/passwd
     NSS_WRAPPER_GROUP=/tmp/group
 

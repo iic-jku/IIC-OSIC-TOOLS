@@ -1,12 +1,15 @@
 cff-version: 1.2.0
 message: "If you use this Docker container or base your work on it, please cite it as below."
 authors:
-- family-names: "Pretl"
-  given-names: "Harald"
-  orcid: "https://orcid.org/0000-0003-1519-076X"
-- family-names: "Zachl"
-  given-names: "Georg"
-  orcid: "https://orcid.org/0009-0006-7676-6389"
+- family-names: Pretl
+  given-names: Harald
+  orcid: https://orcid.org/0000-0003-1519-076X
+- family-names: Zachl
+  given-names: Georg
+  orcid: https://orcid.org/0009-0006-7676-6389
 title: "GitHub repository of the IIC-OSIC-TOOLS"
 date-released: 2023-09-18
-url: "https://github.com/iic-jku/IIC-OSIC-TOOLS"
+url: https://github.com/iic-jku/IIC-OSIC-TOOLS
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.14387234
