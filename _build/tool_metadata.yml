@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: f833e0ac9cb139ee1782a2c63dc70d8c049932d6
+  commit: 85927f0524ee60fb99024117534238c96baedaaf
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 511412f984d64ed7c46c4bdbd839f4b3c48f6fa5
@@ -33,7 +33,7 @@
   commit: a4537c1fba19966e80408a7b224001d5697ff1e6
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.507"
+  commit: "8.3.508"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.287"
@@ -72,13 +72,13 @@
   commit: abadfdc507d5a75b6272dc360e70a80a510c758a
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: a864e108c08219ec9149b0c46539d9d8433dc6e7
+  commit: 6f9e7bfa606b3a0d2a9258e1baf46f33086a8188
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: c71a9451752d4c514c037ca5e88d9a0047cfa66f
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: dc094609b0d35438729401a6aab99af5a8375b27
+  commit: 4cf49152121d0c241c78755718f6223a4822c056
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
@@ -99,7 +99,7 @@
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 7402385a82afe6bf4b6bb7590cf53a4776f82153
+  commit: 61c4f72c15ae2e7a6d7d4ba18c1cc19f84a5bf1c
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.8.0"
