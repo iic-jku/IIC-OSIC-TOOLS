@@ -72,7 +72,7 @@ apt -y install \
 	libfftw3-dev \
 	libfindbin-libs-perl \
 	libfl-dev \
-	libgcc-11-dev \
+	libgcc-13-dev \
 	libgettextpo-dev \
 	libgirepository1.0-dev \
 	libgit2-dev \
@@ -193,3 +193,7 @@ echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*
 apt -y autoremove --purge
 apt -y clean
+
+# FIXME maybe interesting for future cleanup (removal of -dev packages)
+# apt list --installed | grep "\-dev" | grep automatic | cut -d'/' -f1 | xargs apt -y remove
+# apt -y autoremove
