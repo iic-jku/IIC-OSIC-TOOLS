@@ -2,7 +2,7 @@
 
 set -e
 
-# FIXME there is a nasty bug in gobject-introspection
+# FIXME there is a nasty bug in 24.04 LTS gobject-introspection
 # see https://gitlab.gnome.org/GNOME/gobject-introspection/-/commit/a2139dba59eac283a7f543ed737f038deebddc19
 # until this is available upstream, we patch it here
 

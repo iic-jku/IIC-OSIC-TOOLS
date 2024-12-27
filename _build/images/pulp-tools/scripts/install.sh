@@ -31,7 +31,7 @@ cd deps || exit 1
 make # -j"$(nproc)"
 cd ..
 mkdir build && cd build
-#FIXME need to disable this warning in 24.04
+#FIXME need to disable this warning in 24.04 LTS
 sed -i 's/-Werror/-Werror -Wno-dangling-reference/' ../CMakeLists.txt
 cmake ..
 make -j"$(nproc)"

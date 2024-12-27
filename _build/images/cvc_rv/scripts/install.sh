@@ -9,7 +9,7 @@ git checkout "${CVC_RV_REPO_COMMIT}"
 autoreconf -vif
 ./configure --disable-nls --prefix="${TOOLS}/${CVC_RV_NAME}"
 
-#FIXME need to patch for now the build fail
+#FIXME need to patch for now the build fail in 24.04 LTS
 sed -i '/#include "CvcTypes.hh"/a #include <array>' src/Cvc.hh
 
 make -j"$(nproc)"
