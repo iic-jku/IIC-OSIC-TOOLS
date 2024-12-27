@@ -59,7 +59,7 @@
   repo: https://github.com/iic-jku/osic-multitool.git
   commit: cc61d2dcad01491a6256097761b6c25f2809be63
 - name: padring
-  repo: https://github.com/donn/padring.git
+  repo: https://github.com/iic-jku/padring.git
   commit: b2a64abcc8561d758c0bcb3945117dcb13bd9dca
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download

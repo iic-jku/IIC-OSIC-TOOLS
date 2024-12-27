@@ -230,11 +230,11 @@ RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
 # Compile padring
 #######################################################################
 FROM base AS padring
-ARG PADRING_REPO_URL="https://github.com/donn/padring.git"
+ARG PADRING_REPO_URL="https://github.com/iic-jku/padring.git"
 ARG PADRING_REPO_COMMIT="b2a64abcc8561d758c0bcb3945117dcb13bd9dca"
 ARG PADRING_NAME="padring"
-#FIXME RUN --mount=type=bind,source=images/padring,target=/images/padring \
-#    bash /images/padring/scripts/install.sh
+RUN --mount=type=bind,source=images/padring,target=/images/padring \
+    bash /images/padring/scripts/install.sh
 
 #######################################################################
 # Compile pulp platform tools
@@ -468,6 +468,7 @@ COPY --from=osic-multitool               ${TOOLS}/              ${TOOLS}/
 COPY --from=openvaf                      ${TOOLS}/              ${TOOLS}/
 #FIXME COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
 #FIXME COPY --from=pulp-tools                   ${TOOLS}/              ${TOOLS}/
+COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
 #FIXME COPY --from=pyopus                       ${TOOLS}/              ${TOOLS}/
 COPY --from=qflow                        ${TOOLS}/              ${TOOLS}/
 COPY --from=qucs-s                       ${TOOLS}/              ${TOOLS}/
