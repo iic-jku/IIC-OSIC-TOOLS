@@ -133,8 +133,8 @@ FROM base AS gtkwave
 ARG GTKWAVE_REPO_URL="https://github.com/gtkwave/gtkwave.git"
 ARG GTKWAVE_REPO_COMMIT="491f24d7e8619cfc1fcc65704ee5c967d1083c18"
 ARG GTKWAVE_NAME="gtkwave"
-#FIXME RUN --mount=type=bind,source=images/gtkwave,target=/images/gtkwave \
-#    bash /images/gtkwave/scripts/install.sh
+RUN --mount=type=bind,source=images/gtkwave,target=/images/gtkwave \
+    bash /images/gtkwave/scripts/install.sh
 
 #######################################################################
 # Compile irsim
@@ -453,7 +453,7 @@ COPY --from=gaw3-xschem                  ${TOOLS}/              ${TOOLS}/
 COPY --from=gds3d                        ${TOOLS}/              ${TOOLS}/
 COPY --from=gds3d                        ${PDK_ROOT}/           ${PDK_ROOT}/
 COPY --from=ghdl                         ${TOOLS}/              ${TOOLS}/
-#FIXME COPY --from=gtkwave                      ${TOOLS}/              ${TOOLS}/
+COPY --from=gtkwave                      ${TOOLS}/              ${TOOLS}/
 COPY --from=irsim                        ${TOOLS}/              ${TOOLS}/
 COPY --from=iverilog                     ${TOOLS}/              ${TOOLS}/
 COPY --from=klayout                      ${TOOLS}/              ${TOOLS}/
