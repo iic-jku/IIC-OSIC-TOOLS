@@ -37,9 +37,6 @@ else
 fi' > yosys
 chmod +x yosys
 
-# FIXME Not sure what this does whether it is even needed
-ln -s "$TOOLS"/xschem/* "$TOOLS"/xschem/
-
 # create dir for logs
 mkdir "$STARTUPDIR"/logs
 
