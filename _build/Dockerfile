@@ -241,8 +241,8 @@ RUN --mount=type=bind,source=images/padring,target=/images/padring \
 #######################################################################
 FROM base AS pulp-tools
 ARG PULP_NAME="pulp"
-#FIXME RUN --mount=type=bind,source=images/pulp-tools,target=/images/pulp-tools \
-#    bash /images/pulp-tools/scripts/install.sh
+RUN --mount=type=bind,source=images/pulp-tools,target=/images/pulp-tools \
+    bash /images/pulp-tools/scripts/install.sh
 
 #######################################################################
 # Compile pyopus
@@ -466,9 +466,8 @@ COPY --from=ngspyce                      ${TOOLS}/              ${TOOLS}/
 COPY --from=openroad_app                 ${TOOLS}/              ${TOOLS}/
 COPY --from=osic-multitool               ${TOOLS}/              ${TOOLS}/
 COPY --from=openvaf                      ${TOOLS}/              ${TOOLS}/
-#FIXME COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
-#FIXME COPY --from=pulp-tools                   ${TOOLS}/              ${TOOLS}/
 COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
+COPY --from=pulp-tools                   ${TOOLS}/              ${TOOLS}/
 #FIXME COPY --from=pyopus                       ${TOOLS}/              ${TOOLS}/
 COPY --from=qflow                        ${TOOLS}/              ${TOOLS}/
 COPY --from=qucs-s                       ${TOOLS}/              ${TOOLS}/

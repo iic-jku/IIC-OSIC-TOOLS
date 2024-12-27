@@ -32,8 +32,8 @@ make # -j"$(nproc)"
 cd ..
 mkdir build && cd build
 cmake ..
-make -j"$(nproc)"
-cp svase "${TOOLS}/${PULP_NAME}/bin"
+#FIXME make -j"$(nproc)"
+#FIXME cp svase "${TOOLS}/${PULP_NAME}/bin"
 
 # Install Verible
 # ---------------
