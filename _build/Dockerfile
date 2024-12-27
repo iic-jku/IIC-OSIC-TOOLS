@@ -231,7 +231,7 @@ RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
 #######################################################################
 FROM base AS padring
 ARG PADRING_REPO_URL="https://github.com/iic-jku/padring.git"
-ARG PADRING_REPO_COMMIT="b2a64abcc8561d758c0bcb3945117dcb13bd9dca"
+ARG PADRING_REPO_COMMIT="17fba2638142baa4dc6e2a0b18cb1cd542017e16"
 ARG PADRING_NAME="padring"
 RUN --mount=type=bind,source=images/padring,target=/images/padring \
     bash /images/padring/scripts/install.sh
