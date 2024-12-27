@@ -19,8 +19,8 @@ apt -y install \
 	bzip2 \
 	ca-certificates \
 	cargo \
-	clang-15 \
-	clang-tools-15 \
+	clang-16 \
+	clang-tools-16 \
 	cmake \
 	csh \
 	curl \
@@ -52,10 +52,17 @@ apt -y install \
 	lcov \
 	libasound2-dev \
 	libblas-dev \
+	libboost-filesystem-dev \
+	libboost-iostreams-dev \
+	libboost-python-dev \
+	libboost-serialization-dev \
+	libboost-system-dev \
+	libboost-test-dev \
+	libboost-thread-dev \
 	libbz2-dev \
 	libc6-dev \
 	libcairo2-dev \
-	libclang-common-15-dev \
+	libclang-common-16-dev \
 	libcurl4-openssl-dev \
 	libdw-dev \
 	libedit-dev \
@@ -66,7 +73,6 @@ apt -y install \
 	libfindbin-libs-perl \
 	libfl-dev \
 	libgcc-11-dev \
-	libgconf2-dev \
 	libgettextpo-dev \
 	libgirepository1.0-dev \
 	libgit2-dev \
@@ -88,10 +94,9 @@ apt -y install \
 	libnss-wrapper \
 	libomp-dev \
 	libopenmpi-dev \
-	libpcre++-dev \
 	libpcre2-dev \
 	libpcre3-dev \
-	libpython3.10 \
+	libpolly-16-dev \
 	libqhull-dev \
 	libqt5charts5-dev \
 	libqt5multimediawidgets5 \
@@ -106,7 +111,7 @@ apt -y install \
 	libsuitesparse-dev \
 	libtcl \
 	libtool \
-	libwxgtk3.0-gtk3-dev \
+	libwxgtk3.2-dev \
 	libx11-dev \
 	libx11-xcb-dev \
 	libxaw7-dev \
@@ -122,9 +127,9 @@ apt -y install \
 	libz3-dev \
 	libzip-dev \
 	libzstd-dev \
-	lld-15 \
-	llvm-15 \
-	llvm-15-dev \
+	lld-16 \
+	llvm-16 \
+	llvm-16-dev \
 	make \
 	ninja-build \
 	openmpi-bin \
@@ -179,9 +184,9 @@ apt -y install \
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 0	
 
-cd /usr/lib/llvm-15/bin
+cd /usr/lib/llvm-16/bin
 for f in *; do rm -f /usr/bin/"$f"; \
-    ln -s ../lib/llvm-15/bin/"$f" /usr/bin/"$f"
+    ln -s ../lib/llvm-16/bin/"$f" /usr/bin/"$f"
 done
 
 echo "[INFO] Cleaning up caches"

@@ -1,7 +1,7 @@
 #######################################################################
 # Setup base image
 #######################################################################
-ARG BASE_IMAGE=ubuntu:jammy
+ARG BASE_IMAGE=ubuntu:noble
 FROM ${BASE_IMAGE} AS base
 ARG CONTAINER_TAG=unknown
 ENV IIC_OSIC_TOOLS_VERSION=${CONTAINER_TAG} \
@@ -21,7 +21,8 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/32_install_cudd.sh && \
     bash /images/base/scripts/33_install_gtest.sh && \
     bash /images/base/scripts/34_install_spdlog.sh && \
-    bash /images/base/scripts/70_install_from_pip.sh
+    bash /images/base/scripts/70_install_from_pip.sh && \
+    bash /images/base/scripts/71_fix_gobject_introspection.sh
 
 #######################################################################
 # Add base packages (install via pip, npm, or gem)
@@ -229,8 +230,8 @@ RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
 # Compile padring
 #######################################################################
 FROM base AS padring
-ARG PADRING_REPO_URL="https://github.com/donn/padring.git"
-ARG PADRING_REPO_COMMIT="b2a64abcc8561d758c0bcb3945117dcb13bd9dca"
+ARG PADRING_REPO_URL="https://github.com/iic-jku/padring.git"
+ARG PADRING_REPO_COMMIT="17fba2638142baa4dc6e2a0b18cb1cd542017e16"
 ARG PADRING_NAME="padring"
 RUN --mount=type=bind,source=images/padring,target=/images/padring \
     bash /images/padring/scripts/install.sh
@@ -371,8 +372,10 @@ FROM xyce AS xyce-xdm
 ARG XYCE_XDM_REPO_URL="https://github.com/Xyce/XDM.git"
 ARG XYCE_XDM_REPO_COMMIT="Release-2.7.0"
 ARG XYCE_XDM_NAME="xyce-xdm"
-RUN --mount=type=bind,source=images/xyce-xdm,target=/images/xyce-xdm \
-    bash /images/xyce-xdm/scripts/install.sh
+#FIXME XDM has build fails in 24.04 LTS, not sure why; remove it for the
+#      time being
+#RUN --mount=type=bind,source=images/xyce-xdm,target=/images/xyce-xdm \
+#    bash /images/xyce-xdm/scripts/install.sh
 
 #######################################################################
 # Compile yosys & ghdl plugin & slang plugin
@@ -467,7 +470,7 @@ COPY --from=osic-multitool               ${TOOLS}/              ${TOOLS}/
 COPY --from=openvaf                      ${TOOLS}/              ${TOOLS}/
 COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
 COPY --from=pulp-tools                   ${TOOLS}/              ${TOOLS}/
-#COPY --from=pyopus                       ${TOOLS}/              ${TOOLS}/
+#FIXME COPY --from=pyopus                       ${TOOLS}/              ${TOOLS}/
 COPY --from=qflow                        ${TOOLS}/              ${TOOLS}/
 COPY --from=qucs-s                       ${TOOLS}/              ${TOOLS}/
 COPY --from=rftoolkit                    ${TOOLS}/              ${TOOLS}/

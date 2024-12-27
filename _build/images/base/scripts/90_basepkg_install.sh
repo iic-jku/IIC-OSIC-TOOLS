@@ -3,14 +3,14 @@
 set -e
 
 echo "[INFO] Install Jupyter packages via PIP"
-pip3 install --upgrade --no-cache-dir \
+pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	jupyter \
 	jupyterlab \
 	jupyter-collaboration \
 	jupyterlab-night
 
 echo "[INFO] Install EDA packages via PIP"
-pip3 install --upgrade --no-cache-dir \
+pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	amaranth==0.5.4 \
 	cace==2.5.4 \
 	cocotb==1.9.2 \

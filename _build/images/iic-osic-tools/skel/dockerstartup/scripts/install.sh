@@ -40,29 +40,29 @@ rm -f packages.microsoft.gpg
 
 apt update
 apt install -y \
-    code \
-    firefox \
-    gedit \
-    gnuplot \
-    htop \
-    hub \
-    jq \
-    meld \
-    nano \
-    net-tools \
-    nmap \
-    novnc \
-    openems \
-    parallel \
-    sudo \
-    tigervnc-standalone-server \
-    vim \
-    vim-gtk3 \
-    websockify \
-    xarchiver \
-    xfce4 \
-    xfce4-terminal \
-    xterm
+        code \
+        dbus-x11 \
+        firefox \
+        gedit \
+        gnuplot \
+        htop \
+        hub \
+        jq \
+        meld \
+        nano \
+        net-tools \
+        nmap \
+        novnc \
+        parallel \
+        sudo \
+        tigervnc-standalone-server \
+        vim \
+        vim-gtk3 \
+        websockify \
+        xarchiver \
+        xfce4 \
+        xfce4-terminal \
+        xterm
 
 # remove light-locker and other power management stuff, otherwise VNC session locks up
 apt purge -y light-locker pm-utils *screensaver*

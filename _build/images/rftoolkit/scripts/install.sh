@@ -44,8 +44,10 @@ cd "${RFTK_NAME}_fc" || exit 1
 
 # patch FasterCap cmake (fix thanks to Ali Olyanasab) 
 sed -i '3 i add_definitions(-w)' CMakeLists.txt
-mkdir build && cd build
+# patch FasterCap cmake for 24.04 LTS (thanks to ChatGPT)
+sed -i 's/--version=3\.0/--version=3\.2/' CMakeLists.txt
 
+mkdir build && cd build
 #cmake -G"CodeBlocks - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
 cmake -G"Unix Makefiles"  -DCMAKE_BUILD_TYPE=Release -DFASTFIELDSOLVERS_HEADLESS=ON ..
 make -j"$(nproc)" all
