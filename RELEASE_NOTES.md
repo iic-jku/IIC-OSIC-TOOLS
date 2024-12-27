@@ -4,7 +4,9 @@ This document summarizes the most important changes of the individual releases o
 
 ## 2025.01
 
+* Upgrade base OS to Ubuntu 24.04 LTS (from 22.04 LTS)
 * Adding `lctime` CMOS cell characterization kit.
+* Bump various tool versions.
 
 ## 2024.12
 
