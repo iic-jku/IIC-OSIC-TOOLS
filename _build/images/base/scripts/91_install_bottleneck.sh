@@ -7,4 +7,4 @@ set -e
 cd /tmp
 git clone --depth=1 https://github.com/pydata/bottleneck.git
 cd bottleneck || exit 1
-pip install .
+pip install --no-cache-dir --break-system-packages .
