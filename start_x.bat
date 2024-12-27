@@ -64,8 +64,8 @@ IF NOT ERRORLEVEL 1 (
     IF NOT ERRORLEVEL 1 (
         echo Container %CONTAINER_NAME% exists. Restart with \"docker start %CONTAINER_NAME%\" or remove with \"docker rm %CONTAINER_NAME%\" if required.
     ) ELSE (
-	echo Container does not exist, pulling %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG and creating %CONTAINER_NAME% ...
-        %ECHO_IF_DRY_RUN% docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG
+	echo Container does not exist, pulling %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% and creating %CONTAINER_NAME% ...
+        %ECHO_IF_DRY_RUN% docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
         %ECHO_IF_DRY_RUN% docker run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% -e DISPLAY=%DISP% -e LIBGL_ALWAYS_INDIRECT=1 %DOCKER_EXTRA_PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
     )
 )
