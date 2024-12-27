@@ -93,8 +93,8 @@ FROM base AS cvc_rv
 ARG CVC_RV_REPO_URL="https://github.com/d-m-bailey/cvc.git"
 ARG CVC_RV_REPO_COMMIT="v1.1.5"
 ARG CVC_RV_NAME="cvc_rv"
-#FIXME RUN --mount=type=bind,source=images/cvc_rv,target=/images/cvc_rv \
-#    bash /images/cvc_rv/scripts/install.sh
+RUN --mount=type=bind,source=images/cvc_rv,target=/images/cvc_rv \
+    bash /images/cvc_rv/scripts/install.sh
 
 #######################################################################
 # Compile gaw3-xschem
@@ -448,7 +448,7 @@ ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
 # Copy all layers into the final container
 COPY --from=open_pdks                    ${PDK_ROOT}/           ${PDK_ROOT}/
 COPY --from=covered                      ${TOOLS}/              ${TOOLS}/
-#FIXME COPY --from=cvc_rv                       ${TOOLS}/              ${TOOLS}/
+COPY --from=cvc_rv                       ${TOOLS}/              ${TOOLS}/
 COPY --from=gaw3-xschem                  ${TOOLS}/              ${TOOLS}/
 COPY --from=gds3d                        ${TOOLS}/              ${TOOLS}/
 COPY --from=gds3d                        ${PDK_ROOT}/           ${PDK_ROOT}/
