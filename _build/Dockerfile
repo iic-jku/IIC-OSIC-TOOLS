@@ -223,8 +223,8 @@ FROM base AS openroad_app
 ARG OPENROAD_APP_REPO_URL="https://github.com/The-OpenROAD-Project/OpenROAD.git"
 ARG OPENROAD_APP_REPO_COMMIT="edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6"
 ARG OPENROAD_APP_NAME="openroad"
-#FIXME RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
-#    bash /images/openroad/scripts/install.sh
+RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
+    bash /images/openroad/scripts/install.sh
 
 #######################################################################
 # Compile padring
@@ -463,7 +463,7 @@ COPY --from=netgen                       ${TOOLS}/              ${TOOLS}/
 COPY --from=nvc                          ${TOOLS}/              ${TOOLS}/
 COPY --from=ngspice                      ${TOOLS}/              ${TOOLS}/
 COPY --from=ngspyce                      ${TOOLS}/              ${TOOLS}/
-#FIXME COPY --from=openroad_app                 ${TOOLS}/              ${TOOLS}/
+COPY --from=openroad_app                 ${TOOLS}/              ${TOOLS}/
 COPY --from=osic-multitool               ${TOOLS}/              ${TOOLS}/
 COPY --from=openvaf                      ${TOOLS}/              ${TOOLS}/
 #FIXME COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
