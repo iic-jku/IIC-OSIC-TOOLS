@@ -111,6 +111,7 @@ apt -y install \
 	libsuitesparse-dev \
 	libtcl \
 	libtool \
+	libwxgtk3.2-dev \
 	libx11-dev \
 	libx11-xcb-dev \
 	libxaw7-dev \
