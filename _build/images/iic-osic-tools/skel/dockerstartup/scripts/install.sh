@@ -41,6 +41,7 @@ rm -f packages.microsoft.gpg
 apt update
 apt install -y \
         code \
+        dbus-x11 \
         firefox \
         gedit \
         gnuplot \
