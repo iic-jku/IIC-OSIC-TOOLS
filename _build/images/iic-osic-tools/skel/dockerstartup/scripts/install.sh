@@ -54,6 +54,7 @@ apt install -y \
         nmap \
         novnc \
         parallel \
+        qalculate-gtk \
         sudo \
         tigervnc-standalone-server \
         vim \
