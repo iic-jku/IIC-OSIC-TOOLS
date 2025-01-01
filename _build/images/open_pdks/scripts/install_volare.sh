@@ -70,15 +70,15 @@ rm -rf "$PDK_ROOT"/volare/gf180mcu/versions/*/gf180mcuB
 rm -rf "$PDK_ROOT"/gf180mcuA
 rm -rf "$PDK_ROOT"/gf180mcuB
 
-# remove testing folders to save space
-cd "$PDK_ROOT"
-find . -name "testing" -exec rm -rf {} \;
-
 if [ -d "$PDK_ROOT/gf180mcuC" ]; then
 	cd "$PDK_ROOT/gf180mcuC/libs.tech/ngspice" || exit 1
 	
 	# setup empty .spiceinit (harmonize with SG13G2)
 	touch .spiceinit
+
+	# remove testing folders to save space
+	cd "$PDK_ROOT/gf180mcuC"
+	find . -name "testing" -print0 | xargs -0 rm -rf
 fi
 
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
@@ -86,4 +86,8 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	
 	# setup empty .spiceinit (harmonize with SG13G2)
 	touch .spiceinit
+
+	# remove testing folders to save space
+	cd "$PDK_ROOT/gf180mcuD"
+	find . -name "testing" -print0 | xargs -0 rm -rf
 fi

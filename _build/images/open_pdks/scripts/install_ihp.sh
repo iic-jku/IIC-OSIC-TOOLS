@@ -30,4 +30,4 @@ cd "$PDK_ROOT"/"$MY_PDK"/libs.tech/ngspice/openvaf || exit 1
 
 # remove testing folders to save space
 cd "$PDK_ROOT/$MY_PDK"
-find . -name "testing" -exec rm -rf {} \;
+find . -name "testing" -print0 | xargs -0 rm -rf
