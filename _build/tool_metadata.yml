@@ -3,7 +3,7 @@
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
 - name: cvc_rv
   repo: https://github.com/d-m-bailey/cvc.git
-  commit: "v1.1.5"
+  commit: ced5a2e6d5e8656180d404e9220349e87512c82f
 - name: gaw3-xschem
   repo: https://github.com/StefanSchippers/xschem-gaw.git
   commit: d41828de08eef29c2f937d363bc2ecdc2687bfae
@@ -15,16 +15,16 @@
   commit: 85927f0524ee60fb99024117534238c96baedaaf
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
-  commit: 511412f984d64ed7c46c4bdbd839f4b3c48f6fa5
+  commit: 9a18623a4caa9908357fa714cac9ff422baa30e5
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
-  commit: 491f24d7e8619cfc1fcc65704ee5c967d1083c18
+  commit: f668e5ecdf0ad1119d61a1fb27dd56d9c99d79a5
 - name: irsim
   repo: https://github.com/rtimothyedwards/irsim.git
   commit: a7884acc04cd94017779893d381b7e93d8895587
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 06077ed026b4d8498d9129a6acfb0b44d0b51f18
+  commit: 8cd7bb358487f354bdab84bd92f31b2451f60841
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.29.10"
@@ -33,13 +33,13 @@
   commit: a4537c1fba19966e80408a7b224001d5697ff1e6
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.508"
+  commit: "8.3.509"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.287"
+  commit: "1.5.289"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
-  commit: "ngspice-43"
+  commit: "ngspice-44"
 - name: ngspyce
   repo: https://github.com/ignamv/ngspyce.git
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
@@ -72,10 +72,10 @@
   commit: abadfdc507d5a75b6272dc360e70a80a510c758a
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 6f9e7bfa606b3a0d2a9258e1baf46f33086a8188
+  commit: f03ccdb83c873b9c618aa8db317b8003032d14d2
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: c71a9451752d4c514c037ca5e88d9a0047cfa66f
+  commit: 1b1930273972f6a0246951674a23012170e520a1
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
@@ -90,13 +90,13 @@
   commit: "24.4.1"
 - name: verilator
   repo: https://github.com/verilator/verilator.git
-  commit: "v5.030"
+  commit: "v5.032"
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 61c4f72c15ae2e7a6d7d4ba18c1cc19f84a5bf1c
+  commit: 8fa2c9c22a353c98387fe70cf968c46067e42075
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.8.0"

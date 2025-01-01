@@ -37,7 +37,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM basepkg AS magic
 ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic.git"
-ARG MAGIC_REPO_COMMIT="8.3.508"
+ARG MAGIC_REPO_COMMIT="8.3.509"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
@@ -91,7 +91,7 @@ RUN --mount=type=bind,source=images/covered,target=/images/covered \
 #######################################################################
 FROM base AS cvc_rv
 ARG CVC_RV_REPO_URL="https://github.com/d-m-bailey/cvc.git"
-ARG CVC_RV_REPO_COMMIT="v1.1.5"
+ARG CVC_RV_REPO_COMMIT="ced5a2e6d5e8656180d404e9220349e87512c82f"
 ARG CVC_RV_NAME="cvc_rv"
 RUN --mount=type=bind,source=images/cvc_rv,target=/images/cvc_rv \
     bash /images/cvc_rv/scripts/install.sh
@@ -131,7 +131,7 @@ RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
 #######################################################################
 FROM base AS gtkwave
 ARG GTKWAVE_REPO_URL="https://github.com/gtkwave/gtkwave.git"
-ARG GTKWAVE_REPO_COMMIT="491f24d7e8619cfc1fcc65704ee5c967d1083c18"
+ARG GTKWAVE_REPO_COMMIT="f668e5ecdf0ad1119d61a1fb27dd56d9c99d79a5"
 ARG GTKWAVE_NAME="gtkwave"
 RUN --mount=type=bind,source=images/gtkwave,target=/images/gtkwave \
     bash /images/gtkwave/scripts/install.sh
@@ -151,7 +151,7 @@ RUN --mount=type=bind,source=images/irsim,target=/images/irsim \
 #######################################################################
 FROM base AS iverilog
 ARG IVERILOG_REPO_URL="https://github.com/steveicarus/iverilog.git"
-ARG IVERILOG_REPO_COMMIT="06077ed026b4d8498d9129a6acfb0b44d0b51f18"
+ARG IVERILOG_REPO_COMMIT="8cd7bb358487f354bdab84bd92f31b2451f60841"
 ARG IVERILOG_NAME="iverilog"
 RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
     bash /images/iverilog/scripts/install.sh
@@ -181,7 +181,7 @@ RUN --mount=type=bind,source=images/libman,target=/images/libman \
 #######################################################################
 FROM base AS netgen
 ARG NETGEN_REPO_URL="https://github.com/rtimothyedwards/netgen.git"
-ARG NETGEN_REPO_COMMIT="1.5.287"
+ARG NETGEN_REPO_COMMIT="1.5.289"
 ARG NETGEN_NAME="netgen"
 RUN --mount=type=bind,source=images/netgen,target=/images/netgen \
     bash /images/netgen/scripts/install.sh
@@ -191,7 +191,7 @@ RUN --mount=type=bind,source=images/netgen,target=/images/netgen \
 #######################################################################
 FROM open_pdks AS ngspice
 ARG NGSPICE_REPO_URL="https://github.com/danchitnis/ngspice-sf-mirror.git"
-ARG NGSPICE_REPO_COMMIT="ngspice-43"
+ARG NGSPICE_REPO_COMMIT="ngspice-44"
 ARG NGSPICE_NAME="ngspice"
 RUN --mount=type=bind,source=images/ngspice,target=/images/ngspice \
     bash /images/ngspice/scripts/install.sh
@@ -310,7 +310,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="6f9e7bfa606b3a0d2a9258e1baf46f33086a8188"
+ARG SLANG_REPO_COMMIT="f03ccdb83c873b9c618aa8db317b8003032d14d2"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -320,7 +320,7 @@ RUN --mount=type=bind,source=images/slang,target=/images/slang \
 #######################################################################
 FROM base AS verilator
 ARG VERILATOR_REPO_URL="https://github.com/verilator/verilator.git"
-ARG VERILATOR_REPO_COMMIT="v5.030"
+ARG VERILATOR_REPO_COMMIT="v5.032"
 ARG VERILATOR_NAME="verilator"
 RUN --mount=type=bind,source=images/verilator,target=/images/verilator \
     bash /images/verilator/scripts/install.sh
@@ -340,7 +340,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="61c4f72c15ae2e7a6d7d4ba18c1cc19f84a5bf1c"
+ARG XSCHEM_REPO_COMMIT="8fa2c9c22a353c98387fe70cf968c46067e42075"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -385,7 +385,7 @@ RUN --mount=type=bind,source=images/yosys,target=/images/yosys \
 
 FROM base AS ghdl-yosys-plugin
 ARG GHDL_YOSYS_PLUGIN_REPO_URL="https://github.com/ghdl/ghdl-yosys-plugin.git"
-ARG GHDL_YOSYS_PLUGIN_REPO_COMMIT="511412f984d64ed7c46c4bdbd839f4b3c48f6fa5"
+ARG GHDL_YOSYS_PLUGIN_REPO_COMMIT="9a18623a4caa9908357fa714cac9ff422baa30e5"
 ARG GHDL_YOSYS_PLUGIN_NAME="ghdl-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 COPY --from=ghdl	${TOOLS}    ${TOOLS}
@@ -394,7 +394,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="c71a9451752d4c514c037ca5e88d9a0047cfa66f"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="1b1930273972f6a0246951674a23012170e520a1"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \
