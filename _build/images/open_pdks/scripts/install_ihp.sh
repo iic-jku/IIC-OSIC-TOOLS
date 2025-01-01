@@ -25,7 +25,9 @@ if [ -d $IHP_PDK ]; then
 fi
 
 # compile .va models
-
 cd "$PDK_ROOT"/"$MY_PDK"/libs.tech/ngspice/openvaf || exit 1
-
 "$TOOLS/$OPENVAF_NAME/bin/openvaf" --target_cpu generic psp103_nqs.va
+
+# remove testing folders to save space
+cd "$PDK_ROOT/$MY_PDK"
+find . -name "testing" -exec rm -rf {} \;

@@ -70,6 +70,10 @@ rm -rf "$PDK_ROOT"/volare/gf180mcu/versions/*/gf180mcuB
 rm -rf "$PDK_ROOT"/gf180mcuA
 rm -rf "$PDK_ROOT"/gf180mcuB
 
+# remove testing folders to save space
+cd "$PDK_ROOT"
+find . -name "testing" -exec rm -rf {} \;
+
 if [ -d "$PDK_ROOT/gf180mcuC" ]; then
 	cd "$PDK_ROOT/gf180mcuC/libs.tech/ngspice" || exit 1
 	
