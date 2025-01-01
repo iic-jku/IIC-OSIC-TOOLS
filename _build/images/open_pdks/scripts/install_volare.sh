@@ -14,11 +14,16 @@ fi
 echo "[INFO] Installing SKY130 PDK."
 volare enable "${OPEN_PDKS_REPO_COMMIT}" --pdk sky130
 
+# remove sky130B for size reasons
 rm -rf "$PDK_ROOT"/volare/sky130/versions/*/sky130B
 rm -rf "$PDK_ROOT"/sky130B
 
 if [ -d "$PDK_ROOT/sky130A" ]; then
+	# gzip Liberty (.lib) files
+	cd "$PDK_ROOT/sky130A/libs.ref"
+	find . -name "*.lib" -exec gzip {} \;
 
+	# create compact model files
     cd "$PDK_ROOT/sky130A/libs.tech/ngspice" || exit 1
 
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice tt
@@ -27,6 +32,7 @@ if [ -d "$PDK_ROOT/sky130A" ]; then
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice sf
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice fs
 
+	# add custom bindkeys
     echo "# Custom bindkeys for IICQC" 		        >> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
     echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
 
@@ -39,7 +45,11 @@ if [ -d "$PDK_ROOT/sky130A" ]; then
 fi
 
 if [ -d "$PDK_ROOT/sky130B" ]; then
+	# gzip Liberty (.lib) files
+	cd "$PDK_ROOT/sky130B/libs.ref"
+	find . -name "*.lib" -exec gzip {} \;
 
+	# create compact model files
 	cd "$PDK_ROOT/sky130B/libs.tech/ngspice" || exit 1
 	
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice tt
@@ -65,12 +75,17 @@ fi
 echo "[INFO] Installing GF180 PDK."
 volare enable "${OPEN_PDKS_REPO_COMMIT}" --pdk gf180mcu
 
+# remove gf180mcuA and gf180mcuB for size reasons
 rm -rf "$PDK_ROOT"/volare/gf180mcu/versions/*/gf180mcuA
 rm -rf "$PDK_ROOT"/volare/gf180mcu/versions/*/gf180mcuB
 rm -rf "$PDK_ROOT"/gf180mcuA
 rm -rf "$PDK_ROOT"/gf180mcuB
 
 if [ -d "$PDK_ROOT/gf180mcuC" ]; then
+	# gzip Liberty (.lib) files
+	cd "$PDK_ROOT/gf180mcuC/libs.ref"
+	find . -name "*.lib" -exec gzip {} \;
+
 	cd "$PDK_ROOT/gf180mcuC/libs.tech/ngspice" || exit 1
 	
 	# setup empty .spiceinit (harmonize with SG13G2)
@@ -85,6 +100,10 @@ if [ -d "$PDK_ROOT/gf180mcuC" ]; then
 fi
 
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
+	# gzip Liberty (.lib) files
+	cd "$PDK_ROOT/gf180mcuD/libs.ref"
+	find . -name "*.lib" -exec gzip {} \;
+
 	cd "$PDK_ROOT/gf180mcuD/libs.tech/ngspice" || exit 1
 	
 	# setup empty .spiceinit (harmonize with SG13G2)
