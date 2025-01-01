@@ -159,12 +159,11 @@ Below is a list of the current tools already installed and ready to use (note th
 * [rggen](https://github.com/rggen/rggen) code generation tool for configuration and status registers
 * [schemdraw](https://github.com/cdelker/schemdraw) Python package for drawing electrical schematics
 * [slang](https://github.com/MikePopoloski/slang) SystemVerilog parsing and translation (e.g. to Verilog)
-* [spike](https://github.com/riscv-software-src/riscv-isa-sim) Spike RISC-V ISA simulator
 * [spyci](https://github.com/gmagno/spyci) analyze/plot `ngspice`/`xyce` output data with Python
 * [surelog](https://github.com/chipsalliance/Surelog) SystemVerilog parser, elaborator, and UHDM compiler
 * [vlog2verilog](https://github.com/RTimothyEdwards/qflow) Verilog file conversion
 * [volare](https://github.com/efabless/volare) version manager (and builder) for open-source PDKs
-* [risc-v toolchain](https://github.com/riscv/riscv-gnu-toolchain) GNU compiler toolchain for RISC-V cores
+* [risc-v toolchain](https://github.com/riscv/riscv-gnu-toolchain) GNU compiler toolchain for RISC-V cores, incl. [Spike](https://github.com/riscv-software-src/riscv-isa-sim) RISC-V ISA simulator
 * [siliconcompiler](https://github.com/siliconcompiler/siliconcompiler) modular build system for hardware
 * [sky130](https://github.com/google/skywater-pdk) SkyWater Technologies 130nm CMOS PDK
 * [verilator](https://github.com/verilator/verilator) fast Verilog simulator
