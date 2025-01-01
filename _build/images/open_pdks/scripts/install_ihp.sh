@@ -45,3 +45,7 @@ find . -name "testing" -print0 | xargs -0 rm -rf
 # remove mdm files from doc folder to save space
 cd "$PDK_ROOT/$PDK/libs.doc"
 find . -name "*.mdm" -print0 | xargs -0 rm -rf
+
+# gzip Liberty (.lib) files
+cd "$PDK_ROOT/$MY_PDK/libs.ref"
+find . -name "*.lib" -exec gzip {} \;
