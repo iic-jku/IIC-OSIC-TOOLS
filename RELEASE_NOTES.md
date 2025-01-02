@@ -4,8 +4,16 @@ This document summarizes the most important changes of the individual releases o
 
 ## 2025.01
 
-* Upgrade base OS to Ubuntu 24.04 LTS (from 22.04 LTS)
+* Upgrade base OS to Ubuntu 24.04 LTS (from 22.04 LTS).
+* Significantly reduced (by 1/3) the Docker image size with various measures:
+  * Remove the debug symbols from the RISC-V toolchain and strip the executables
+  * Remove the KLayout testing folders
+  * Remove dedicated build of `spike` as it is a part of the RISC-V toolchain
+  * Remove the device measurements (mdm files) for the SG13G2 PDK
+  * Use gzip`ed Liberty files for all PDKs
 * Adding `lctime` CMOS cell characterization kit.
+* Adding `qalculate` to have an onboard calculator.
+* Adding analog circuit design course files.
 * Bump various tool versions.
 
 ## 2024.12
