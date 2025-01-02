@@ -310,7 +310,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="f03ccdb83c873b9c618aa8db317b8003032d14d2"
+ARG SLANG_REPO_COMMIT="6cc7af515d1f5c7cae9d230aa3b862372390745a"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
