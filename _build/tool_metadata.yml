@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 85927f0524ee60fb99024117534238c96baedaaf
+  commit: 7c048e5b373e0a1df6f62401dc2403c446b2095a
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 9a18623a4caa9908357fa714cac9ff422baa30e5
@@ -24,7 +24,7 @@
   commit: a7884acc04cd94017779893d381b7e93d8895587
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 8cd7bb358487f354bdab84bd92f31b2451f60841
+  commit: b794b9cc2649172f27ba77f701956e903fdb0705
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.29.10"
@@ -33,10 +33,10 @@
   commit: a4537c1fba19966e80408a7b224001d5697ff1e6
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.509"
+  commit: "8.3.511"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.289"
+  commit: "1.5.291"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-44"
@@ -72,7 +72,7 @@
   commit: abadfdc507d5a75b6272dc360e70a80a510c758a
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 6cc7af515d1f5c7cae9d230aa3b862372390745a
+  commit: 4a368ae0e51dd681e55ddb564f0d81bd53a6a49b
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 1b1930273972f6a0246951674a23012170e520a1
@@ -96,7 +96,7 @@
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 8fa2c9c22a353c98387fe70cf968c46067e42075
+  commit: d2321f1eeb9c59505ade520ea76fbf46745ccf6f
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.8.0"

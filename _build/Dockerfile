@@ -37,7 +37,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM basepkg AS magic
 ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic.git"
-ARG MAGIC_REPO_COMMIT="8.3.509"
+ARG MAGIC_REPO_COMMIT="8.3.511"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
@@ -121,7 +121,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="85927f0524ee60fb99024117534238c96baedaaf"
+ARG GHDL_REPO_COMMIT="7c048e5b373e0a1df6f62401dc2403c446b2095a"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -151,7 +151,7 @@ RUN --mount=type=bind,source=images/irsim,target=/images/irsim \
 #######################################################################
 FROM base AS iverilog
 ARG IVERILOG_REPO_URL="https://github.com/steveicarus/iverilog.git"
-ARG IVERILOG_REPO_COMMIT="8cd7bb358487f354bdab84bd92f31b2451f60841"
+ARG IVERILOG_REPO_COMMIT="b794b9cc2649172f27ba77f701956e903fdb0705"
 ARG IVERILOG_NAME="iverilog"
 RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
     bash /images/iverilog/scripts/install.sh
@@ -181,7 +181,7 @@ RUN --mount=type=bind,source=images/libman,target=/images/libman \
 #######################################################################
 FROM base AS netgen
 ARG NETGEN_REPO_URL="https://github.com/rtimothyedwards/netgen.git"
-ARG NETGEN_REPO_COMMIT="1.5.289"
+ARG NETGEN_REPO_COMMIT="1.5.291"
 ARG NETGEN_NAME="netgen"
 RUN --mount=type=bind,source=images/netgen,target=/images/netgen \
     bash /images/netgen/scripts/install.sh
@@ -310,7 +310,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="6cc7af515d1f5c7cae9d230aa3b862372390745a"
+ARG SLANG_REPO_COMMIT="4a368ae0e51dd681e55ddb564f0d81bd53a6a49b"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -340,7 +340,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="8fa2c9c22a353c98387fe70cf968c46067e42075"
+ARG XSCHEM_REPO_COMMIT="d2321f1eeb9c59505ade520ea76fbf46745ccf6f"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
