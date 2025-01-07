@@ -199,6 +199,19 @@ alias gln='git log --name-status'
 alias gsss='git submodule status'
 
 #----------------------------------------
+# user functions
+#----------------------------------------
+
+function mdview() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: mdview <file.md>"
+    else
+        pandoc "$1" > "/tmp/$1.html"
+        xdg-open "/tmp/$1.html"
+  fi
+}
+
+#----------------------------------------
 # adapt user prompt
 #----------------------------------------
 

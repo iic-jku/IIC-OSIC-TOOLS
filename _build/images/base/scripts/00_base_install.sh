@@ -134,6 +134,7 @@ apt -y install \
 	ninja-build \
 	openmpi-bin \
 	openssl \
+	pandoc \
 	patch \
 	patchutils \
 	pciutils \
