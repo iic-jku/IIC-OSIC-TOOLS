@@ -79,6 +79,9 @@
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
+- name: surfer
+  repo: https://gitlab.com/surfer-project/surfer
+  commit: "v0.3.0"
 - name: trilinos
   repo: https://github.com/trilinos/Trilinos.git
   commit: "trilinos-release-12-12-1"

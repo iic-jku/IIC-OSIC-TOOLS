@@ -78,6 +78,7 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
     _path_add_tool_bin      "qucs-s"
     _path_add_tool_custom   "rftoolkit/bin"
     _path_add_tool_bin      "slang"
+    _path_add_tool_bin      "surfer"
     _path_add_tool_bin      "verilator"
     _path_add_tool_bin      "xschem"
     _path_add_tool_bin      "xyce"
@@ -150,6 +151,7 @@ alias k='klayout -nn $PDKPATH/libs.tech/klayout/tech/$PDK.lyt'
 alias ke='klayout -e -nn $PDKPATH/libs.tech/klayout/tech/$PDK.lyt'
 
 alias openlane='openlane --manual-pdk'
+alias surfer="LIBGL_ALWAYS_INDIRECT=0 surfer"
 
 #FIXME Show hint that OpenLane(1) has been removed
 alias flow.tcl='printf "[INFO] OpenLane(1) has been depreciated.\n[INFO] Please use OpenLane2 (start with <openlane>).\n"'

@@ -265,6 +265,16 @@ RUN --mount=type=bind,source=images/surelog,target=/images/surelog \
     bash /images/surelog/scripts/install.sh
 
 #######################################################################
+# Compile surfer
+#######################################################################
+FROM base AS surfer
+ARG SURFER_REPO_URL="https://gitlab.com/surfer-project/surfer"
+ARG SURFER_REPO_COMMIT="v0.3.0"
+ARG SURFER_NAME="surfer"
+RUN --mount=type=bind,source=images/surfer,target=/images/surfer \
+    bash /images/surfer/scripts/install.sh
+
+#######################################################################
 # Compile qflow helper files
 #######################################################################
 FROM base AS qflow
@@ -468,6 +478,7 @@ COPY --from=riscv-gnu-toolchain          ${TOOLS}/              ${TOOLS}/
 COPY --from=riscv-pk                     ${TOOLS}/              ${TOOLS}/
 COPY --from=slang                        ${TOOLS}/              ${TOOLS}/
 COPY --from=surelog                      ${TOOLS}/              ${TOOLS}/
+COPY --from=surfer                       ${TOOLS}/              ${TOOLS}/
 COPY --from=verilator                    ${TOOLS}/              ${TOOLS}/
 COPY --from=xcircuit                     ${TOOLS}/              ${TOOLS}/
 COPY --from=xschem                       ${TOOLS}/              ${TOOLS}/
