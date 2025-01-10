@@ -29,9 +29,9 @@ make > $RESULT
 
 # check if there is an error in the log
 if grep -q "ERROR" "$RESULT"; then
-    echo "[ERROR] Test <ORFS with sg13g2> FAILED."
+    echo "[ERROR] Test <ORFS with ihp-sg13g2> FAILED."
     exit 1
 else
-    echo "[INFO] Test <ORFS with sg13g2> passed."
+    echo "[INFO] Test <ORFS with ihp-sg13g2> passed."
     exit 0
 fi

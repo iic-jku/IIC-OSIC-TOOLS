@@ -1,4 +1,4 @@
-** sch_path: /foss/pdks/sg13g2/libs.tech/xschem/sg13g2_tests/dc_hbt_13g2.sch
+** sch_path: /foss/pdks/ihp-sg13g2/libs.tech/xschem/sg13g2_tests/dc_hbt_13g2.sch
 **.subckt dc_hbt_13g2
 Vce net3 GND 1.5
 I0 GND net1 1u

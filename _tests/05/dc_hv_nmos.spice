@@ -1,4 +1,4 @@
-** sch_path: /foss/pdks/sg13g2/libs.tech/xschem/sg13g2_tests/dc_hv_nmos.sch
+** sch_path: /foss/pdks/ihp-sg13g2/libs.tech/xschem/sg13g2_tests/dc_hv_nmos.sch
 **.subckt dc_hv_nmos
 Vgs net1 GND 0.75
 Vds net3 GND 1.5

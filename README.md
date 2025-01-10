@@ -91,11 +91,11 @@ export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
 ```
 
-| IHP Microelectronics `sg13g2` |
+| IHP Microelectronics `ihp-sg13g2` |
 |---|
 
 ```bash
-export PDK=sg13g2
+export PDK=ihp-sg13g2
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=sg13g2_stdcell
 export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
@@ -105,7 +105,7 @@ export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
 The probably best way to switch between PDKs is to use the command `iic-pdk`. When called without arguments a list of installed PDKs is shown. To e.g. switch to IHP enter
 
 ```bash
-iic-pdk sg13g2
+iic-pdk ihp-sg13g2
 ```
 
 More options for selecting digital standard cell libraries are available; please check the PDK directories.
@@ -128,7 +128,7 @@ Below is a list of the current tools already installed and ready to use (note th
 * [gf180mcu](https://github.com/google/gf180mcu-pdk) GlobalFoundries 180nm CMOS PDK
 * [ghdl](https://github.com/ghdl/ghdl) VHDL simulator
 * [gtkwave](https://github.com/gtkwave/gtkwave) waveform plot tool for digital simulation
-* [sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
+* [ihp-sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
 * [irsim](https://github.com/rtimothyedwards/irsim) switch-level digital simulator
 * [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
 * [hdl21](https://github.com/dan-fritchman/Hdl21) analog hardware description library

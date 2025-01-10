@@ -10,7 +10,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Switch to sg13g2 PDK
 # shellcheck source=/dev/null
-source iic-pdk-script.sh sg13g2 > /dev/null
+source iic-pdk-script.sh ihp-sg13g2 > /dev/null
 # Run the simulations
 ngspice -b $DIR/dc_hbt_13g2.spice > /dev/null 2>&1 || ERROR=1
 ngspice -b $DIR/dc_hv_nmos.spice > /dev/null 2>&1 || ERROR=1
@@ -19,9 +19,9 @@ ngspice -b $DIR/dc_lv_nmos.spice > /dev/null 2>&1 || ERROR=1
 ngspice -b $DIR/dc_lv_pmos.spice > /dev/null 2>&1 || ERROR=1
 # Check if there is an error in the log
 if [ $ERROR -eq 1 ]; then
-    echo "[ERROR] Test <ngspice with sg13g2> FAILED."
+    echo "[ERROR] Test <ngspice with ihp-sg13g2> FAILED."
     exit 1
 else
-    echo "[INFO] Test <ngspice with sg13g2> passed."
+    echo "[INFO] Test <ngspice with ihp-sg13g2> passed."
     exit 0
 fi

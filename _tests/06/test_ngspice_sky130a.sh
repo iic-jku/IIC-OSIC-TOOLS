@@ -8,7 +8,7 @@
 ERROR=0
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Switch to sg13g2 PDK
+# Switch to sky130A PDK
 # shellcheck source=/dev/null
 source iic-pdk-script.sh sky130A > /dev/null
 # Run the simulations
