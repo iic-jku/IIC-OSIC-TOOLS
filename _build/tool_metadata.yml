@@ -12,19 +12,19 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 7c048e5b373e0a1df6f62401dc2403c446b2095a
+  commit: c1e8896311e20faacee40337b44c728f57792f73
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 9a18623a4caa9908357fa714cac9ff422baa30e5
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
-  commit: f668e5ecdf0ad1119d61a1fb27dd56d9c99d79a5
+  commit: 746fca8d109a0343aba46b20e59af866416acdec
 - name: irsim
   repo: https://github.com/rtimothyedwards/irsim.git
   commit: a7884acc04cd94017779893d381b7e93d8895587
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: b794b9cc2649172f27ba77f701956e903fdb0705
+  commit: 30123f89451939fc946a2395c91e39911fcd354a
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.29.10"
@@ -33,7 +33,7 @@
   commit: a4537c1fba19966e80408a7b224001d5697ff1e6
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.511"
+  commit: "8.3.512"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.291"
@@ -72,7 +72,7 @@
   commit: abadfdc507d5a75b6272dc360e70a80a510c758a
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 4a368ae0e51dd681e55ddb564f0d81bd53a6a49b
+  commit: dd7f9c0cd904c93cc6316aa2c6f6a17773a4e2be
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 1b1930273972f6a0246951674a23012170e520a1
@@ -99,7 +99,7 @@
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: d2321f1eeb9c59505ade520ea76fbf46745ccf6f
+  commit: 0a3fd95e065f34dea80c851efe049cf9205ef289
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.8.0"

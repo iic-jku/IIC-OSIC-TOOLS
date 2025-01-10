@@ -30,7 +30,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	scikit-rf==1.5.0 \
 	siliconcompiler==0.29.0 \
 	spyci==1.0.2 \
-	volare==0.19.3
+	volare==0.20.5
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
