@@ -266,9 +266,10 @@ RUN --mount=type=bind,source=images/surelog,target=/images/surelog \
 #######################################################################
 # Compile surfer
 #######################################################################
-FROM rust:1.82 AS surfer
+FROM base AS surfer
 ARG SURFER_REPO_URL="https://gitlab.com/surfer-project/surfer"
 ARG SURFER_REPO_COMMIT="v0.3.0"
+ARG SURFER_NAME="surfer"
 RUN --mount=type=bind,source=images/surfer,target=/images/surfer \
     bash /images/surfer/scripts/install.sh
 

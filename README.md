@@ -161,6 +161,7 @@ Below is a list of the current tools already installed and ready to use (note th
 * [spike](https://github.com/riscv-software-src/riscv-isa-sim) Spike RISC-V ISA simulator
 * [spyci](https://github.com/gmagno/spyci) analyze/plot `ngspice`/`xyce` output data with Python
 * [surelog](https://github.com/chipsalliance/Surelog) SystemVerilog parser, elaborator, and UHDM compiler
+* [surfer](https://gitlab.com/surfer-project/surfer) waveform viewer with snappy usable interface and extensibility
 * [vlog2verilog](https://github.com/RTimothyEdwards/qflow) Verilog file conversion
 * [volare](https://github.com/efabless/volare) version manager (and builder) for open-source PDKs
 * [risc-v toolchain](https://github.com/riscv/riscv-gnu-toolchain) GNU compiler toolchain for RISC-V cores

@@ -78,6 +78,7 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
     _path_add_tool_bin      "qucs-s"
     _path_add_tool_custom   "rftoolkit/bin"
     _path_add_tool_bin      "slang"
+    _path_add_tool_bin      "surfer"
     _path_add_tool_bin      "verilator"
     _path_add_tool_bin      "xschem"
     _path_add_tool_bin      "xyce"
