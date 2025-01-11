@@ -70,7 +70,7 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
     _path_add_tool_bin      "nvc"
     _path_add_tool_bin      "openroad"
     _path_add_tool_bin      "opensta"
-	_path_add_tool_bin	    "openvaf"
+	_path_add_tool_bin	"openvaf"
     _path_add_tool_custom   "osic-multitool"
     _path_add_tool_bin      "padring"
     _path_add_tool_bin      "pyopus"
@@ -152,6 +152,9 @@ alias ke='klayout -e -nn $PDKPATH/libs.tech/klayout/tech/$PDK.lyt'
 
 alias openlane='openlane --manual-pdk'
 alias surfer='LIBGL_ALWAYS_INDIRECT=0 surfer'
+# IHP-SG13G2 needs this plugin, using an alias seems to the the only proper solution for now
+alias xyce='xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so'
+alias Xyce='Xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so'
 
 #FIXME Show hint that OpenLane(1) has been removed
 alias flow.tcl='printf "[INFO] OpenLane(1) has been depreciated.\n[INFO] Please use OpenLane2 (start with <openlane>).\n"'
