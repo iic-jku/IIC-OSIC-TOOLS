@@ -27,7 +27,7 @@ cd "$PDK_ROOT/$PDK/libs.tech/ngspice/openvaf" || exit 1
 "$TOOLS/openvaf/bin/openvaf" --target_cpu generic psp103_nqs.va
 
 # compile PSP model for xyce
-cd "$PDK_ROOT/$PDK/libs.tech/xyce" || exit 1 
+cd "$PDK_ROOT/$PDK/libs.tech/xyce/adms" || exit 1 
 ./adms-compile-va.sh
 
 # remove testing folders to save space
