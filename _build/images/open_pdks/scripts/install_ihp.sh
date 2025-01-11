@@ -28,7 +28,12 @@ cd "$PDK_ROOT/$PDK/libs.tech/ngspice/openvaf" || exit 1
 
 # compile PSP model for xyce
 cd "$PDK_ROOT/$PDK/libs.tech/xyce/adms" || exit 1 
+export PATH=$TOOLS/xyce/bin:$PATH
 ./adms-compile-va.sh
+if [ ! -f ../plugins/Xyce_Plugin_PSP103_VA.so ]; then
+    echo "[ERROR] ADMS model compilation for Xyce failed!"
+    exit 1
+fi
 
 # remove testing folders to save space
 cd "$PDK_ROOT/$PDK"
