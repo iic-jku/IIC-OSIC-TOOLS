@@ -57,7 +57,7 @@ RUN --mount=type=bind,source=images/openvaf,target=/images/openvaf \
 #######################################################################
 # Compile osic-multitool
 #######################################################################
-FROM openvaf AS osic-multitool
+FROM base AS osic-multitool
 ARG OSIC_MULTITOOL_REPO_URL="https://github.com/iic-jku/osic-multitool.git"
 ARG OSIC_MULTITOOL_REPO_COMMIT="cc61d2dcad01491a6256097761b6c25f2809be63"
 ARG OSIC_MULTITOOL_NAME="osic-multitool"
@@ -71,6 +71,8 @@ FROM osic-multitool AS open_pdks
 ARG OPEN_PDKS_REPO_URL="https://github.com/RTimothyEdwards/open_pdks.git"
 ARG OPEN_PDKS_REPO_COMMIT="0fe599b2afb6708d281543108caf8310912f54af"
 ARG OPEN_PDKS_NAME="open_pdks"
+COPY --from=openvaf ${TOOLS}/ ${TOOLS}/
+COPY --from=xyce ${TOOLS}/ ${TOOLS}/
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_volare.sh
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \

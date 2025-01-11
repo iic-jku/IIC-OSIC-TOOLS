@@ -22,9 +22,13 @@ if [ -d $PDK ]; then
 	mv $PDK "$PDK_ROOT/$PDK"
 fi
 
-# compile .va models
-cd "$PDK_ROOT"/"$PDK"/libs.tech/ngspice/openvaf || exit 1
+# compile .va models for ngspice
+cd "$PDK_ROOT/$PDK/libs.tech/ngspice/openvaf" || exit 1
 "$TOOLS/$OPENVAF_NAME/bin/openvaf" --target_cpu generic psp103_nqs.va
+
+# compile PSP model for xyce
+cd "$PDK_ROOT/$PDK/libs.tech/xyce" || exit 1 
+./adms-compile-va.sh
 
 # remove testing folders to save space
 cd "$PDK_ROOT/$PDK"
