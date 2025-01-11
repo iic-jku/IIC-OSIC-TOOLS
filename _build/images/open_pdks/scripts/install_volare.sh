@@ -79,6 +79,9 @@ if [ -d "$PDK_ROOT/gf180mcuC" ]; then
 	# remove testing folders to save space
 	cd "$PDK_ROOT/gf180mcuC"
 	find . -name "testing" -print0 | xargs -0 rm -rf
+
+	# fix test schematic relative paths
+	sed -i 's/{test_/{tests\/test_/g' $PDK_ROOT/gf180mcuC/libs.tech/xschem/tests/0_top.sch
 fi
 
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
@@ -90,4 +93,7 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	# remove testing folders to save space
 	cd "$PDK_ROOT/gf180mcuD"
 	find . -name "testing" -print0 | xargs -0 rm -rf
+
+	# fix test schematic relative paths
+	sed -i 's/{test_/{tests\/test_/g' $PDK_ROOT/gf180mcuD/libs.tech/xschem/tests/0_top.sch
 fi
