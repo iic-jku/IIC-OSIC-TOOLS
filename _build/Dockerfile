@@ -57,7 +57,7 @@ RUN --mount=type=bind,source=images/openvaf,target=/images/openvaf \
 #######################################################################
 # Compile osic-multitool
 #######################################################################
-FROM base AS osic-multitool
+FROM basepkg AS osic-multitool
 ARG OSIC_MULTITOOL_REPO_URL="https://github.com/iic-jku/osic-multitool.git"
 ARG OSIC_MULTITOOL_REPO_COMMIT="cc61d2dcad01491a6256097761b6c25f2809be63"
 ARG OSIC_MULTITOOL_NAME="osic-multitool"
