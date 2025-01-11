@@ -65,6 +65,28 @@ RUN --mount=type=bind,source=images/osic-multitool,target=/images/osic-multitool
     bash /images/osic-multitool/scripts/install.sh
 
 #######################################################################
+# Compile xyce & xyce-xdm
+#######################################################################
+FROM base AS xyce
+ARG XYCE_TRILINOS_REPO_URL="https://github.com/trilinos/Trilinos.git"
+ARG XYCE_TRILINOS_REPO_COMMIT="trilinos-release-12-12-1"
+ARG XYCE_TRILINOS_NAME="trilinos"
+ARG XYCE_REPO_URL="https://github.com/Xyce/Xyce.git"
+ARG XYCE_REPO_COMMIT="Release-7.8.0"
+ARG XYCE_NAME="xyce"
+RUN --mount=type=bind,source=images/xyce,target=/images/xyce \
+    bash /images/xyce/scripts/install.sh
+
+FROM xyce AS xyce-xdm
+ARG XYCE_XDM_REPO_URL="https://github.com/Xyce/XDM.git"
+ARG XYCE_XDM_REPO_COMMIT="Release-2.7.0"
+ARG XYCE_XDM_NAME="xyce-xdm"
+#FIXME XDM has build fails in 24.04 LTS, not sure why; remove it for the
+#      time being
+#RUN --mount=type=bind,source=images/xyce-xdm,target=/images/xyce-xdm \
+#    bash /images/xyce-xdm/scripts/install.sh
+
+#######################################################################
 # Create open_pdks
 #######################################################################
 FROM osic-multitool AS open_pdks
@@ -356,28 +378,6 @@ ARG XSCHEM_REPO_COMMIT="0a3fd95e065f34dea80c851efe049cf9205ef289"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
-
-#######################################################################
-# Compile xyce & xyce-xdm
-#######################################################################
-FROM base AS xyce
-ARG XYCE_TRILINOS_REPO_URL="https://github.com/trilinos/Trilinos.git"
-ARG XYCE_TRILINOS_REPO_COMMIT="trilinos-release-12-12-1"
-ARG XYCE_TRILINOS_NAME="trilinos"
-ARG XYCE_REPO_URL="https://github.com/Xyce/Xyce.git"
-ARG XYCE_REPO_COMMIT="Release-7.8.0"
-ARG XYCE_NAME="xyce"
-RUN --mount=type=bind,source=images/xyce,target=/images/xyce \
-    bash /images/xyce/scripts/install.sh
-
-FROM xyce AS xyce-xdm
-ARG XYCE_XDM_REPO_URL="https://github.com/Xyce/XDM.git"
-ARG XYCE_XDM_REPO_COMMIT="Release-2.7.0"
-ARG XYCE_XDM_NAME="xyce-xdm"
-#FIXME XDM has build fails in 24.04 LTS, not sure why; remove it for the
-#      time being
-#RUN --mount=type=bind,source=images/xyce-xdm,target=/images/xyce-xdm \
-#    bash /images/xyce-xdm/scripts/install.sh
 
 #######################################################################
 # Compile yosys & ghdl plugin & slang plugin
