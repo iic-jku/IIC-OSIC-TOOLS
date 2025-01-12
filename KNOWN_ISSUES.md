@@ -36,10 +36,6 @@ As of image `2025.01` Surfer has been added. Surfer is known to crash on quite a
 
 The visualization tool "AppCSXCAD" will not work in the container with our default settings (`vtkXOpenGLRenderWindow (0x....): Cannot create GLX context.  Aborting.`). The issue has been located to be connected with the environment variable "LIBGL_ALWAYS_INDIRECT". As a workaround, we suggest either unsetting the variable or setting it to 0 (`unset LIBGL_ALWAYS_INDIRECT` or `export LIBGL_ALWAYS_INDIRECT=0`) which is persistent for the running terminal or run AppCSXCAD with the variable set to zero inline: `LIBGL_ALWAYS_INDIRECT=0 AppCSXCAD`.
 
-### Hdl21/Vlsirtools
-
-We (temporarily) removed `Hdl21` and `Vlsirtools`, as they force `numpy` to version 1. All other packages allow `numpy` 2, so this removal, until the dependencies are fixed.
-
 ### PyOPUS
 
 `PyOPUS` is removed, as build fails, and it forces `numpy` to version 1.

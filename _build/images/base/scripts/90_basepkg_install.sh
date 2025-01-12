@@ -18,6 +18,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	fusesoc==2.4 \
 	gdsfactory==8.29.0 \
 	gdspy==1.6.13 \
+	hdl21==7.0.0 \
 	lctime==0.0.24 \
 	openlane==2.3.2 \
 	openram==1.2.48 \
@@ -30,6 +31,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	scikit-rf==1.5.0 \
 	siliconcompiler==0.29.0 \
 	spyci==1.0.2 \
+	vlsirtools=7.0.0 \
 	volare==0.20.5
 
 echo "[INFO] Install EDA packages via GEM"
