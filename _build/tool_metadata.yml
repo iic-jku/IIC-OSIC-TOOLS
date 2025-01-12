@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: c1e8896311e20faacee40337b44c728f57792f73
+  commit: ea6a2fb29855ca72d7bc3a3c34d528535625d62b
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 9a18623a4caa9908357fa714cac9ff422baa30e5
@@ -33,19 +33,19 @@
   commit: a4537c1fba19966e80408a7b224001d5697ff1e6
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.512"
+  commit: "8.3.513"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.291"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
-  commit: "ngspice-44"
+  commit: "ngspice-44.2"
 - name: ngspyce
   repo: https://github.com/ignamv/ngspyce.git
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
 - name: nvc
   repo: https://github.com/nickg/nvc.git
-  commit: "r1.14.2"
+  commit: "r1.15.0"
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
   commit: 0fe599b2afb6708d281543108caf8310912f54af
@@ -72,10 +72,10 @@
   commit: abadfdc507d5a75b6272dc360e70a80a510c758a
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: dd7f9c0cd904c93cc6316aa2c6f6a17773a4e2be
+  commit: f04d7a0f10e9ae96ca9bdfb4de6dd6eb543f6ce9
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 1b1930273972f6a0246951674a23012170e520a1
+  commit: e767dc084c0caa5dbf8c5125feec587977ff271b
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
@@ -99,10 +99,10 @@
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 0a3fd95e065f34dea80c851efe049cf9205ef289
+  commit: 8da888a11938dbc9b47c1d80f1fa76307a7e7ab8
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
-  commit: "Release-7.8.0"
+  commit: be78559c25eb74c5c56b0cee795b36940db6de17
 - name: xyce-xdm
   repo: https://github.com/Xyce/XDM.git
   commit: "Release-2.7.0"

@@ -37,7 +37,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM basepkg AS magic
 ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic.git"
-ARG MAGIC_REPO_COMMIT="8.3.512"
+ARG MAGIC_REPO_COMMIT="8.3.513"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
@@ -72,7 +72,7 @@ ARG XYCE_TRILINOS_REPO_URL="https://github.com/trilinos/Trilinos.git"
 ARG XYCE_TRILINOS_REPO_COMMIT="trilinos-release-12-12-1"
 ARG XYCE_TRILINOS_NAME="trilinos"
 ARG XYCE_REPO_URL="https://github.com/Xyce/Xyce.git"
-ARG XYCE_REPO_COMMIT="Release-7.8.0"
+ARG XYCE_REPO_COMMIT="be78559c25eb74c5c56b0cee795b36940db6de17"
 ARG XYCE_NAME="xyce"
 RUN --mount=type=bind,source=images/xyce,target=/images/xyce \
     bash /images/xyce/scripts/install.sh
@@ -145,7 +145,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="c1e8896311e20faacee40337b44c728f57792f73"
+ARG GHDL_REPO_COMMIT="ea6a2fb29855ca72d7bc3a3c34d528535625d62b"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -215,7 +215,7 @@ RUN --mount=type=bind,source=images/netgen,target=/images/netgen \
 #######################################################################
 FROM open_pdks AS ngspice
 ARG NGSPICE_REPO_URL="https://github.com/danchitnis/ngspice-sf-mirror.git"
-ARG NGSPICE_REPO_COMMIT="ngspice-44"
+ARG NGSPICE_REPO_COMMIT="ngspice-44.2"
 ARG NGSPICE_NAME="ngspice"
 RUN --mount=type=bind,source=images/ngspice,target=/images/ngspice \
     bash /images/ngspice/scripts/install.sh
@@ -235,7 +235,7 @@ RUN --mount=type=bind,source=images/ngspyce,target=/images/ngspyce \
 #######################################################################
 FROM base AS nvc
 ARG NVC_REPO_URL="https://github.com/nickg/nvc.git"
-ARG NVC_REPO_COMMIT="r1.14.2"
+ARG NVC_REPO_COMMIT="r1.15.0"
 ARG NVC_NAME="nvc"
 RUN --mount=type=bind,source=images/nvc,target=/images/nvc \
     bash /images/nvc/scripts/install.sh
@@ -344,7 +344,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="dd7f9c0cd904c93cc6316aa2c6f6a17773a4e2be"
+ARG SLANG_REPO_COMMIT="f04d7a0f10e9ae96ca9bdfb4de6dd6eb543f6ce9"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -374,7 +374,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="0a3fd95e065f34dea80c851efe049cf9205ef289"
+ARG XSCHEM_REPO_COMMIT="8da888a11938dbc9b47c1d80f1fa76307a7e7ab8"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -406,7 +406,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="1b1930273972f6a0246951674a23012170e520a1"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="e767dc084c0caa5dbf8c5125feec587977ff271b"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \
