@@ -122,6 +122,7 @@ export PDK=sky130A
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=sky130_fd_sc_hd
 export SPICE_USERINIT_DIR=$PDK_ROOT/$PDK/libs.tech/ngspice
+export KLAYOUT_PATH="$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech"
 
 # this gets rid of a few libGL errors
 # https://unix.stackexchange.com/questions/589236/libgl-error-no-matching-fbconfigs-or-visuals-found-glxgears-error-docker-cu
@@ -147,8 +148,8 @@ export PYTHONPATH=$HOME/.local/lib/python3.10/site-packages:$PYTHONPATH
 alias mmagic='MAGTYPE=mag magic'
 alias lmagic='MAGTYPE=maglef magic'
 
-alias k='klayout -nn $PDKPATH/libs.tech/klayout/tech/$PDK.lyt'
-alias ke='klayout -e -nn $PDKPATH/libs.tech/klayout/tech/$PDK.lyt'
+alias k='klayout'
+alias ke='klayout -e'
 
 alias openlane='openlane --manual-pdk'
 alias surfer='LIBGL_ALWAYS_INDIRECT=0 surfer'
