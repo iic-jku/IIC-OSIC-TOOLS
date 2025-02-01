@@ -32,6 +32,8 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	spyci==1.0.2 \
 	volare==0.20.6
 
+#FIXME	hdl21==7.0.0 \
+#FIXME	vlsirtools==7.0.0 \
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
