@@ -5,26 +5,12 @@ I0 GND net1 0.0
 Vc net3 net2 0
 XQ1 net2 net1 GND GND npn13G2 Nx=1
 **** begin user architecture code
-
-
-
 .preprocess replaceground true
 .option temp=27
 .step I0 0 5u 0.1u
 .dc Vce 0 1.2 0.01
-.print dc format=raw file=dc_hbt_13G2.raw I(Vc)
-
-
-
-
-
+.print dc format=raw file=/tmp/dc_hbt_13G2.raw I(Vc)
 .lib /foss/pdks/ihp-sg13g2/libs.tech/xyce/models/cornerHBT.lib hbt_typ
-
-
-
-
-
-
 **** end user architecture code
 **.ends
 .GLOBAL GND

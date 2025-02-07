@@ -8,25 +8,11 @@ XR1 GND net1 rsil w=0.5e-6 l=10e-6 m=1 b=0
 XR2 GND net2 rppd w=0.5e-6 l=0.5e-6 m=1 b=0
 XR3 GND net3 rhigh w=0.5e-6 l=0.5e-6 m=1 b=0
 **** begin user architecture code
-
-
-
 .preprocess replaceground true
 .option temp=27
 .dc Vres 0 1 1m
-.print dc format=raw file=dc_res_temp.raw I(Vsil) I(Vppd) I(Vrh)
-
-
-
-
-
+.print dc format=raw file=/tmp/dc_res_temp.raw I(Vsil) I(Vppd) I(Vrh)
 .lib /foss/pdks/ihp-sg13g2/libs.tech/xyce/models/cornerRES.lib res_typ
-
-
-
-
-
-
 **** end user architecture code
 **.ends
 .GLOBAL GND

@@ -5,26 +5,12 @@ Vds net3 GND 0
 Vd net3 net2 0
 XM1 net2 net1 GND GND sg13_hv_nmos w=1.0u l=0.45u ng=1
 **** begin user architecture code
-
-
-
 .preprocess replaceground true
 .option temp=27
 .step  vgs 0.3 1.5 0.05
 .dc vds 0 3.0 0.01
-.print dc format=raw file=dc_hv_nmos.raw i(Vd)
-
-
-
-
-
+.print dc format=raw file=/tmp/dc_hv_nmos.raw i(Vd)
 .lib /foss/pdks/ihp-sg13g2/libs.tech/xyce/models/cornerMOShv.lib mos_tt
-
-
-
-
-
-
 **** end user architecture code
 **.ends
 .GLOBAL GND
