@@ -13,4 +13,4 @@ chmod +x rustup-init.sh
 ./rustup-init.sh --no-modify-path -y
 
 # install surfer
-cargo install --git ${SURFER_REPO_URL} --tag ${SURFER_REPO_COMMIT} surfer --root "${TOOLS}/${SURFER_NAME}"
+cargo install --git ${SURFER_REPO_URL} --tag ${SURFER_REPO_COMMIT} surfer --root "${TOOLS}/${SURFER_NAME}" --locked
