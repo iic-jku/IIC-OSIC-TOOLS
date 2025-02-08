@@ -41,7 +41,3 @@ The visualization tool "AppCSXCAD" will not work in the container with our defau
 `PyOPUS` is removed, as build fails, and it forces `numpy` to version 1.
 
 ## Build
-
-### Boost
-
-Boost is currently installed from the package sources of Ubuntu and a manual install/build. This is currently required, as there are some dependencies from packages, but also, some manually built tools require a newer boost version. This issue will be resolved in the future when switching to a more modern Ubuntu release.
