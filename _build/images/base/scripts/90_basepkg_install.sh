@@ -29,6 +29,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	schemdraw[svgmath]==0.19 \
 	scikit-rf==1.5.0 \
 	siliconcompiler==0.29.4 \
+	spicelib==1.3.8 \
 	spyci==1.0.2 \
 	volare==0.20.6
 
