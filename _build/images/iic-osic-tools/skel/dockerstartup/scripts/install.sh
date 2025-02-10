@@ -69,7 +69,6 @@ apt install -y \
 apt purge -y light-locker pm-utils *screensaver*
 apt autoremove -y
 
-# FIXME rm /etc/xdg/autostart/polkit*
 /bin/dbus-uuidgen > /etc/machine-id
 
 # create index.html to forward automatically to `vnc_lite.html`
