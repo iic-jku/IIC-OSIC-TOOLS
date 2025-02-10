@@ -33,22 +33,17 @@ make -j"$(nproc)"
 make install
 
 # enable OSDI for IHP PDK
+_add_model() {
+    if [ -f "$PDK_ROOT/ihp-sg13g2/libs.tech/verilog-a/$1" ]; then
+        cp "$PDK_ROOT/ihp-sg13g2/libs.tech/verilog-a/$1" "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$1"
+        echo "osdi ${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$1" >> "$2"
+    fi
+}
 FNAME="${TOOLS}/${NGSPICE_NAME}/share/ngspice/scripts/spinit"
-if [ -f "$PDK_ROOT"/ihp-sg13g2/libs.tech/ngspice/openvaf/psp103_nqs.osdi ]; then
-    cp "$FNAME" "$FNAME".bak
-    sed -i "s/unset osdi_enabled/* unset osdi_enabled/g" "$FNAME"
 
-    sed -i "/asmhemt.osdi/s/^/#/" "$FNAME"
-    sed -i "/bjt504t.osdi/s/^/#/" "$FNAME"
-    sed -i "/BSIMBULK107.osdi/s/^/#/" "$FNAME"
-    sed -i "/BSIMCMG.osdi/s/^/#/" "$FNAME"
-    sed -i "/HICUMl0-2.0.osdi/s/^/#/" "$FNAME"
-    sed -i "/r2_cmc.osdi/s/^/#/" "$FNAME"
-    sed -i "/vbic_4T_et_cf.osdi/s/^/#/" "$FNAME"
-
-    # copy OSDI PSP model for IHP
-    cp "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/openvaf/psp103_nqs.osdi" "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/psp103_nqs.osdi"
-fi
+# enable OSDI for IHP PDK
+_add_model psp103_nqs.osdi "$FNAME"
+_add_model r3_cmc.osdi "$FNAME"
 
 # add BSIMCMG model, required for ASAP7
 git clone --depth=1 https://github.com/dwarning/VA-Models.git vamodels
