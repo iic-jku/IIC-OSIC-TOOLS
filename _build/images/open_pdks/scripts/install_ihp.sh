@@ -13,7 +13,7 @@ PDK="ihp-sg13g2"
 #git clone --depth=1 https://github.com/IHP-GmbH/IHP-Open-PDK.git ihp
 git clone https://github.com/IHP-GmbH/IHP-Open-PDK.git ihp
 cd ihp || exit 1
-#FIXME for now uses branch "dev" to get the latest releases
+# for now uses branch "dev" to get the latest releases
 git checkout dev
 git submodule update --init --recursive
 
@@ -32,11 +32,13 @@ chmod +x openvaf-compile-va.sh
 # xyce
 export PATH="$TOOLS/xyce/bin:$PATH"
 chmod +x adms-compile-va.sh
+# need this WA because of https://github.com/IHP-GmbH/IHP-Open-PDK/issues/352
+rm -f psp103/discipline.h && rm -f r3_cmc/discipline.h
 ./adms-compile-va.sh
-#if [ ! -f ../plugins/Xyce_Plugin_PSP103_VA.so ]; then
-#    echo "[ERROR] ADMS model compilation for Xyce failed!"
-#    exit 1
-#fi
+if [ ! -f ../xyce/plugins/Xyce_Plugin_PSP103_VA.so ] || [ ! -f ../xyce/plugins/Xyce_Plugin_r3_cmc.so ]; then
+    echo "[ERROR] ADMS model compilation for Xyce failed!"
+    exit 1
+fi
 
 # remove testing folders to save space
 cd "$PDK_ROOT/$PDK"
