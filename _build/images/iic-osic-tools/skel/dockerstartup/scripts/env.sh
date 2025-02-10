@@ -157,7 +157,7 @@ alias surfer='LIBGL_ALWAYS_INDIRECT=0 surfer'
 alias xyce='xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so'
 alias Xyce='Xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so'
 
-#FIXME Show hint that OpenLane(1) has been removed
+# Show hint that OpenLane(1) has been removed
 alias flow.tcl='printf "[INFO] OpenLane(1) has been depreciated.\n[INFO] Please use OpenLane2 (start with <openlane>).\n"'
 
 alias iic-pdk='source iic-pdk-script.sh'
