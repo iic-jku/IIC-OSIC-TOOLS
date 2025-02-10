@@ -33,7 +33,8 @@ chmod +x openvaf-compile-va.sh
 export PATH="$TOOLS/xyce/bin:$PATH"
 chmod +x adms-compile-va.sh
 # need this WA because of https://github.com/IHP-GmbH/IHP-Open-PDK/issues/352
-rm -f psp103/discipline.h && rm -f r3_cmc/discipline.h
+sed -i -E '/^(nature|discipline)/s/;( *$)//' psp103/discipline.h
+sed -i -E '/^(nature|discipline)/s/;( *$)//' r3_cmc/discipline.h 
 ./adms-compile-va.sh
 if [ ! -f ../xyce/plugins/Xyce_Plugin_PSP103_VA.so ] || [ ! -f ../xyce/plugins/Xyce_Plugin_r3_cmc.so ]; then
     echo "[ERROR] ADMS model compilation for Xyce failed!"
