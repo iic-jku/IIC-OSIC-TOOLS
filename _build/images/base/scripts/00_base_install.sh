@@ -8,7 +8,6 @@ echo "[INFO] Updating, upgrading and installing packages with APT"
 apt -y update
 apt -y upgrade
 apt -y install \
-	adms \
 	ant \
 	autoconf \
 	automake \
