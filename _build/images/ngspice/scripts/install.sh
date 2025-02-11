@@ -34,8 +34,8 @@ make install
 
 # enable OSDI for IHP PDK
 _add_model() {
-    if [ -f "$PDK_ROOT/ihp-sg13g2/libs.tech/verilog-a/$1" ]; then
-        cp "$PDK_ROOT/ihp-sg13g2/libs.tech/verilog-a/$1" "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$1"
+    if [ -f "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/$1" ]; then
+        cp "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/$1" "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$1"
         echo "osdi ${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$1" >> "$2"
     fi
 }
