@@ -22,7 +22,8 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/33_install_gtest.sh && \
     bash /images/base/scripts/34_install_spdlog.sh && \
     bash /images/base/scripts/70_install_from_pip.sh && \
-    bash /images/base/scripts/71_fix_gobject_introspection.sh
+    bash /images/base/scripts/71_fix_gobject_introspection.sh && \
+    bash /images/base/scripts/72_install_adms.sh
 
 #######################################################################
 # Add base packages (install via pip, npm, or gem)
@@ -30,8 +31,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 FROM base AS basepkg
 RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/90_basepkg_install.sh && \
-    bash /images/base/scripts/91_install_bottleneck.sh && \
-    bash /images/base/scripts/92_install_adms.sh
+    bash /images/base/scripts/91_install_bottleneck.sh
 
 #######################################################################
 # Compile magic
