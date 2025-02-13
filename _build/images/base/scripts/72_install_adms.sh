@@ -9,5 +9,5 @@ cd /tmp
 git clone --depth=1 https://github.com/Qucs/ADMS.git adms
 cd adms || exit 1
 mkdir -p build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/usr/local/bin
+cmake .. -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/usr/local
 make install
