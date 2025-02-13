@@ -2,6 +2,16 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2025.02
+
+* Adding `spicelib` SPICE-simulator interaction from Python.
+* Adding `klayout-pex` parasitic extraction tool.
+* Adding a couple of useful Python packages (`numpy`, `pandas`, `plotly`, `pygmid`, `schemdraw`, `scipy`, `sympy`).
+* Adapting to changed directory structure of IHP's PDK.
+* Remove temporarily `hdl21` and `vlsirtools` due to incompatibility with `gdsfactory` on `pydantic`.
+* Build `adms` from source, compile `xyce` models with it. 
+* Bump various tool versions.
+
 ## 2025.01
 
 * Upgrade base OS to Ubuntu 24.04 LTS (from 22.04 LTS).
