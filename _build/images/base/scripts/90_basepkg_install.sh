@@ -18,6 +18,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	fusesoc==2.4.2 \
 	gdsfactory==8.32.1 \
 	gdspy==1.6.13 \
+	klayout-pex==0.1.13 \
 	lctime==0.0.24 \
 	openlane==2.3.3 \
 	openram==1.2.48 \
