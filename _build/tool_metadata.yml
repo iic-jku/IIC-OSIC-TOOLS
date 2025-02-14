@@ -24,7 +24,7 @@
   commit: a7884acc04cd94017779893d381b7e93d8895587
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 14375567c72b6f71cc93bec3b62cf43aaf34942e
+  commit: 6088a26d78219f0da2e90876d5e2c696749cf0c9
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.29.11"
@@ -33,7 +33,7 @@
   commit: a4537c1fba19966e80408a7b224001d5697ff1e6
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.518"
+  commit: "8.3.519"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.292"
@@ -72,7 +72,7 @@
   commit: e5563d1044bd6790325c4602c49f89e1182fa91a
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: b4a74b00745ca9ab6edfad4502cb02e08f09f9d1
+  commit: f3d557ad87755920404cf6d46c8aff9fd451307a
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: e79ef757c6793726d793cadf689b4b347db874ab
@@ -99,7 +99,7 @@
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: a4e0471fcc163829b4c1d01107e1990756172ad2
+  commit: e9c927d8825a44ef640687494512264418de5e06
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"
@@ -108,7 +108,7 @@
   commit: "Release-2.7.0"
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: "v0.49"
+  commit: "v0.50"
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
 - name: yosys_sby

@@ -38,7 +38,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM basepkg AS magic
 ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic.git"
-ARG MAGIC_REPO_COMMIT="8.3.518"
+ARG MAGIC_REPO_COMMIT="8.3.519"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
@@ -176,7 +176,7 @@ RUN --mount=type=bind,source=images/irsim,target=/images/irsim \
 #######################################################################
 FROM base AS iverilog
 ARG IVERILOG_REPO_URL="https://github.com/steveicarus/iverilog.git"
-ARG IVERILOG_REPO_COMMIT="14375567c72b6f71cc93bec3b62cf43aaf34942e"
+ARG IVERILOG_REPO_COMMIT="6088a26d78219f0da2e90876d5e2c696749cf0c9"
 ARG IVERILOG_NAME="iverilog"
 RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
     bash /images/iverilog/scripts/install.sh
@@ -345,7 +345,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="b4a74b00745ca9ab6edfad4502cb02e08f09f9d1"
+ARG SLANG_REPO_COMMIT="f3d557ad87755920404cf6d46c8aff9fd451307a"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -375,7 +375,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="a4e0471fcc163829b4c1d01107e1990756172ad2"
+ARG XSCHEM_REPO_COMMIT="e9c927d8825a44ef640687494512264418de5e06"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -385,7 +385,7 @@ RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
 #######################################################################
 FROM base AS yosys
 ARG YOSYS_REPO_URL="https://github.com/YosysHQ/yosys.git"
-ARG YOSYS_REPO_COMMIT="v0.49"
+ARG YOSYS_REPO_COMMIT="v0.50"
 ARG YOSYS_NAME="yosys"
 ARG YOSYS_EQY_REPO_URL="https://github.com/YosysHQ/eqy.git"
 ARG YOSYS_EQY_NAME="yosys_eqy"

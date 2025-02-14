@@ -20,7 +20,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	gdspy==1.6.13 \
 	klayout-pex==0.1.13 \
 	lctime==0.0.24 \
-	openlane==2.3.3 \
+	openlane==2.3.6 \
 	openram==1.2.48 \
 	pygmid==1.2.12 \
 	pyrtl==0.11.2 \
@@ -30,7 +30,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	schemdraw[svgmath]==0.19 \
 	scikit-rf==1.5.0 \
 	siliconcompiler==0.29.4 \
-	spicelib==1.3.8 \
+	spicelib==1.4.0 \
 	spyci==1.0.2 \
 	volare==0.20.6
 
