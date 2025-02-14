@@ -23,6 +23,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	orderedmultidict \
 	panda \
 	pandas \
+	paramiko \
 	pathspec \
 	pipdeptree \
 	plotly \
