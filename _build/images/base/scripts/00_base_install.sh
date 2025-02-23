@@ -147,12 +147,14 @@ apt -y install \
 	python3-dev \
 	python3-pip \
 	python3-pyqt5 \
+	python3-pyqt6 \
 	python3-setuptools \
 	python3-setuptools-rust \
 	python3-tk \
 	python3-venv \
 	python3-virtualenv \
 	python3-wheel \
+	qmake6 \
 	qt5-image-formats-plugins \
 	qt5-qmake \
 	qtbase5-dev \
