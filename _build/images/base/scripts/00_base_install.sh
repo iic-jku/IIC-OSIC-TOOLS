@@ -102,6 +102,7 @@ apt -y install \
 	libqt5multimediawidgets5 \
 	libqt5svg5-dev \
 	libqt5xmlpatterns5-dev \
+	libqt6svg6-dev \
 	libre2-dev \
 	libreadline-dev \
 	libsm-dev \
@@ -127,6 +128,7 @@ apt -y install \
 	libz3-dev \
 	libzip-dev \
 	libzstd-dev \
+	linguist-qt6 \
 	lld-16 \
 	llvm-16 \
 	llvm-16-dev \
@@ -155,6 +157,11 @@ apt -y install \
 	qt5-qmake \
 	qtbase5-dev \
 	qtbase5-dev-tools \
+	qt6-base-dev \
+	qt6-charts-dev \
+	qt6-tools-dev \
+	qt6-tools-dev-tools \
+	qt6-l10n-tools \
 	qtchooser \
 	qtmultimedia5-dev \
 	qttools5-dev \
