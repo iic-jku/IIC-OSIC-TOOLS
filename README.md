@@ -241,7 +241,7 @@ or
 .\start_x.bat
 ```
 
-**Attention Windows and macOS users:** The X-server connection is automatically killed if there is a too-long idle period in the terminal (when this happens, it looks like a **crash** of the system). A **workaround** is to start a second terminal from the initial terminal that pops up when executing the start scripts `./start_x.sh` or `.\start_x.bat` and then start `htop` in the initial terminal. In this way, there is an ongoing display activity in the initial terminal, and as a positive side-effect, the usage of the machine can be monitored. We are looking for a better long-term solution.
+**Attention macOS users:** The X-server connection is automatically killed if there is a too-long idle period in the terminal (when this happens, it looks like a **crash** of the system). A **workaround** is to start a second terminal from the initial terminal that pops up when executing the start scripts `./start_x.sh` or `.\start_x.bat` and then start `htop` in the initial terminal. In this way, there is an ongoing display activity in the initial terminal, and as a positive side-effect, the usage of the machine can be monitored. We are looking for a better long-term solution.
 
 **Attention macOS users:** Please disable the *Enable VirtioFS accelerated directory sharing* setting available as "Beta Setting," as this will cause issues accessing the mounted drives! However, enabling the *VirtioFS* general setting works in Docker >v4.15.0!
 
@@ -260,11 +260,13 @@ The following environment variables are used for configuration:
 
 #### 4.3.2 macOS and Windows-specific Variables
 
-For Mac and Windows, the X11 server is accessed through TCP (`:0`, aka port 6000). To control the server's address, you can set the following variable:
+For Mac, the X11 server is accessed through TCP (`:0`, aka port 6000). To control the server's address, you can set the following variable:
 
 * `DISP=host.docker.internal:0` is the environment variable that is copied into the `DISPLAY` variable of the container. `host.docker.internal` resolves to the host's IP address inside the docker containers, `:0` corresponds to display 0 which corresponds to TCP port 6000.
 
 If the executable `xauth` is in `PATH`, the startup script automatically disables access control for localhost, so the X11 server is open for connections from the container. A warning will be shown if not, and you must disable access control.
+
+For Windows, WSLg (the graphical subsystem for WSL) is used. No additional X-Server needs to be installed and it should be readily available on Windows 10 (from Build 19044) and Windows 11.
 
 #### 4.3.3 Linux-specific Variables
 
@@ -278,20 +280,13 @@ The defaults for these variables are tested on native X11 servers, X2Go sessions
 
 #### 4.3.4 Installing X11-Server
 
-Everything should be ready on Linux with a desktop environment / UI (this setup has been tested on X11 and XWayland). For Windows and macOS, the installation of an X11 server is typically required. Due to the common protocol, every X11-server should work, although the following are tested:
+Everything should be ready on Linux with a desktop environment / UI (this setup has been tested on X11 and XWayland). For Windows, WSL should be updated to the latest version to provide WSLg. For macOS, the installation of an X11 server is typically required. Due to the common protocol, every X11-server should work, although the following are tested:
 
-* For Windows: [VcXsrc](https://sourceforge.net/projects/vcxsrv/)
 * For macOS: [XQuartz](https://www.xquartz.org/) **Important:** Please enable *"Allow connections from network clients"* in the XQuartz preferences [CMD+","], tab *"Security"*
 
-For both X-Servers, it is strongly recommended to enable OpenGL:
+It is strongly recommended to enable OpenGL:
 
 * The `start_x.sh` script will take care of that on macOS and set it according to configuration values. Only a manual restart of XQuartz is required after the script is run once (observe the output!).
-* On Windows with VcXsrv, we recommend using the utility "XLaunch" (installed with VcXsrv):
-
-  * Multiple windows mode
-  * Set the Display Number to 0
-  * Start no client
-  * Tick all `Extra settings`: `Clipboard`, `Primary selection`, `Native opengl`, and `Disable access control`
 
 ### 4.4 Overwriting Shell Variables
 

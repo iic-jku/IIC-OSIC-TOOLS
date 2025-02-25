@@ -12,7 +12,12 @@ Example:
 DOCKER_EXTRA_PARAMS='--security-opt seccomp=unconfined' ./start_x.sh
 ```
 
-### Frequent crashes of `xschem` on Windows 11
+### Switching to WSLg for graphical applications on Windows
+
+The current variant of the `start_x.bat` for Windows uses WSLg for audio & visual output, which comes preinstalled/packaged with WSL (Windows 10 Build 19044 or Windows 11). If problems arrise, update WSL according to [the Microsoft website](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps).
+Further, setting `LIBGL_ALWAYS_INDIRECT` should not be required anymore. Please refrain from doing so. WSLg provides virtual GPU support inside the containers, providing faster and more reliable OpenGL support.
+
+### Frequent crashes of `xschem` on Windows 10+
 
 Since the update of the image to Ubuntu 24.04 LTS with tag `2025.01` there are reports of frequent crashes of `xschem` under Windows 11 using certain versions of specific X-servers. It has been found that using <https://vcxsrv.com> version `64.1.17.2.0` under Windows 11 works well (see [issue 92](https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/92)).
 
