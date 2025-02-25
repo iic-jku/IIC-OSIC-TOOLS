@@ -11,6 +11,7 @@ This document summarizes the most important changes of the individual releases o
 * Remove temporarily `hdl21` and `vlsirtools` due to incompatibility with `gdsfactory` on `pydantic`.
 * Build `adms` from source, compile `xyce` models with it. 
 * Bump various tool versions.
+* Changed Windows `start_x.bat` to use WSL integrated WSLg audio and visual subsystem instead of a third-party X-server.
 
 ## 2025.01
 
