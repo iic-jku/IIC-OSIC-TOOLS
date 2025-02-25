@@ -260,13 +260,14 @@ The following environment variables are used for configuration:
 
 #### 4.3.2 macOS and Windows-specific Variables
 
-For Mac, the X11 server is accessed through TCP (`:0`, aka port 6000). To control the server's address, you can set the following variable:
+For Windows, WSLg (the graphical subsystem for WSL) is used, which is provided by a socket file inside the container. The display number is `:0`.
+For Mac, the X11 server is accessed through TCP (defaults to `host.docker.internal:0`, `host.docker.internal` resolves to the host's IP address inside the docker containers, `:0` corresponds to display 0 which corresponds to TCP port 6000.).
 
-* `DISP=host.docker.internal:0` is the environment variable that is copied into the `DISPLAY` variable of the container. `host.docker.internal` resolves to the host's IP address inside the docker containers, `:0` corresponds to display 0 which corresponds to TCP port 6000.
+Normally, it should not be necessary to modify this settings, but to control the server's address, you can set the following variable:
 
-If the executable `xauth` is in `PATH`, the startup script automatically disables access control for localhost, so the X11 server is open for connections from the container. A warning will be shown if not, and you must disable access control.
+* `DISP` is the environment variable that is copied into the `DISPLAY` variable of the container.
 
-For Windows, WSLg (the graphical subsystem for WSL) is used. No additional X-Server needs to be installed and it should be readily available on Windows 10 (from Build 19044) and Windows 11.
+For TCP based connections, access control might be modified. If the executable `xauth` is in `PATH`, the startup script automatically disables access control for localhost, so the X11 server is open for connections from the container. A warning will be shown if not, and you must disable access control.
 
 #### 4.3.3 Linux-specific Variables
 
@@ -280,7 +281,7 @@ The defaults for these variables are tested on native X11 servers, X2Go sessions
 
 #### 4.3.4 Installing X11-Server
 
-Everything should be ready on Linux with a desktop environment / UI (this setup has been tested on X11 and XWayland). For Windows, WSL should be updated to the latest version to provide WSLg. For macOS, the installation of an X11 server is typically required. Due to the common protocol, every X11-server should work, although the following are tested:
+Everything should be ready on Linux with a desktop environment / UI (this setup has been tested on X11 and XWayland). For Windows, WSL should be updated to the latest version to provide WSLg (No additional X-Server needs to be installed and it should be readily available on Windows 10 (from Build 19044) and Windows 11). For macOS, the installation of an X11 server is typically required. Due to the common protocol, every X11-server should work, although the following are tested:
 
 * For macOS: [XQuartz](https://www.xquartz.org/) **Important:** Please enable *"Allow connections from network clients"* in the XQuartz preferences [CMD+","], tab *"Security"*
 

@@ -112,7 +112,6 @@ _add_resolution 3840 2160
 
 # shellcheck disable=SC2086
 LD_LIBRARY_PATH="$(realpath ${TOOLS}/klayout ):${TOOLS}/ngspice/lib" && export LD_LIBRARY_PATH
-export XDG_RUNTIME_DIR=/tmp/runtime-default
 export EDITOR="gedit"
 export PYTHONPYCACHEPREFIX="/tmp/pycache"
 export KLAYOUT_HOME="/headless/.klayout"
@@ -132,10 +131,16 @@ export LIBGL_ALWAYS_INDIRECT=1
 # https://unix.stackexchange.com/questions/230238/x-applications-warn-couldnt-connect-to-accessibility-bus-on-stderr/230442#230442
 export NO_AT_BRIDGE=1
 
+#First, check if XDG_RUNTIME_DIR is set, if not, set to default.
+if [ -z ${XDG_RUNTIME_DIR+z} ]; then
+    export XDG_RUNTIME_DIR=/tmp/runtime-default
+fi
+#Second, verify if the actual directory exists, if not, create it.
 if [ ! -d $XDG_RUNTIME_DIR ]; then
     mkdir -p $XDG_RUNTIME_DIR
     chmod 700 $XDG_RUNTIME_DIR
 fi
+
 
 # add local directories in $HOME to the path so that the user can upgrade PIP packages
 export PATH=$HOME/.local/bin:$PATH

@@ -15,7 +15,6 @@ DOCKER_EXTRA_PARAMS='--security-opt seccomp=unconfined' ./start_x.sh
 ### Switching to WSLg for graphical applications on Windows
 
 The current variant of the `start_x.bat` for Windows uses WSLg for audio & visual output, which comes preinstalled/packaged with WSL (Windows 10 Build 19044 or Windows 11). If problems arrise, update WSL according to [the Microsoft website](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps).
-Further, setting `LIBGL_ALWAYS_INDIRECT` should not be required anymore. Please refrain from doing so. WSLg provides virtual GPU support inside the containers, providing faster and more reliable OpenGL support.
 
 ### Frequent crashes of `xschem` on Windows 10+
 
