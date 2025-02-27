@@ -19,6 +19,7 @@ apt -y install \
 	bzip2 \
 	ca-certificates \
 	cargo \
+	ccache \
 	clang-16 \
 	clang-tools-16 \
 	cmake \
@@ -133,6 +134,7 @@ apt -y install \
 	llvm-16 \
 	llvm-16-dev \
 	make \
+	mold \
 	ninja-build \
 	openmpi-bin \
 	openssl \
