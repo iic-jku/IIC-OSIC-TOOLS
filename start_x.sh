@@ -44,6 +44,8 @@ if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
 	fi
 fi
 
+PARAMS=""
+
 # SET YOUR DESIGN PATH RIGHT!
 if [ -z ${DESIGNS+z} ]; then
 	DESIGNS=$HOME/eda/designs
@@ -52,6 +54,8 @@ if [ -z ${DESIGNS+z} ]; then
 	fi
 	echo "[INFO] Design directory auto-set to $DESIGNS."
 fi
+
+PARAMS="$PARAMS -v ${DESIGNS}:/foss/designs:rw"
 
 if [ -z ${DOCKER_USER+z} ]; then
 	DOCKER_USER="hpretl"
@@ -65,7 +69,6 @@ if [ -z ${DOCKER_TAG+z} ]; then
 	DOCKER_TAG="latest"
 fi
 
-PARAMS=""
 if [[ "$OSTYPE" == "linux"* ]]; then
 	echo "[INFO] Auto detected Linux."
 	# Should also be a sensible default
@@ -76,6 +79,14 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 	if [ -z ${CONTAINER_GROUP+z} ]; then
 	        CONTAINER_GROUP=$(id -g)
 	fi
+
+	# On Linux, we force the container-side XDG_RUNTIME_DIR to /tmp/runtime-default, if not overwritten
+	# Note, this would be the default, also set in env.sh, if not set. As it is required for mounting, it is still defined here
+	if [ -z ${CONTAINER_XDG_RUNTIME_DIR+z} ]; then
+		CONTAINER_XDG_RUNTIME_DIR="/tmp/runtime-default"
+	fi
+	PARAMS="${PARAMS} -e XDG_RUNTIME_DIR=${CONTAINER_XDG_RUNTIME_DIR}"
+
 	if [ -z ${XSOCK+z} ]; then
 		if [ -d "/tmp/.X11-unix" ]; then
 			XSOCK="/tmp/.X11-unix"
@@ -84,7 +95,6 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 			exit 1
 		fi
 	fi
-	PARAMS="$PARAMS -v $XSOCK:/tmp/.X11-unix:rw"
 	if [ -z ${DISP+z} ]; then
 		if [ -z ${DISPLAY+z} ]; then
 			echo "[ERROR] No DISPLAY set!"
@@ -93,6 +103,25 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 			DISP=$DISPLAY
 		fi
 	fi
+
+	PARAMS="$PARAMS -v $XSOCK:/tmp/.X11-unix:rw"
+
+	# For testing for the Wayland-Display, we simply assume that XDG_RUNTIME_DIR is set correctly.
+	if [ -z ${WAYLAND_DISP+z} ]; then
+		WAYLAND_SOCK="$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
+		WAYLAND_DISP="$WAYLAND_DISPLAY"
+		echo "Assuming Wayland Socket ${WAYLAND_SOCK}"
+	else
+		WAYLAND_SOCK="$XDG_RUNTIME_DIR/$WAYLAND_DISP"
+	fi
+
+	if [ -S "$WAYLAND_SOCK" ]; then
+		echo "Wayland Socket exists, forwarding..."
+		PARAMS="${PARAMS} -v ${WAYLAND_SOCK}:${CONTAINER_XDG_RUNTIME_DIR}/${WAYLAND_DISP}:rw -e WAYLAND_DISPLAY=${WAYLAND_DISP}"
+	else
+		echo "[WARNING] Wayland socket could not be found. Falling back to X11"
+	fi
+
 	if [ -z ${XAUTH+z} ]; then
 		# Senseful defaults (uses XAUTHORITY Shell variable if set, or the default .Xauthority -file in the caller home directory)
 		if [ -z ${XAUTHORITY+z} ]; then
@@ -115,15 +144,15 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 			${ECHO_IF_DRY_RUN} "xauth -f ${XAUTH} nlist ${DISP} | sed -e 's/^..../ffff/' | xauth -f ${XAUTH_TMP} nmerge -"
 		fi
 		XAUTH=${XAUTH_TMP}
-		if [ -d "/dev/dri" ]; then
-			echo "[INFO] /dev/dri detected, forwarding GPU for graphics acceleration."
-			PARAMS="${PARAMS} --device=/dev/dri:/dev/dri"
-		else
-			echo "[INFO] No /dev/dri detected!"
-			FORCE_LIBGL_INDIRECT=1
-		fi
 	fi
 	PARAMS="$PARAMS -v $XAUTH:/headless/.xauthority:rw -e XAUTHORITY=/headless/.xauthority"
+	if [ -d "/dev/dri" ]; then
+		echo "[INFO] /dev/dri detected, forwarding GPU for graphics acceleration."
+		PARAMS="${PARAMS} --device=/dev/dri:/dev/dri"
+	else
+		echo "[INFO] No /dev/dri detected!"
+		FORCE_LIBGL_INDIRECT=1
+	fi
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
 	if [ -z ${CONTAINER_USER+z} ]; then
@@ -201,5 +230,5 @@ else
 	${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
 	# Disable SC2086, $PARAMS must be globbed and splitted.
 	# shellcheck disable=SC2086
-	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" -e "DISPLAY=${DISP}" -v "${DESIGNS}:/foss/designs:rw" ${PARAMS} --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" -e "DISPLAY=${DISP}" ${PARAMS} --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
 fi

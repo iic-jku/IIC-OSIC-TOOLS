@@ -47,6 +47,11 @@ ldconfig
 # set /usr/bin/python3 to provide "/usr/bin/python"
 update-alternatives --set python /usr/bin/python3
 
+# create default XDG_RUNTIME_DIR
+# FIXME: Do not create an all-world readable directory, but one that fits the exact user of the container.
+mkdir -p /tmp/runtime-default
+chmod 777 /tmp/runtime-default
+
 # set access rights for home dir and designs dir
 chown -R 1000:1000 "$HOME"
 chmod -R +rw "$HOME"
