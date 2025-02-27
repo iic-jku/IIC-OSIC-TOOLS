@@ -147,6 +147,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 		echo "[ERROR] Please restart XQuartz!"
 		exit 1
 	fi
+	# Always for indirect rendering on MacOS with XQuartz
 	FORCE_LIBGL_INDIRECT=1
 else
 	echo "[ERROR] Not setup for ${OSTYPE}!"
