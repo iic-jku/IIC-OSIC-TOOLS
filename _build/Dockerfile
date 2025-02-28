@@ -38,7 +38,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM basepkg AS magic
 ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic.git"
-ARG MAGIC_REPO_COMMIT="8.3.520"
+ARG MAGIC_REPO_COMMIT="8.3.522"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
@@ -146,7 +146,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="1fdd5fc62e7529c6030a834f9bc922b3a28ffef7"
+ARG GHDL_REPO_COMMIT="19281ad215eb96ab8e4c2dab6e3e141dceae99fb"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -196,7 +196,7 @@ RUN --mount=type=bind,source=images/klayout,target=/images/klayout \
 #######################################################################
 FROM base AS libman
 ARG LIBMAN_REPO_URL="https://github.com/IHP-GmbH/LibMan.git"
-ARG LIBMAN_REPO_COMMIT="a4537c1fba19966e80408a7b224001d5697ff1e6"
+ARG LIBMAN_REPO_COMMIT="70ae52c5c01423e99a310c46f7f801382a45fa1e"
 ARG LIBMAN_NAME="libman"
 RUN --mount=type=bind,source=images/libman,target=/images/libman \
     bash /images/libman/scripts/install.sh
@@ -345,7 +345,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="f9d888a5ea817818322b70f15fe97330ad9393b5"
+ARG SLANG_REPO_COMMIT="7b08a94294ebf85b08238d07530902e523fdbea3"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -355,7 +355,7 @@ RUN --mount=type=bind,source=images/slang,target=/images/slang \
 #######################################################################
 FROM base AS verilator
 ARG VERILATOR_REPO_URL="https://github.com/verilator/verilator.git"
-ARG VERILATOR_REPO_COMMIT="v5.032"
+ARG VERILATOR_REPO_COMMIT="v5.034"
 ARG VERILATOR_NAME="verilator"
 RUN --mount=type=bind,source=images/verilator,target=/images/verilator \
     bash /images/verilator/scripts/install.sh
@@ -375,7 +375,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="f9ccf878c2fa94babe30bcb5224e3af8fd51f92c"
+ARG XSCHEM_REPO_COMMIT="be1a0deb89fe88d61094780238c1648939a51feb"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -407,7 +407,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="0366b32fa27305d0581031c29536b9725df28d4c"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="0adba99ea43331235506b9b154c78a401f4fe9b6"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \

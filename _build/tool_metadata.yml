@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 1fdd5fc62e7529c6030a834f9bc922b3a28ffef7
+  commit: 19281ad215eb96ab8e4c2dab6e3e141dceae99fb
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 4ea20ad3f1c1177b912a93308a8e926d5981792d
@@ -30,10 +30,10 @@
   commit: "v0.29.11"
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
-  commit: a4537c1fba19966e80408a7b224001d5697ff1e6
+  commit: 70ae52c5c01423e99a310c46f7f801382a45fa1e
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.520"
+  commit: "8.3.522"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.292"
@@ -72,10 +72,10 @@
   commit: e5563d1044bd6790325c4602c49f89e1182fa91a
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: f9d888a5ea817818322b70f15fe97330ad9393b5
+  commit: 7b08a94294ebf85b08238d07530902e523fdbea3
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 0366b32fa27305d0581031c29536b9725df28d4c
+  commit: 0adba99ea43331235506b9b154c78a401f4fe9b6
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
@@ -93,13 +93,13 @@
   commit: "25.1.0"
 - name: verilator
   repo: https://github.com/verilator/verilator.git
-  commit: "v5.032"
+  commit: "v5.034"
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: f9ccf878c2fa94babe30bcb5224e3af8fd51f92c
+  commit: be1a0deb89fe88d61094780238c1648939a51feb
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"
