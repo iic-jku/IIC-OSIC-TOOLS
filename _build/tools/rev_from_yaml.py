@@ -2,7 +2,7 @@
 # ========================================================================
 # Update tool versions from YAML manifest file
 #
-# SPDX-FileCopyrightText: 2022-2024 Harald Pretl and Georg Zachl
+# SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Institute for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

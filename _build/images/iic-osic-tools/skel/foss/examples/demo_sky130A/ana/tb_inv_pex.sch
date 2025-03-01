@@ -51,7 +51,7 @@ logy=0
 hilight_wave=0
 color=7
 node=out}
-T {(c) 2021-2024 Harald Pretl, JKU, IIC
+T {(c) 2021-2025 Harald Pretl, JKU, IIC
 
 Inverter Testbench
 

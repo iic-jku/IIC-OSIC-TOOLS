@@ -2,7 +2,7 @@
 # ========================================================================
 # Spins up multiple IIC-OSIC-TOOLS containers for many EDA users
 #
-# SPDX-FileCopyrightText: 2023-2024 Harald Pretl
+# SPDX-FileCopyrightText: 2023-2025 Harald Pretl
 # Johannes Kepler University, Institute for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
