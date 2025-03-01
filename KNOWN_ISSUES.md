@@ -36,6 +36,12 @@ export OPENROAD_EXE=$TOOLS/openroad-latest/bin/openroad
 export OPENSTA_EXE=$TOOLS/openroad-latest/bin/sta
 ```
 
+Since the OpenROAD version and ORFS version are tightly integrated with often occuring interface breaks, the ORFS Git commit hash at image build time is stored in `$TOOLS/openroad-latest/ORFS_COMMIT`. After cloning ORFS from GitHub use the following command to switch to the tested ORFS version:
+
+```bash
+git checkout $(cat $TOOLS/openroad-latest/ORFS_COMMIT)
+```
+
 ### Surfer crashing
 
 As of image `2025.01` Surfer has been added. Surfer is known to crash on quite a few platforms due to issues with OpenGL drivers. If Surfer works on your platform, great. If Surfer does crash then this is not good, but there is currently no solution available. Please do not file bug reports. As soon as we are aware of a solution for these crashes we will implement the fixes.

@@ -11,7 +11,10 @@ WORK_DIR=/tmp/orfs_sg13g2
 FLOW_HOME=$WORK_DIR/orfs/flow
 
 mkdir -p $WORK_DIR && cd $WORK_DIR || exit 1
-git clone --quiet --depth=1 https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git orfs
+git clone --quiet --filter=blob:none https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git orfs
+cd orfs || exit 1
+ORFS_COMMIT=$(cat "$TOOLS/openroad-latest/ORFS_COMMIT")
+git checkout --quiet "$ORFS_COMMIT"
 cd $FLOW_HOME || exit 1
 
 # prepare environment for ORFS
