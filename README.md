@@ -112,7 +112,7 @@ More options for selecting digital standard cell libraries are available; please
 
 ## 3. Installed Tools
 
-Below is a list of the current tools already installed and ready to use (note there are some adaptions in our container vs. efabless.com):
+Below is a list of the current tools/PDKs already installed and ready to use:
 
 * [amaranth](https://github.com/amaranth-lang/amaranth) a Python-based HDL toolchain
 * [cace](https://github.com/efabless/cace) a Python-based circuit automatic characterization engine
@@ -122,16 +122,18 @@ Below is a list of the current tools already installed and ready to use (note th
 * [edalize](https://github.com/olofk/edalize) Python abstraction library for EDA tools
 * [fusesoc](https://github.com/olofk/fusesoc) package manager and build tools for SoC
 * [gaw3-xschem](https://github.com/StefanSchippers/xschem-gaw) waveform plot tool for `xschem`
+* [gds3d](https://github.com/trilomix/GDS3D) a 3D viewer for GDS files
 * [gdsfactory](https://github.com/gdsfactory/gdsfactory) Python library for GDS generation
 * [gdspy](https://github.com/heitzmann/gdspy) Python module for the creation and manipulation of GDS files
-* [gds3d](https://github.com/trilomix/GDS3D) a 3D viewer for GDS files
 * [gf180mcu](https://github.com/google/gf180mcu-pdk) GlobalFoundries 180nm CMOS PDK
+* [ghdl-yosys-plugin](https://github.com/ghdl/ghdl-yosys-plugin) VHDL-plugin for `yosys`
 * [ghdl](https://github.com/ghdl/ghdl) VHDL simulator
 * [gtkwave](https://github.com/gtkwave/gtkwave) waveform plot tool for digital simulation
+* [hdl21](https://github.com/dan-fritchman/Hdl21) analog hardware description library
 * [ihp-sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
 * [irsim](https://github.com/rtimothyedwards/irsim) switch-level digital simulator
 * [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
-* [hdl21](https://github.com/dan-fritchman/Hdl21) analog hardware description library
+* [klayout-pex](https://github.com/martinjankoehler/klayout-pex) parasitic extraction for `klayout`
 * [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS
 * [lctime](https://codeberg.org/librecell/lctime) Characterization kit for CMOS cells
 * [libman](https://github.com/IHP-GmbH/LibMan) design library manager to manage cells and views
@@ -144,6 +146,7 @@ Below is a list of the current tools already installed and ready to use (note th
 * [openlane2](https://github.com/efabless/openlane2) rewrite of OpenLane in Python, 2nd generation
 * [openram](https://github.com/VLSIDA/OpenRAM) OpenRAM Python library
 * [openroad](https://github.com/The-OpenROAD-Project/OpenROAD) RTL2GDS engine used by `openlane2`
+* [openvaf](https://github.com/dwarning/OpenVAF) Verilog-A compiler for device models
 * [osic-multitool](https://github.com/iic-jku/osic-multitool) collection of useful scripts and documentation
 * [padring](https://github.com/donn/padring) padring generation tool
 * [pulp-tools](https://github.com/pulp-platform/pulp) PULP platform tools consisting of [bender](https://github.com/pulp-platform/bender), [morty](https://github.com/pulp-platform/morty), [svase](https://github.com/pulp-platform/svase), [verible](https://github.com/chipsalliance/verible), and [sv2v](https://github.com/zachjs/sv2v)
@@ -153,25 +156,29 @@ Below is a list of the current tools already installed and ready to use (note th
 * [pyspice](https://github.com/PySpice-org/PySpice) interface `ngspice` and `xyce` from Python
 * [pyuvm](https://github.com/pyuvm/pyuvm) Universal Verification Methodology implemented in Python (instead of SystemVerilog) using `cocotb`
 * [pyverilog](https://github.com/PyHDI/Pyverilog) Python toolkit for Verilog
-* RF toolkit with [FastHenry2](https://github.com/ediloren/FastHenry2), [FasterCap](https://github.com/ediloren/FasterCap), [openEMS](https://github.com/thliebig/openEMS), and [scikit-rf](https://github.com/scikit-rf/scikit-rf).
+* [qflow](https://github.com/RTimothyEdwards/qflow) collection of useful conversion tools
 * [qucs-s](https://github.com/ra3xdh/qucs_s) simulation environment with RF emphasis
-* [riscv-pk](https://github.com/riscv-software-src/riscv-pk) RISC-V proxy kernel and boot loader
 * [rggen](https://github.com/rggen/rggen) code generation tool for configuration and status registers
+* [risc-v toolchain](https://github.com/riscv/riscv-gnu-toolchain) GNU compiler toolchain for RISC-V cores, incl. [Spike](https://github.com/riscv-software-src/riscv-isa-sim) RISC-V ISA simulator
+* [riscv-pk](https://github.com/riscv-software-src/riscv-pk) RISC-V proxy kernel and boot loader
 * [schemdraw](https://github.com/cdelker/schemdraw) Python package for drawing electrical schematics
+* [siliconcompiler](https://github.com/siliconcompiler/siliconcompiler) modular build system for hardware
+* [sky130](https://github.com/google/skywater-pdk) SkyWater Technologies 130nm CMOS PDK
+* [slang yosys plugin](https://github.com/povik/yosys-slang) Slang-based plugin for `yosys` for SystemVerilog support
 * [slang](https://github.com/MikePopoloski/slang) SystemVerilog parsing and translation (e.g. to Verilog)
+* [spicelib](https://github.com/nunobrum/spicelib) library to interact with SPICCE-like simulators
 * [spyci](https://github.com/gmagno/spyci) analyze/plot `ngspice`/`xyce` output data with Python
 * [surelog](https://github.com/chipsalliance/Surelog) SystemVerilog parser, elaborator, and UHDM compiler
 * [surfer](https://gitlab.com/surfer-project/surfer) waveform viewer with snappy usable interface and extensibility
-* [vlog2verilog](https://github.com/RTimothyEdwards/qflow) Verilog file conversion
-* [volare](https://github.com/efabless/volare) version manager (and builder) for open-source PDKs
-* [risc-v toolchain](https://github.com/riscv/riscv-gnu-toolchain) GNU compiler toolchain for RISC-V cores, incl. [Spike](https://github.com/riscv-software-src/riscv-isa-sim) RISC-V ISA simulator
-* [siliconcompiler](https://github.com/siliconcompiler/siliconcompiler) modular build system for hardware
-* [sky130](https://github.com/google/skywater-pdk) SkyWater Technologies 130nm CMOS PDK
 * [verilator](https://github.com/verilator/verilator) fast Verilog simulator
+* [vlog2verilog](https://github.com/RTimothyEdwards/qflow) Verilog file conversion
 * [vlsirtools](https://github.com/Vlsir/Vlsir) interchange formats for chip design.
+* [volare](https://github.com/efabless/volare) version manager (and builder) for open-source PDKs
+* [xcircuit](https://github.com/RTimothyEdwards/XCircuit) schematic editor
 * [xschem](https://github.com/StefanSchippers/xschem) schematic editor
 * [xyce](https://github.com/Xyce/Xyce) fast parallel SPICE simulator (incl. `xdm` netlist conversion tool)
-* [yosys](https://github.com/YosysHQ/yosys) Verilog synthesis tool (with GHDL plugin for VHDL synthesis), incl. `eqy` (equivalence checker), `sby` (formal verification), and `mcy` (mutation coverage)
+* [yosys](https://github.com/YosysHQ/yosys) Verilog synthesis tool (with GHDL plugin for VHDL synthesis and Slang plugin for SystemVerilog synthesis), incl. `eqy` (equivalence checker), `sby` (formal verification), and `mcy` (mutation coverage)
+* RF toolkit with [FastHenry2](https://github.com/ediloren/FastHenry2), [FasterCap](https://github.com/ediloren/FasterCap), [openEMS](https://github.com/thliebig/openEMS), and [scikit-rf](https://github.com/scikit-rf/scikit-rf).
 
 The tool versions used for `OpenLane2` (and other tools) are documented in `tool_metadata.yml`. In addition to the EDA tools above, further valuable tools (like `git`) and editors (like `gvim`) are installed. If something useful is missing, please let us know!
 
