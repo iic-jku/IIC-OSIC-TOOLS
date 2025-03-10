@@ -29,6 +29,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	plotly \
 	prettyprinttree \
 	prettytable \
+	pygame \
 	pygmid \
 	pytest \
 	schemdraw[svgmath] \
