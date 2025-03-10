@@ -16,7 +16,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	cocotb==1.9.2 \
 	edalize==0.6.0 \
 	fusesoc==2.4.2 \
-	gdsfactory==9.0.2 \
+	gdsfactory==9.1.0 \
 	gdspy==1.6.13 \
 	klayout-pex==0.1.13 \
 	lctime==0.0.24 \
@@ -27,10 +27,10 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	pyspice==1.5 \
 	pyuvm==3.0.0 \
 	pyverilog==1.3.0 \
-	schemdraw[svgmath]==0.19 \
+	schemdraw[svgmath]==0.20 \
 	scikit-rf==1.6.2 \
-	siliconcompiler==0.30.0 \
-	spicelib==1.4.1 \
+	siliconcompiler==0.31.1 \
+	spicelib==1.4.2 \
 	spyci==1.0.2 \
 	volare==0.20.6
 

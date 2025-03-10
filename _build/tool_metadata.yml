@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 19281ad215eb96ab8e4c2dab6e3e141dceae99fb
+  commit: dd13f1d382e62eaa1d86a042a2b81de931766377
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 4ea20ad3f1c1177b912a93308a8e926d5981792d
@@ -27,7 +27,7 @@
   commit: 99580cd05171b82e3b460c96abdfbfafbcfd9d60
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
-  commit: "v0.29.11"
+  commit: "v0.29.12"
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
   commit: 70ae52c5c01423e99a310c46f7f801382a45fa1e
@@ -45,7 +45,7 @@
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
 - name: nvc
   repo: https://github.com/nickg/nvc.git
-  commit: "r1.15.1"
+  commit: "r1.15.2"
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
   commit: 0fe599b2afb6708d281543108caf8310912f54af
@@ -72,10 +72,10 @@
   commit: e5563d1044bd6790325c4602c49f89e1182fa91a
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 7b08a94294ebf85b08238d07530902e523fdbea3
+  commit: e62d383b1b6e91a44d3287d8bc6a2dfe256d30bb
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 0adba99ea43331235506b9b154c78a401f4fe9b6
+  commit: 8f2239b2b12dac43f8f47f56deef1095d5262fa2
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
@@ -99,7 +99,7 @@
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: be1a0deb89fe88d61094780238c1648939a51feb
+  commit: 7e5a36531b6ce2cad6c17d8ab26b4de5b2a4f530
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"

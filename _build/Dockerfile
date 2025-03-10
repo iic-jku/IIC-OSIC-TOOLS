@@ -146,7 +146,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="19281ad215eb96ab8e4c2dab6e3e141dceae99fb"
+ARG GHDL_REPO_COMMIT="dd13f1d382e62eaa1d86a042a2b81de931766377"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -186,7 +186,7 @@ RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
 #######################################################################
 FROM basepkg AS klayout
 ARG KLAYOUT_REPO_URL="https://github.com/KLayout/klayout.git"
-ARG KLAYOUT_REPO_COMMIT="v0.29.11"
+ARG KLAYOUT_REPO_COMMIT="v0.29.12"
 ARG KLAYOUT_NAME="klayout"
 RUN --mount=type=bind,source=images/klayout,target=/images/klayout \
     bash /images/klayout/scripts/install.sh
@@ -236,7 +236,7 @@ RUN --mount=type=bind,source=images/ngspyce,target=/images/ngspyce \
 #######################################################################
 FROM base AS nvc
 ARG NVC_REPO_URL="https://github.com/nickg/nvc.git"
-ARG NVC_REPO_COMMIT="r1.15.1"
+ARG NVC_REPO_COMMIT="r1.15.2"
 ARG NVC_NAME="nvc"
 RUN --mount=type=bind,source=images/nvc,target=/images/nvc \
     bash /images/nvc/scripts/install.sh
@@ -345,7 +345,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="7b08a94294ebf85b08238d07530902e523fdbea3"
+ARG SLANG_REPO_COMMIT="e62d383b1b6e91a44d3287d8bc6a2dfe256d30bb"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -375,7 +375,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="be1a0deb89fe88d61094780238c1648939a51feb"
+ARG XSCHEM_REPO_COMMIT="7e5a36531b6ce2cad6c17d8ab26b4de5b2a4f530"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -407,7 +407,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="0adba99ea43331235506b9b154c78a401f4fe9b6"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="8f2239b2b12dac43f8f47f56deef1095d5262fa2"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \
