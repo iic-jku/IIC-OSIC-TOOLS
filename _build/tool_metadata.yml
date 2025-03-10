@@ -99,7 +99,7 @@
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 7e5a36531b6ce2cad6c17d8ab26b4de5b2a4f530
+  commit: c69c1b26874f771369d930c788a8bb51ce872555
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"

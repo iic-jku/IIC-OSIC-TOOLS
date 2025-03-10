@@ -375,7 +375,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="7e5a36531b6ce2cad6c17d8ab26b4de5b2a4f530"
+ARG XSCHEM_REPO_COMMIT="c69c1b26874f771369d930c788a8bb51ce872555"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
