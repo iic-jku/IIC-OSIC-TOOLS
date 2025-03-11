@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: dd13f1d382e62eaa1d86a042a2b81de931766377
+  commit: e58e803ec9e4dfb4bc5824d49c2f84dc874b2bcd
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 4ea20ad3f1c1177b912a93308a8e926d5981792d
@@ -36,7 +36,7 @@
   commit: "8.3.522"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.292"
+  commit: "1.5.293"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-44.2"
@@ -72,7 +72,7 @@
   commit: e5563d1044bd6790325c4602c49f89e1182fa91a
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: e62d383b1b6e91a44d3287d8bc6a2dfe256d30bb
+  commit: 49516315dfd6fa1c27f4d283f7c5e3249cf3d612
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 8f2239b2b12dac43f8f47f56deef1095d5262fa2
@@ -99,7 +99,7 @@
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: c69c1b26874f771369d930c788a8bb51ce872555
+  commit: 5e6ce2dce8bfa628b6b6d04d907f5e69185373b8
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"

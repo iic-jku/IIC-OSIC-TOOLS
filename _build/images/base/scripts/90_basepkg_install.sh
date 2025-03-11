@@ -29,7 +29,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	pyverilog==1.3.0 \
 	schemdraw[svgmath]==0.20 \
 	scikit-rf==1.6.2 \
-	siliconcompiler==0.31.1 \
+	siliconcompiler==0.32.0 \
 	spicelib==1.4.2 \
 	spyci==1.0.2 \
 	volare==0.20.6

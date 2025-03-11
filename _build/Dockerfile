@@ -146,7 +146,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="dd13f1d382e62eaa1d86a042a2b81de931766377"
+ARG GHDL_REPO_COMMIT="e58e803ec9e4dfb4bc5824d49c2f84dc874b2bcd"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -206,7 +206,7 @@ RUN --mount=type=bind,source=images/libman,target=/images/libman \
 #######################################################################
 FROM base AS netgen
 ARG NETGEN_REPO_URL="https://github.com/rtimothyedwards/netgen.git"
-ARG NETGEN_REPO_COMMIT="1.5.292"
+ARG NETGEN_REPO_COMMIT="1.5.293"
 ARG NETGEN_NAME="netgen"
 RUN --mount=type=bind,source=images/netgen,target=/images/netgen \
     bash /images/netgen/scripts/install.sh
@@ -345,7 +345,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="e62d383b1b6e91a44d3287d8bc6a2dfe256d30bb"
+ARG SLANG_REPO_COMMIT="49516315dfd6fa1c27f4d283f7c5e3249cf3d612"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -375,7 +375,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="c69c1b26874f771369d930c788a8bb51ce872555"
+ARG XSCHEM_REPO_COMMIT="5e6ce2dce8bfa628b6b6d04d907f5e69185373b8"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
