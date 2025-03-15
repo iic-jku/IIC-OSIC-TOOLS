@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: e58e803ec9e4dfb4bc5824d49c2f84dc874b2bcd
+  commit: 678632755ed88d4f9c4fda1d2b28dc026015eb0d
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 4ea20ad3f1c1177b912a93308a8e926d5981792d
@@ -24,7 +24,7 @@
   commit: a7884acc04cd94017779893d381b7e93d8895587
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 99580cd05171b82e3b460c96abdfbfafbcfd9d60
+  commit: b0c57ab17714b0640f80efd018de2fe932083e60
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.29.12"
@@ -72,7 +72,7 @@
   commit: e5563d1044bd6790325c4602c49f89e1182fa91a
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 49516315dfd6fa1c27f4d283f7c5e3249cf3d612
+  commit: a15be31aad05c0d2e2909d3b5696d0b53898817b
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 8f2239b2b12dac43f8f47f56deef1095d5262fa2
@@ -90,7 +90,7 @@
   commit: 52ecda1053bcbd2f6ec88b8379c8179e2a849f7a
 - name: qucs-s
   repo: https://github.com/ra3xdh/qucs_s.git
-  commit: "25.1.0"
+  commit: "25.1.1"
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: "v5.034"
@@ -99,7 +99,7 @@
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 5e6ce2dce8bfa628b6b6d04d907f5e69185373b8
+  commit: 313acc8e2974c38be80549203a555bed0fd4e30f
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"
