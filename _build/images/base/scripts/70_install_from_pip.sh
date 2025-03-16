@@ -18,6 +18,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	matplotlib-inline \
 	maturin \
 	meson \
+	nevergrad \
 	ninja \
 	numpy \
 	orderedmultidict \
