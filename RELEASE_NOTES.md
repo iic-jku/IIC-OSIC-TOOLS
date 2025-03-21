@@ -2,6 +2,17 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2025.03
+
+* **ATTENTION**: The symbol configuration of the LV- and HV-NMOS has changed in the IHP PDK in this release (drain and source have been swapped). Please adapt your existing IHP schematics accordingly!
+* Changed Windows `start_x.bat` to use WSL integrated WSLg audio and visual subsystem instead of a third-party X-server.
+* Changed Linux `start_x.sh` to support Wayland and provide more robust parameter handling.
+* Adding `mold` and `ccache` to speed up `verilator` simulations.
+* Add `pygame` for IIC-RALF.
+* Add `nevergrad` for optimization (e.g., in Jupyter notebooks).
+* Bump various tool versions.
+* Store `ORFS` git hash in image (see `KNOWN_ISSUES.md`).
+
 ## 2025.02
 
 * Adding `spicelib` SPICE-simulator interaction from Python.
@@ -11,7 +22,7 @@ This document summarizes the most important changes of the individual releases o
 * Remove temporarily `hdl21` and `vlsirtools` due to incompatibility with `gdsfactory` on `pydantic`.
 * Build `adms` from source, compile `xyce` models with it. 
 * Bump various tool versions.
-* Changed Windows `start_x.bat` to use WSL integrated WSLg audio and visual subsystem instead of a third-party X-server.
+
 
 ## 2025.01
 
