@@ -19,18 +19,28 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	maturin \
 	meson \
 	ninja \
+	numpy \
 	orderedmultidict \
 	panda \
+	pandas \
+	paramiko \
 	pathspec \
 	pipdeptree \
+	plotly \
 	prettyprinttree \
 	prettytable \
+	pygame \
+	pygmid \
 	pytest \
+	schemdraw[svgmath] \
 	scikit-build \
 	scikit-image \
+	scipy \
 	simanneal \
 	svgutils \
-	torch_geometric
+	sympy \
+	torch_geometric \
+	ziamath
 
 echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*

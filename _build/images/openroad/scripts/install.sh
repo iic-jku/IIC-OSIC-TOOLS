@@ -18,3 +18,7 @@ git submodule update --init --recursive
 cmake .. "-DCMAKE_INSTALL_PREFIX=${TOOLS}/${OPENROAD_APP_NAME}-latest" "-DUSE_SYSTEM_BOOST=ON" "-DGTest_ROOT=/usr/local"
 make -j"$(nproc)"
 make install
+
+# Get ORFS GitHub hash that works with this OR version
+ORFS_COMMIT=$(git ls-remote https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git | grep HEAD | cut -f 1)
+echo "$ORFS_COMMIT" > "${TOOLS}/${OPENROAD_APP_NAME}-latest/ORFS_COMMIT"

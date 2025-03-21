@@ -22,5 +22,12 @@ mkdir -p parallel_build && cd parallel_build
 cp /images/xyce/scripts/xyce.reconfigure.sh ./reconfigure.sh
 chmod +x reconfigure.sh
 ./reconfigure.sh
+
+# build models
+cd src/DeviceModelPKG/ADMS
+make -j"$(nproc)"
+cd ../../..
+
+# build Xyce
 make -j"$(nproc)"
 make install

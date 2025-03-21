@@ -40,8 +40,17 @@ chmod +x yosys
 # create dir for logs
 mkdir "$STARTUPDIR"/logs
 
+# For the WSLg VGPU to correctly work, the potentially mounted driver directory needs to be added to the dynamic linker config:
+echo "/usr/lib/wsl/lib" > /etc/ld.so.conf.d/ld.wsl.conf
+ldconfig
+
 # set /usr/bin/python3 to provide "/usr/bin/python"
 update-alternatives --set python /usr/bin/python3
+
+# create default XDG_RUNTIME_DIR
+# FIXME: Do not create an all-world readable directory, but one that fits the exact user of the container.
+mkdir -p /tmp/runtime-default
+chmod 777 /tmp/runtime-default
 
 # set access rights for home dir and designs dir
 chown -R 1000:1000 "$HOME"

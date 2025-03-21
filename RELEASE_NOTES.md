@@ -2,17 +2,34 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2025.02
+
+* Adding `spicelib` SPICE-simulator interaction from Python.
+* Adding `klayout-pex` parasitic extraction tool.
+* Adding a couple of useful Python packages (`numpy`, `pandas`, `plotly`, `pygmid`, `schemdraw`, `scipy`, `sympy`).
+* Adapting to changed directory structure of IHP's PDK.
+* Remove temporarily `hdl21` and `vlsirtools` due to incompatibility with `gdsfactory` on `pydantic`.
+* Build `adms` from source, compile `xyce` models with it. 
+* Bump various tool versions.
+* Changed Windows `start_x.bat` to use WSL integrated WSLg audio and visual subsystem instead of a third-party X-server.
+
 ## 2025.01
 
 * Upgrade base OS to Ubuntu 24.04 LTS (from 22.04 LTS).
-* Significantly reduced (by 1/3) the Docker image size with various measures:
+* Significantly reduced the Docker image size with various measures:
   * Remove the debug symbols from the RISC-V toolchain and strip the executables
-  * Remove the KLayout testing folders
+  * Remove the KLayout testing folders (most users will never need them)
   * Remove dedicated build of `spike` as it is a part of the RISC-V toolchain
-  * Remove the device measurements (mdm files) for the SG13G2 PDK
+  * Remove the device measurements (MDM files) for the SG13G2 PDK
   * Use gzip`ed Liberty files for all PDKs
+* Rename SG13G2 PDK location from `sg13g2` to `ihp-sg13g2` to be compatible to upstream.
+* Fix the PSP models for `xyce`, add `adms` model compiler along the way. Enable external model support for `xyce`.
+* Fix wrong symbol paths (caused upstream) of `xschem` test schematics for `gf180mcuC` and `gf180mcuD`.
+* Re-add `hdl21` and `vlsirtools`.
+* Adding `surfer` waveform viewer.
 * Adding `lctime` CMOS cell characterization kit.
 * Adding `qalculate` to have an onboard calculator.
+* Adding a simple viewer for `.md` files (called `mdview`)
 * Adding analog circuit design course files.
 * Bump various tool versions.
 

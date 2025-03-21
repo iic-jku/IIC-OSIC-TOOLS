@@ -10,5 +10,8 @@
 	F77=mpif77 \
 	--enable-stokhos \
 	--enable-amesos2 \
+	--enable-shared \
+	--enable-xyce-shareable \
+	--enable-user-plugin \
 	--verbose \
 	--prefix="${TOOLS}/${XYCE_NAME}"

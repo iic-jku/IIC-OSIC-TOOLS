@@ -12,6 +12,14 @@ Example:
 DOCKER_EXTRA_PARAMS='--security-opt seccomp=unconfined' ./start_x.sh
 ```
 
+### Switching to WSLg for graphical applications on Windows
+
+The current variant of the `start_x.bat` for Windows uses WSLg for audio & visual output, which comes preinstalled/packaged with WSL (Windows 10 Build 19044 or Windows 11). If problems arrise, update WSL according to [the Microsoft website](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps).
+
+### Frequent crashes of `xschem` on Windows 10+
+
+Since the update of the image to Ubuntu 24.04 LTS with tag `2025.01` there are reports of frequent crashes of `xschem` under Windows 11 using certain versions of specific X-servers. It has been found that using <https://vcxsrv.com> version `64.1.17.2.0` under Windows 11 works well (see [issue 92](https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/92)).
+
 ### Issues with OpenGL on some environments
 
 A few applications are using OpenGL graphics, which can lead to issues on some computing environments. A (potential) remedy is to enable SW-rendering with can be achieved by setting the following environment variable inside the Docker VM:
@@ -28,20 +36,22 @@ export OPENROAD_EXE=$TOOLS/openroad-latest/bin/openroad
 export OPENSTA_EXE=$TOOLS/openroad-latest/bin/sta
 ```
 
+Since the OpenROAD version and ORFS version are tightly integrated with often occuring interface breaks, the ORFS Git commit hash at image build time is stored in `$TOOLS/openroad-latest/ORFS_COMMIT`. After cloning ORFS from GitHub use the following command to switch to the tested ORFS version:
+
+```bash
+git checkout $(cat $TOOLS/openroad-latest/ORFS_COMMIT)
+```
+
+### Surfer crashing
+
+As of image `2025.01` Surfer has been added. Surfer is known to crash on quite a few platforms due to issues with OpenGL drivers. If Surfer works on your platform, great. If Surfer does crash then this is not good, but there is currently no solution available. Please do not file bug reports. As soon as we are aware of a solution for these crashes we will implement the fixes.
+
 ### OpenEMS
 
 The visualization tool "AppCSXCAD" will not work in the container with our default settings (`vtkXOpenGLRenderWindow (0x....): Cannot create GLX context.  Aborting.`). The issue has been located to be connected with the environment variable "LIBGL_ALWAYS_INDIRECT". As a workaround, we suggest either unsetting the variable or setting it to 0 (`unset LIBGL_ALWAYS_INDIRECT` or `export LIBGL_ALWAYS_INDIRECT=0`) which is persistent for the running terminal or run AppCSXCAD with the variable set to zero inline: `LIBGL_ALWAYS_INDIRECT=0 AppCSXCAD`.
-
-### Hdl21/Vlsirtools
-
-We (temporarily) removed `Hdl21` and `Vlsirtools`, as they force `numpy` to version 1. All other packages allow `numpy` 2, so this removal, until the dependencies are fixed.
 
 ### PyOPUS
 
 `PyOPUS` is removed, as build fails, and it forces `numpy` to version 1.
 
 ## Build
-
-### Boost
-
-Boost is currently installed from the package sources of Ubuntu and a manual install/build. This is currently required, as there are some dependencies from packages, but also, some manually built tools require a newer boost version. This issue will be resolved in the future when switching to a more modern Ubuntu release.

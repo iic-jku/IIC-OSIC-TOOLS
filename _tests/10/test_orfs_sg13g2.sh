@@ -1,5 +1,5 @@
 #!/bin/bash
-# SPDX-FileCopyrightText: 2024 Harald Pretl
+# SPDX-FileCopyrightText: 2024-2025 Harald Pretl
 # Johannes Kepler University, Institute for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -11,7 +11,10 @@ WORK_DIR=/tmp/orfs_sg13g2
 FLOW_HOME=$WORK_DIR/orfs/flow
 
 mkdir -p $WORK_DIR && cd $WORK_DIR || exit 1
-git clone --quiet --depth=1 https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git orfs
+git clone --quiet --filter=blob:none https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git orfs
+cd orfs || exit 1
+ORFS_COMMIT=$(cat "$TOOLS/openroad-latest/ORFS_COMMIT")
+git checkout --quiet "$ORFS_COMMIT"
 cd $FLOW_HOME || exit 1
 
 # prepare environment for ORFS
@@ -29,9 +32,9 @@ make > $RESULT
 
 # check if there is an error in the log
 if grep -q "ERROR" "$RESULT"; then
-    echo "[ERROR] Test <ORFS with sg13g2> FAILED."
+    echo "[ERROR] Test <ORFS with ihp-sg13g2> FAILED."
     exit 1
 else
-    echo "[INFO] Test <ORFS with sg13g2> passed."
+    echo "[INFO] Test <ORFS with ihp-sg13g2> passed."
     exit 0
 fi
