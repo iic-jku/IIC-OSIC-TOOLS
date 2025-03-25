@@ -2,8 +2,9 @@
 # ========================================================================
 # Restarts multiple IIC-OSIC-TOOLS containers for many EDA users
 #
-# SPDX-FileCopyrightText: 2023 Harald Pretl
-# Johannes Kepler University, Institute for Integrated Circuits
+# SPDX-FileCopyrightText: 2023-2025 Harald Pretl
+# Johannes Kepler University, Institute for Integrated Circuits and
+# Quantum Computing
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,7 +44,7 @@ while getopts "hdf:g:l:" flag; do
 			;;
 		h)
 		 	echo
-			echo "Restarting Docker instances for EDA users (IIC@JKU)"
+			echo "Restarting Docker instances for EDA users (IICQC@JKU)"
 			echo
 			echo "Usage: $0 [-h] [-d] [-f credential_file] [-g user_group] [-l data_directory]"
 			echo

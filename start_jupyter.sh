@@ -1,9 +1,10 @@
 #!/bin/bash
 # ========================================================================
-# Start script for IIC docker images (use for Jupyter Notebooks only)
+# Start script for IICQC docker images (use for Jupyter Notebooks only)
 #
 # SPDX-FileCopyrightText: 2022-2023 Harald Pretl and Georg Zachl
-# Johannes Kepler University, Institute for Integrated Circuits
+# Johannes Kepler University, Institute for Integrated Circuits and
+# Quantum Computing
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
