@@ -4,7 +4,7 @@
 
 This environment is based on the [efabless.com FOSS-ASIC-TOOLS](https://github.com/efabless/foss-asic-tools).
 
-**IIC-OSIC-TOOLS** is an all-in-one Docker container for open-source-based integrated circuit designs for analog and digital circuit flows. The CPU architectures `x86_64/amd64` and `aarch64/arm64` are natively supported based on Ubuntu 24.04 LTS (since release `2025.01`). This collection of tools is curated by the [**Institute for Integrated Circuits (IIC), Johannes Kepler University (JKU)**](https://iic.jku.at).
+**IIC-OSIC-TOOLS** is an all-in-one Docker container for open-source-based integrated circuit designs for analog and digital circuit flows. The CPU architectures `x86_64/amd64` and `aarch64/arm64` are natively supported based on Ubuntu 24.04 LTS (since release `2025.01`). This collection of tools is curated by the [**Institute for Integrated Circuits and Quantum Computing (IICQC), Johannes Kepler University (JKU)**](https://iic.jku.at).
 
 ## Table of Contents
 
