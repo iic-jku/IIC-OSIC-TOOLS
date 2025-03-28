@@ -1,1 +1,0 @@
-../common/hspice2ngspice.sh

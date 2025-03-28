@@ -1,1 +1,0 @@
-../magic/magic-ext.sh

@@ -1,8 +1,0 @@
-* simulation de RC2
-.control
-
-noise v(n3) v1 dec 100 10k 1000k 
-
-write
-.endc
-.include RC2.net

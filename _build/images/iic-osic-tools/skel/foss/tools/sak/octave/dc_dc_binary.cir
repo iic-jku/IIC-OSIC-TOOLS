@@ -1,8 +1,0 @@
-* simulation de RC2
-.control
-
-dc v1 0 5 0.1 i1 0 5mA 1mA
-
-write
-.endc
-.include RC2.net

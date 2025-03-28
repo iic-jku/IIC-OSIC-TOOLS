@@ -1,1 +1,0 @@
-../klayout/klayoutDrc.sh

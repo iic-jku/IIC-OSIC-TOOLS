@@ -1,8 +1,0 @@
-* simulation de RC2
-.control
-set filetype=ascii
-tran 10n 10000n   
-
-write tran_ascii.raw
-.endc
-.include RC2.net

@@ -1,1 +1,0 @@
-../magic/ext-def-sky130A.sh

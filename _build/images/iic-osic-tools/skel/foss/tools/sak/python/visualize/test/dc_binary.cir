@@ -1,8 +1,0 @@
-* simulation de RC2
-.control
-
-dc v1 0 5 0.01    
-
-write dc_binary.raw
-.endc
-.include RC2.net

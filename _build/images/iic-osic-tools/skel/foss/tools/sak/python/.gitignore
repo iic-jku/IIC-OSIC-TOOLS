@@ -1,9 +1,0 @@
-*~
-*.pyc
-*.log
-test/*.png
-test/*.raw
-test/*.net
-test/*.cir
-test/out.hdf5
-test/plot_listings.txt

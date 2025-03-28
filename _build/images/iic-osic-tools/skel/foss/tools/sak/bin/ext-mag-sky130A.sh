@@ -1,1 +1,0 @@
-../magic/ext-mag-sky130A.sh

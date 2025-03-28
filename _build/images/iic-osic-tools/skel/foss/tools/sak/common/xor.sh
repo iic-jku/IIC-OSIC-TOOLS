@@ -1,1 +1,0 @@
-../klayout/xor.sh

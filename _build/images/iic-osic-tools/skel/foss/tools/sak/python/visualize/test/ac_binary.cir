@@ -1,8 +1,0 @@
-* simulation de RC2
-.control
-
-ac dec 100 10k 1000k 
-
-write ac_binary.raw
-.endc
-.include RC2.net

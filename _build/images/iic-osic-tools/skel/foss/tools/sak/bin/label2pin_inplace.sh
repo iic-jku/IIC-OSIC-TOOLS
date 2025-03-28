@@ -1,1 +1,0 @@
-../klayout/label2pin_inplace.sh

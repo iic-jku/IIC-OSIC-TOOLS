@@ -1,1 +1,0 @@
-../magic/mag2maglef.sh

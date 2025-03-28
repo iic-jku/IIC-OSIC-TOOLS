@@ -1,9 +1,0 @@
-* simulation de RC2
-.control
-set filetype=ascii
-
-noise v(n3) v1 dec 100 10k 1000k 
-
-write noise_ascii.raw
-.endc
-.include RC2.net

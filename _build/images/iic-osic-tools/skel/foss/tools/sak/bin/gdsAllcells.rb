@@ -1,1 +1,0 @@
-../klayout/gdsAllcells.rb

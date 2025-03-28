@@ -1,1 +1,0 @@
-../magic/drc-gds-full-EFS8A.sh

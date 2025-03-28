@@ -1,8 +1,0 @@
-* simulation de RC2
-.control
-
-tran 10n 10000n   
-
-write
-.endc
-.include RC2.net

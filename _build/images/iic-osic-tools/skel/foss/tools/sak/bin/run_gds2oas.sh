@@ -1,1 +1,0 @@
-../klayout/run_gds2oas.sh

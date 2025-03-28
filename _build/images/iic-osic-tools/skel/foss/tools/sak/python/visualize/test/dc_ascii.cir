@@ -1,8 +1,0 @@
-* simulation de RC2
-.control
-set filetype=ascii
-dc v1 0 5 0.01    
-
-write dc_ascii.raw
-.endc
-.include RC2.net

@@ -1,1 +1,0 @@
-../magic/drc-mag-sky130A.sh

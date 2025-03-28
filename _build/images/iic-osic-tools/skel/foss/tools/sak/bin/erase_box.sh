@@ -1,1 +1,0 @@
-../magic/erase_box.sh

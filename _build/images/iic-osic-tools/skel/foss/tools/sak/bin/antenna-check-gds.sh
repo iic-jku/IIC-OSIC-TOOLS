@@ -1,1 +1,0 @@
-../magic/antenna-check-gds.sh
