@@ -20,7 +20,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	gdspy==1.6.13 \
 	klayout-pex==0.2.0 \
 	lctime==0.0.24 \
-	openlane==2.3.10 \
 	openram==1.2.48 \
 	pygmid==1.2.12 \
 	pyrtl==0.11.2 \
@@ -35,6 +34,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	volare==0.20.6
 
 #FIXME	hdl21==7.0.0 \
+#FIXME	openlane==2.3.10 \
 #FIXME	vlsirtools==7.0.0 \
 
 echo "[INFO] Install EDA packages via GEM"
