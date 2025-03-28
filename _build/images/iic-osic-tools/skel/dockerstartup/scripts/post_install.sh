@@ -14,9 +14,6 @@ mv "$STARTUPDIR/scripts/env.sh" "$HOME/.bashrc"
 [ ! -d "$PDK_ROOT" ] && mkdir -p "$PDK_ROOT"
 [ ! -d "$EXAMPLES" ] && mkdir -p "$EXAMPLES"
 
-# install the SPEF extractor
-cp -a "$TOOLS/sak/openlane/spef_extractor" "$TOOLS/"
-
 # link all tool binaries into one bin folder
 mkdir -p "$TOOLS/bin"
 cd "$TOOLS/bin" || exit

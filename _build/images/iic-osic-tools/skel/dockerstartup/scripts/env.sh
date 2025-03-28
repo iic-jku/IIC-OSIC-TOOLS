@@ -85,7 +85,7 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
     _path_add_tool_bin      "yosys"
     _path_add_tool_custom   "yosys/bin"
 	
-    export SAK=$TOOLS/sak/
+    export SAK=$TOOLS/sak
     export PATH=$TOOLS/bin:$SAK:/usr/local/sbin:$PATH
 
     # OpenROAD in Ubuntu 22.04 does not find the PIP modules, so use PYTHONPATH
