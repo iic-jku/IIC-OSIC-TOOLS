@@ -60,7 +60,7 @@ RUN --mount=type=bind,source=images/openvaf,target=/images/openvaf \
 #######################################################################
 FROM basepkg AS osic-multitool
 ARG OSIC_MULTITOOL_REPO_URL="https://github.com/iic-jku/osic-multitool.git"
-ARG OSIC_MULTITOOL_REPO_COMMIT="cc61d2dcad01491a6256097761b6c25f2809be63"
+ARG OSIC_MULTITOOL_REPO_COMMIT="ab373a6b917635d1ae85b4d11397a1b708050f76"
 ARG OSIC_MULTITOOL_NAME="osic-multitool"
 RUN --mount=type=bind,source=images/osic-multitool,target=/images/osic-multitool \
     bash /images/osic-multitool/scripts/install.sh
@@ -146,7 +146,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="678632755ed88d4f9c4fda1d2b28dc026015eb0d"
+ARG GHDL_REPO_COMMIT="5d39d5095671bea1d378ec81e84bf57a57b40b6d"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -156,7 +156,7 @@ RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
 #######################################################################
 FROM base AS gtkwave
 ARG GTKWAVE_REPO_URL="https://github.com/gtkwave/gtkwave.git"
-ARG GTKWAVE_REPO_COMMIT="4435a9ef89892757eaf703085606f10040da6bfe"
+ARG GTKWAVE_REPO_COMMIT="b65817ab8601a17515659f3472cbbd74813687fb"
 ARG GTKWAVE_NAME="gtkwave"
 RUN --mount=type=bind,source=images/gtkwave,target=/images/gtkwave \
     bash /images/gtkwave/scripts/install.sh
@@ -186,7 +186,7 @@ RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
 #######################################################################
 FROM basepkg AS klayout
 ARG KLAYOUT_REPO_URL="https://github.com/KLayout/klayout.git"
-ARG KLAYOUT_REPO_COMMIT="v0.29.12"
+ARG KLAYOUT_REPO_COMMIT="v0.30.0"
 ARG KLAYOUT_NAME="klayout"
 RUN --mount=type=bind,source=images/klayout,target=/images/klayout \
     bash /images/klayout/scripts/install.sh
@@ -345,7 +345,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="a15be31aad05c0d2e2909d3b5696d0b53898817b"
+ARG SLANG_REPO_COMMIT="98534e5926e083bbc9af3d8738d90a2fb60fe0b3"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -375,7 +375,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="313acc8e2974c38be80549203a555bed0fd4e30f"
+ARG XSCHEM_REPO_COMMIT="1d2bff5f9b400218a169b124a312d309460cdcfc"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -407,7 +407,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="8f2239b2b12dac43f8f47f56deef1095d5262fa2"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="e23228f4b4ec5ec0b4b17f1f675debfa29458665"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \
