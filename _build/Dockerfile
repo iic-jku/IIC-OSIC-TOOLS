@@ -39,7 +39,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM basepkg AS magic
 ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic.git"
-ARG MAGIC_REPO_COMMIT="8.3.522"
+ARG MAGIC_REPO_COMMIT="8.3.524"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
@@ -127,7 +127,7 @@ RUN --mount=type=bind,source=images/cvc_rv,target=/images/cvc_rv \
 #######################################################################
 FROM base AS gaw3-xschem
 ARG GAW3_XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem-gaw.git"
-ARG GAW3_XSCHEM_REPO_COMMIT="d41828de08eef29c2f937d363bc2ecdc2687bfae"
+ARG GAW3_XSCHEM_REPO_COMMIT="6b8fa4ab007e88b3129381e0479737ae014a8b51"
 ARG GAW3_XSCHEM_NAME="gaw3-xschem"
 RUN --mount=type=bind,source=images/gaw3-xschem,target=/images/gaw3-xschem \
     bash /images/gaw3-xschem/scripts/install.sh
@@ -147,7 +147,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="5d39d5095671bea1d378ec81e84bf57a57b40b6d"
+ARG GHDL_REPO_COMMIT="26ee28a24ad960952c17c548d0a6c1e8588e8c28"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -177,7 +177,7 @@ RUN --mount=type=bind,source=images/irsim,target=/images/irsim \
 #######################################################################
 FROM base AS iverilog
 ARG IVERILOG_REPO_URL="https://github.com/steveicarus/iverilog.git"
-ARG IVERILOG_REPO_COMMIT="b0c57ab17714b0640f80efd018de2fe932083e60"
+ARG IVERILOG_REPO_COMMIT="7e238e7ca555448ca0ce3d405e0f4d1883af616b"
 ARG IVERILOG_NAME="iverilog"
 RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
     bash /images/iverilog/scripts/install.sh
@@ -336,7 +336,7 @@ ENV RISCV=$TOOLS/$RISCV_GNU_TOOLCHAIN_NAME
 #######################################################################
 FROM riscv-gnu-toolchain AS riscv-pk
 ARG RISCV_PK_REPO_URL="https://github.com/riscv-software-src/riscv-pk.git"
-ARG RISCV_PK_REPO_COMMIT="e5563d1044bd6790325c4602c49f89e1182fa91a"
+ARG RISCV_PK_REPO_COMMIT="d8659a4e8e888bdc9caf840ad17bfe83239b1d64"
 ARG RISCV_PK_NAME="riscv-pk"
 RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
     bash /images/riscv-pk/scripts/install.sh
@@ -346,7 +346,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="98534e5926e083bbc9af3d8738d90a2fb60fe0b3"
+ARG SLANG_REPO_COMMIT="9d19d0098bc654f385e032052b4f35aeada96fb0"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -376,7 +376,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="1d2bff5f9b400218a169b124a312d309460cdcfc"
+ARG XSCHEM_REPO_COMMIT="28aca824ed8e9a96406b0b75a9297bf5be6b11ff"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -408,7 +408,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="e23228f4b4ec5ec0b4b17f1f675debfa29458665"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="51096461a347d93294789e4fe6f68baaba67feea"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \

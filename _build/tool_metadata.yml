@@ -6,13 +6,13 @@
   commit: ced5a2e6d5e8656180d404e9220349e87512c82f
 - name: gaw3-xschem
   repo: https://github.com/StefanSchippers/xschem-gaw.git
-  commit: d41828de08eef29c2f937d363bc2ecdc2687bfae
+  commit: 6b8fa4ab007e88b3129381e0479737ae014a8b51
 - name: gds3d
   repo: https://github.com/trilomix/GDS3D.git
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 5d39d5095671bea1d378ec81e84bf57a57b40b6d
+  commit: 26ee28a24ad960952c17c548d0a6c1e8588e8c28
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 4ea20ad3f1c1177b912a93308a8e926d5981792d
@@ -24,7 +24,7 @@
   commit: a7884acc04cd94017779893d381b7e93d8895587
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: b0c57ab17714b0640f80efd018de2fe932083e60
+  commit: 7e238e7ca555448ca0ce3d405e0f4d1883af616b
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.30.0"
@@ -33,7 +33,7 @@
   commit: 70ae52c5c01423e99a310c46f7f801382a45fa1e
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.522"
+  commit: "8.3.524"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.293"
@@ -69,13 +69,13 @@
   commit: "2025.01.20"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
-  commit: e5563d1044bd6790325c4602c49f89e1182fa91a
+  commit: d8659a4e8e888bdc9caf840ad17bfe83239b1d64
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 98534e5926e083bbc9af3d8738d90a2fb60fe0b3
+  commit: 9d19d0098bc654f385e032052b4f35aeada96fb0
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: e23228f4b4ec5ec0b4b17f1f675debfa29458665
+  commit: 51096461a347d93294789e4fe6f68baaba67feea
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
@@ -99,7 +99,7 @@
   commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 1d2bff5f9b400218a169b124a312d309460cdcfc
+  commit: 28aca824ed8e9a96406b0b75a9297bf5be6b11ff
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"
