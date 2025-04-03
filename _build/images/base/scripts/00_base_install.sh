@@ -18,7 +18,6 @@ apt -y install \
 	build-essential \
 	bzip2 \
 	ca-certificates \
-	cargo \
 	ccache \
 	clang-16 \
 	clang-tools-16 \
@@ -151,7 +150,6 @@ apt -y install \
 	python3-pyqt5 \
 	python3-pyqt6 \
 	python3-setuptools \
-	python3-setuptools-rust \
 	python3-tk \
 	python3-venv \
 	python3-virtualenv \
@@ -173,7 +171,7 @@ apt -y install \
 	ruby-dev \
 	ruby-irb \
 	ruby-rubygems \
-	rustc \
+	rustup \
 	strace \
 	swig \
 	tcl \
@@ -205,6 +203,13 @@ echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*
 apt -y autoremove --purge
 apt -y clean
+
+# setup rust and cargo via rustup
+echo "[INFO] Installing Rust and Cargo"
+export RUSTUP_HOME=/tmp/rustup
+export CARGO_HOME=/tmp/cargo
+export PATH=$CARGO_HOME/bin:$PATH
+rustup default stable
 
 # FIXME maybe interesting for future cleanup (removal of -dev packages)
 # apt list --installed | grep "\-dev" | grep automatic | cut -d'/' -f1 | xargs apt -y remove

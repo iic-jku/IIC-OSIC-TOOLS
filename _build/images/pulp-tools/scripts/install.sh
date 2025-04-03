@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 mkdir -p "${TOOLS}/${PULP_NAME}/bin"
+export RUSTUP_HOME=/tmp/rustup
+export CARGO_HOME=/tmp/cargo
+export PATH=$CARGO_HOME/bin:$PATH
+rustup default stable
 
 # Build Bender
 # ------------
@@ -8,6 +12,7 @@ cd /tmp || exit 1
 echo "[INFO] Building Bender"
 git clone --depth=1 https://github.com/pulp-platform/bender.git
 cd bender || exit 1
+cargo update
 cargo build --release -j"$(nproc)"
 cp target/release/bender "${TOOLS}/${PULP_NAME}/bin"
 
@@ -17,6 +22,7 @@ cd /tmp || exit 1
 echo "[INFO] Building Morty"
 git clone --depth=1 https://github.com/pulp-platform/morty.git 
 cd morty || exit 1
+cargo update
 cargo build --release -j"$(nproc)"
 cp target/release/morty "${TOOLS}/${PULP_NAME}/bin"
 
