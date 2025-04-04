@@ -80,8 +80,8 @@
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
 - name: surfer
-  repo: https://gitlab.com/surfer-project/surfer
-  commit: "v0.3.0"
+  repo: https://gitlab.com/surfer-project/surfer.git
+  commit: b60386396bbcc7673b1c0550024990a94f29ff08
 - name: trilinos
   repo: https://github.com/trilinos/Trilinos.git
   commit: "trilinos-release-12-12-1"
