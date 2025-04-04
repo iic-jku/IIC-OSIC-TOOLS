@@ -2,8 +2,9 @@
 # ========================================================================
 # Stops and removes multiple IIC-OSIC-TOOLS containers for many EDA users
 #
-# SPDX-FileCopyrightText: 2023 Harald Pretl
-# Johannes Kepler University, Institute for Integrated Circuits
+# SPDX-FileCopyrightText: 2023-2025 Harald Pretl
+# Johannes Kepler University, Institute for Integrated Circuits and
+# Quantum Computing
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,7 +40,7 @@ while getopts "hdm:" flag; do
 			;;	
 		h)
 			echo
-			echo "Stopping Docker instances for EDA users (IIC@JKU)"
+			echo "Stopping Docker instances for EDA users (IICQC@JKU)"
 			echo
 			echo "Usage: $0 [-h] [-d] [-m cont_prefix]"
 			echo

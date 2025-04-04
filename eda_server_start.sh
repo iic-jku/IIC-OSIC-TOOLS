@@ -3,7 +3,8 @@
 # Spins up multiple IIC-OSIC-TOOLS containers for many EDA users
 #
 # SPDX-FileCopyrightText: 2023-2025 Harald Pretl
-# Johannes Kepler University, Institute for Integrated Circuits
+# Johannes Kepler University, Institute for Integrated Circuits and
+# Quantum Computing
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -76,7 +77,7 @@ while getopts "hcdkp:n:s:f:g:l:m:" flag; do
 			;;
 		h)
 		 	echo
-			echo "Spinning up Docker instances for EDA users (IIC@JKU)"
+			echo "Spinning up Docker instances for EDA users (IICQC@JKU)"
 			echo
 			echo "Usage: $0 [-h] [-d] [-c] [-k] [-p port_number] [-n number_instances] [-g user_group] [-s passwd_digits] [-f credential_file] [-l data_directory] [-m cont_prefix]"
 			echo
