@@ -147,7 +147,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="26ee28a24ad960952c17c548d0a6c1e8588e8c28"
+ARG GHDL_REPO_COMMIT="57dc78c76a8e139dc509bd05815e372ba33d502b"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -295,7 +295,7 @@ RUN --mount=type=bind,source=images/surelog,target=/images/surelog \
 #######################################################################
 FROM base AS surfer
 ARG SURFER_REPO_URL="https://gitlab.com/surfer-project/surfer.git"
-ARG SURFER_REPO_COMMIT=b60386396bbcc7673b1c0550024990a94f29ff08
+ARG SURFER_REPO_COMMIT="56f0243da10b2050ab1c2e598c6c3bd851e9cfcf"
 ARG SURFER_NAME="surfer"
 RUN --mount=type=bind,source=images/surfer,target=/images/surfer \
     bash /images/surfer/scripts/install.sh
@@ -315,7 +315,7 @@ RUN --mount=type=bind,source=images/qflow,target=/images/qflow \
 #######################################################################
 FROM base AS qucs-s
 ARG QUCS_S_REPO_URL="https://github.com/ra3xdh/qucs_s.git"
-ARG QUCS_S_REPO_COMMIT="25.1.1"
+ARG QUCS_S_REPO_COMMIT="25.1.2"
 ARG QUCS_S_NAME="qucs-s"
 RUN --mount=type=bind,source=images/qucs-s,target=/images/qucs-s \
     bash /images/qucs-s/scripts/install.sh
@@ -346,7 +346,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="9d19d0098bc654f385e032052b4f35aeada96fb0"
+ARG SLANG_REPO_COMMIT="6e7ad80e6b7b65541097b75a58c99cdfcc38d552"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -376,7 +376,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="28aca824ed8e9a96406b0b75a9297bf5be6b11ff"
+ARG XSCHEM_REPO_COMMIT="232384f8fbf16836938ec0ce65c20b05d8a39b97"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -386,7 +386,7 @@ RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
 #######################################################################
 FROM base AS yosys
 ARG YOSYS_REPO_URL="https://github.com/YosysHQ/yosys.git"
-ARG YOSYS_REPO_COMMIT="v0.51"
+ARG YOSYS_REPO_COMMIT="v0.52"
 ARG YOSYS_NAME="yosys"
 ARG YOSYS_EQY_REPO_URL="https://github.com/YosysHQ/eqy.git"
 ARG YOSYS_EQY_NAME="yosys_eqy"
@@ -399,7 +399,7 @@ RUN --mount=type=bind,source=images/yosys,target=/images/yosys \
 
 FROM base AS ghdl-yosys-plugin
 ARG GHDL_YOSYS_PLUGIN_REPO_URL="https://github.com/ghdl/ghdl-yosys-plugin.git"
-ARG GHDL_YOSYS_PLUGIN_REPO_COMMIT="4ea20ad3f1c1177b912a93308a8e926d5981792d"
+ARG GHDL_YOSYS_PLUGIN_REPO_COMMIT="8c29f2cc7cc3b8c979acd02f543d25f321b55c30"
 ARG GHDL_YOSYS_PLUGIN_NAME="ghdl-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 COPY --from=ghdl	${TOOLS}    ${TOOLS}
@@ -408,7 +408,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="51096461a347d93294789e4fe6f68baaba67feea"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="2ee890391796ed5b07d8553dc38ac2b28b61cc5f"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \
