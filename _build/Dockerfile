@@ -39,7 +39,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM basepkg AS magic
 ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic.git"
-ARG MAGIC_REPO_COMMIT="8.3.524"
+ARG MAGIC_REPO_COMMIT="8.3.526"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
@@ -147,7 +147,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="57dc78c76a8e139dc509bd05815e372ba33d502b"
+ARG GHDL_REPO_COMMIT="d93c3e8db4cd8a5ee1b5843f937587d8a6319251"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -157,7 +157,7 @@ RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
 #######################################################################
 FROM base AS gtkwave
 ARG GTKWAVE_REPO_URL="https://github.com/gtkwave/gtkwave.git"
-ARG GTKWAVE_REPO_COMMIT="b65817ab8601a17515659f3472cbbd74813687fb"
+ARG GTKWAVE_REPO_COMMIT="01e18ee593be93f96b0794bf4a8492251d7bbff7"
 ARG GTKWAVE_NAME="gtkwave"
 RUN --mount=type=bind,source=images/gtkwave,target=/images/gtkwave \
     bash /images/gtkwave/scripts/install.sh
@@ -167,7 +167,7 @@ RUN --mount=type=bind,source=images/gtkwave,target=/images/gtkwave \
 #######################################################################
 FROM base AS irsim
 ARG IRSIM_REPO_URL="https://github.com/rtimothyedwards/irsim.git"
-ARG IRSIM_REPO_COMMIT="a7884acc04cd94017779893d381b7e93d8895587"
+ARG IRSIM_REPO_COMMIT="34b1e7bbb1014346a5bbe9171bd25840ee020578"
 ARG IRSIM_NAME="irsim"
 RUN --mount=type=bind,source=images/irsim,target=/images/irsim \
     bash /images/irsim/scripts/install.sh
@@ -197,7 +197,7 @@ RUN --mount=type=bind,source=images/klayout,target=/images/klayout \
 #######################################################################
 FROM base AS libman
 ARG LIBMAN_REPO_URL="https://github.com/IHP-GmbH/LibMan.git"
-ARG LIBMAN_REPO_COMMIT="70ae52c5c01423e99a310c46f7f801382a45fa1e"
+ARG LIBMAN_REPO_COMMIT="dba437d4d883c4a57ba9a1dff3d0eb67d26c3c6c"
 ARG LIBMAN_NAME="libman"
 RUN --mount=type=bind,source=images/libman,target=/images/libman \
     bash /images/libman/scripts/install.sh
@@ -207,7 +207,7 @@ RUN --mount=type=bind,source=images/libman,target=/images/libman \
 #######################################################################
 FROM base AS netgen
 ARG NETGEN_REPO_URL="https://github.com/rtimothyedwards/netgen.git"
-ARG NETGEN_REPO_COMMIT="1.5.293"
+ARG NETGEN_REPO_COMMIT="1.5.294"
 ARG NETGEN_NAME="netgen"
 RUN --mount=type=bind,source=images/netgen,target=/images/netgen \
     bash /images/netgen/scripts/install.sh
@@ -295,7 +295,7 @@ RUN --mount=type=bind,source=images/surelog,target=/images/surelog \
 #######################################################################
 FROM base AS surfer
 ARG SURFER_REPO_URL="https://gitlab.com/surfer-project/surfer.git"
-ARG SURFER_REPO_COMMIT="56f0243da10b2050ab1c2e598c6c3bd851e9cfcf"
+ARG SURFER_REPO_COMMIT="fe97694c1da463c231f97d38aab8a98915ebe7be"
 ARG SURFER_NAME="surfer"
 RUN --mount=type=bind,source=images/surfer,target=/images/surfer \
     bash /images/surfer/scripts/install.sh
@@ -366,7 +366,7 @@ RUN --mount=type=bind,source=images/verilator,target=/images/verilator \
 #######################################################################
 FROM base AS xcircuit
 ARG XCIRCUIT_REPO_URL="https://github.com/RTimothyEdwards/XCircuit.git"
-ARG XCIRCUIT_REPO_COMMIT="b6d0b096a6a4730a4255efb50191e03cfa9b5496"
+ARG XCIRCUIT_REPO_COMMIT="b67fb820ac5506f9926ebc7f92c65c74c48e087d"
 ARG XCIRCUIT_NAME="xcircuit"
 RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
     bash /images/xcircuit/scripts/install.sh
@@ -408,7 +408,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="2ee890391796ed5b07d8553dc38ac2b28b61cc5f"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="a95ef24f0307230ae25ea6f2216d2fe8b8ece0be"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \

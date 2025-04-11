@@ -12,16 +12,16 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 57dc78c76a8e139dc509bd05815e372ba33d502b
+  commit: d93c3e8db4cd8a5ee1b5843f937587d8a6319251
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 8c29f2cc7cc3b8c979acd02f543d25f321b55c30
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
-  commit: b65817ab8601a17515659f3472cbbd74813687fb
+  commit: 01e18ee593be93f96b0794bf4a8492251d7bbff7
 - name: irsim
   repo: https://github.com/rtimothyedwards/irsim.git
-  commit: a7884acc04cd94017779893d381b7e93d8895587
+  commit: 34b1e7bbb1014346a5bbe9171bd25840ee020578
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
   commit: 7e238e7ca555448ca0ce3d405e0f4d1883af616b
@@ -30,13 +30,13 @@
   commit: "v0.30.0"
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
-  commit: 70ae52c5c01423e99a310c46f7f801382a45fa1e
+  commit: dba437d4d883c4a57ba9a1dff3d0eb67d26c3c6c
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.524"
+  commit: "8.3.526"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.293"
+  commit: "1.5.294"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-44.2"
@@ -75,13 +75,13 @@
   commit: 6e7ad80e6b7b65541097b75a58c99cdfcc38d552
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 2ee890391796ed5b07d8553dc38ac2b28b61cc5f
+  commit: a95ef24f0307230ae25ea6f2216d2fe8b8ece0be
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
 - name: surfer
   repo: https://gitlab.com/surfer-project/surfer.git
-  commit: 56f0243da10b2050ab1c2e598c6c3bd851e9cfcf
+  commit: fe97694c1da463c231f97d38aab8a98915ebe7be
 - name: trilinos
   repo: https://github.com/trilinos/Trilinos.git
   commit: "trilinos-release-12-12-1"
@@ -96,7 +96,7 @@
   commit: "v5.034"
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
-  commit: b6d0b096a6a4730a4255efb50191e03cfa9b5496
+  commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
   commit: 232384f8fbf16836938ec0ce65c20b05d8a39b97
