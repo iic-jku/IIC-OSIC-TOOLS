@@ -7,7 +7,7 @@ fi
 
 for var in "$@"
 do
-    echo "[INFO] Fix permissions for: $var"
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Fix permissions for: $var"
     # shellcheck disable=SC2086
     find "$var"/ -name '*.sh' -exec chmod $verbose a+x {} +
     # shellcheck disable=SC2086

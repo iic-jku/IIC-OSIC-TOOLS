@@ -32,9 +32,9 @@ source "$HOME/.bashrc"
 
 # if the first parameter is `skip`:
 if [[ $1 =~ -s|--skip ]]; then
-    echo -e "[INFO] SKIPPING UI STARTUP"
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] SKIPPING UI STARTUP"
     # shellcheck disable=SC2145
-    echo "[INFO] Executing command: '${@:2}'"
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Executing command: '${@:2}'"
     exec "${@:2}"
     exit $?
 fi
@@ -71,7 +71,7 @@ done
 
 # correct forwarding of shutdown signal
 cleanup () {
-    echo -e "[INFO] Cleanup called, exiting..."
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Cleanup called, exiting..."
     kill -s SIGTERM $!
     exit 0
 }
@@ -85,10 +85,10 @@ if [ "$start_x" != true ] && [ "$start_vnc" != true ]; then
         # DISPLAY is not set, so set it and run the startup script.
         start_vnc=true
         export DISPLAY=:1
-        echo -e "[INFO] Auto-selected VNC"
+        [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Auto-selected VNC."
     else
         start_x=true
-        echo -e "[INFO] Auto-selected local X11"
+        [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Auto-selected local X11."
     fi
 fi
 
@@ -97,7 +97,7 @@ if [ "$start_vnc" = true ]; then
     VNC_IP=$(hostname -i)
 
     # change the vnc password
-    echo -e "[INFO] Change VNC password"
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Change VNC password..."
     # first entry is control, second is the view (if only one is valid for both)
     mkdir -p "$HOME/.vnc"
     PASSWD_PATH="$HOME/.vnc/passwd"
@@ -105,11 +105,11 @@ if [ "$start_vnc" = true ]; then
     chmod 600 "$PASSWD_PATH"
 
     # start vncserver and noVNC webclient
-    echo -e "[INFO] Start noVNC"
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Start noVNC..."
 
     "$NO_VNC_HOME"/utils/novnc_proxy --vnc localhost:"$VNC_PORT" --listen "$NO_VNC_PORT" 2>&1 | tag "[NOVNC]" &
 
-    echo -e "[INFO] Starting vncserver and window manager with param: VNC_COL_DEPTH=$VNC_COL_DEPTH, VNC_RESOLUTION=$VNC_RESOLUTION"
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Starting vncserver and window manager with param: VNC_COL_DEPTH=$VNC_COL_DEPTH, VNC_RESOLUTION=$VNC_RESOLUTION."
 
     # workaround, lock files are not removed if the container is re-run otherwise which makes vncserver unaccessible
     rm -rf /tmp/.X1-lock
@@ -127,20 +127,20 @@ if [ "$start_vnc" = true ]; then
     fi
 
     # log connect options
-    echo -e "[INFO] VNC environment started"
-    echo -e "[INFO] VNCSERVER started on DISPLAY= $DISPLAY \n\t=> connect via VNC viewer with $VNC_IP:$VNC_PORT"
-    echo -e "[INFO] noVNC HTML client started:\n\t=> connect via http://localhost/?password=$VNC_PW\n"
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] VNC environment started."
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] VNCSERVER started on DISPLAY= $DISPLAY \n\t=> connect via VNC viewer with $VNC_IP:$VNC_PORT."
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] noVNC HTML client started:\n\t=> connect via http://localhost/?password=$VNC_PW\n"
 fi
 
 if [ "$start_x" = true ]; then
     xfce4-terminal | tag "[TERM]" &
     # add an empty newline so one can see that this script is done.
-    echo
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo
 fi
 
 if [ "$par_wait" = true ]; then
     trap cleanup SIGINT SIGTERM
-    echo -e "[INFO] Waiting until one of the sub-processes stops..."
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Waiting until one of the sub-processes stops..."
     wait -n
-    echo -e "[INFO] One sub process stopped, exiting..."
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] One sub process stopped, exiting..."
 fi

@@ -3,7 +3,7 @@
 
 USER_ID=$(id -u)
 GROUP_ID=$(id -g)
-echo "[INFO] USER_ID: $USER_ID, GROUP_ID: $GROUP_ID"
+[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] USER_ID: $USER_ID, GROUP_ID: $GROUP_ID"
 
 if [ x"$USER_ID" != x"0" ]; then
     NSS_WRAPPER_PASSWD=/tmp/passwd

@@ -33,7 +33,7 @@ if [ -z ${DESIGNS+z} ]; then
 	if [ ! -d "$DESIGNS" ]; then
 		${ECHO_IF_DRY_RUN} mkdir -p "$DESIGNS"
 	fi
-	echo "[INFO] Design directory auto-set to $DESIGNS."
+	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Design directory auto-set to $DESIGNS."
 fi
 
 # Set the host ports, and disable them with 0. Only used if not set as shell variables!
@@ -103,6 +103,10 @@ if [ -n "${DOCKER_EXTRA_PARAMS}" ]; then
 	PARAMS="${PARAMS} ${DOCKER_EXTRA_PARAMS}"
 fi
 
+if [ -n "${IIC_OSIC_TOOLS_QUIET}" ]; then
+	DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e IIC_OSIC_TOOLS_QUIET=1"
+fi
+
 # Check if the container exists and if it is running.
 if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
 	echo "[WARNING] Container is running!"
@@ -132,12 +136,12 @@ elif [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 		${ECHO_IF_DRY_RUN} docker rm "${CONTAINER_NAME}"
 	fi
 else
-	echo "[INFO] Container does not exist, creating ${CONTAINER_NAME} ..."
+	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container does not exist, creating ${CONTAINER_NAME} ..."
 	# Finally, run the container, and sets DISPLAY to the local display number
-	${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+	${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
 	# Disable SC2086, $PARAMS must be globbed and splitted.
 	# shellcheck disable=SC2086
-	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" $PARAMS -v "$DESIGNS:/foss/designs:rw" --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" -s jupyter lab
+	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" $PARAMS -v "$DESIGNS:/foss/designs:rw" --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" -s jupyter lab > /dev/null
 	NB_STARTED=1
 fi
 

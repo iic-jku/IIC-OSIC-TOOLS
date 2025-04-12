@@ -96,8 +96,8 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
     KLAYOUT_PYTHON=("$TOOLS"/klayout/pymod)
     export PYTHONPATH=$PYTHONPATH:${KLAYOUT_PYTHON[*]}
     
-    echo "[INFO] Final PATH variable: $PATH"
-    echo "[INFO] Final PYTHONPATH variable: $PYTHONPATH"
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Final PATH variable: $PATH"
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Final PYTHONPATH variable: $PYTHONPATH"
 
     export FOSS_INIT_DONE=1
 fi

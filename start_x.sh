@@ -53,7 +53,7 @@ if [ -z ${DESIGNS+z} ]; then
 	if [ ! -d "$DESIGNS" ]; then
 		${ECHO_IF_DRY_RUN} mkdir -p "$DESIGNS"
 	fi
-	echo "[INFO] Design directory auto-set to $DESIGNS."
+	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Design directory auto-set to $DESIGNS."
 fi
 
 PARAMS="$PARAMS -v ${DESIGNS}:/foss/designs:rw"
@@ -71,7 +71,7 @@ if [ -z ${DOCKER_TAG+z} ]; then
 fi
 
 if [[ "$OSTYPE" == "linux"* ]]; then
-	echo "[INFO] Auto detected Linux."
+	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Auto detected Linux."
 	# Should also be a sensible default
 	if [ -z ${CONTAINER_USER+z} ]; then
 	        CONTAINER_USER=$(id -u)
@@ -111,16 +111,16 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 	if [ -z ${WAYLAND_DISP+z} ]; then
 		WAYLAND_SOCK="$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
 		WAYLAND_DISP="$WAYLAND_DISPLAY"
-		echo "Assuming Wayland Socket ${WAYLAND_SOCK}"
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Assuming Wayland Socket ${WAYLAND_SOCK}."
 	else
 		WAYLAND_SOCK="$XDG_RUNTIME_DIR/$WAYLAND_DISP"
 	fi
 
 	if [ -S "$WAYLAND_SOCK" ]; then
-		echo "Wayland Socket exists, forwarding..."
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Wayland Socket exists, forwarding..."
 		PARAMS="${PARAMS} -v ${WAYLAND_SOCK}:${CONTAINER_XDG_RUNTIME_DIR}/${WAYLAND_DISP}:rw -e WAYLAND_DISPLAY=${WAYLAND_DISP}"
 	else
-		echo "[WARNING] Wayland socket could not be found. Falling back to X11"
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[WARNING] Wayland socket could not be found. Falling back to X11."
 	fi
 
 	if [ -z ${XAUTH+z} ]; then
@@ -148,10 +148,10 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 	fi
 	PARAMS="$PARAMS -v $XAUTH:/headless/.xauthority:rw -e XAUTHORITY=/headless/.xauthority"
 	if [ -d "/dev/dri" ]; then
-		echo "[INFO] /dev/dri detected, forwarding GPU for graphics acceleration."
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] /dev/dri detected, forwarding GPU for graphics acceleration."
 		PARAMS="${PARAMS} --device=/dev/dri:/dev/dri"
 	else
-		echo "[INFO] No /dev/dri detected!"
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] No /dev/dri detected!"
 		FORCE_LIBGL_INDIRECT=1
 	fi
 
@@ -166,7 +166,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 	if [ -z ${DISP+z} ]; then
 		DISP="host.docker.internal:0"
 		if [[ $(type -P "xhost") ]]; then
-			${ECHO_IF_DRY_RUN} xhost +localhost
+			${ECHO_IF_DRY_RUN} xhost +localhost > /dev/null
 		else
 			echo "[WARNING] xhost could not be found, access control to the X server must be managed manually!"
 		fi
@@ -185,7 +185,7 @@ else
 fi
 
 if [ -n "${FORCE_LIBGL_INDIRECT}" ]; then
-	echo "[INFO] Using indirect rendering."
+	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Using indirect rendering."
 	PARAMS="${PARAMS} -e LIBGL_ALWAYS_INDIRECT=1"
 fi
 
@@ -212,6 +212,10 @@ if [[ ${CONTAINER_GROUP} -ne 0 ]]  && [[ ${CONTAINER_GROUP} -lt 1000 ]]; then
         echo
 fi
 
+if [ -n "${IIC_OSIC_TOOLS_QUIET}" ]; then
+	DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e IIC_OSIC_TOOLS_QUIET=1"
+fi
+
 # If the container exists but is exited, it can be restarted.
 if [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	echo "[WARNING] Container ${CONTAINER_NAME} exists."
@@ -226,10 +230,10 @@ if [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 		${ECHO_IF_DRY_RUN} docker rm "${CONTAINER_NAME}"
 	fi
 else
-	echo "[INFO] Container does not exist, creating ${CONTAINER_NAME} ..."
+	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container does not exist, creating ${CONTAINER_NAME} ..."
 	# Finally, run the container, and set DISPLAY to the local display number
-	${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+	${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
 	# Disable SC2086, $PARAMS must be globbed and splitted.
 	# shellcheck disable=SC2086
-	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" -e "DISPLAY=${DISP}" ${PARAMS} --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" -e "DISPLAY=${DISP}" ${PARAMS} --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
 fi
