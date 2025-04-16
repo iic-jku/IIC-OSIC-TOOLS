@@ -12,13 +12,13 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: d93c3e8db4cd8a5ee1b5843f937587d8a6319251
+  commit: d7f9b8671b8e4c8ca56d10c7cf7319ef56dc66a8
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
-  commit: 8c29f2cc7cc3b8c979acd02f543d25f321b55c30
+  commit: a8c3018956833a1f551ebf2d597b357624f5fc2e
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
-  commit: 01e18ee593be93f96b0794bf4a8492251d7bbff7
+  commit: bb978d9d667d569b9153ffa34007e300302907dc
 - name: irsim
   repo: https://github.com/rtimothyedwards/irsim.git
   commit: 34b1e7bbb1014346a5bbe9171bd25840ee020578
@@ -30,7 +30,7 @@
   commit: "v0.30.0"
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
-  commit: dba437d4d883c4a57ba9a1dff3d0eb67d26c3c6c
+  commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
   commit: "8.3.526"
@@ -72,10 +72,10 @@
   commit: d8659a4e8e888bdc9caf840ad17bfe83239b1d64
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 6e7ad80e6b7b65541097b75a58c99cdfcc38d552
+  commit: 76d8b1e44fe582dd4029d968ebdb2fb64a24f92d
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: a95ef24f0307230ae25ea6f2216d2fe8b8ece0be
+  commit: 25540d82e35d1478b453670b752001cb1f5b1ef6
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
@@ -99,7 +99,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 232384f8fbf16836938ec0ce65c20b05d8a39b97
+  commit: 1417c05658a521bb8d0e693c794863d4211e2d6f
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"
@@ -108,7 +108,7 @@
   commit: "Release-2.7.0"
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: "v0.51"
+  commit: c894685f26850a7313dcbf800c306dbab8681517
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
 - name: yosys_sby

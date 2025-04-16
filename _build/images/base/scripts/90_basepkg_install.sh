@@ -14,11 +14,11 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	amaranth==0.5.4 \
 	cace==2.5.6 \
 	cocotb==1.9.2 \
-	edalize==0.6.0 \
+	edalize==0.6.1 \
 	fusesoc==2.4.2 \
-	gdsfactory==9.3.5 \
+	gdsfactory==9.4.0 \
 	gdspy==1.6.13 \
-	klayout-pex==0.2.3 \
+	klayout-pex==0.2.5 \
 	lctime==0.0.24 \
 	openram==1.2.48 \
 	pygmid==1.2.12 \
