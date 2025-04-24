@@ -54,4 +54,10 @@ The visualization tool "AppCSXCAD" will not work in the container with our defau
 
 `PyOPUS` is removed, as build fails, and it forces `numpy` to version 1.
 
+### Podman compatibility
+
+The IIC-OSIC-Tools container can be run using Podman instead of Docker (with the Podman Docker compatible CLI ), but it introduces some Problems:
+By default, Podman mounts all bind-mounts/volumes as root, even though the UID inside the container is != 0, which creates some problems when accessing files inside the container. To work around this issue, we suggest the following procedure:
+Edit the desired start script and find/replace all occurences of ":rw" with ":U,rw". Then Podman will mount all listed directories with the given UID inside the container.
+
 ## Build
