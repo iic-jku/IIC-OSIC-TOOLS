@@ -19,7 +19,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	fusesoc==2.4.3 \
 	gdsfactory==9.5.0 \
 	gdspy==1.6.13 \
-	klayout-pex==0.2.5 \
 	lctime==0.0.24 \
 	librelane==2.4.0.dev0 \
 	openlane==2.3.10 \
@@ -38,6 +37,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 
 #FIXME	hdl21==7.0.0 \
 #FIXME	vlsirtools==7.0.0 \
+#FIXME	klayout-pex \
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
