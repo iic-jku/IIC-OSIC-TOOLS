@@ -17,7 +17,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	cocotb==1.9.2 \
 	edalize==0.6.1 \
 	fusesoc==2.4.3 \
-	gdsfactory==9.5.0 \
+	gdsfactory==9.3.1 \
 	gdspy==1.6.13 \
 	lctime==0.0.24 \
 	librelane==2.4.0.dev0 \
