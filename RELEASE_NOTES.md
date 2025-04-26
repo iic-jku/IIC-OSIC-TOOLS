@@ -2,6 +2,17 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2025.04
+
+* **ATTENTION**: The default PDK has been switched to `ihp-sg13g2` (from `sky130A`).
+* Startup scripts now feature a quiet mode when `IIC_OSIC_TOOLS_QUIET` is set.
+* Adding `librelane` (successor to `openlane`) and `ciel` (successor to `volare`).
+* Bump various tool versions (note that we keep `gdsfactory` a bit older because we need to stick with `klayout` v0.29.x for now).
+* [Maintenance] The important scripts from `osic-multitool` are now part of `iic-osic-tools` to make maintenance easier.
+* [Maintenance] The handling of `rust` and `cargo` have been streamlined.
+* Removed the contents of the `sak` folder from the image.
+* Temporarily remove `klayout-pex` due to `klayout` version clash.
+
 ## 2025.03
 
 * **ATTENTION**: The symbol configuration of the LV- and HV-NMOS has changed in the IHP PDK in this release (drain and source have been swapped). Please adapt your existing IHP schematics accordingly!
@@ -20,9 +31,8 @@ This document summarizes the most important changes of the individual releases o
 * Adding a couple of useful Python packages (`numpy`, `pandas`, `plotly`, `pygmid`, `schemdraw`, `scipy`, `sympy`).
 * Adapting to changed directory structure of IHP's PDK.
 * Remove temporarily `hdl21` and `vlsirtools` due to incompatibility with `gdsfactory` on `pydantic`.
-* Build `adms` from source, compile `xyce` models with it. 
+* Build `adms` from source, compile `xyce` models with it.
 * Bump various tool versions.
-
 
 ## 2025.01
 
