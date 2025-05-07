@@ -19,9 +19,9 @@ rm -rf "$PDK_ROOT"/volare/sky130/versions/*/sky130B
 rm -rf "$PDK_ROOT"/sky130B
 
 if [ -d "$PDK_ROOT/sky130A" ]; then
-	# gzip Liberty (.lib) files
-	cd "$PDK_ROOT/sky130A/libs.ref"
-	find . -name "*.lib" -exec gzip {} \;
+	#FIXME gzip Liberty (.lib) files
+	#FIXME cd "$PDK_ROOT/sky130A/libs.ref"
+	#FIXME find . -name "*.lib" -exec gzip {} \;
 
 	# create compact model files
     cd "$PDK_ROOT/sky130A/libs.tech/ngspice" || exit 1
@@ -45,9 +45,9 @@ if [ -d "$PDK_ROOT/sky130A" ]; then
 fi
 
 if [ -d "$PDK_ROOT/sky130B" ]; then
-	# gzip Liberty (.lib) files
-	cd "$PDK_ROOT/sky130B/libs.ref"
-	find . -name "*.lib" -exec gzip {} \;
+	#FIXME gzip Liberty (.lib) files
+	#FIXME cd "$PDK_ROOT/sky130B/libs.ref"
+	#FIXME find . -name "*.lib" -exec gzip {} \;
 
 	# create compact model files
 	cd "$PDK_ROOT/sky130B/libs.tech/ngspice" || exit 1
@@ -82,9 +82,9 @@ rm -rf "$PDK_ROOT"/gf180mcuA
 rm -rf "$PDK_ROOT"/gf180mcuB
 
 if [ -d "$PDK_ROOT/gf180mcuC" ]; then
-	# gzip Liberty (.lib) files
-	cd "$PDK_ROOT/gf180mcuC/libs.ref"
-	find . -name "*.lib" -exec gzip {} \;
+	#FIXME gzip Liberty (.lib) files
+	#FIXME cd "$PDK_ROOT/gf180mcuC/libs.ref"
+	#FIXME find . -name "*.lib" -exec gzip {} \;
 
 	cd "$PDK_ROOT/gf180mcuC/libs.tech/ngspice" || exit 1
 	
@@ -100,9 +100,9 @@ if [ -d "$PDK_ROOT/gf180mcuC" ]; then
 fi
 
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
-	# gzip Liberty (.lib) files
-	cd "$PDK_ROOT/gf180mcuD/libs.ref"
-	find . -name "*.lib" -exec gzip {} \;
+	#FIXME gzip Liberty (.lib) files
+	#FIXME cd "$PDK_ROOT/gf180mcuD/libs.ref"
+	#FIXME find . -name "*.lib" -exec gzip {} \;
 
 	cd "$PDK_ROOT/gf180mcuD/libs.tech/ngspice" || exit 1
 	
