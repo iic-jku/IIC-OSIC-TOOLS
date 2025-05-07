@@ -385,7 +385,7 @@ RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
 #######################################################################
 FROM base AS yosys
 ARG YOSYS_REPO_URL="https://github.com/YosysHQ/yosys.git"
-ARG YOSYS_REPO_COMMIT="v0.52"
+ARG YOSYS_REPO_COMMIT="v0.53"
 ARG YOSYS_NAME="yosys"
 ARG YOSYS_EQY_REPO_URL="https://github.com/YosysHQ/eqy.git"
 ARG YOSYS_EQY_NAME="yosys_eqy"
