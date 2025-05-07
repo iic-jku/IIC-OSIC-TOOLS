@@ -13,14 +13,12 @@ echo "[INFO] Install EDA packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	amaranth==0.5.4 \
 	cace==2.5.6 \
-	ciel==2.0.1 \
 	cocotb==1.9.2 \
 	edalize==0.6.1 \
 	fusesoc==2.4.3 \
 	gdsfactory==9.3.1 \
 	gdspy==1.6.13 \
 	lctime==0.0.24 \
-	librelane==2.4.0.dev0 \
 	openlane==2.3.10 \
 	openram==1.2.48 \
 	pygmid==1.2.12 \
@@ -38,6 +36,8 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 #FIXME	hdl21==7.0.0 \
 #FIXME	vlsirtools==7.0.0 \
 #FIXME	klayout-pex \
+#FIXME	librelane==2.4.0.dev0 \
+#FIXME	ciel==2.0.1 \
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
