@@ -186,7 +186,7 @@ RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
 #######################################################################
 FROM basepkg AS klayout
 ARG KLAYOUT_REPO_URL="https://github.com/KLayout/klayout.git"
-ARG KLAYOUT_REPO_COMMIT="v0.30.0"
+ARG KLAYOUT_REPO_COMMIT="v0.30.1"
 ARG KLAYOUT_NAME="klayout"
 RUN --mount=type=bind,source=images/klayout,target=/images/klayout \
     bash /images/klayout/scripts/install.sh
@@ -294,7 +294,7 @@ RUN --mount=type=bind,source=images/surelog,target=/images/surelog \
 #######################################################################
 FROM base AS surfer
 ARG SURFER_REPO_URL="https://gitlab.com/surfer-project/surfer.git"
-ARG SURFER_REPO_COMMIT="3724ec30c2338255562e408f02df362b83856ae0"
+ARG SURFER_REPO_COMMIT="217f5d860c0e31b1466b3be7b0954fb85e349deb"
 ARG SURFER_NAME="surfer"
 RUN --mount=type=bind,source=images/surfer,target=/images/surfer \
     bash /images/surfer/scripts/install.sh
@@ -324,7 +324,7 @@ RUN --mount=type=bind,source=images/qucs-s,target=/images/qucs-s \
 #######################################################################
 FROM base AS riscv-gnu-toolchain
 ARG RISCV_GNU_TOOLCHAIN_REPO_URL="https://github.com/riscv-collab/riscv-gnu-toolchain.git"
-ARG RISCV_GNU_TOOLCHAIN_REPO_COMMIT="2025.01.20"
+ARG RISCV_GNU_TOOLCHAIN_REPO_COMMIT="2025.05.01"
 ARG RISCV_GNU_TOOLCHAIN_NAME="riscv-gnu-toolchain"
 RUN --mount=type=bind,source=images/riscv-gnu-toolchain,target=/images/riscv-gnu-toolchain \
     bash /images/riscv-gnu-toolchain/scripts/install.sh
@@ -355,7 +355,7 @@ RUN --mount=type=bind,source=images/slang,target=/images/slang \
 #######################################################################
 FROM base AS verilator
 ARG VERILATOR_REPO_URL="https://github.com/verilator/verilator.git"
-ARG VERILATOR_REPO_COMMIT="v5.034"
+ARG VERILATOR_REPO_COMMIT="v5.036"
 ARG VERILATOR_NAME="verilator"
 RUN --mount=type=bind,source=images/verilator,target=/images/verilator \
     bash /images/verilator/scripts/install.sh
