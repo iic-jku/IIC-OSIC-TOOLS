@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 4c416ec3682f8caf391b5d87345a89e20e8e9344
+  commit: 15cf45c09a5a08b416fa111ec2faee7df4241c8f
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 5eaeeac1568e37c889f36f5eeee825f11ce65354
@@ -69,13 +69,13 @@
   commit: "2025.01.20"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
-  commit: d8659a4e8e888bdc9caf840ad17bfe83239b1d64
+  commit: 02b1e2177aac86041d62dd1054afca6cd87159db
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 43fc552ef3c974e24fa5d1d4e003a15eedbe1f56
+  commit: 20e20fa33ca0d9ee610a968a3bb99a966a1e6d63
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 2617e72756c9de94e4f14a9e4460423a09ca8f9a
+  commit: 72cae17fe813670550f52fdd0f1e2546d1eb75a2
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
@@ -99,7 +99,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 6b12969d6d6f8dd6ea6496d6ad0f964b1777fe5b
+  commit: 8f8b7e224734e0c23a6e4c57c2224704dee45677
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"
