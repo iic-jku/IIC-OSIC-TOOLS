@@ -47,5 +47,5 @@ cd "$PDK_ROOT/$PDK/libs.doc"
 find . -name "*.mdm" -print0 | xargs -0 rm -rf
 
 # gzip Liberty (.lib) files
-cd "$PDK_ROOT/$MY_PDK/libs.ref"
+cd "$PDK_ROOT/$PDK/libs.ref"
 find . -name "*.lib" -exec gzip {} \;
