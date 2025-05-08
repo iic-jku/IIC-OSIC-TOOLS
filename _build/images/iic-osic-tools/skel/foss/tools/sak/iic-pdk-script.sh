@@ -2,8 +2,8 @@
 # ========================================================================
 # Switch PDKs (for IIC-OSIC-TOOLS)
 #
-# SPDX-FileCopyrightText: 2023-2024 Harald Pretl
-# Johannes Kepler University, Institute for Integrated Circuits
+# SPDX-FileCopyrightText: 2023-2025 Harald Pretl
+# Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # You may not use this file except in compliance with the License.
@@ -42,11 +42,10 @@ if [ $# = 0 ]; then
 	fi
 
 else
-
 	# check if PDK_ROOT is set, if not, set it to the default location 
-	if [ -z ${PDK_ROOT+z} ]; then
+	if [ -z "$PDK_ROOT" ]; then
 		if [ -d /foss/pdks ]; then
-			export PDK_ROOT /foss/pdks
+			export PDK_ROOT="/foss/pdks"
 		else
 			echo "[ERROR] Variable PDK_ROOT is not set, and default location (/foss/pdks) not found!"
 			ERROR=1
@@ -66,15 +65,38 @@ else
 
 	if [ $# = 2 ]; then
 		export STD_CELL_LIBRARY="$2"
+	else
+		case "$1" in
+			sky130A|sky130B)
+				export STD_CELL_LIBRARY="sky130_fd_sc_hd"
+				;;
+			ihp-sg13g2)
+				export STD_CELL_LIBRARY="sg13g2_stdcell"
+				;;
+			gf180mcuC)
+				export STD_CELL_LIBRARY="gf180mcuC_fd_sc_hd"
+				;;
+			gf180mcuD)
+				export STD_CELL_LIBRARY="gf180mcuD_fd_sc_hd"
+				;;
+			*)
+				echo "[ERROR] No valid standard cell library selected!"
+				exit 1
+				;;
+		esac
 	fi
 
 	if [ $ERROR = 0 ]; then
 		echo "PDK_ROOT=$PDK_ROOT"
 		echo "PDK=$PDK"
 		echo "PDKPATH=$PDKPATH"
-		[ $# = 2 ] && echo "STD_CELL_LIBRARY=$STD_CELL_LIBRARY"	
+		echo "STD_CELL_LIBRARY=$STD_CELL_LIBRARY"	
 		#echo
 		#echo "[DONE] Bye!"
+	fi
+
+	if [ $ERROR -ne 0 ]; then
+	    exit 1
 	fi
 
 fi
