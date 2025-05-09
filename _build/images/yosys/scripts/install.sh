@@ -7,8 +7,6 @@ cd /tmp || exit 1
 git clone --filter=blob:none "${YOSYS_REPO_URL}" "${YOSYS_NAME}"
 cd "${YOSYS_NAME}" || exit 1
 git checkout "${YOSYS_REPO_COMMIT}"
-#FIXME: Use newer version of yosys as otherwise build of pyosys fails
-git checkout 08b3a9fc7b21aa6b4ccce0faa4c6f666f7a426c9
 git submodule update --init
 make install -j"$(nproc)" PREFIX="${TOOLS}/${YOSYS_NAME}" CONFIG=gcc ENABLE_PYOSYS=1
 
