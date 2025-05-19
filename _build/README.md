@@ -17,7 +17,7 @@ docker build .
 ```
 
 You can add build parameters accordingly. We strongly recommend using `docker buildx` because of `buildkit` (parallel building) and multi-architecture support. The script `build_all.sh` includes building with `buildx`, on two different machines (for fast `amd64` and `arm64` builds) and pushes both images to the Docker Hub under the same tag. The script includes multiple environment variables with defaults. If you intend to build this image, we encourage you to use this script as a template.
-The predefined settings are for the IICQC build machines, and the image gets pushed with the tags `latest` and `year.month` (e.g., `2022.12`).
+The predefined settings are for the DIC build machines, and the image gets pushed with the tags `latest` and `year.month` (e.g., `2022.12`).
 
 ### Detailed container settings
 

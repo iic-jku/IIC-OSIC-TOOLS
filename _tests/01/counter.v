@@ -2,7 +2,7 @@
 * counter.v -- Simple Digital Counter Example in Verilog
 *
 * (c) 2021-2025 Harald Pretl (harald.pretl@jku.at)
-* Johannes Kepler University Linz, Institute for Integrated Circuits
+* Johannes Kepler University Linz, Department for Integrated Circuits
 */
 
 module counter #(parameter WIDTH=32) (

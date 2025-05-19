@@ -2,7 +2,7 @@
 
 :: ========================================================================
 :: SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
-:: Johannes Kepler University, Institute for Integrated Circuits
+:: Johannes Kepler University, Department for Integrated Circuits
 ::.
 :: Licensed under the Apache License, Version 2.0 (the "License");
 :: you may not use this file except in compliance with the License.

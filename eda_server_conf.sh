@@ -2,8 +2,8 @@
 # ========================================================================
 # Configuration file for eda_server_[start|restart|stop] scripts
 #
-# SPDX-FileCopyrightText: 2023 Harald Pretl
-# Johannes Kepler University, Institute for Integrated Circuits
+# SPDX-FileCopyrightText: 2023-2025 Harald Pretl
+# Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

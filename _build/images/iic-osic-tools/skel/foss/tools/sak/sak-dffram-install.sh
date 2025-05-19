@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 # ========================================================================
-# GDS3D wrapper script
+# DFFRAM Installation Script (optimized for IIC-OSIC-TOOLS)
 #
-# SPDX-FileCopyrightText: 2022-2025 Georg Zachl
+# SPDX-FileCopyrightText: 2022-2025 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,12 +17,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
+#
+# Usage: iic-dffram-install.sh [install_dir]
+#
+# This script installs the DFFRAM package from GitHub at
+# https://github.com/AUCOHL/DFFRAM
 # ========================================================================
 
-if [ $# = 1 ]; then
-    GDS3D -p "$PDKPATH/libs.tech/gds3d/gds3d_tech.txt" -i "$1"
-elif [ $# = 0 ]; then
-    GDS3D -h
-else
-    GDS3D -p "$PDKPATH/libs.tech/gds3d/gds3d_tech.txt" "$@"
+ERR_PARAM=1
+
+if [ $# -gt 1 ]; then
+	echo
+	echo "DFFRAM installation script (DIC@JKU)"
+	echo
+	echo "Usage: $0 [install_dir]"
+	echo
+	echo "       If no <install_dir> is provided then <dffram> is used as default."
+	echo
+	exit $ERR_PARAM
 fi
+
+if [ $# = 1 ]; then
+	DIR_NAME=$1
+else
+	DIR_NAME=dffram
+fi
+
+if [ ! -d "$DIR_NAME" ]; then
+	git clone --depth 1 https://github.com/Cloud-V/DFFRAM "$DIR_NAME"
+else
+	echo "[INFO] Directory <$DIR_NAME> already exists."
+fi
+
+cd "$DIR_NAME" || exit
+
+echo "[DONE] Bye!"

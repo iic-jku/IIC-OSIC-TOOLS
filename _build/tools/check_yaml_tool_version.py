@@ -3,8 +3,7 @@
 # Check for newer versions of YAML packages
 #
 # SPDX-FileCopyrightText: 2025 Harald Pretl
-# Johannes Kepler University, Institute for Integrated Circuits and
-# Quantum Computing (IICQC)
+# Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

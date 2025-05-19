@@ -1,6 +1,6 @@
 #!/bin/bash
 # SPDX-FileCopyrightText: 2024-2025 Harald Pretl
-# Johannes Kepler University, Institute for Integrated Circuits
+# Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 #
 # Test if the smoke test of OpenLane2 runs successfully; if this works,

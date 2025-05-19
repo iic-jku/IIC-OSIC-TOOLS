@@ -1,6 +1,6 @@
 #!/bin/bash
 # SPDX-FileCopyrightText: 2024-2025 Harald Pretl
-# Johannes Kepler University, Institute for Integrated Circuits
+# Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 #
 # Test if ngspice simulations for SG13G2 PDK run (this also checks the PSP OSDI model).

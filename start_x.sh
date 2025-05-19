@@ -1,10 +1,9 @@
 #!/bin/bash
 # ========================================================================
-# Start script for IICQC docker images (X11)
+# Start script for DIC docker images (X11)
 #
-# SPDX-FileCopyrightText: 2022-2023 Harald Pretl and Georg Zachl
-# Johannes Kepler University, Institute for Integrated Circuits and
-# Quantum Computing
+# SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

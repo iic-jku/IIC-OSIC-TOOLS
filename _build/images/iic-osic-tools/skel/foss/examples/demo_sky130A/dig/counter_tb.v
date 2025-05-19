@@ -2,7 +2,7 @@
 * counter_tb.v -- Simple Digital Counter Example Testbench in Verilog
 *
 * (c) 2021-2025 Harald Pretl (harald.pretl@jku.at)
-* Johannes Kepler University Linz, Institute for Integrated Circuits
+* Johannes Kepler University Linz, Department for Integrated Circuits
 */
 
 `timescale 1ns / 1ns

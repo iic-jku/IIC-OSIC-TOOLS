@@ -1,7 +1,7 @@
 -- counter.vhdl -- Simple Digital Counter Example in VHDL
 --
 -- (c) 2024-2025 Harald Pretl (harald.pretl@jku.at)
--- Johannes Kepler University Linz, Institute for Integrated Circuits
+-- Johannes Kepler University Linz, Department for Integrated Circuits
 
 library ieee;
 use ieee.std_logic_1164.all;
