@@ -12,10 +12,10 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 15cf45c09a5a08b416fa111ec2faee7df4241c8f
+  commit: 56a4d3e4a4ff010fc0b85b6b461a02d79e545d32
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
-  commit: 5eaeeac1568e37c889f36f5eeee825f11ce65354
+  commit: a367a2fce99325587337249531f109ec5c0c3f01
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
   commit: bb978d9d667d569b9153ffa34007e300302907dc
@@ -24,7 +24,7 @@
   commit: 34b1e7bbb1014346a5bbe9171bd25840ee020578
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 7e238e7ca555448ca0ce3d405e0f4d1883af616b
+  commit: ea26587b5ef485f2ca82a3e4364e58ec3307240f
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.30.1"
@@ -33,10 +33,10 @@
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.526"
+  commit: "8.3.527"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.294"
+  commit: "1.5.295"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-44.2"
@@ -45,7 +45,7 @@
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
 - name: nvc
   repo: https://github.com/nickg/nvc.git
-  commit: "r1.16.0"
+  commit: "r1.16.1"
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
   commit: 0fe599b2afb6708d281543108caf8310912f54af
@@ -66,22 +66,22 @@
   commit: "0.11.2"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2025.05.01"
+  commit: "2025.05.16"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 02b1e2177aac86041d62dd1054afca6cd87159db
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 20e20fa33ca0d9ee610a968a3bb99a966a1e6d63
+  commit: 6f3c55222efb4bfd6a2860e4f84aeb15eb92d17b
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 72cae17fe813670550f52fdd0f1e2546d1eb75a2
+  commit: 7d4959430442ac1d7e3bf7b3e55d648293a5ac7b
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
 - name: surfer
   repo: https://gitlab.com/surfer-project/surfer.git
-  commit: 217f5d860c0e31b1466b3be7b0954fb85e349deb
+  commit: 2388fd08e21ab676d05af0dec055c24e116ac918
 - name: trilinos
   repo: https://github.com/trilinos/Trilinos.git
   commit: "trilinos-release-12-12-1"
@@ -99,7 +99,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 8f8b7e224734e0c23a6e4c57c2224704dee45677
+  commit: ae86b92fdacf8a92425bd6c6c6cbb8ca7615b7a1
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"

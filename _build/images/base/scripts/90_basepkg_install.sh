@@ -11,7 +11,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 
 echo "[INFO] Install EDA packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
-	amaranth==0.5.4 \
+	amaranth==0.5.6 \
 	cace==2.5.6 \
 	cocotb==1.9.2 \
 	edalize==0.6.1 \
@@ -37,7 +37,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 #FIXME	vlsirtools==7.0.0 \
 #FIXME	klayout-pex \
 #FIXME	librelane==2.4.0.dev0 \
-#FIXME	ciel==2.0.1 \
+#FIXME	ciel==2.0.2 \
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
