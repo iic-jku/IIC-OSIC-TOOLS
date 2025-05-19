@@ -294,7 +294,7 @@ RUN --mount=type=bind,source=images/surelog,target=/images/surelog \
 #######################################################################
 FROM base AS surfer
 ARG SURFER_REPO_URL="https://gitlab.com/surfer-project/surfer.git"
-ARG SURFER_REPO_COMMIT="2388fd08e21ab676d05af0dec055c24e116ac918"
+ARG SURFER_REPO_COMMIT="68ea99e1a956e008a101c1705362b5c2cce7acd6"
 ARG SURFER_NAME="surfer"
 RUN --mount=type=bind,source=images/surfer,target=/images/surfer \
     bash /images/surfer/scripts/install.sh

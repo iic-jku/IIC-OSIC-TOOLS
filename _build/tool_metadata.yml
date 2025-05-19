@@ -81,7 +81,7 @@
   commit: "v1.84"
 - name: surfer
   repo: https://gitlab.com/surfer-project/surfer.git
-  commit: 2388fd08e21ab676d05af0dec055c24e116ac918
+  commit: 68ea99e1a956e008a101c1705362b5c2cce7acd6
 - name: trilinos
   repo: https://github.com/trilinos/Trilinos.git
   commit: "trilinos-release-12-12-1"
