@@ -16,10 +16,10 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	cocotb==1.9.2 \
 	edalize==0.6.1 \
 	fusesoc==2.4.3 \
-	gdsfactory==9.3.1 \
+	gdsfactory==9.5.10 \
 	gdspy==1.6.13 \
 	lctime==0.0.24 \
-	openlane==2.3.10 \
+	klayout-pex==0.2.5 \
 	openram==1.2.48 \
 	pygmid==1.2.12 \
 	pyrtl==0.11.2 \
@@ -35,9 +35,15 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 
 #FIXME	hdl21==7.0.0 \
 #FIXME	vlsirtools==7.0.0 \
-#FIXME	klayout-pex \
 #FIXME	librelane==2.4.0.dev0 \
 #FIXME	ciel==2.0.2 \
+#FIXME	openlane==2.3.10 \ 
+
+echo "[INFO] Install custom OpenLane2 version"
+cd /tmp
+git clone https://github.com/iic-jku/openlane2.git openlane2
+cd openlane2
+pip3 install --upgrade --no-cache-dir --break-system-packages .
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
