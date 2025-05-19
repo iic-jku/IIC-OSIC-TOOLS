@@ -162,6 +162,7 @@ alias Xyce='Xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin
 alias flow.tcl='printf "[INFO] OpenLane(1) has been depreciated.\n[INFO] Please use OpenLane2 (start with <openlane>).\n"'
 
 alias iic-pdk='source iic-pdk-script.sh'
+alias sak-pdk='source sak-pdk-script.sh'
 alias tt='cd $TOOLS'
 alias dd='cd $DESIGNS'
 alias pp='cd $PDK_ROOT'
