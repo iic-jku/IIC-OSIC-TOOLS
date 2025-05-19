@@ -10,7 +10,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Switch to sg13g2 PDK
 # shellcheck source=/dev/null
-source iic-pdk-script.sh ihp-sg13g2 > /dev/null
+source sak-pdk-script.sh ihp-sg13g2 > /dev/null
 # Run the simulations
 ngspice -b $DIR/dc_hbt_13g2.spice > /dev/null 2>&1 || ERROR=1
 ngspice -b $DIR/dc_hv_nmos.spice > /dev/null 2>&1 || ERROR=1

@@ -10,7 +10,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Switch to sky130A PDK
 # shellcheck source=/dev/null
-source iic-pdk-script.sh sky130A > /dev/null
+source sak-pdk-script.sh sky130A > /dev/null
 # Run the simulations
 ngspice -b $DIR/test_nmos.spice > /dev/null 2>&1 || ERROR=1
 ngspice -b $DIR/test_pmos.spice > /dev/null 2>&1 || ERROR=1

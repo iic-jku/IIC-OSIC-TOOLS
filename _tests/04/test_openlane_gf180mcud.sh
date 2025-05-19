@@ -15,7 +15,7 @@ if command -v openlane >/dev/null 2>&1; then
 
     # Switch to gf180mcuD PDK
     # shellcheck source=/dev/null
-    source iic-pdk-script.sh gf180mcuD gf180mcu_fd_sc_mcu7t5v0 > /dev/null
+    source sak-pdk-script.sh gf180mcuD gf180mcu_fd_sc_mcu7t5v0 > /dev/null
     # Run the OpenLane2 smoke test
     mkdir -p /tmp/ol2_gf180mcu
     cp "$DIR"/counter.* /tmp/ol2_gf180mcu

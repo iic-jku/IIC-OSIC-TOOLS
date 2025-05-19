@@ -15,7 +15,7 @@ if command -v openlane >/dev/null 2>&1; then
 
     # Switch to sky130A PDK
     # shellcheck source=/dev/null
-    source iic-pdk-script.sh sky130A sky130_fd_sc_hd > /dev/null
+    source sak-pdk-script.sh sky130A sky130_fd_sc_hd > /dev/null
     # Run the OpenLane2 smoke test
     mkdir -p /tmp/ol2_sky130_vhdl
     cp "$DIR"/counter.* /tmp/ol2_sky130_vhdl
