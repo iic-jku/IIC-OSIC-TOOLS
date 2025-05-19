@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-clean.sh [dir]
+# Usage: sak-clean.sh [dir]
 #
 #        If [dir] is given then this directory is cleaned, otherwise
 #        then the current directory is used.

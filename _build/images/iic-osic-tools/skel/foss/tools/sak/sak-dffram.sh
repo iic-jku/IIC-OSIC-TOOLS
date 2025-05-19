@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-dffram.sh [parameter list]
+# Usage: sak-dffram.sh [parameter list]
 #
 # This script provides a wrapper for the DFFRAM package from GitHub at
 # https://github.com/AUCOHL/DFFRAM
@@ -42,7 +42,7 @@ fi
 if [ ! -f dffram.py ]; then
 	echo "[ERROR] Script needs to be started in DFFRAM directory!"
 	echo
-	echo "[INFO] You can install DFFRAM using <iic-dffram-install.sh>."
+	echo "[INFO] You can install DFFRAM using <sak-dffram-install.sh>."
 	exit $ERR_NO_DFFRAM
 fi
 

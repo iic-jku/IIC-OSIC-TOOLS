@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-chipart.sh [parameter list]
+# Usage: sak-chipart.sh [parameter list]
 #
 # This script provides a wrapper for the CHIP_ART package from GitHub at
 # https://github.com/AUCOHL/DFFRAM
@@ -43,7 +43,7 @@ fi
 if [ ! -f chip_art.py ]; then
 	echo "[ERROR] Script needs to be started in CHIP_ART directory!"
 	echo
-	echo "[INFO] You can install CHIP_ART using <iic-chipart-install.sh>."
+	echo "[INFO] You can install CHIP_ART using <sak-chipart-install.sh>."
 	exit $ERR_NO_CHIPART
 fi
 

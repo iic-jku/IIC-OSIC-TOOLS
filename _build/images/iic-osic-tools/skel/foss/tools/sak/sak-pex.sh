@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-pex.sh [-d] [-m mode] [-s mode] [-n <subcktname>] [-w <workdir>] <cellname>
+# Usage: sak-pex.sh [-d] [-m mode] [-s mode] [-n <subcktname>] [-w <workdir>] <cellname>
 #
 # Supported PEX modes:
 #   1 = C-decoupled

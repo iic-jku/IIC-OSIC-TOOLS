@@ -18,13 +18,13 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-lvs.sh [-d] [-w workdir] [-s <schematic> -l <layout> | <cellname>]
+# Usage: sak-lvs.sh [-d] [-w workdir] [-s <schematic> -l <layout> | <cellname>]
 #
 # The script can also compare a powered Verilog netlist named
 # <cellname.v> to a layout.
 #
 # The LVS script can also compare a netlist created from a 
-# Powered-Verilog-to-xschem-schematic conversion using iic-v2sch.
+# Powered-Verilog-to-xschem-schematic conversion using sak-v2sch.
 # ========================================================================
 
 ERR_LVS_MISMATCH=1

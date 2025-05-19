@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-drc.sh [-d] [-m|-k|-b] [-c] [-w workdir] <cellname>
+# Usage: sak-drc.sh [-d] [-m|-k|-b] [-c] [-w workdir] <cellname>
 # ========================================================================
 
 ERR_DRC=1

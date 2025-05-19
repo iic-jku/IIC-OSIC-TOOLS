@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-pdk <pdk> [<stdcell-lib>]
+# Usage: sak-pdk <pdk> [<stdcell-lib>]
 #
 # ========================================================================
 
@@ -32,7 +32,7 @@ if [ $# = 0 ]; then
 	echo
 	echo "Switch PDKs"
 	echo
-	echo "Usage: iic-pdk <pdk> [<stdcell-lib>]"
+	echo "Usage: sak-pdk <pdk> [<stdcell-lib>]"
 	echo
 	if [ -d "$PDK_ROOT" ]; then
 		echo "Available PDKs:"

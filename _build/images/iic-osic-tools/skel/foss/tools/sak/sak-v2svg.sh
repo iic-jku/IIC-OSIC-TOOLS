@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-v2svg.sh <input.v> <output.svg>
+# Usage: sak-v2svg.sh <input.v> <output.svg>
 #
 # This script uses Yosys (https://github.com/YosysHQ/yosys) and
 # netlistsvg (https://github.com/nturley/netlistsvg).

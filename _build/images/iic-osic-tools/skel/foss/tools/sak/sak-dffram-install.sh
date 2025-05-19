@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-dffram-install.sh [install_dir]
+# Usage: sak-dffram-install.sh [install_dir]
 #
 # This script installs the DFFRAM package from GitHub at
 # https://github.com/AUCOHL/DFFRAM

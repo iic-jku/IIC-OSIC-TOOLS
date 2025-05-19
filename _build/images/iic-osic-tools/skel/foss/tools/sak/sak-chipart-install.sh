@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-chipart-install.sh [install_dir]
+# Usage: sak-chipart-install.sh [install_dir]
 #
 # This script installs the CHIP_ART package from GitHub at
 # https://github.com/jazvw/chip_art.git

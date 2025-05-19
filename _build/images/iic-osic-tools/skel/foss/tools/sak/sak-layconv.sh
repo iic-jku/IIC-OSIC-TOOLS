@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-layconv.sh <input layout> <output layout>
+# Usage: sak-layconv.sh <input layout> <output layout>
 #
 # This script uses KLayout (https://www.klayout.de).
 # ========================================================================

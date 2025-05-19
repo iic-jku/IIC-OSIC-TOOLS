@@ -1,6 +1,6 @@
 #!/bin/sh
 # ========================================================================
-# Xschem SCH-to-SVG Converter (iic-sch2svg.sh)
+# Xschem SCH-to-SVG Converter (sak-sch2svg.sh)
 #
 # SPDX-FileCopyrightText: 2024-2025 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-sch2svg.sh <schematic>
+# Usage: sak-sch2svg.sh <schematic>
 #
 # The schematic with name <schematic> is converted to a SVG.
 # ========================================================================

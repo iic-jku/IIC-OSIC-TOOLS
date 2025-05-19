@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: iic-vlint [-i|-v|-b] [-g1995|-g2001|-g2005|-g2005-sv|-g2009|-g2012]
+# Usage: sak-vlint [-i|-v|-b] [-g1995|-g2001|-g2005|-g2005-sv|-g2009|-g2012]
 #        <file.v>
 #
 # The script runs linting on <file.v>
