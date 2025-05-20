@@ -169,7 +169,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [sky130](https://github.com/google/skywater-pdk) SkyWater Technologies 130 nm CMOS PDK
 - [slang yosys plugin](https://github.com/povik/yosys-slang) Slang-based plugin for `yosys` for SystemVerilog support
 - [slang](https://github.com/MikePopoloski/slang) SystemVerilog parsing and translation (e.g. to Verilog)
-- [spicelib](https://github.com/nunobrum/spicelib) library to interact with SPICCE-like simulators
+- [spicelib](https://github.com/nunobrum/spicelib) library to interact with SPICE-like simulators
 - [spyci](https://github.com/gmagno/spyci) analyze/plot `ngspice`/`xyce` output data with Python
 - [surelog](https://github.com/chipsalliance/Surelog) SystemVerilog parser, elaborator, and UHDM compiler
 - [surfer](https://gitlab.com/surfer-project/surfer) waveform viewer with snappy usable interface and extensibility
