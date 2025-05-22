@@ -6,12 +6,14 @@ This document summarizes the most important changes of the individual releases o
 
 * **ATTENTION**: The default PDK has been switched to `ihp-sg13g2` (from `sky130A`).
 * Startup scripts now feature a quiet mode when `IIC_OSIC_TOOLS_QUIET` is set.
-* Adding `librelane` (successor to `openlane`) and `ciel` (successor to `volare`).
-* Bump various tool versions (note that we keep `gdsfactory` a bit older because we need to stick with `klayout` v0.29.x for now).
+* Bump various tool versions.
+* Using local `openlane` build for bugfix and resolution of version clash.
+* Enable build of `libvvp` in `iverilog`.
+* Enable build of Qtbindings in `klayout`.
+* Rename scripts beginning with `iic-` to `sak-` (and install alias to still allow use of `iic-`).
 * [Maintenance] The important scripts from `osic-multitool` are now part of `iic-osic-tools` to make maintenance easier.
 * [Maintenance] The handling of `rust` and `cargo` have been streamlined.
 * Removed the contents of the `sak` folder from the image.
-* Temporarily remove `klayout-pex` due to `klayout` version clash.
 
 ## 2025.03
 
