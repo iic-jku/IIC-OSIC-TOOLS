@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 56a4d3e4a4ff010fc0b85b6b461a02d79e545d32
+  commit: 6ce81a8e5ce51bd6bd4d02acf2e258ebd10fa4fa
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: a367a2fce99325587337249531f109ec5c0c3f01
@@ -66,22 +66,22 @@
   commit: "0.11.2"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2025.05.16"
+  commit: "2025.05.22"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 02b1e2177aac86041d62dd1054afca6cd87159db
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 6f3c55222efb4bfd6a2860e4f84aeb15eb92d17b
+  commit: ed2e5ad2328f75ed66f9c8281a34b7ce7691aeb4
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 7d4959430442ac1d7e3bf7b3e55d648293a5ac7b
+  commit: 34753c07b7bd285b784b3a2c756cfac56e1a26ab
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
 - name: surfer
   repo: https://gitlab.com/surfer-project/surfer.git
-  commit: 68ea99e1a956e008a101c1705362b5c2cce7acd6
+  commit: 6dd3a4f3983f317b8ae1aad18d3fddff45e67957
 - name: trilinos
   repo: https://github.com/trilinos/Trilinos.git
   commit: "trilinos-release-12-12-1"
@@ -99,7 +99,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: ae86b92fdacf8a92425bd6c6c6cbb8ca7615b7a1
+  commit: "3.4.7"
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"

@@ -146,7 +146,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="56a4d3e4a4ff010fc0b85b6b461a02d79e545d32"
+ARG GHDL_REPO_COMMIT="6ce81a8e5ce51bd6bd4d02acf2e258ebd10fa4fa"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -294,7 +294,7 @@ RUN --mount=type=bind,source=images/surelog,target=/images/surelog \
 #######################################################################
 FROM base AS surfer
 ARG SURFER_REPO_URL="https://gitlab.com/surfer-project/surfer.git"
-ARG SURFER_REPO_COMMIT="68ea99e1a956e008a101c1705362b5c2cce7acd6"
+ARG SURFER_REPO_COMMIT="6dd3a4f3983f317b8ae1aad18d3fddff45e67957"
 ARG SURFER_NAME="surfer"
 RUN --mount=type=bind,source=images/surfer,target=/images/surfer \
     bash /images/surfer/scripts/install.sh
@@ -324,7 +324,7 @@ RUN --mount=type=bind,source=images/qucs-s,target=/images/qucs-s \
 #######################################################################
 FROM base AS riscv-gnu-toolchain
 ARG RISCV_GNU_TOOLCHAIN_REPO_URL="https://github.com/riscv-collab/riscv-gnu-toolchain.git"
-ARG RISCV_GNU_TOOLCHAIN_REPO_COMMIT="2025.05.16"
+ARG RISCV_GNU_TOOLCHAIN_REPO_COMMIT="2025.05.22"
 ARG RISCV_GNU_TOOLCHAIN_NAME="riscv-gnu-toolchain"
 RUN --mount=type=bind,source=images/riscv-gnu-toolchain,target=/images/riscv-gnu-toolchain \
     bash /images/riscv-gnu-toolchain/scripts/install.sh
@@ -345,7 +345,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="6f3c55222efb4bfd6a2860e4f84aeb15eb92d17b"
+ARG SLANG_REPO_COMMIT="ed2e5ad2328f75ed66f9c8281a34b7ce7691aeb4"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -375,7 +375,7 @@ RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
 #######################################################################
 FROM base AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="ae86b92fdacf8a92425bd6c6c6cbb8ca7615b7a1"
+ARG XSCHEM_REPO_COMMIT="3.4.7"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh
@@ -407,7 +407,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="7d4959430442ac1d7e3bf7b3e55d648293a5ac7b"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="34753c07b7bd285b784b3a2c756cfac56e1a26ab"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \
