@@ -18,6 +18,7 @@
     <comment>GDS II File</comment>
     <glob pattern="*.gds"/>
     <glob pattern="*.gds.gz"/>
+    <glob pattern="*.gdsz"/>
   </mime-type>
 
   <!-- Magic Layout File -->
