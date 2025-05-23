@@ -12,6 +12,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	docopt \
 	flake8 \
 	gobject \
+	h5py \
 	ipympl \
 	libparse \
 	matplotlib \
