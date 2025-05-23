@@ -45,6 +45,6 @@ cd /tmp || exit 1
 git clone --depth=1 https://github.com/SRI-CSL/yices2.git yices2
 cd yices2 || exit 1
 autoconf
-./configure
+./configure --prefix="${TOOLS}/${YOSYS_NAME}"
 make -j"$(nproc)"
 make install
