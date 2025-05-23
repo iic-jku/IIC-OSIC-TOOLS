@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+
+  <!-- Xschem Symbol -->
+  <mime-type type="application/x-xschem-symbol">
+    <comment>Xschem Symbol</comment>
+    <glob pattern="*.sym"/>
+  </mime-type>
+
+  <!-- Xschem Schematic -->
+  <mime-type type="application/x-xschem-schematic">
+    <comment>Xschem Schematic</comment>
+    <glob pattern="*.sch"/>
+  </mime-type>
+
+  <!-- GDS II Files -->
+  <mime-type type="application/x-gds">
+    <comment>GDS II File</comment>
+    <glob pattern="*.gds"/>
+    <glob pattern="*.gds.gz"/>
+  </mime-type>
+
+  <!-- Magic Layout File -->
+  <mime-type type="application/x-magic-layout">
+    <comment>Magic Layout File</comment>
+    <glob pattern="*.mag"/>
+  </mime-type>
+
+  <!-- Spice Netlist -->
+  <mime-type type="text/x-spice-netlist">
+    <comment>Spice Netlist</comment>
+    <glob pattern="*.spice"/>
+    <glob pattern="*.spc"/>
+    <glob pattern="*.cir"/>
+    <sub-class-of type="text/plain"/>
+  </mime-type>
+</mime-info>

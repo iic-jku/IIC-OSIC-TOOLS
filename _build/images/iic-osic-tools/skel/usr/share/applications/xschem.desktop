@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Xschem
+Exec=xschem %f
+Type=Application
+MimeType=application/x-xschem-symbol;application/x-xschem-schematic;
+Icon=xschem
+Categories=Development;Electronics;
