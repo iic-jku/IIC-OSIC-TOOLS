@@ -46,4 +46,5 @@ git clone --depth=1 https://github.com/SRI-CSL/yices2.git yices2
 cd yices2 || exit 1
 autoconf
 ./configure
-make install -j"$(nproc)"
+make -j"$(nproc)"
+make install
