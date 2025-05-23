@@ -242,6 +242,16 @@ RUN --mount=type=bind,source=images/nvc,target=/images/nvc \
     bash /images/nvc/scripts/install.sh
 
 #######################################################################
+# Compile openems
+#######################################################################
+FROM basepkg AS openems
+ARG OPENEMS_REPO_URL="https://github.com/thliebig/openEMS-Project.git"
+ARG OPENEMS_REPO_COMMIT="9ba6e1b330c2152e7f8d13bba4e42d834c9a432b"
+ARG OPENEMS_NAME="openems"
+RUN --mount=type=bind,source=images/openems,target=/images/openems \
+    bash /images/openems/scripts/install.sh
+
+#######################################################################
 # Compile openroad
 #######################################################################
 FROM base AS openroad_app
@@ -468,6 +478,7 @@ COPY --from=netgen                       ${TOOLS}/              ${TOOLS}/
 COPY --from=nvc                          ${TOOLS}/              ${TOOLS}/
 COPY --from=ngspice                      ${TOOLS}/              ${TOOLS}/
 COPY --from=ngspyce                      ${TOOLS}/              ${TOOLS}/
+COPY --from=openems                      ${TOOLS}/              ${TOOLS}/
 COPY --from=openroad_app                 ${TOOLS}/              ${TOOLS}/
 COPY --from=osic-multitool               ${TOOLS}/              ${TOOLS}/
 COPY --from=openvaf                      ${TOOLS}/              ${TOOLS}/

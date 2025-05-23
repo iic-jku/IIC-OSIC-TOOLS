@@ -24,6 +24,7 @@ apt -y install \
 	cmake \
 	csh \
 	curl \
+	cython3 \
 	debhelper \
 	default-jre \
 	desktop-file-utils \
@@ -62,6 +63,7 @@ apt -y install \
 	libbz2-dev \
 	libc6-dev \
 	libcairo2-dev \
+	libcgal-dev \
 	libclang-common-16-dev \
 	libcurl4-openssl-dev \
 	libdw-dev \
@@ -82,6 +84,7 @@ apt -y install \
 	libgoogle-perftools-dev \
 	libgtk-3-dev \
 	libgtk-4-dev \
+	libhdf5-dev \
 	libjpeg-dev \
 	libjudy-dev \
 	liblapack-dev \
@@ -111,7 +114,10 @@ apt -y install \
 	libstdc++-11-dev \
 	libsuitesparse-dev \
 	libtcl \
+	libtinyxml-dev \
 	libtool \
+	libvtk9-dev \
+	libvtk9-qt-dev \
 	libwxgtk3.2-dev \
 	libx11-dev \
 	libx11-xcb-dev \
