@@ -1,14 +1,5 @@
 # shellcheck shell=bash
 
-function _path_add_tool_bin() {
-    tool_name=$1
-    for d in $TOOLS/$tool_name ; do
-        if [ -d "${d}bin" ]; then
-            export PATH=$PATH:${d}bin
-        fi
-    done
-}
-
 function _path_add_tool() {
     tool_name=$1
     for d in $TOOLS/$tool_name ; do
@@ -54,35 +45,10 @@ function _add_resolution () {
 }
 
 if [ -z ${FOSS_INIT_DONE+x} ]; then
-    _path_add_tool_bin      "covered"
-    _path_add_tool_bin      "cvc_rv"
-    _path_add_tool_bin      "gaw3-xschem"
-    _path_add_tool_bin      "gds3d"
-    _path_add_tool_bin      "ghdl"
-    _path_add_tool_bin      "gtkwave"
-    _path_add_tool_bin      "irsim"
-    _path_add_tool_bin      "iverilog"
     _path_add_tool          "klayout"
     _path_add_tool_custom   "libman"
-    _path_add_tool_bin      "magic"
-    _path_add_tool_bin      "netgen"
-    _path_add_tool_bin      "ngspice"
-    _path_add_tool_bin      "nvc"
-    _path_add_tool_bin      "openroad"
-    _path_add_tool_bin      "opensta"
-	_path_add_tool_bin	    "openvaf"
     _path_add_tool_custom   "osic-multitool"
-    _path_add_tool_bin      "padring"
-    _path_add_tool_bin      "pyopus"
-    _path_add_tool_bin      "qflow"
-    _path_add_tool_bin      "qucs-s"
     _path_add_tool_custom   "rftoolkit/bin"
-    _path_add_tool_bin      "slang"
-    _path_add_tool_bin      "surfer"
-    _path_add_tool_bin      "verilator"
-    _path_add_tool_bin      "xschem"
-    _path_add_tool_bin      "xyce"
-    _path_add_tool_bin      "yosys"
     _path_add_tool_custom   "yosys/bin"
 	
     export SAK=$TOOLS/sak
