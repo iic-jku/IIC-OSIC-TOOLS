@@ -28,10 +28,7 @@ ERROR=0
 # ---------------
 
 if [ $# = 0 ]; then
-
-	echo
-	echo "Switch PDKs"
-	echo
+	# present help
 	echo "Usage: sak-pdk <pdk> [<stdcell-lib>]"
 	echo
 	if [ -d "$PDK_ROOT" ]; then
@@ -40,7 +37,6 @@ if [ $# = 0 ]; then
 		ls "$PDK_ROOT" | grep -v volare
 		echo
 	fi
-
 else
 	# check if PDK_ROOT is set, if not, set it to the default location 
 	if [ -z "$PDK_ROOT" ]; then
@@ -57,7 +53,7 @@ else
 		export PDK="$1"
 		export PDKPATH="$PDK_ROOT/$PDK"
 		export SPICE_USERINIT_DIR="$PDK_ROOT/$PDK/libs.tech/ngspice"
-		export KLAYOUT_PATH="$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech"
+		export KLAYOUT_PATH="/headless/.klayout:$PDKPATH/libs.tech/klayout"
 	else
 		echo "[ERROR] PDK directory $PDK_ROOT/$1 not found!"
 		ERROR=1
@@ -81,7 +77,7 @@ else
 				;;
 			*)
 				echo "[ERROR] No valid standard cell library selected!"
-				exit 1
+				export STD_CELL_LIBRARY=""
 				;;
 		esac
 	fi
@@ -91,12 +87,5 @@ else
 		echo "PDK=$PDK"
 		echo "PDKPATH=$PDKPATH"
 		echo "STD_CELL_LIBRARY=$STD_CELL_LIBRARY"	
-		#echo
-		#echo "[DONE] Bye!"
 	fi
-
-	if [ $ERROR -ne 0 ]; then
-	    exit 1
-	fi
-
 fi
