@@ -44,6 +44,10 @@ ldconfig
 # set /usr/bin/python3 to provide "/usr/bin/python"
 update-alternatives --set python /usr/bin/python3
 
+# Update the mime-type and application database so typical IC-Design files are recognized
+update-mime-database /usr/share/mime
+update-desktop-database /usr/share/applications
+
 # create default XDG_RUNTIME_DIR
 # FIXME: Do not create an all-world readable directory, but one that fits the exact user of the container.
 mkdir -p /tmp/runtime-default

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=KLayout
+Exec=klayout %f
+Type=Application
+MimeType=application/x-gds-layout;application/x-oasis-layout;
+Icon=klayout
+Categories=Development;Electronics;
