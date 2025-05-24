@@ -38,3 +38,13 @@ cd "${YOSYS_MCY_NAME}" || exit 1
 git checkout "${YOSYS_REPO_COMMIT}"
 sed -i "s#^PREFIX.*#PREFIX=${TOOLS}/${YOSYS_NAME}#g" Makefile
 make install -j"$(nproc)"
+
+# Install solver for sby
+# ----------------------
+cd /tmp || exit 1
+git clone --depth=1 https://github.com/SRI-CSL/yices2.git yices2
+cd yices2 || exit 1
+autoconf
+./configure --prefix="${TOOLS}/${YOSYS_NAME}"
+make -j"$(nproc)"
+make install

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Magic
+Exec=magic %f
+Type=Application
+MimeType=application/x-magic-layout;application/x-gds-layout;
+Icon=magic
+Categories=Development;Electronics;
