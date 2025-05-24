@@ -4,7 +4,7 @@
 
 This environment is based on the [efabless.com FOSS-ASIC-TOOLS](https://github.com/efabless/foss-asic-tools).
 
-**IIC-OSIC-TOOLS** is an all-in-one Docker container for open-source-based integrated circuit designs for analog and digital circuit flows. The CPU architectures `x86_64/amd64` and `aarch64/arm64` are natively supported based on Ubuntu 24.04 LTS (since release `2025.01`). This collection of tools is curated by the [**Department for Integrated Circuits (DIC), Johannes Kepler University (JKU)**](https://iic.jku.at).
+**IIC-OSIC-TOOLS** (Integrated Infrastructure for Collaborative Open Source IC Tools) is an all-in-one Docker container for open-source-based integrated circuit designs for analog and digital circuit flows. The CPU architectures `x86_64/amd64` and `aarch64/arm64` are natively supported based on Ubuntu 24.04 LTS (since release `2025.01`). This collection of tools is curated by the [**Department for Integrated Circuits (DIC), Johannes Kepler University (JKU)**](https://iic.jku.at).
 
 ## Table of Contents
 
@@ -103,10 +103,16 @@ export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
 ```
 
-Probably the best way to switch between PDKs is to use the command `iic-pdk`. When called without arguments a list of installed PDKs is shown. To e.g. switch to IHP enter
+Probably the best way to switch between PDKs is to use the command `sak-pdk`. When called without arguments a list of installed PDKs is shown. To e.g. switch to IHP enter
 
 ```bash
-iic-pdk ihp-sg13g2
+sak-pdk ihp-sg13g2
+```
+
+or to switch to sky130A enter
+
+```bash
+sak-pdk sky130A
 ```
 
 More options for selecting digital standard cell libraries are available; please check the PDK directories.
