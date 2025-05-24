@@ -1,5 +1,4 @@
-Regression tests:
------------------
+# Regression tests
 
 01: Test of OpenLane2 with sky130A
 02: Test of DRC and LVS with sky130A
@@ -12,3 +11,4 @@ Regression tests:
 09: Test of RISC-V toolchain
 10: Test of OpenROAD flow scripts with SG13G2
 11: Test of Xyce with SG13G2
+12: Test of iVerilog functionality
