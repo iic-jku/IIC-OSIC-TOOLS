@@ -39,3 +39,12 @@ VcXsrv
 VirtioFS
 XLaunch
 XQuartz
+ORFS
+WSLg
+OpenROAD
+OpenEMS
+PyOPUS
+LIBGL
+IIC-OSIC-Tools
+Podman
+Murmann

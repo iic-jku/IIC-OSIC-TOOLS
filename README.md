@@ -259,7 +259,7 @@ or
 .\start_x.bat
 ```
 
-**Attention macOS users:** The X-server connection is automatically killed if there is a too-long idle period in the terminal (when this happens, it looks like a **crash** of the system). A **workaround** is to start a second terminal from the initial terminal that pops up when executing the start scripts `./start_x.sh` or `.\start_x.bat` and then start `htop` in the initial terminal. In this way, there is an ongoing display activity in the initial terminal, and as a positive side-effect, the usage of the machine can be monitored. We are looking for a better long-term solution.
+**Attention macOS users:** The X-server connection is automatically killed if there is a too-long idle period in the terminal (when this happens, it looks like a **crash** of the system). A **workaround** is to start a second terminal from the initial terminal that pops up when executing the start scripts `./start_x.sh` or `.\start_x.bat` and then start `htop` in the initial terminal. In this way, there is an ongoing display activity in the initial terminal, and as a positive side effect, the usage of the machine can be monitored. We are looking for a better long-term solution.
 
 **Attention macOS users:** Please disable the *Enable VirtioFS accelerated directory sharing* setting available as "Beta Setting," as this will cause issues accessing the mounted drives! However, enabling the *VirtioFS* general setting works in Docker >v4.15.0!
 
@@ -281,7 +281,7 @@ The following environment variables are used for configuration:
 For Windows, WSLg (the graphical subsystem for WSL) is used, which is provided by a socket file inside the container. The display number is `:0`.
 For Mac, the X11 server is accessed through TCP (defaults to `host.docker.internal:0`, `host.docker.internal` resolves to the host's IP address inside the docker containers, `:0` corresponds to display 0 which corresponds to TCP port 6000.).
 
-Normally, it should not be necessary to modify this settings, but to control the server's address, you can set the following variable:
+Normally, it should not be necessary to modify these settings, but to control the server's address, you can set the following variable:
 
 - `DISP` is the environment variable that is copied into the `DISPLAY` variable of the container.
 
@@ -299,11 +299,11 @@ The defaults for these variables are tested on native X11 servers, X2Go sessions
 
 #### 4.3.4 Installing X11-Server
 
-Everything should be ready on Linux with a desktop environment / UI (this setup has been tested on X11 and XWayland). For Windows, WSL should be updated to the latest version to provide WSLg (No additional X-Server needs to be installed and it should be readily available on Windows 10 (from Build 19044) and Windows 11). For macOS, the installation of an X11 server is typically required. Due to the common protocol, every X11-server should work, although the following are tested:
+Everything should be ready on Linux with a desktop environment / UI (this setup has been tested on X11 and XWayland). For Windows, WSL should be updated to the latest version to provide WSLg (No additional X-Server needs to be installed, and it should be readily available on Windows 10 (from Build 19044) and Windows 11). For macOS, the installation of an X11 server is typically required. Due to the common protocol, every X11-server should work, although the following are tested:
 
 - For macOS: [XQuartz](https://www.xquartz.org/) **Important:** Please enable *"Allow connections from network clients"* in the XQuartz preferences [CMD+","], tab *"Security"*
 
-It is strongly recommended to enable OpenGL:
+It is strongly recommended enabling OpenGL:
 
 - The `start_x.sh` script will take care of that on macOS and set it according to configuration values. Only a manual restart of XQuartz is required after the script is run once (observe the output!).
 
