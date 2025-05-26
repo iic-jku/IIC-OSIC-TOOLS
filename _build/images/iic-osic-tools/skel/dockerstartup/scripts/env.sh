@@ -88,7 +88,7 @@ export PDK=ihp-sg13g2
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=sg13g2_stdcell
 export SPICE_USERINIT_DIR=$PDK_ROOT/$PDK/libs.tech/ngspice
-export KLAYOUT_PATH="/headless/.klayout:$PDKPATH/libs.tech/klayout"
+export KLAYOUT_PATH="/headless/.klayout:$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech"
 
 # this gets rid of the DBUS warning
 # https://unix.stackexchange.com/questions/230238/x-applications-warn-couldnt-connect-to-accessibility-bus-on-stderr/230442#230442

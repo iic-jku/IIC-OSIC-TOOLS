@@ -53,7 +53,7 @@ else
 		export PDK="$1"
 		export PDKPATH="$PDK_ROOT/$PDK"
 		export SPICE_USERINIT_DIR="$PDK_ROOT/$PDK/libs.tech/ngspice"
-		export KLAYOUT_PATH="/headless/.klayout:$PDKPATH/libs.tech/klayout"
+		export KLAYOUT_PATH="/headless/.klayout:$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech"
 	else
 		echo "[ERROR] PDK directory $PDK_ROOT/$1 not found!"
 		ERROR=1
