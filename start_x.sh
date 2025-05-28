@@ -229,7 +229,7 @@ if [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 		${ECHO_IF_DRY_RUN} docker rm "${CONTAINER_NAME}"
 	fi
 else
-	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container does not exist, creating ${CONTAINER_NAME} ..."
+	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container does not exist, creating ${CONTAINER_NAME}. Please be patient, this can take a few minutes ..."
 	# Finally, run the container, and set DISPLAY to the local display number
 	${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
 	# Disable SC2086, $PARAMS must be globbed and splitted.
