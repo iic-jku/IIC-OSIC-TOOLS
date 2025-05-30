@@ -15,7 +15,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	cace==2.5.6 \
 	cocotb==1.9.2 \
 	edalize==0.6.1 \
-	fault-dft==0.9.3 \
+	fault-dft==0.9.4 \
 	fusesoc==2.4.3 \
 	gdsfactory==9.5.11 \
 	gdspy==1.6.13 \

@@ -2,6 +2,10 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2025.06
+
+* (Re-)adding `fault`.
+
 ## 2025.05
 
 * **ATTENTION**: The default PDK has been switched to `ihp-sg13g2` (from `sky130A`).
