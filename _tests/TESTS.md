@@ -12,3 +12,4 @@
 10: Test of OpenROAD flow scripts with SG13G2
 11: Test of Xyce with SG13G2
 12: Test of iVerilog functionality
+13: Test the Zero2ASIC course examples
