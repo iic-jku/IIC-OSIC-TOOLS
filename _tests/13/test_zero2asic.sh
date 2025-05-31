@@ -3,7 +3,8 @@
 # Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 #
-# Smoke test for the Zero2ASIC course examples of Matt Venn
+# Smoke test for the Zero to ASIC Course
+# <https://www.zerotoasiccourse.com> examples of Matt Venn
 
 set -euo pipefail
 
