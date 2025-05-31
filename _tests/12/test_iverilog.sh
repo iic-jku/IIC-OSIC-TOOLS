@@ -44,5 +44,5 @@ if ! vvp counter_tb.vvp > "$LOG" 2>&1; then
     exit 1
 fi
 
-echo "[INFO] Test <iVerilog> passed successfully."
+echo "[INFO] Test <iVerilog> passed."
 exit 0
