@@ -20,14 +20,14 @@ WORKDIR=/foss/designs
 docker pull --quiet hpretl/iic-osic-tools:"$TAG" > /dev/null
 
 # Create the test runner script
-cat <<EOL > $CMD
+cat <<EOL > "$CMD"
 #!/bin/bash
 find $WORKDIR -type f -name "test*.sh" -exec parallel ::: {} \;
 EOL
-chmod +x $CMD
+chmod +x "$CMD"
 
 # Now run the actual tests
-docker run -it --rm --name $CONTAINER_NAME --user "$(id -u):$(id -g)" -e DISPLAY= -v "$PWD":$WORKDIR:rw hpretl/iic-osic-tools:"$TAG" -s "$WORKDIR/$CMD"
+docker run -it --rm --name "$CONTAINER_NAME" --user "$(id -u):$(id -g)" -e DISPLAY= -v "$PWD":$WORKDIR:rw hpretl/iic-osic-tools:"$TAG" -s "$WORKDIR/$CMD"
 
 # Cleanup
-rm -f $CMD
+rm -f "$CMD"
