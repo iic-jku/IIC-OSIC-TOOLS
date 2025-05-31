@@ -22,7 +22,18 @@ docker pull --quiet hpretl/iic-osic-tools:"$TAG" > /dev/null
 # Create the test runner script
 cat <<EOL > "$CMD"
 #!/bin/bash
-find $WORKDIR -type f -name "test*.sh" -exec parallel ::: {} \;
+find $WORKDIR -type f -name "test*.sh" -exec parallel --halt soon,fail=1 ::: {} \;
+if [ \$? -ne 0 ]; then
+    echo "------------------------------------"
+    echo "[ERROR] AT LEAST ONE TEST FAILED :-("
+    echo "------------------------------------"
+    exit 1
+else
+    echo "----------------------------------------"
+    echo "[INFO] All tests passed successfully :-)"
+    echo "----------------------------------------"
+    exit 0
+fi
 EOL
 chmod +x "$CMD"
 
