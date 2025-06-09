@@ -12,10 +12,10 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 6ce81a8e5ce51bd6bd4d02acf2e258ebd10fa4fa
+  commit: b7de4c596c55e5f76b1fe0beab6d11e679f3c967
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
-  commit: a367a2fce99325587337249531f109ec5c0c3f01
+  commit: 1b97dc71377cea7e861be6625be4353c377a5fb5
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
   commit: bb978d9d667d569b9153ffa34007e300302907dc
@@ -27,13 +27,13 @@
   commit: ea26587b5ef485f2ca82a3e4364e58ec3307240f
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
-  commit: "v0.30.1"
+  commit: "v0.30.2"
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.527"
+  commit: "8.3.528"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.295"
@@ -66,22 +66,22 @@
   commit: "0.11.2"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2025.05.22"
+  commit: "2025.06.07"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 02b1e2177aac86041d62dd1054afca6cd87159db
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: ed2e5ad2328f75ed66f9c8281a34b7ce7691aeb4
+  commit: e0b592af12dd8c23208cfb4b2646f9e7b22262ce
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 34753c07b7bd285b784b3a2c756cfac56e1a26ab
+  commit: 52875e39f60715d97f4f6ad969908982d500a7d7
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
 - name: surfer
   repo: https://gitlab.com/surfer-project/surfer.git
-  commit: 6dd3a4f3983f317b8ae1aad18d3fddff45e67957
+  commit: 38e9541cc60c39924acd5ba8425f98f31497991f
 - name: trilinos
   repo: https://github.com/trilinos/Trilinos.git
   commit: "trilinos-release-12-12-1"
@@ -108,7 +108,7 @@
   commit: "Release-2.7.0"
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: "v0.53"
+  commit: "v0.54"
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
 - name: yosys_sby
