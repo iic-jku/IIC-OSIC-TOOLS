@@ -20,7 +20,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	gdsfactory==9.8.0 \
 	gdspy==1.6.13 \
 	lctime==0.0.24 \
-	klayout-pex==0.2.6 \
+	klayout-pex==0.2.5 \
 	openram==1.2.48 \
 	pygmid==1.2.12 \
 	pyrtl==0.11.2 \
@@ -29,7 +29,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	pyverilog==1.3.0 \
 	schemdraw[svgmath]==0.20 \
 	scikit-rf==1.7.0 \
-	siliconcompiler==0.33.2 \
+	siliconcompiler==0.32.3 \
 	spicelib==1.4.4 \
 	spyci==1.0.2 \
 	volare==0.20.6
