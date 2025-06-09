@@ -28,16 +28,6 @@ if [ -z ${CONTAINER_NAME+z} ]; then
 	CONTAINER_NAME="iic-osic-tools_xserver_uid_"$(id -u)
 fi
 
-# Check if Docker is running on Docker Desktop or classic engine
-docker_info=$(docker version --format '{{.Server.Version}} {{.Server.Os}} {{.Server.Platform.Name}}' 2>/dev/null)
-
-if echo "$docker_info" | grep -iq "Docker Desktop"; then
-    IS_DOCKER_DESKTOP=true
-else
-    IS_DOCKER_DESKTOP=false
-fi
-
-
 # Check if the container exists and if it is running.
 if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
 	echo "[WARNING] Container is running!"
@@ -156,14 +146,9 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 		XAUTH=${XAUTH_TMP}
 	fi
 	PARAMS="$PARAMS -v $XAUTH:/headless/.xauthority:rw -e XAUTHORITY=/headless/.xauthority"
-	# Check for /dev/dri and forward GPU only if running on the classic engine
 	if [ -d "/dev/dri" ]; then
-		if [ "$IS_DOCKER_DESKTOP" = false ]; then
-			[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] /dev/dri detected, forwarding GPU for graphics acceleration."
-			PARAMS="${PARAMS} --device=/dev/dri:/dev/dri"
-		else
-			[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] /dev/dri detected, but not forwarding GPU because Docker Desktop is in use."
-		fi
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] /dev/dri detected, forwarding GPU for graphics acceleration."
+		PARAMS="${PARAMS} --device=/dev/dri:/dev/dri"
 	else
 		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] No /dev/dri detected!"
 		FORCE_LIBGL_INDIRECT=1
