@@ -163,6 +163,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 			PARAMS="${PARAMS} --device=/dev/dri:/dev/dri"
 		else
 			[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] /dev/dri detected, but not forwarding GPU because Docker Desktop is in use."
+			FORCE_LIBGL_INDIRECT=1
 		fi
 	else
 		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] No /dev/dri detected!"
