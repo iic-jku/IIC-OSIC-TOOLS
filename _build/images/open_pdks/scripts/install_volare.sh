@@ -99,7 +99,7 @@ if [ -d "$PDK_ROOT/gf180mcuC" ]; then
 	sed -i 's/{test_/{tests\/test_/g' $PDK_ROOT/gf180mcuC/libs.tech/xschem/tests/0_top.sch
 
 	# fix missing PDK variant in path definitions for in xschemrc
-	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuD/models/ngspice|' $PDK_ROOT/gf180mcuC/libs.tech/xschem/xschemrc
+	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuC/models/ngspice|' $PDK_ROOT/gf180mcuC/libs.tech/xschem/xschemrc
 fi
 
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
