@@ -169,7 +169,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [pyverilog](https://github.com/PyHDI/Pyverilog) Python toolkit for Verilog
 - [qflow](https://github.com/RTimothyEdwards/qflow) collection of useful conversion tools
 - [qucs-s](https://github.com/ra3xdh/qucs_s) simulation environment with RF emphasis
-- [rggen](https://github.com/rggen/rggen) code generation tool for configuration and status registers
+- [rggen](https://github.com/rggen/rggen) Code generation tool for control and status registers
 - [risc-v toolchain](https://github.com/riscv/riscv-gnu-toolchain) GNU compiler toolchain for RISC-V cores, incl. [Spike](https://github.com/riscv-software-src/riscv-isa-sim) RISC-V ISA simulator
 - [riscv-pk](https://github.com/riscv-software-src/riscv-pk) RISC-V proxy kernel and bootloader
 - [schemdraw](https://github.com/cdelker/schemdraw) Python package for drawing electrical schematics

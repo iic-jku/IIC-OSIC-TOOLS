@@ -50,4 +50,5 @@ echo "[INFO] Install EDA packages via GEM"
 gem install \
 	rggen \
 	rggen-verilog \
-	rggen-vhdl
+	rggen-vhdl \
+	rggen-veryl
