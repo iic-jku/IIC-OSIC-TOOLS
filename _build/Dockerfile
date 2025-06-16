@@ -522,6 +522,9 @@ RUN git clone --depth=1 https://github.com/mole99/ota-5t.git ${EXAMPLES}/cace/ot
 # Finalize setup/install
 RUN $STARTUPDIR/scripts/post_install.sh
 
+# Install Chipathon specific stuff
+RUN $STARTUPDIR/scripts/chipathon_install.sh
+
 WORKDIR ${DESIGNS}
 USER 1000:1000
 ENTRYPOINT ["/dockerstartup/scripts/ui_startup.sh"]
