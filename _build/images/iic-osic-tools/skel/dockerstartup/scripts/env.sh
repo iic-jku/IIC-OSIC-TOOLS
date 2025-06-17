@@ -84,9 +84,9 @@ export PYTHONPYCACHEPREFIX="/tmp/pycache"
 export KLAYOUT_HOME="/headless/.klayout"
 
 # setting default PDK
-export PDK=ihp-sg13g2
+export PDK=gf180mcuD
 export PDKPATH=$PDK_ROOT/$PDK
-export STD_CELL_LIBRARY=sg13g2_stdcell
+export STD_CELL_LIBRARY=gf180mcu_fd_sc_mcu7t5v0
 export SPICE_USERINIT_DIR=$PDK_ROOT/$PDK/libs.tech/ngspice
 export KLAYOUT_PATH="/headless/.klayout:$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech"
 
