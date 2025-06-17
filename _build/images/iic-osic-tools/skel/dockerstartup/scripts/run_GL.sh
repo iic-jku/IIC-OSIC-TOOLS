@@ -23,7 +23,7 @@ else
     cd "$BASE_DIR"
 
     # Download and install Miniconda
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-`uname -i`.sh -O miniconda.sh
     bash miniconda.sh -b -p "$MINICONDA_DIR"
 
     # Source Conda
