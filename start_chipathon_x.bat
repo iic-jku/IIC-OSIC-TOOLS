@@ -35,12 +35,12 @@ if not exist "%DESIGNS%" %ECHO_IF_DRY_RUN% mkdir "%DESIGNS%"
 
 IF "%DOCKER_USER%"=="" SET DOCKER_USER=hpretl
 IF "%DOCKER_IMAGE%"=="" SET DOCKER_IMAGE=iic-osic-tools
-IF "%DOCKER_TAG%"=="" SET DOCKER_TAG=latest
+IF "%DOCKER_TAG%"=="" SET DOCKER_TAG=chipathon
 
 IF "%CONTAINER_USER%"=="" SET CONTAINER_USER=1000
 IF "%CONTAINER_GROUP%"=="" SET CONTAINER_GROUP=1000
 
-IF "%CONTAINER_NAME%"=="" SET CONTAINER_NAME=iic-osic-tools_xserver
+IF "%CONTAINER_NAME%"=="" SET CONTAINER_NAME=iic-osic-tools_chipathon_xserver
 
 IF "%DISP%"=="" SET DISP=:0
 IF "%WAYLAND_DISP%"=="" SET WAYLAND_DISP=wayland-0

@@ -36,7 +36,7 @@ if [ -n "${DRY_RUN}" ]; then
 fi
 
 if [ -z ${CONTAINER_NAME+z} ]; then
-	CONTAINER_NAME="iic-osic-tools_xserver_uid_"$(id -u)
+	CONTAINER_NAME="iic-osic-tools_chipathon_xserver_uid_"$(id -u)
 fi
 
 if [ -z ${JUPYTER_PORT+z} ]; then
@@ -81,7 +81,7 @@ if [ -z ${DOCKER_IMAGE+z} ]; then
 fi
 
 if [ -z ${DOCKER_TAG+z} ]; then
-	DOCKER_TAG="latest"
+	DOCKER_TAG="chipathon"
 fi
 
 if [[ "$OSTYPE" == "linux"* ]]; then

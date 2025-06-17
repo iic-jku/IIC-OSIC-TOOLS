@@ -55,11 +55,11 @@ if [ -z ${DOCKER_IMAGE+z} ]; then
 fi
 
 if [ -z ${DOCKER_TAG+z} ]; then
-	DOCKER_TAG="latest"
+	DOCKER_TAG="chipathon"
 fi
 
 if [ -z ${CONTAINER_NAME+z} ]; then
-	CONTAINER_NAME="iic-osic-tools_xvnc_uid_"$(id -u)
+	CONTAINER_NAME="iic-osic-tools_chipathon_xvnc_uid_"$(id -u)
 fi
 
 if [[ "$OSTYPE" == "linux"* ]]; then
