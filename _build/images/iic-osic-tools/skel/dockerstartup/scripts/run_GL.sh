@@ -45,19 +45,14 @@ else
     python -m ipykernel install --user --name="$ENV_NAME"
 
     # Pip packages
-    pip install glayout==0.0.9
+    pip install glayout
     pip install "klayout>=0.28,<0.29"
     pip install svgutils
 
     echo "Setup complete!"
 fi
 
-# === Step 3: Clone repo if needed ===
-if [ ! -d "../OpenFASOC" ]; then
-    git clone https://github.com/idea-fasoc/OpenFASOC ../OpenFASOC
-fi
-
-# === Step 4: Launch Jupyter ===
+# === Step 3: Launch Jupyter ===
 echo "Launching Jupyter Lab..."
 source "$MINICONDA_DIR/etc/profile.d/conda.sh"
 conda activate "$ENV_NAME"
