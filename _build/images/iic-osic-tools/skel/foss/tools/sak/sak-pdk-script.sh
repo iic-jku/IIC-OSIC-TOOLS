@@ -69,11 +69,8 @@ else
 			ihp-sg13g2)
 				export STD_CELL_LIBRARY="sg13g2_stdcell"
 				;;
-			gf180mcuC)
-				export STD_CELL_LIBRARY="gf180mcuC_fd_sc_hd"
-				;;
-			gf180mcuD)
-				export STD_CELL_LIBRARY="gf180mcuD_fd_sc_hd"
+			gf180mcuC|gf180mcuD)
+				export STD_CELL_LIBRARY="gf180mcu_fd_sc_mcu7t5v0"
 				;;
 			*)
 				echo "[ERROR] No valid standard cell library selected!"
