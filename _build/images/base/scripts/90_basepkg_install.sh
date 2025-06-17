@@ -13,6 +13,7 @@ echo "[INFO] Install EDA packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	amaranth==0.5.6 \
 	cace==2.5.6 \
+	ciel==2.0.2 \
 	cocotb==1.9.2 \
 	edalize==0.6.1 \
 	fault-dft==0.9.4 \
@@ -37,7 +38,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 #FIXME	hdl21==7.0.0 \
 #FIXME	vlsirtools==7.0.0 \
 #FIXME	librelane==2.4.0.dev0 \
-#FIXME	ciel==2.0.2 \
 #FIXME	openlane==2.3.10 \ 
 
 echo "[INFO] Install custom OpenLane2 version"
