@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: b7de4c596c55e5f76b1fe0beab6d11e679f3c967
+  commit: 674782ac48fbd23d3ed5e022e82f0ce446265034
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 1b97dc71377cea7e861be6625be4353c377a5fb5
@@ -33,7 +33,7 @@
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.528"
+  commit: "8.3.529"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.295"
@@ -45,7 +45,7 @@
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
 - name: nvc
   repo: https://github.com/nickg/nvc.git
-  commit: "r1.16.1"
+  commit: "r1.16.2"
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
   commit: 0fe599b2afb6708d281543108caf8310912f54af
@@ -66,22 +66,22 @@
   commit: "0.11.2"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2025.06.07"
+  commit: "2025.06.13"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 02b1e2177aac86041d62dd1054afca6cd87159db
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: e0b592af12dd8c23208cfb4b2646f9e7b22262ce
+  commit: 4239b0e4733a0334b2df3b3737708a047d3a6f61
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 52875e39f60715d97f4f6ad969908982d500a7d7
+  commit: 45d43f77f606b6553a41bdcd439907f2ecfbbecf
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
 - name: surfer
   repo: https://gitlab.com/surfer-project/surfer.git
-  commit: 38e9541cc60c39924acd5ba8425f98f31497991f
+  commit: 2659e8e06924d0c41d5a0a371086a2d370f663d2
 - name: trilinos
   repo: https://github.com/trilinos/Trilinos.git
   commit: "trilinos-release-12-12-1"

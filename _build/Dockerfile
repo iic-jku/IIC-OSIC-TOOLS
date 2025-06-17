@@ -38,7 +38,7 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 #######################################################################
 FROM basepkg AS magic
 ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic.git"
-ARG MAGIC_REPO_COMMIT="8.3.528"
+ARG MAGIC_REPO_COMMIT="8.3.529"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
@@ -146,7 +146,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="b7de4c596c55e5f76b1fe0beab6d11e679f3c967"
+ARG GHDL_REPO_COMMIT="674782ac48fbd23d3ed5e022e82f0ce446265034"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -236,7 +236,7 @@ RUN --mount=type=bind,source=images/ngspyce,target=/images/ngspyce \
 #######################################################################
 FROM base AS nvc
 ARG NVC_REPO_URL="https://github.com/nickg/nvc.git"
-ARG NVC_REPO_COMMIT="r1.16.1"
+ARG NVC_REPO_COMMIT="r1.16.2"
 ARG NVC_NAME="nvc"
 RUN --mount=type=bind,source=images/nvc,target=/images/nvc \
     bash /images/nvc/scripts/install.sh
@@ -304,7 +304,7 @@ RUN --mount=type=bind,source=images/surelog,target=/images/surelog \
 #######################################################################
 FROM base AS surfer
 ARG SURFER_REPO_URL="https://gitlab.com/surfer-project/surfer.git"
-ARG SURFER_REPO_COMMIT="38e9541cc60c39924acd5ba8425f98f31497991f"
+ARG SURFER_REPO_COMMIT="2659e8e06924d0c41d5a0a371086a2d370f663d2"
 ARG SURFER_NAME="surfer"
 RUN --mount=type=bind,source=images/surfer,target=/images/surfer \
     bash /images/surfer/scripts/install.sh
@@ -334,7 +334,7 @@ RUN --mount=type=bind,source=images/qucs-s,target=/images/qucs-s \
 #######################################################################
 FROM base AS riscv-gnu-toolchain
 ARG RISCV_GNU_TOOLCHAIN_REPO_URL="https://github.com/riscv-collab/riscv-gnu-toolchain.git"
-ARG RISCV_GNU_TOOLCHAIN_REPO_COMMIT="2025.06.07"
+ARG RISCV_GNU_TOOLCHAIN_REPO_COMMIT="2025.06.13"
 ARG RISCV_GNU_TOOLCHAIN_NAME="riscv-gnu-toolchain"
 RUN --mount=type=bind,source=images/riscv-gnu-toolchain,target=/images/riscv-gnu-toolchain \
     bash /images/riscv-gnu-toolchain/scripts/install.sh
@@ -355,7 +355,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="e0b592af12dd8c23208cfb4b2646f9e7b22262ce"
+ARG SLANG_REPO_COMMIT="4239b0e4733a0334b2df3b3737708a047d3a6f61"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -417,7 +417,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="52875e39f60715d97f4f6ad969908982d500a7d7"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="45d43f77f606b6553a41bdcd439907f2ecfbbecf"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \
