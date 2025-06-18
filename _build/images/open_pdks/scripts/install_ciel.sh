@@ -21,6 +21,9 @@ rm -rf "$PDK_ROOT"/ciel/gf180mcu/versions/*/gf180mcuB
 rm -rf "$PDK_ROOT"/gf180mcuA
 rm -rf "$PDK_ROOT"/gf180mcuB
 
+git clone https://github.com/martinjankoehler/globalfoundries-pdk-libs-gf180mcu_fd_pr.git --branch gdsfactory-v7-to-v9-port /tmp/glofo-mjk
+git clone https://github.com/mabrains/globalfoundries-pdk-libs-gf180mcu_fd_pr.git /tmp/glofo-mabrains
+
 if [ -d "$PDK_ROOT/gf180mcuC" ]; then
 	#FIXME gzip Liberty (.lib) files
 	#FIXME cd "$PDK_ROOT/gf180mcuC/libs.ref"
@@ -42,11 +45,11 @@ if [ -d "$PDK_ROOT/gf180mcuC" ]; then
 	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuC/libs.tech/ngspice|' $PDK_ROOT/gf180mcuC/libs.tech/xschem/xschemrc
 
 	# Replace pymacro with working pcells.
-        git clone https://github.com/martinjankoehler/globalfoundries-pdk-libs-gf180mcu_fd_pr.git --branch gdsfactory-v7-to-v9-port /tmp/glofo-mjk
-        rm -rf /foss/pdks/ciel/gf180mcu/versions/f2e289da6753f26157a308c492cf990fdcd4932d/gf180mcuC/libs.tech/klayout/tech/pymacros
-        cp -a /tmp/glofo-mjk/cells/klayout/pymacros /foss/pdks/ciel/gf180mcu/versions/f2e289da6753f26157a308c492cf990fdcd4932d/gf180mcuC/libs.tech/klayout/tech/pymacros
-        rm -rf /tmp/glofo-mjk
+	rm -rf $PDK_ROOT/gf180mcuC/libs.tech/klayout/tech/pymacros
+	cp -a /tmp/glofo-mjk/cells/klayout/pymacros $PDK_ROOT/gf180mcuC/libs.tech/klayout/tech/pymacros
 
+	cp -r /tmp/glofo-mabrains/rules/klayout/macros/ $PDK_ROOT/gf180mcuC/libs.tech/klayout/
+	chmod -R 777 $PDK_ROOT/gf180mcuC/libs.tech/klayout/macros
 
 fi
 
@@ -71,8 +74,12 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuD/libs.tech/ngspice|' $PDK_ROOT/gf180mcuD/libs.tech/xschem/xschemrc
 
 	# Replace pymacro with working pcells.
-	git clone https://github.com/martinjankoehler/globalfoundries-pdk-libs-gf180mcu_fd_pr.git --branch gdsfactory-v7-to-v9-port /tmp/glofo-mjk
-	rm -rf /foss/pdks/ciel/gf180mcu/versions/f2e289da6753f26157a308c492cf990fdcd4932d/gf180mcuD/libs.tech/klayout/tech/pymacros
-	cp -a /tmp/glofo-mjk/cells/klayout/pymacros /foss/pdks/ciel/gf180mcu/versions/f2e289da6753f26157a308c492cf990fdcd4932d/gf180mcuD/libs.tech/klayout/tech/pymacros
-	rm -rf /tmp/glofo-mjk
+	rm -rf $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros
+	cp -a /tmp/glofo-mjk/cells/klayout/pymacros $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros
+
+	cp -r /tmp/glofo-mabrains/rules/klayout/macros/ $PDK_ROOT/gf180mcuD/libs.tech/klayout/
+	chmod -R 777 $PDK_ROOT/gf180mcuD/libs.tech/klayout/macros
 fi
+
+rm -rf /tmp/glofo-mjk
+rm -rf /tmp/glofo-mabrains
