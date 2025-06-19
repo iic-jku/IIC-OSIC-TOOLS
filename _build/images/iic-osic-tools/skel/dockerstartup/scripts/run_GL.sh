@@ -38,7 +38,7 @@ else
     # Install packages
     conda install -y jupyter jupyterlab notebook nbclassic \
         jupyter_server_ydoc jupyter_server_fileid \
-        numpy=1.24 matplotlib magic netgen ngspice pip \
+        numpy=1.24 matplotlib pip \
         -c litex-hub -c conda-forge -c anaconda
 
     # Register the kernel
