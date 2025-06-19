@@ -524,8 +524,8 @@ RUN git clone --depth=1 https://github.com/mole99/ota-5t.git ${EXAMPLES}/cace/ot
 # Finalize setup/install
 RUN $STARTUPDIR/scripts/post_install.sh
 
-# Install the chipathon Virtual Environment
-RUN $STARTUPDIR/scripts/chipathon_install.sh
+# Install the Chipathon Virtual Environment
+#FIXME RUN $STARTUPDIR/scripts/chipathon_install.sh
 
 WORKDIR ${DESIGNS}
 USER 1000:1000
