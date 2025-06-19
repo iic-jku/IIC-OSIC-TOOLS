@@ -50,11 +50,8 @@ else
     pip install svgutils
 
     echo "Setup complete!"
+
+    chown -f -R 1000:1000 $BASE_DIR
+    find $BASE_DIR -type f -exec chmod a+rw {} \; -o -type d -exec chmod a+rwx {} \;
+    
 fi
-
-# === Step 3: Launch Jupyter ===
-echo "Launching Jupyter Lab..."
-source "$MINICONDA_DIR/etc/profile.d/conda.sh"
-conda activate "$ENV_NAME"
-jupyter lab --ip=0.0.0.0 --no-browser --port=8888
-
