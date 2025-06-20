@@ -53,6 +53,9 @@ update-desktop-database /usr/share/applications
 mkdir -p /tmp/runtime-default
 chmod 777 /tmp/runtime-default
 
+# Remove Ubuntu user in container to prevent conflicts with designer user.
+userdel ubuntu
+
 # set access rights for home dir and designs dir
 chown -R 1000:1000 "$HOME"
 chmod -R +rw "$HOME"

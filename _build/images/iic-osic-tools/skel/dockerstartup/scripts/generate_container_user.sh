@@ -31,4 +31,5 @@ if [ x"$USER_ID" != x"0" ]; then
         exit 1
     fi
     export LD_PRELOAD
+    export USER=designer
 fi

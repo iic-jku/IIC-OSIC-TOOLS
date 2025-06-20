@@ -99,6 +99,8 @@ COPY --from=xyce ${TOOLS}/ ${TOOLS}/
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_volare.sh
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
+    bash /images/open_pdks/scripts/install_ciel.sh
+RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ihp.sh
 
 #######################################################################
@@ -304,7 +306,7 @@ RUN --mount=type=bind,source=images/surelog,target=/images/surelog \
 #######################################################################
 FROM base AS surfer
 ARG SURFER_REPO_URL="https://gitlab.com/surfer-project/surfer.git"
-ARG SURFER_REPO_COMMIT="2659e8e06924d0c41d5a0a371086a2d370f663d2"
+ARG SURFER_REPO_COMMIT="main"
 ARG SURFER_NAME="surfer"
 RUN --mount=type=bind,source=images/surfer,target=/images/surfer \
     bash /images/surfer/scripts/install.sh
