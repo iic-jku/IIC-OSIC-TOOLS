@@ -18,10 +18,9 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	edalize==0.6.1 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.3 \
-	gdsfactory==9.8.0 \
+	gdsfactory==9.9.0 \
 	gdspy==1.6.13 \
 	lctime==0.0.25 \
-	klayout-pex==0.2.5 \
 	openram==1.2.48 \
 	pygmid==1.2.12 \
 	pyrtl==0.11.3 \
@@ -35,9 +34,10 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	spyci==1.0.2 \
 	volare==0.20.6
 
+#FIXME	klayout-pex==0.2.6 \
 #FIXME	hdl21==7.0.0 \
 #FIXME	vlsirtools==7.0.0 \
-#FIXME	librelane==2.4.0.dev0 \
+#FIXME	librelane==2.4.0.dev6 \
 #FIXME	openlane==2.3.10 \ 
 
 echo "[INFO] Install custom OpenLane2 version"
