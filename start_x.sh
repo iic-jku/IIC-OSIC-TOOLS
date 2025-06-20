@@ -27,6 +27,10 @@ cleanup() {
         wait "${SOCAT_PID}" 2>/dev/null || true
         echo "socat stopped."
     fi
+
+    if [ -n "${XHOST_USED}" ]; then
+        ${ECHO_IF_DRY_RUN} xhost - > /dev/null
+    fi
 }
 
 
@@ -106,7 +110,8 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 		if [ -z ${DISP+z} ]; then
 			DISP="host.docker.internal:0"
 			if [[ $(type -P "xhost") ]]; then
-				${ECHO_IF_DRY_RUN} xhost +localhost > /dev/null
+				${ECHO_IF_DRY_RUN} xhost + > /dev/null
+				XHOST_USED=1
 			else
 				echo "[WARNING] xhost could not be found, access control to the X server might needs to be managed manually!"
 			fi
@@ -204,7 +209,8 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 	if [ -z ${DISP+z} ]; then
 		DISP="host.docker.internal:0"
 		if [[ $(type -P "xhost") ]]; then
-			${ECHO_IF_DRY_RUN} xhost +localhost > /dev/null
+			${ECHO_IF_DRY_RUN} xhost + > /dev/null
+			XHOST_USED=1
 		else
 			echo "[WARNING] xhost could not be found, access control to the X server must be managed manually!"
 		fi
