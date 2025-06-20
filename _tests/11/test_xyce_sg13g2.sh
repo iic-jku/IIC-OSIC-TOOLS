@@ -17,7 +17,7 @@ xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.s
 xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so $DIR/dc_hv_pmos.spice > /dev/null 2>&1 || ERROR=1
 xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so $DIR/dc_lv_nmos.spice > /dev/null 2>&1 || ERROR=1
 xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so $DIR/dc_lv_pmos.spice > /dev/null 2>&1 || ERROR=1
-xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so $DIR/dc_res_temp.spice > /dev/null 2>&1 || ERROR=1
+xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_r3_cmc.so $DIR/dc_res_temp.spice > /dev/null 2>&1 || ERROR=1
 # Remove result files
 rm -f $DIR/*.res
 # Check if there is an error in the log
