@@ -97,8 +97,6 @@ ARG OPEN_PDKS_NAME="open_pdks"
 COPY --from=openvaf ${TOOLS}/ ${TOOLS}/
 COPY --from=xyce ${TOOLS}/ ${TOOLS}/
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
-    bash /images/open_pdks/scripts/install_volare.sh
-RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ciel.sh
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ihp.sh

@@ -34,7 +34,7 @@ if [ $# = 0 ]; then
 	if [ -d "$PDK_ROOT" ]; then
 		echo "Available PDKs:"
 		# shellcheck disable=SC2010
-		ls "$PDK_ROOT" | grep -v volare
+		ls "$PDK_ROOT" | grep -v ciel
 		echo
 	fi
 else

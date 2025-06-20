@@ -31,8 +31,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	scikit-rf==1.7.0 \
 	siliconcompiler==0.32.3 \
 	spicelib==1.4.4 \
-	spyci==1.0.2 \
-	volare==0.20.6
+	spyci==1.0.2
 
 #FIXME	klayout-pex==0.2.6 \
 #FIXME	hdl21==7.0.0 \
