@@ -46,7 +46,7 @@ cd openlane2
 pip3 install --upgrade --no-cache-dir --break-system-packages .
 
 echo "[INFO] Installing CharLib"
-pip install git+https://github.com/stineje/charlib
+pip install --break-system-packages git+https://github.com/stineje/charlib
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
