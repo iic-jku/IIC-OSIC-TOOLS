@@ -146,7 +146,7 @@ RUN --mount=type=bind,source=images/gds3d,target=/images/gds3d \
 #######################################################################
 FROM base AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="1c57da39f653acad3cc3509ae194a40fbe11a296"
+ARG GHDL_REPO_COMMIT="870738a4d2326c053e96007fe17a390427926efd"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh
@@ -176,7 +176,7 @@ RUN --mount=type=bind,source=images/irsim,target=/images/irsim \
 #######################################################################
 FROM base AS iverilog
 ARG IVERILOG_REPO_URL="https://github.com/steveicarus/iverilog.git"
-ARG IVERILOG_REPO_COMMIT="ea26587b5ef485f2ca82a3e4364e58ec3307240f"
+ARG IVERILOG_REPO_COMMIT="46a5078a689399e6bb3691238ffb4bad303e22ab"
 ARG IVERILOG_NAME="iverilog"
 RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
     bash /images/iverilog/scripts/install.sh
@@ -345,7 +345,7 @@ ENV RISCV=$TOOLS/$RISCV_GNU_TOOLCHAIN_NAME
 #######################################################################
 FROM riscv-gnu-toolchain AS riscv-pk
 ARG RISCV_PK_REPO_URL="https://github.com/riscv-software-src/riscv-pk.git"
-ARG RISCV_PK_REPO_COMMIT="02b1e2177aac86041d62dd1054afca6cd87159db"
+ARG RISCV_PK_REPO_COMMIT="0239d921a2b06c931736e55462ba50233763ee33"
 ARG RISCV_PK_NAME="riscv-pk"
 RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
     bash /images/riscv-pk/scripts/install.sh
@@ -355,7 +355,7 @@ RUN --mount=type=bind,source=images/riscv-pk,target=/images/riscv-pk \
 #######################################################################
 FROM base AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="1899fc5a3ec6ff5fa00a16c68899a5e085698543"
+ARG SLANG_REPO_COMMIT="801e7d6f94046c16104a3cb44e9c6f671526c73a"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
@@ -365,7 +365,7 @@ RUN --mount=type=bind,source=images/slang,target=/images/slang \
 #######################################################################
 FROM riscv-gnu-toolchain AS spike
 ARG SPIKE_REPO_URL="https://github.com/riscv-software-src/riscv-isa-sim.git"
-ARG SPIKE_REPO_COMMIT="4cf49152121d0c241c78755718f6223a4822c056"
+ARG SPIKE_REPO_COMMIT="70687ccf41bb2696c55c6f6aa44b3949f2921ddf"
 ARG SPIKE_NAME="spike"
 RUN --mount=type=bind,source=images/spike,target=/images/spike \
     bash /images/spike/scripts/install.sh
@@ -427,7 +427,7 @@ RUN --mount=type=bind,source=images/ghdl-yosys-plugin,target=/images/ghdl-yosys-
 
 FROM base AS slang-yosys-plugin
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="6ba28d997b89c179a10ed79be6547b97c9f143a8"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="76b83eb5b73ba871797e6db7bc5fed10af380be4"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 RUN --mount=type=bind,source=images/slang-yosys-plugin,target=/images/slang-yosys-plugin \

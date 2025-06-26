@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 1c57da39f653acad3cc3509ae194a40fbe11a296
+  commit: 870738a4d2326c053e96007fe17a390427926efd
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 1b97dc71377cea7e861be6625be4353c377a5fb5
@@ -24,7 +24,7 @@
   commit: 34b1e7bbb1014346a5bbe9171bd25840ee020578
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: ea26587b5ef485f2ca82a3e4364e58ec3307240f
+  commit: 46a5078a689399e6bb3691238ffb4bad303e22ab
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.30.2"
@@ -69,16 +69,16 @@
   commit: "2025.06.13"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
-  commit: 02b1e2177aac86041d62dd1054afca6cd87159db
+  commit: 0239d921a2b06c931736e55462ba50233763ee33
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 1899fc5a3ec6ff5fa00a16c68899a5e085698543
+  commit: 801e7d6f94046c16104a3cb44e9c6f671526c73a
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 6ba28d997b89c179a10ed79be6547b97c9f143a8
+  commit: 76b83eb5b73ba871797e6db7bc5fed10af380be4
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 4cf49152121d0c241c78755718f6223a4822c056
+  commit: 70687ccf41bb2696c55c6f6aa44b3949f2921ddf
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
