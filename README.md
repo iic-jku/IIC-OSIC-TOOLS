@@ -170,7 +170,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [qflow](https://github.com/RTimothyEdwards/qflow) collection of useful conversion tools
 - [qucs-s](https://github.com/ra3xdh/qucs_s) simulation environment with RF emphasis
 - [rggen](https://github.com/rggen/rggen) Code generation tool for control and status registers
-- [risc-v toolchain](https://github.com/riscv/riscv-gnu-toolchain) GNU compiler toolchain for RISC-V cores, incl. [Spike](https://github.com/riscv-software-src/riscv-isa-sim) RISC-V ISA simulator
+- [risc-v toolchain](https://github.com/riscv/riscv-gnu-toolchain) GNU compiler toolchain for RISC-V cores
 - [riscv-pk](https://github.com/riscv-software-src/riscv-pk) RISC-V proxy kernel and bootloader
 - [schemdraw](https://github.com/cdelker/schemdraw) Python package for drawing electrical schematics
 - [siliconcompiler](https://github.com/siliconcompiler/siliconcompiler) modular build system for hardware
@@ -178,6 +178,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [slang yosys plugin](https://github.com/povik/yosys-slang) Slang-based plugin for `yosys` for SystemVerilog support
 - [slang](https://github.com/MikePopoloski/slang) SystemVerilog parsing and translation (e.g. to Verilog)
 - [spicelib](https://github.com/nunobrum/spicelib) library to interact with SPICE-like simulators
+* [spike](https://github.com/riscv-software-src/riscv-isa-sim) Spike RISC-V ISA simulator
 - [spyci](https://github.com/gmagno/spyci) analyze/plot `ngspice`/`xyce` output data with Python
 - [surelog](https://github.com/chipsalliance/Surelog) SystemVerilog parser, elaborator, and UHDM compiler
 - [surfer](https://gitlab.com/surfer-project/surfer) waveform viewer with snappy usable interface and extensibility

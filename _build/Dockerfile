@@ -361,6 +361,16 @@ RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh
 
 #######################################################################
+# Compile spike (RISCV ISA simulator)
+#######################################################################
+FROM riscv-gnu-toolchain AS spike
+ARG SPIKE_REPO_URL="https://github.com/riscv-software-src/riscv-isa-sim.git"
+ARG SPIKE_REPO_COMMIT="4cf49152121d0c241c78755718f6223a4822c056"
+ARG SPIKE_NAME="spike"
+RUN --mount=type=bind,source=images/spike,target=/images/spike \
+    bash /images/spike/scripts/install.sh
+
+#######################################################################
 # Compile verilator
 #######################################################################
 FROM base AS verilator
@@ -491,6 +501,7 @@ COPY --from=rftoolkit                    ${TOOLS}/              ${TOOLS}/
 COPY --from=riscv-gnu-toolchain          ${TOOLS}/              ${TOOLS}/
 COPY --from=riscv-pk                     ${TOOLS}/              ${TOOLS}/
 COPY --from=slang                        ${TOOLS}/              ${TOOLS}/
+COPY --from=spike                        ${TOOLS}/              ${TOOLS}/
 COPY --from=surelog                      ${TOOLS}/              ${TOOLS}/
 COPY --from=surfer                       ${TOOLS}/              ${TOOLS}/
 COPY --from=verilator                    ${TOOLS}/              ${TOOLS}/
