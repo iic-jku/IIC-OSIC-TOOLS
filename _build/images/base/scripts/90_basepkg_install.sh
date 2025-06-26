@@ -37,7 +37,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 #FIXME	klayout-pex==0.2.6 \
 #FIXME	hdl21==7.0.0 \
 #FIXME	vlsirtools==7.0.0 \
-#FIXME	librelane==2.4.0.dev6 \
 #FIXME	openlane==2.3.10 \ 
 
 echo "[INFO] Install custom OpenLane2 version"
@@ -45,6 +44,9 @@ cd /tmp
 git clone https://github.com/iic-jku/openlane2.git openlane2
 cd openlane2
 pip3 install --upgrade --no-cache-dir --break-system-packages .
+
+echo "[INFO] Installing CharLib"
+pip install git+https://github.com/stineje/charlib
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
