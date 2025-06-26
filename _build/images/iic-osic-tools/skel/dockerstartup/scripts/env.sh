@@ -120,6 +120,7 @@ alias k='klayout'
 alias ke='klayout -e'
 
 alias openlane='openlane --manual-pdk'
+alias librelane='librelane --manual-pdk'
 alias surfer='LIBGL_ALWAYS_INDIRECT=0 surfer'
 # IHP-SG13G2 needs this plugin, using an alias seems to the the only proper solution for now
 alias xyce='xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so'
