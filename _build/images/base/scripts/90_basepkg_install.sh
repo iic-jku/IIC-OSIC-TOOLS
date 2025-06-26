@@ -11,8 +11,8 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 
 echo "[INFO] Install EDA packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
-	amaranth==0.5.6 \
 	cace==2.5.6 \
+	amaranth[builtin-yosys]==0.5.6 \
 	ciel==2.0.2 \
 	cocotb==1.9.2 \
 	edalize==0.6.1 \
