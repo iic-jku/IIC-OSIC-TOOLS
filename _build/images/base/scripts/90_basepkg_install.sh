@@ -11,14 +11,14 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 
 echo "[INFO] Install EDA packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
-	cace==2.5.6 \
 	amaranth[builtin-yosys]==0.5.6 \
+	cace==2.6.0 \
 	ciel==2.0.2 \
 	cocotb==1.9.2 \
 	edalize==0.6.1 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.3 \
-	gdsfactory==9.9.0 \
+	gdsfactory==9.9.4 \
 	gdspy==1.6.13 \
 	lctime==0.0.25 \
 	librelane==2.4.0.dev8 \
