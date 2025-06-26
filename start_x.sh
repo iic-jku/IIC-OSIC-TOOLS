@@ -118,12 +118,17 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 			# If we are running in Wayland, we are using Xwayland. For that we assume that no TCP interface is available.
 			# Therefore we have to socat the socket. For X11, this should not be needed.
 			echo "Starting socat to enable TCP connections to the X-Server from the container."
-			#DISPLAY_NUM=$(echo $DISPLAY | sed 's/^[^:]*:\([0-9]*\).*/\1/')
-			DISPLAY_NUM=${DISPLAY#*:}
-			DISPLAY_NUM=${DISPLAY_NUM%%.*}
-			socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CONNECT:/tmp/.X11-unix/X$DISPLAY_NUM &
-			SOCAT_PID=$!
-			echo "Started socat with PID ${SOCAT_PID} in the background.."
+			if [[ $(type -P "socat") ]]; then
+				#DISPLAY_NUM=$(echo $DISPLAY | sed 's/^[^:]*:\([0-9]*\).*/\1/')
+				DISPLAY_NUM=${DISPLAY#*:}
+				DISPLAY_NUM=${DISPLAY_NUM%%.*}
+				socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CONNECT:/tmp/.X11-unix/X$DISPLAY_NUM &
+				SOCAT_PID=$!
+				echo "Started socat with PID ${SOCAT_PID} in the background.."
+			else
+				echo "[ERROR] socat could not be found! This is required to use the X11 mode with Docker Desktop (On Ubuntu/Debian, install it with e.g.: sudo apt -y install socat)"
+				exit 1
+			fi
 		fi
 		# Always for indirect rendering on MacOS with XQuartz
 		FORCE_LIBGL_INDIRECT=1	
