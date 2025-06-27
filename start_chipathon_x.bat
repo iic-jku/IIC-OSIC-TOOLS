@@ -50,8 +50,14 @@ IF "%JUPYTER_PORT%"=="" SET JUPYTER_PORT=8888
 IF %CONTAINER_USER% NEQ 0 if %CONTAINER_USER% LSS 1000 echo WARNING: Selected User ID %CONTAINER_USER% is below 1000. This ID might interfere with User-IDs inside the container and cause undefined behaviour!
 IF %CONTAINER_GROUP% NEQ 0 if %CONTAINER_GROUP% LSS 1000 echo WARNING: Selected Group ID %CONTAINER_GROUP% is below 1000. This ID might interfere with Group-IDs inside the container and cause undefined behaviour!
 
+SET PARAMS=
+
 IF %JUPYTER_PORT% GTR 0 (
   SET PARAMS=%PARAMS% -p %JUPYTER_PORT%:8888
+)
+
+IF DEFINED DOCKER_EXTRA_PARAMS (
+  SET PARAMS=%PARAMS% %DOCKER_EXTRA_PARAMS%
 )
 
 
@@ -65,6 +71,6 @@ IF NOT ERRORLEVEL 1 (
     ) ELSE (
 	echo Container does not exist, pulling %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% and creating %CONTAINER_NAME% ...
         %ECHO_IF_DRY_RUN% docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
-        %ECHO_IF_DRY_RUN% docker run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% -e DISPLAY=%DISP% -e WAYLAND_DISPLAY=%WAYLAND_DISP% -e XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir -e PULSE_SERVER=/mnt/wslg/PulseServer -v /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix -v /run/desktop/mnt/host/wslg:/mnt/wslg --device=/dev/dxg -v /usr/lib/wsl:/usr/lib/wsl %DOCKER_EXTRA_PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
+        %ECHO_IF_DRY_RUN% docker run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% -e DISPLAY=%DISP% -e WAYLAND_DISPLAY=%WAYLAND_DISP% -e XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir -e PULSE_SERVER=/mnt/wslg/PulseServer -v /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix -v /run/desktop/mnt/host/wslg:/mnt/wslg --device=/dev/dxg -v /usr/lib/wsl:/usr/lib/wsl %PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
     )
 )

@@ -83,16 +83,6 @@ IF DEFINED DOCKER_EXTRA_PARAMS (
   SET PARAMS=%PARAMS% %DOCKER_EXTRA_PARAMS%
 )
 
-IF "%DISP%"=="" SET DISP=host.docker.internal:0
-
-where /q xhost
-IF ERRORLEVEL 1 (
-    ECHO xhost is not detected / not in PATH. Please verify X-server access control!
-) ELSE (
-    ECHO Using xhost to enable localhost access to the X-server.
-    %ECHO_IF_DRY_RUN% xhost +localhost
-)
-
 docker container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "running"
 IF NOT ERRORLEVEL 1 (
     ECHO Container is running! Stop with \"docker stop %CONTAINER_NAME%\" and remove with \"docker rm %CONTAINER_NAME%\" if required.

@@ -12,6 +12,15 @@ Example:
 DOCKER_EXTRA_PARAMS='--security-opt seccomp=unconfined' ./start_x.sh
 ```
 
+### Using the X11-mode on Linux with Docker Desktop
+
+Due to the quite different way of how Docker Desktop works to the classical Docker CE, `socat` is required to forward the X11 sockets to the container.
+To install socat, here are the commands for popular distributions:
+- Ubuntu/Debian (deb-based): `sudo apt-get -y install socat`
+- Arch/Manjaro (pacman-based): `pacman -S socat`
+- Fedora/RHEL/Rocky/Alma (rpm-based, RHEL-clones): `dnf -y install socat`
+- SuSE/openSUSE (rpm-based, SuSE-clones): `zypper install socat`
+
 ### Switching to WSLg for graphical applications on Windows
 
 The current variant of the `start_x.bat` for Windows uses WSLg for audio & visual output, which comes preinstalled/packaged with WSL (Windows 10 Build 19044 or Windows 11). If problems arise, update WSL according to [the Microsoft website](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps).

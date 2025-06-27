@@ -27,6 +27,10 @@ cleanup() {
         wait "${SOCAT_PID}" 2>/dev/null || true
         echo "socat stopped."
     fi
+
+    if [ -n "${XHOST_USED}" ]; then
+        ${ECHO_IF_DRY_RUN} xhost - > /dev/null
+    fi
 }
 
 
@@ -110,19 +114,25 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 		if [ -z ${DISP+z} ]; then
 			DISP="host.docker.internal:0"
 			if [[ $(type -P "xhost") ]]; then
-				${ECHO_IF_DRY_RUN} xhost +localhost > /dev/null
+				${ECHO_IF_DRY_RUN} xhost + > /dev/null
+				XHOST_USED=1
 			else
 				echo "[WARNING] xhost could not be found, access control to the X server might needs to be managed manually!"
 			fi
 			# If we are running in Wayland, we are using Xwayland. For that we assume that no TCP interface is available.
 			# Therefore we have to socat the socket. For X11, this should not be needed.
 			echo "Starting socat to enable TCP connections to the X-Server from the container."
-			#DISPLAY_NUM=$(echo $DISPLAY | sed 's/^[^:]*:\([0-9]*\).*/\1/')
-			DISPLAY_NUM=${DISPLAY#*:}
-			DISPLAY_NUM=${DISPLAY_NUM%%.*}
-			socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CONNECT:/tmp/.X11-unix/X$DISPLAY_NUM &
-			SOCAT_PID=$!
-			echo "Started socat with PID ${SOCAT_PID} in the background.."
+			if [[ $(type -P "socat") ]]; then
+				#DISPLAY_NUM=$(echo $DISPLAY | sed 's/^[^:]*:\([0-9]*\).*/\1/')
+				DISPLAY_NUM=${DISPLAY#*:}
+				DISPLAY_NUM=${DISPLAY_NUM%%.*}
+				socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CONNECT:/tmp/.X11-unix/X$DISPLAY_NUM &
+				SOCAT_PID=$!
+				echo "Started socat with PID ${SOCAT_PID} in the background.."
+			else
+				echo "[ERROR] socat could not be found! This is required to use the X11 mode with Docker Desktop (On Ubuntu/Debian, install it with e.g.: sudo apt -y install socat)"
+				exit 1
+			fi
 		fi
 		# Always for indirect rendering on MacOS with XQuartz
 		FORCE_LIBGL_INDIRECT=1	
@@ -208,7 +218,8 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 	if [ -z ${DISP+z} ]; then
 		DISP="host.docker.internal:0"
 		if [[ $(type -P "xhost") ]]; then
-			${ECHO_IF_DRY_RUN} xhost +localhost > /dev/null
+			${ECHO_IF_DRY_RUN} xhost + > /dev/null
+			XHOST_USED=1
 		else
 			echo "[WARNING] xhost could not be found, access control to the X server must be managed manually!"
 		fi
