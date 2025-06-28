@@ -21,7 +21,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	gdsfactory==9.9.4 \
 	gdspy==1.6.13 \
 	lctime==0.0.25 \
-	librelane==2.4.0.dev8 \
 	openram==1.2.48 \
 	pygmid==1.2.12 \
 	pyrtl==0.11.3 \
