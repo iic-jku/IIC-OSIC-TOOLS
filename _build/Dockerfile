@@ -182,6 +182,16 @@ RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
     bash /images/iverilog/scripts/install.sh
 
 #######################################################################
+# Compile kactus2
+#######################################################################
+FROM base AS kactus2
+ARG KACTUS_REPO_URL="https://github.com/kactus2/kactus2dev.git"
+ARG KACTUS_REPO_COMMIT="v3.13.5"
+ARG KACTUS_NAME="kactus2"
+RUN --mount=type=bind,source=images/kactus2,target=/images/kactus2 \
+    bash /images/kactus2/scripts/install.sh
+
+#######################################################################
 # Compile klayout
 #######################################################################
 FROM basepkg AS klayout
@@ -481,6 +491,7 @@ COPY --from=ghdl                         ${TOOLS}/              ${TOOLS}/
 COPY --from=gtkwave                      ${TOOLS}/              ${TOOLS}/
 COPY --from=irsim                        ${TOOLS}/              ${TOOLS}/
 COPY --from=iverilog                     ${TOOLS}/              ${TOOLS}/
+COPY --from=kactus2                      ${TOOLS}/              ${TOOLS}/
 COPY --from=klayout                      ${TOOLS}/              ${TOOLS}/
 COPY --from=libman                       ${TOOLS}/              ${TOOLS}/
 COPY --from=magic                        ${TOOLS}/              ${TOOLS}/

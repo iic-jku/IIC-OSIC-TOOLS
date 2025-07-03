@@ -25,6 +25,9 @@
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
   commit: f82c6c7b3ada873015348f728aa3087cdb6661a6
+- name: kactus2
+  repo: https://github.com/kactus2/kactus2dev.git
+  commit: "v3.13.5"
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.30.2"
