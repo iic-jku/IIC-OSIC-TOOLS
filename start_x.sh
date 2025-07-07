@@ -28,7 +28,7 @@ cleanup() {
         echo "socat stopped."
     fi
 
-    if [ -n "${XHOST_USED}" ]; then
+    if [ -n "${XHOST_DO_RESET}" ]; then
         ${ECHO_IF_DRY_RUN} xhost - > /dev/null
     fi
 }
@@ -111,7 +111,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 			DISP="host.docker.internal:0"
 			if [[ $(type -P "xhost") ]]; then
 				${ECHO_IF_DRY_RUN} xhost + > /dev/null
-				XHOST_USED=1
+				XHOST_DO_RESET=1
 			else
 				echo "[WARNING] xhost could not be found, access control to the X server might needs to be managed manually!"
 			fi
@@ -214,8 +214,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 	if [ -z ${DISP+z} ]; then
 		DISP="host.docker.internal:0"
 		if [[ $(type -P "xhost") ]]; then
-			${ECHO_IF_DRY_RUN} xhost + > /dev/null
-			XHOST_USED=1
+			${ECHO_IF_DRY_RUN} xhost +localhost > /dev/null
 		else
 			echo "[WARNING] xhost could not be found, access control to the X server must be managed manually!"
 		fi
@@ -284,7 +283,7 @@ else
 	${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
 	# Disable SC2086, $PARAMS must be globbed and splitted.
 	# shellcheck disable=SC2086
-	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" -e "DISPLAY=${DISP}" ${PARAMS} --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
+	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" -e "DISPLAY=${DISP}" ${PARAMS} --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
 fi
 
 if [ -n "${SOCAT_PID}" ]; then
