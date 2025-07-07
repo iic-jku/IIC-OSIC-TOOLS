@@ -118,8 +118,8 @@ fi
 
 if echo "$PDK" | grep -q -i "sky130"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] sky130 PDK selected"
-elif echo "$PDK" | grep -q -i "gf180mcuC"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] gf180mcuC PDK selected"
+elif echo "$PDK" | grep -q -i "gf180mcu"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] gf180mcu PDK selected"
 else
 	echo "[ERROR] The PDK $PDK is not yet supported!"
 	exit $ERR_PDK_NOT_SUPPORTED
