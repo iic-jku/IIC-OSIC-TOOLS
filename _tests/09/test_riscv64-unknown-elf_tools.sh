@@ -45,6 +45,7 @@ fi
 cp $DIR/crt0.S     $TMP/
 cp $DIR/link.ld    $TMP/
 cp $DIR/main.c     $TMP/
+cp $DIR/hello.c    $TMP/
 cd $TMP/
 
 RISCV_PREFIX=riscv64-unknown-elf
@@ -57,6 +58,8 @@ RISCV_FLAGS="-march=rv32i -mabi=ilp32  -mcmodel=medany -static -ffast-math"
     test "$RISCV_CC $RISCV_FLAGS -c main.c -o main.o"
     test "$RISCV_CC $RISCV_FLAGS -c crt0.S -o crt0.o"
     test "$RISCV_CC $RISCV_FLAGS -nostartfiles -lm -lgcc -Tlink.ld -o main.elf main.o crt0.o"
+    test "$RISCV_CC -o hello hello.c"
+    test "spike pk hello"
 } &> $LOG
 
 if grep -q "\[ERROR\]" $LOG; then
