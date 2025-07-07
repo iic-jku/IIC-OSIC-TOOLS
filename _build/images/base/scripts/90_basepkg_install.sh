@@ -41,9 +41,10 @@ echo "[INFO] Installing CharLib"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	git+https://github.com/stineje/charlib
 
-echo "[INFO] Installing OpenRAM"
-pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
-	git+https://github.com/VLSIDA/OpenRAM
+#FIXME OpenRAM is removed for now, waiting for a release via PyPi
+#echo "[INFO] Installing OpenRAM"
+#pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+#	git+https://github.com/VLSIDA/OpenRAM
 
 echo "[INFO] Installing Hdl21/vlsirtools"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
