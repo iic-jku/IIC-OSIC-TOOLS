@@ -1,0 +1,64 @@
+** sch_path: /foss/designs/inv_tb.sch
+**.subckt inv_tb
+xinv1 VDD in out GND inv
+V1 VDD GND 3.3
+VIN in GND 3.3
+C1 out GND 5f m=1
+**** begin user architecture code
+
+.include /foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice
+.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
+
+
+
+
+.control
+save all
+
+** Define input signal
+let fsig = 1k
+let tper = 1/fsig
+let tfr = 0.01*tper
+let ton = 0.5*tper-2*tfr
+
+** Define transient params
+let tstop = 2*tper
+let tstep = 0.001*tper
+
+** Set Sources
+alter @VIN[DC] = 0.0
+alter @VIN[PULSE] = [ 0 3.3 0 $&tfr $&tfr $&ton $&tper 0 ]
+
+** Simulations
+op
+dc vin 0 3.3 0.01
+tran $&tstep $&tstop
+
+** Plots
+setplot op1
+write inv_tb.raw
+
+exit
+.endc
+
+
+**** end user architecture code
+**.ends
+
+* expanding   symbol:  inv.sym # of pins=4
+** sym_path: /foss/designs/inv.sym
+** sch_path: /foss/designs/inv.sch
+.subckt inv vdd vi vo vss
+*.iopin vdd
+*.iopin vss
+*.ipin vi
+*.opin vo
+XM1 vo vi vss vss nfet_03v3 L=0.28u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=1
+XM2 vo vi vdd vdd pfet_03v3 L=0.28u W=2u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0 m=1
+.ends
+
+.GLOBAL VDD
+.GLOBAL GND
+.end
