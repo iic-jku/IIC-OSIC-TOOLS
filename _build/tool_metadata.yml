@@ -3,7 +3,7 @@
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
 - name: cvc_rv
   repo: https://github.com/d-m-bailey/cvc.git
-  commit: ced5a2e6d5e8656180d404e9220349e87512c82f
+  commit: d359e88cdd2eda722360b177b57942106f0a378b
 - name: gaw3-xschem
   repo: https://github.com/StefanSchippers/xschem-gaw.git
   commit: 6b8fa4ab007e88b3129381e0479737ae014a8b51
@@ -24,7 +24,7 @@
   commit: 34b1e7bbb1014346a5bbe9171bd25840ee020578
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 46a5078a689399e6bb3691238ffb4bad303e22ab
+  commit: f82c6c7b3ada873015348f728aa3087cdb6661a6
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.30.2"
@@ -66,19 +66,19 @@
   commit: "0.11.2"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2025.06.13"
+  commit: "2025.07.03"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 0239d921a2b06c931736e55462ba50233763ee33
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 801e7d6f94046c16104a3cb44e9c6f671526c73a
+  commit: 66fa94a4862e6dd49c32036b57eaa1d3a76b6c29
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 76b83eb5b73ba871797e6db7bc5fed10af380be4
+  commit: 9d9ce7b767d2ea776e2dee0ef636a84512e6b229
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 70687ccf41bb2696c55c6f6aa44b3949f2921ddf
+  commit: 965547260a803a77d10f8f628bda61bea4b1464f
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
@@ -102,7 +102,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: "3.4.7"
+  commit: 8fe82cf4ce11eac524b3990db225ce0d4f394012
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"
