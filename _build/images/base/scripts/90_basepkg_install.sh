@@ -21,6 +21,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	gdsfactory==9.9.4 \
 	gdspy==1.6.13 \
 	lctime==0.0.25 \
+	najaeda==0.1.22 \
 	pygmid==1.2.12 \
 	pyrtl==0.11.3 \
 	pyuvm==3.0.0 \
