@@ -4,9 +4,9 @@ Vres Vcc GND 1.5
 Vsil Vcc net1 0
 Vppd Vcc net2 0
 Vrh Vcc net3 0
-XR1 GND net1 rsil w=0.5e-6 l=10e-6 m=1 b=0
-XR2 GND net2 rppd w=0.5e-6 l=0.5e-6 m=1 b=0
-XR3 GND net3 rhigh w=0.5e-6 l=0.5e-6 m=1 b=0
+XR1 GND net1 GND rsil w=0.5e-6 l=10e-6 m=1 b=0
+XR2 GND net2 GND rppd w=0.5e-6 l=0.5e-6 m=1 b=0
+XR3 GND net3 GND rhigh w=0.5e-6 l=0.5e-6 m=1 b=0
 **** begin user architecture code
 .preprocess replaceground true
 .option temp=27
