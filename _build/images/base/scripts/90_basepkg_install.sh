@@ -31,8 +31,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	spicelib==1.4.4 \
 	spyci==1.0.2
 
-#FIXME	hdl21==7.0.0 \
-#FIXME	vlsirtools==7.0.0 \
 #FIXME	openlane==2.3.10 \ 
 #FIXME	librelane==3.0.0.dev22 \
 #FIXME	klayout-pex==0.2.7 \
@@ -51,6 +49,9 @@ echo "[INFO] Installing OpenRAM"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	git+https://github.com/VLSIDA/OpenRAM
 
+echo "[INFO] Installing Hdl21/vlsirtools"
+pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+	git+https://github.com/dan-fritchman/Hdl21
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
