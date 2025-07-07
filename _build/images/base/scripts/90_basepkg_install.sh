@@ -24,7 +24,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	openram==1.2.48 \
 	pygmid==1.2.12 \
 	pyrtl==0.11.3 \
-	pyspice==1.5 \
 	pyuvm==3.0.0 \
 	pyverilog==1.3.0 \
 	schemdraw[svgmath]==0.20 \
@@ -46,7 +45,9 @@ cd openlane2
 pip3 install --upgrade --no-cache-dir --break-system-packages .
 
 echo "[INFO] Installing CharLib"
-pip install --break-system-packages git+https://github.com/stineje/charlib
+pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+	git+https://github.com/stineje/charlib
+
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
