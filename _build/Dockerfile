@@ -45,11 +45,11 @@ RUN --mount=type=bind,source=images/magic,target=/images/magic \
     bash /images/magic/scripts/install.sh
 
 #######################################################################
-# Compile openvaf
+# Compile openvaf-reloaded
 #######################################################################
 FROM basepkg AS openvaf
-ARG OPENVAF_REPO_URL="https://github.com/dwarning/OpenVAF.git"
-ARG OPENVAF_REPO_COMMIT="2ab0d05fcf9ffd21cc5f49022b7624224cb96b1f"
+ARG OPENVAF_REPO_URL="https://github.com/arpadbuermen/OpenVAF.git"
+ARG OPENVAF_REPO_COMMIT="643fcead0564aa915761257c08bd7f92c7634639"
 ARG OPENVAF_NAME="openvaf"
 ENV OPENVAF_NAME=${OPENVAF_NAME}
 RUN --mount=type=bind,source=images/openvaf,target=/images/openvaf \
