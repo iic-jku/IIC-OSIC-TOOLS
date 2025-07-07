@@ -27,7 +27,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	pyuvm==3.0.0 \
 	pyverilog==1.3.0 \
 	schemdraw[svgmath]==0.20 \
-	scikit-rf==1.7.0 \
+	scikit-rf==1.8.0 \
 	siliconcompiler==0.34.0 \
 	spicelib==1.4.4 \
 	spyci==1.0.2
