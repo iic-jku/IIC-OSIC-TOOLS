@@ -20,7 +20,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	fusesoc==2.4.3 \
 	gdsfactory==9.9.4 \
 	gdspy==1.6.13 \
-	klayout-pex==0.2.7 \
 	lctime==0.0.25 \
 	openram==1.2.48 \
 	pygmid==1.2.12 \
@@ -38,6 +37,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 #FIXME	vlsirtools==7.0.0 \
 #FIXME	openlane==2.3.10 \ 
 #FIXME	librelane==3.0.0.dev22 \
+#FIXME	klayout-pex==0.2.7 \
 
 echo "[INFO] Install custom OpenLane2 version"
 cd /tmp
