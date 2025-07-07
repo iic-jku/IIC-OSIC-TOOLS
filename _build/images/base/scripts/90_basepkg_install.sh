@@ -31,15 +31,11 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	spicelib==1.4.4 \
 	spyci==1.0.2
 
-#FIXME	openlane==2.3.10 \ 
-#FIXME	librelane==3.0.0.dev22 \
 #FIXME	klayout-pex==0.2.7 \
 
 echo "[INFO] Install custom OpenLane2 version"
-cd /tmp
-git clone https://github.com/iic-jku/openlane2.git openlane2
-cd openlane2
-pip3 install --upgrade --no-cache-dir --break-system-packages .
+pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+	git+https://github.com/iic-jku/openlane2
 
 echo "[INFO] Installing CharLib"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
