@@ -124,6 +124,8 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [abc](https://github.com/berkeley-abc/abc) sequential logic synthesis and formal verification
 - [amaranth](https://github.com/amaranth-lang/amaranth) a Python-based HDL tool chain
 - [cace](https://github.com/efabless/cace) a Python-based circuit automatic characterization engine
+- [charlib](https://github.com/stineje/CharLib) a characterization library for standard cells
+- [ciel](https://github.com/fossi-foundation/ciel) version manager (and builder) for open-source PDKs
 - [cocotb](https://github.com/cocotb/cocotb) simulation library for writing VHDL and Verilog test benches in Python
 - [covered](https://github.com/hpretl/verilog-covered) Verilog code coverage
 - [cvc](https://github.com/d-m-bailey/cvc) circuit validity checker (ERC)
@@ -142,11 +144,13 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [ihp-sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130 nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
 - [irsim](https://github.com/rtimothyedwards/irsim) switch-level digital simulator
 - [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
+- [kactus2](https://github.com/kactus2/kactus2dev) Kactus2 is a graphical editor for IP-XACT files, which are used to describe hardware components and their interfaces
 - [klayout-pex](https://github.com/martinjankoehler/klayout-pex) parasitic extraction for `klayout`
 - [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS
 - [lctime](https://codeberg.org/librecell/lctime) Characterization kit for CMOS cells
 - [libman](https://github.com/IHP-GmbH/LibMan) design library manager to manage cells and views
 - [magic](https://github.com/rtimothyedwards/magic) layout editor with DRC and PEX
+- [najaeda](https://github.com/najaeda/naja) data structures and APIs for the development of post logic synthesis EDA algorithms
 - [netgen](https://github.com/rtimothyedwards/netgen) netlist comparison (LVS)
 - [ngspice](http://ngspice.sourceforge.net) SPICE analog and mixed-signal simulator, with OSDI support
 - [ngspyce](https://github.com/ignamv/ngspyce) Python bindings for `ngspice`
@@ -185,7 +189,6 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [verilator](https://github.com/verilator/verilator) fast Verilog simulator
 - [vlog2verilog](https://github.com/RTimothyEdwards/qflow) Verilog file conversion
 - [vlsirtools](https://github.com/Vlsir/Vlsir) interchange formats for chip design.
-- [volare](https://github.com/efabless/volare) version manager (and builder) for open-source PDKs
 - [xcircuit](https://github.com/RTimothyEdwards/XCircuit) schematic editor
 - [xschem](https://github.com/StefanSchippers/xschem) schematic editor
 - [xyce](https://github.com/Xyce/Xyce) fast parallel SPICE simulator (incl. `xdm` netlist conversion tool)
@@ -340,7 +343,7 @@ SET DOCKER_USERNAME=another_user
 
 ### 4.5 Using as devcontainer
 
-This is a new usage mode, that might not fit your needs. [Devcontainers](https://code.visualstudio.com/docs/devcontainers/containers) are a great way to provide a working build environment along your own project. It is supported by the [devcontainer](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension in Visual Studio Code.
+This is a new usage mode, that might fit your needs. [Devcontainers](https://code.visualstudio.com/docs/devcontainers/containers) are a great way to provide a working build environment along your own project. It is supported by the [devcontainer](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension in Visual Studio Code.
 
 #### 4.5.1 Add it to project
 

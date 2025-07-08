@@ -2,9 +2,23 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
-## 2025.06
+## 2025.07
 
 * (Re-)adding `fault`.
+* (Re-)adding `hdl21` and `vlsirtools`.
+* Adding `kactus2`.
+* Adding `najaeda`.
+* Adding support for Docker Desktop on Linux in `start_x.sh`.
+* Adding support of `gf180mcuD` in the `sak-drc.sh`, `sak-lvs.sh`, and `sak-pex.sh` scripts.
+* Adding `charlib` for characterization of standard cells.
+* Adding analog inverter example for `gf180mcuD`.
+* Adding SBT for Chisel.
+* Switching from `volare` to `ciel` for PDK management.
+* Switching from `openvaf` to `openvaf-reloaded`.
+* Update various tool versions.
+* Remove (temporarily) `klayout-pex` due to incompatibility with some dependencies.
+* Remove `gf180mcuC` technology flavor to decrease image size.
+* Remove (temporarily) `openram` (re-add later when PyPi package is updated).
 
 ## 2025.05
 
