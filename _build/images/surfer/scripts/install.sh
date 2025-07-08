@@ -6,8 +6,13 @@ export CARGO_HOME=/tmp/cargo
 export PATH=$CARGO_HOME/bin:$PATH
 rustup default stable
 
-git clone --depth=1 "${SURFER_REPO_URL}" "${SURFER_NAME}"
+git clone --branch "${SURFER_REPO_COMMIT}" "${SURFER_REPO_URL}" "${SURFER_NAME}"
 cd "${SURFER_NAME}" || exit 1
-git checkout "${SURFER_REPO_COMMIT}"
 git submodule update --init --recursive
-cargo install surfer --root "${TOOLS}/${SURFER_NAME}" --locked
+cargo build --release -j"$(nproc)"
+strip target/release/surfer
+strip target/release/surver
+mkdir -p "${TOOLS}/${SURFER_NAME}/bin"
+cp target/release/surfer "${TOOLS}/${SURFER_NAME}/bin"
+cp target/release/surver "${TOOLS}/${SURFER_NAME}/bin"
+cp target/release/liblibsurfer.so "${TOOLS}/${SURFER_NAME}/bin"
