@@ -14,6 +14,7 @@ git clone --depth=1 https://github.com/pulp-platform/bender.git
 cd bender || exit 1
 cargo update
 cargo build --release -j"$(nproc)"
+strip target/release/bender
 cp target/release/bender "${TOOLS}/${PULP_NAME}/bin"
 
 # Build Morty
@@ -24,6 +25,7 @@ git clone --depth=1 https://github.com/pulp-platform/morty.git
 cd morty || exit 1
 cargo update
 cargo build --release -j"$(nproc)"
+strip target/release/morty
 cp target/release/morty "${TOOLS}/${PULP_NAME}/bin"
 
 # Build SVase
@@ -39,6 +41,7 @@ cd ..
 mkdir build && cd build
 cmake ..
 make -j"$(nproc)"
+strip svase
 cp svase "${TOOLS}/${PULP_NAME}/bin"
 
 # Install Verible
@@ -66,4 +69,5 @@ wget -qO- https://get.haskellstack.org/ | sh
 git clone --depth=1 https://github.com/zachjs/sv2v.git
 cd sv2v || exit 1
 stack install --install-ghc --local-bin-path bin --stack-root /tmp/stack
+strip bin/sv2v
 cp bin/sv2v "${TOOLS}/${PULP_NAME}/bin"

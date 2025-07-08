@@ -15,5 +15,6 @@ cargo update
 cargo build --release --bin openvaf-r -j$(nproc)
 
 mkdir -p  "${TOOLS}/${OPENVAF_NAME}/bin"
+strip target/release/openvaf-r
 cp target/release/openvaf-r "${TOOLS}/${OPENVAF_NAME}/bin"
 ln -s "${TOOLS}/${OPENVAF_NAME}/bin/openvaf-r" "${TOOLS}/${OPENVAF_NAME}/bin/openvaf"
