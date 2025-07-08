@@ -35,8 +35,15 @@ install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packa
 cat <<EOF >> /etc/apt/sources.list.d/vscode.list
 deb [arch=amd64,arm64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main
 EOF
-
 rm -f packages.microsoft.gpg
+
+# preparations for adding SBT (used for Chisel)
+echo "[INFO] Adding Scala repo for SBT"
+echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" > /etc/apt/sources.list.d/sbt.list
+echo "deb https://repo.scala-sbt.org/scalasbt/debian /" > /etc/apt/sources.list.d/sbt_old.list
+wget -qO- "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --dearmor > scalasbt-release.gpg
+install -D -o root -g root -m 644 scalasbt-release.gpg /etc/apt/trusted.gpg.d/scalasbt-release.gpg
+rm -f scalasbt-release.gpg
 
 apt update
 apt install -y \
@@ -47,6 +54,7 @@ apt install -y \
         gnuplot \
         htop \
         hub \
+        openjdk-17-jdk \
         jq \
         meld \
         nano \
@@ -55,6 +63,7 @@ apt install -y \
         novnc \
         parallel \
         qalculate-gtk \
+        sbt \
         sudo \
         tigervnc-standalone-server \
         vim \
@@ -64,6 +73,9 @@ apt install -y \
         xfce4 \
         xfce4-terminal \
         xterm
+
+# need to switch Java-17 (for Chisel)
+update-java-alternatives --set "$(update-java-alternatives --list | grep 1.17 | cut -d' ' -f1)"
 
 # remove light-locker and other power management stuff, otherwise VNC session locks up
 apt purge -y light-locker pm-utils *screensaver*

@@ -14,3 +14,4 @@
 12: Test of iVerilog functionality
 13: Test the <https://www.zerotoasiccourse.com> examples of Matt Venn
 14: Test of ngspice with gf180mcuD
+15: Test Chisel with a simple example ALU
