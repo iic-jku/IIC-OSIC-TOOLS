@@ -187,6 +187,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [surelog](https://github.com/chipsalliance/Surelog) SystemVerilog parser, elaborator, and UHDM compiler
 - [surfer](https://gitlab.com/surfer-project/surfer) waveform viewer with snappy usable interface and extensibility
 - [verilator](https://github.com/verilator/verilator) fast Verilog simulator
+- [veryl](https://github.com/veryl-lang/veryl) a modern hardware description language, based on SystemVerilog
 - [vlog2verilog](https://github.com/RTimothyEdwards/qflow) Verilog file conversion
 - [vlsirtools](https://github.com/Vlsir/Vlsir) interchange formats for chip design.
 - [xcircuit](https://github.com/RTimothyEdwards/XCircuit) schematic editor

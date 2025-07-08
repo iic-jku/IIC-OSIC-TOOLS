@@ -391,6 +391,14 @@ RUN --mount=type=bind,source=images/verilator,target=/images/verilator \
     bash /images/verilator/scripts/install.sh
 
 #######################################################################
+# Compile veryl
+#######################################################################
+FROM base AS veryl
+ARG VERYL_NAME="veryl"
+RUN --mount=type=bind,source=images/veryl,target=/images/veryl \
+    bash /images/veryl/scripts/install.sh
+
+#######################################################################
 # Compile xcircuit
 #######################################################################
 FROM base AS xcircuit
@@ -505,7 +513,7 @@ COPY --from=osic-multitool               ${TOOLS}/              ${TOOLS}/
 COPY --from=openvaf                      ${TOOLS}/              ${TOOLS}/
 COPY --from=padring                      ${TOOLS}/              ${TOOLS}/
 COPY --from=pulp-tools                   ${TOOLS}/              ${TOOLS}/
-#FIXME COPY --from=pyopus                       ${TOOLS}/              ${TOOLS}/
+#FIXME COPY --from=pyopus                ${TOOLS}/              ${TOOLS}/
 COPY --from=qflow                        ${TOOLS}/              ${TOOLS}/
 COPY --from=qucs-s                       ${TOOLS}/              ${TOOLS}/
 COPY --from=rftoolkit                    ${TOOLS}/              ${TOOLS}/
@@ -516,6 +524,7 @@ COPY --from=spike                        ${TOOLS}/              ${TOOLS}/
 COPY --from=surelog                      ${TOOLS}/              ${TOOLS}/
 COPY --from=surfer                       ${TOOLS}/              ${TOOLS}/
 COPY --from=verilator                    ${TOOLS}/              ${TOOLS}/
+COPY --from=veryl                        ${TOOLS}/              ${TOOLS}/
 COPY --from=xcircuit                     ${TOOLS}/              ${TOOLS}/
 COPY --from=xschem                       ${TOOLS}/              ${TOOLS}/
 COPY --from=xyce                         ${TOOLS}/              ${TOOLS}/
