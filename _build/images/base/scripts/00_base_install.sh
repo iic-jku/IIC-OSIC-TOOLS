@@ -210,13 +210,6 @@ rm -rf /tmp/*
 apt -y autoremove --purge
 apt -y clean
 
-# setup rust and cargo via rustup
-echo "[INFO] Installing Rust and Cargo"
-export RUSTUP_HOME=/tmp/rustup
-export CARGO_HOME=/tmp/cargo
-export PATH=$CARGO_HOME/bin:$PATH
-rustup default stable
-
 # FIXME maybe interesting for future cleanup (removal of -dev packages)
 # apt list --installed | grep "\-dev" | grep automatic | cut -d'/' -f1 | xargs apt -y remove
 # apt -y autoremove
