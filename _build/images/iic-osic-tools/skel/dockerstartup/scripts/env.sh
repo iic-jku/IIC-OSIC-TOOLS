@@ -95,16 +95,18 @@ export KLAYOUT_PATH="/headless/.klayout:$PDKPATH/libs.tech/klayout:$PDKPATH/libs
 # https://unix.stackexchange.com/questions/230238/x-applications-warn-couldnt-connect-to-accessibility-bus-on-stderr/230442#230442
 export NO_AT_BRIDGE=1
 
-#First, check if XDG_RUNTIME_DIR is set, if not, set to default.
+# first, check if XDG_RUNTIME_DIR is set, if not, set to default.
 if [ -z ${XDG_RUNTIME_DIR+z} ]; then
     export XDG_RUNTIME_DIR=/tmp/runtime-default
 fi
-#Second, verify if the actual directory exists, if not, create it.
-if [ ! -d $XDG_RUNTIME_DIR ]; then
-    mkdir -p $XDG_RUNTIME_DIR
-    chmod 700 $XDG_RUNTIME_DIR
+# second, verify if the actual directory exists, if not, create it.
+if [ ! -d "$XDG_RUNTIME_DIR" ]; then
+    mkdir -p "$XDG_RUNTIME_DIR"
+    chmod 700 "$XDG_RUNTIME_DIR"
 fi
 
+# this is needed for Veryl to store its data
+export XDG_DATA_HOME=$TOOLS/.data-default
 
 # add local directories in $HOME to the path so that the user can upgrade PIP packages
 export PATH=$HOME/.local/bin:$PATH
