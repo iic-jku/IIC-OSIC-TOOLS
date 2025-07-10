@@ -97,6 +97,9 @@
 - name: qucs-s
   repo: https://github.com/ra3xdh/qucs_s.git
   commit: "25.1.2"
+- name: vacask
+  repo: https://codeberg.org/arpadbuermen/VACASK.git
+  commit: "_0.3.0"
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: "v5.036"

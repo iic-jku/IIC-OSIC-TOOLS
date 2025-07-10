@@ -381,6 +381,16 @@ RUN --mount=type=bind,source=images/spike,target=/images/spike \
     bash /images/spike/scripts/install.sh
 
 #######################################################################
+# Compile vacask
+#######################################################################
+FROM openvaf AS vacask
+ARG VACASK_REPO_URL="https://codeberg.org/arpadbuermen/VACASK.git"
+ARG VACASK_REPO_COMMIT="_0.3.0"
+ARG VACASK_NAME="vacask"
+RUN --mount=type=bind,source=images/vacask,target=/images/vacask \
+    bash /images/vacask/scripts/install.sh
+
+#######################################################################
 # Compile verilator
 #######################################################################
 FROM base AS verilator
@@ -523,6 +533,7 @@ COPY --from=slang                        ${TOOLS}/              ${TOOLS}/
 COPY --from=spike                        ${TOOLS}/              ${TOOLS}/
 COPY --from=surelog                      ${TOOLS}/              ${TOOLS}/
 COPY --from=surfer                       ${TOOLS}/              ${TOOLS}/
+COPY --from=vacask                       ${TOOLS}/              ${TOOLS}/
 COPY --from=verilator                    ${TOOLS}/              ${TOOLS}/
 COPY --from=veryl                        ${TOOLS}/              ${TOOLS}/
 COPY --from=xcircuit                     ${TOOLS}/              ${TOOLS}/

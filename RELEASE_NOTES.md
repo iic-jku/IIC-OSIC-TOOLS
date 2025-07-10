@@ -9,6 +9,7 @@ This document summarizes the most important changes of the individual releases o
 * Adding `kactus2`.
 * Adding `najaeda`.
 * Adding `veryl`.
+* Adding `vacask`.
 * Adding support for Docker Desktop on Linux in `start_x.sh`.
 * Adding support of `gf180mcuD` in the `sak-drc.sh`, `sak-lvs.sh`, and `sak-pex.sh` scripts.
 * Adding `charlib` for characterization of standard cells.
