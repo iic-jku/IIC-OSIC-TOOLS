@@ -1,0 +1,66 @@
+Gilbert cell
+
+load "psp103v4.osdi"
+load "spice/resistor.osdi"
+load "capacitor.osdi"
+
+include "models.inc"
+
+model vcvs vcvs
+model v vsource
+model i isource
+model r sp_resistor
+model c capacitor
+
+subckt gilbert(rfp rfn lop lon ifp ifn vdd vss)
+  rd1 (vdd ifp) r r=10k 
+  rd2 (vdd ifn) r r=10k 
+  m1 (ifp rfp dg1 vss) nmos w=2u l=0.2u
+  m2 (ifn rfn dg1 vss) nmos w=2u l=0.2u
+  m3 (ifn rfp dg2 vss) nmos w=2u l=0.2u
+  m4 (ifp rfn dg2 vss) nmos w=2u l=0.2u
+  m5 (dg1 lop s  vss) nmos w=2u l=0.2u
+  m6 (dg2 lon s  vss) nmos w=2u l=0.2u
+  i0 (s 0) i dc=40u
+  r0 (s 0) r r=1G
+ends
+
+vdd (vdd 0) v dc=1.2
+
+x1 (rfp rfn lop lon ifp ifn vdd 0) gilbert
+vrfb (rfb 0) v dc=0.5
+vlob (lob 0) v dc=0.3
+
+subckt dctest()
+  vrf (rfp rfb) v dc=0
+  erf (rfn rfb rfp rfb) vcvs gain=-1
+  vlo (lop lob) v dc=0
+  elo (lon lob lop lob) vcvs gain=-1
+ends
+
+subckt sintest()
+  vrf (rfp rfb) v type="sine" sinedc=0 ampl=2m freq=50k
+  erf (rfn rfb rfp rfb) vcvs gain=-1
+  vlo (lop lob) v type="sine" sinedc=0 ampl=50m freq=1M
+  elo (lon lob lop lob) vcvs gain=-1
+ends
+
+
+control
+  elaborate circuit("dctest")
+
+  save p('x1:rd1',i) p('x1:rd2',i) v(ifp) v(ifn)
+  analysis op1 op
+
+  clear saves
+  sweep vlo instance="vlo" parameter="dc" from=-100m to=100m mode="lin" points=6
+  sweep vrf instance="vrf" parameter="dc" from=-100m to=100m mode="lin" points=50
+    analysis op2 op
+
+  
+  elaborate circuit("sintest")
+  
+  analysis tran1 tran step=1n stop=40u maxstep=2n 
+  analysis hb1 hb freq=[50k, 1M] truncate="box" nharm=[3, 5]
+
+endc
