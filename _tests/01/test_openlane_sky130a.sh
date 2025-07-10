@@ -22,7 +22,7 @@ if command -v openlane >/dev/null 2>&1; then
     openlane --manual-pdk /tmp/ol2_sky130/counter.json > $RESULT
     # Check if there is an error in the log
     if grep -q "ERROR" "$RESULT"; then
-        echo "[ERROR] Test <OpenLane smoke-test with sky130A> FAILED."
+        echo "[ERROR] Test <OpenLane smoke-test with sky130A> FAILED. Check the log <$RESULT>."
         exit 1
     else
         echo "[INFO] Test <OpenLane smoke-test with sk130A> passed."
