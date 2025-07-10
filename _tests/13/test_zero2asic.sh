@@ -7,11 +7,8 @@
 
 set -euo pipefail
 
-TMP=/tmp/test_13
+TMP=$(mktemp -d)
 LOG=$TMP/z2a.log
-
-mkdir -p "$TMP"
-rm -rf "${TMP:?}"/*
 cd $TMP || exit 1
 
 git clone --recursive https://github.com/mattvenn/z2a-course-regressions.git > "$LOG" 2>&1

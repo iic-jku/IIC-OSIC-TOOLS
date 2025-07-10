@@ -31,16 +31,10 @@ done
 shift $((OPTIND-1))
 
 
-TMP=/tmp/test_09
+TMP=$(mktemp -d)
 LOG=$TMP/tools.log
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-
-if [ -d $TMP ]; then
-    rm -rf $TMP/*
-else 
-    mkdir $TMP
-fi
 
 cp $DIR/crt0.S     $TMP/
 cp $DIR/link.ld    $TMP/

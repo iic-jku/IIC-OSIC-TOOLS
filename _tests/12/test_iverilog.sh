@@ -12,11 +12,8 @@ if ! command -v iverilog >/dev/null 2>&1; then
     exit 1
 fi
 
-TMP=/tmp/test_12
+TMP=$(mktemp -d)
 LOG=$TMP/tools.log
-
-mkdir -p "$TMP"
-rm -rf "${TMP:?}"/*
 
 SRC1="/foss/examples/demo_sky130A/dig/counter.v"
 SRC2="/foss/examples/demo_sky130A/dig/counter_tb.v"
@@ -40,7 +37,7 @@ if ! iverilog -o counter_tb.vvp counter_tb.v; then
 fi
 
 if ! vvp counter_tb.vvp > "$LOG" 2>&1; then
-    echo "[ERROR] Simulation with vvp failed. See $LOG for details."
+    echo "[ERROR] Simulation with vvp failed. See <$LOG> for details."
     exit 1
 fi
 

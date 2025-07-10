@@ -6,8 +6,8 @@
 # Test if the OpenROAD flow scripts (ORFS) run successfully; we run
 # this for IHP SG13G2 only
 
-RESULT=/tmp/result_orfs_sg13g2.log
-WORK_DIR=/tmp/orfs_sg13g2
+WORK_DIR=$(mktemp -d)
+RESULT=$WORK_DIR/result_orfs_sg13g2.log
 FLOW_HOME=$WORK_DIR/orfs/flow
 
 mkdir -p $WORK_DIR && cd $WORK_DIR || exit 1
@@ -32,7 +32,7 @@ make > $RESULT
 
 # check if there is an error in the log
 if grep -q "ERROR" "$RESULT"; then
-    echo "[ERROR] Test <ORFS with ihp-sg13g2> FAILED."
+    echo "[ERROR] Test <ORFS with ihp-sg13g2> FAILED. Check the log <$RESULT>."
     exit 1
 else
     echo "[INFO] Test <ORFS with ihp-sg13g2> passed."

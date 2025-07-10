@@ -47,17 +47,9 @@ while getopts "d" flag; do
 done
 shift $((OPTIND-1))
 
-
-TMP=/tmp/test_08
+TMP=$(mktemp -d)
 LOG=$TMP/tools.log
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-
-if [ -d $TMP ]; then
-    rm -rf $TMP/*
-else 
-    mkdir $TMP
-fi
 
 cp $DIR/Bender.yml $TMP/
 cp $DIR/*.sv       $TMP/
@@ -89,7 +81,6 @@ cd $TMP/
     test "sv2v --write top_sv2v.v top_svase.sv"
     test "yosys -Q -q -p \"read_verilog top_sv2v.v; synth;\""
 } &> $LOG
-
 
 if grep -q "\[ERROR\]" $LOG; then
     echo "[ERROR] Test <PULP-flow> FAILED! Check log at <$LOG>."
