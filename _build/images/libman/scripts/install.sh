@@ -9,3 +9,7 @@ qmake libman.pro
 make
 mkdir -p "${TOOLS}/${LIBMAN_NAME}"
 mv libman "${TOOLS}/${LIBMAN_NAME}"
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .

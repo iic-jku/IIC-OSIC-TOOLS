@@ -9,3 +9,7 @@ sed -i "s|^LOCAL_INSTALL_DIR=\".*\"|LOCAL_INSTALL_DIR=\"${TOOLS}/${KACTUS_NAME}\
 ./configure
 make -j"$(nproc)"
 make install
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .

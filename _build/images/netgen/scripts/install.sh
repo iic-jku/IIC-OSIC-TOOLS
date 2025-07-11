@@ -9,3 +9,7 @@ git checkout "${NETGEN_REPO_COMMIT}"
 make clean
 make -j"$(nproc)"
 make install
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .

@@ -11,3 +11,7 @@ autoreconf -vif
 
 make -j"$(nproc)"
 make install
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .
