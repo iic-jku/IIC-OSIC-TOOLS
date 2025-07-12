@@ -17,33 +17,6 @@ cargo build --release -j"$(nproc)"
 strip target/release/bender
 cp target/release/bender "${TOOLS}/${PULP_NAME}/bin"
 
-# Build Morty
-# -----------
-cd /tmp || exit 1
-echo "[INFO] Building Morty"
-git clone --depth=1 https://github.com/pulp-platform/morty.git 
-cd morty || exit 1
-cargo update
-cargo build --release -j"$(nproc)"
-strip target/release/morty
-cp target/release/morty "${TOOLS}/${PULP_NAME}/bin"
-
-# Build SVase
-# -----------
-cd /tmp || exit 1
-echo "[INFO] Building SVase"
-git clone --depth=1 https://github.com/pulp-platform/svase.git
-cd svase || exit 1
-scripts/gen_version.sh > include/version.h
-cd deps || exit 1
-make # -j"$(nproc)"
-cd ..
-mkdir build && cd build
-cmake ..
-make -j"$(nproc)"
-strip svase
-cp svase "${TOOLS}/${PULP_NAME}/bin"
-
 # Install Verible
 # ---------------
 cd /tmp || exit 1

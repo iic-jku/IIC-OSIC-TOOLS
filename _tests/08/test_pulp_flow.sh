@@ -5,8 +5,6 @@
 #
 # Smoke test for the following tools:
 # - bender: https://github.com/pulp-platform/bender
-# - morty:  https://github.com/pulp-platform/morty
-# - svase:  https://github.com/pulp-platform/svase
 # - sv2v:   https://github.com/zachjs/sv2v
 
 # test if a command finishes successfully
@@ -61,19 +59,6 @@ cd $TMP/
     test "bender checkout"
     test "bender sources -f > error.json"
     test "bender sources -f -t test_target > top.json"
-} &> $LOG
-
-[ $DEBUG -eq 1 ] && echo "[INFO] Testing morty..."
-{
-    test_fail "morty -q -f error.json -o error_morty.sv"
-    test "morty -q -f top.json -o top_morty.sv"
-    test "morty -q -f top.json -D ERROR -o error_morty.sv"
-} &> $LOG
-
-[ $DEBUG -eq 1 ] && echo "[INFO] Testing svase..."
-{
-    test_fail "svase top error_svase.sv error_morty.sv"
-    test "svase top top_svase.sv top_morty.sv"
 } &> $LOG
 
 [ $DEBUG -eq 1 ] && echo "[INFO] Testing sv2v..."
