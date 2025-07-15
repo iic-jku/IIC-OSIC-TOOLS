@@ -26,50 +26,17 @@ if [ -n "${DRY_RUN}" ]; then
 	ECHO_IF_DRY_RUN="echo $"
 fi
 
-if [ -z ${DOCKER_USER+z} ]; then
-	DOCKER_USER="hpretl"
-fi
-
-if [ -z ${DOCKER_IMAGE+z} ]; then
-        DOCKER_IMAGE="iic-osic-tools"
-fi
-
-if [ -z ${DOCKER_TAGS+z} ]; then
-		CONTAINER_TAG="$(date +"%Y.%m")"
-        DOCKER_TAGS="latest,$CONTAINER_TAG"
-fi
-
 if [ -z ${DOCKER_PLATFORMS+z} ]; then
 	DOCKER_PLATFORMS="linux/amd64,linux/arm64"
 fi
 
-if [ -z ${DOCKER_LOAD+z} ]; then
-	load_or_push="--push"
-else
-	load_or_push="--load"
-fi
-
 if [ -z ${BUILDER_STRS+z} ]; then
 	echo "Defining builder strs"
-	#BUILDER_STRS="host=ssh://pretl@buildx86,host=unix:///var/run/docker.sock"
-	BUILDER_STRS="host=ssh://pretl@buildx86,host=ssh://pretl@buildaarch"
+	BUILDER_STRS="host=ssh://$USER@buildx86,host=ssh://$USER@buildaarch"
 fi
 
 if [ -z ${BUILDER_NAME+z} ]; then
 	BUILDER_NAME="iic-osic-tools-builder"
-fi
-
-
-# Process set tags:
-TAG_PARAMS=""
-IFS=',' read -ra P_TAGS <<< "$DOCKER_TAGS"
-for i in "${P_TAGS[@]}"; do
-	echo "[INFO] Using Tag \"$i\""
-	TAG_PARAMS="${TAG_PARAMS} --tag ${DOCKER_USER}/${DOCKER_IMAGE}:${i}"
-done
-
-if [ -z "${TAG_PARAMS}" ]; then
-	echo "[WARNING] No tags set!"
 fi
 
 # if a builder already exists (either from a previous run or manually created), we directly run the build command.
@@ -114,6 +81,3 @@ for ((;i<"${#P_PLATS[@]}";i++)); do
 		echo "[INFO] Docker context ${BUILDER_NAME}-${P_PLATS[i]//\//-} already part of builder, not appending..."
 	fi
 done
-
-#shellcheck disable=SC2086
-${ECHO_IF_DRY_RUN} docker buildx build --platform ${DOCKER_PLATFORMS} --builder ${BUILDER_NAME} ${load_or_push} ${TAG_PARAMS} --build-arg CONTAINER_TAG=${CONTAINER_TAG} .

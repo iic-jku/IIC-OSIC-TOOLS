@@ -32,9 +32,9 @@ target "image-full" {
 #  tags = ["registry.iic.jku.at:5000/iic-osic-tools:latest"]
 #}
 
-#group "images" {
-#  targets = ["image-full", "image-analog", "image-digital", "image-riscv"]
-#}
+group "images" {
+  targets = ["image-full"]
+}
 
 
 # Base target for common settings
