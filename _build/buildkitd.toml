@@ -20,3 +20,7 @@
   [[worker.oci.gcpolicy]]
     all = true
     keepBytes = 51200000000
+
+[registry."registry.iic.jku.at:5000"]
+  http = true
+  insecure = true

@@ -1,7 +1,0 @@
-#######################################################################
-# Extend base image with development packages for building
-#######################################################################
-ARG BASE_IMAGE=iic-osic-tools:base
-FROM ${BASE_IMAGE} AS iic-osic-tools:base-dev
-RUN --mount=type=bind,source=images/base-dev,target=/images/base-dev \
-    bash /images/base-dev/scripts/00_base_install.sh

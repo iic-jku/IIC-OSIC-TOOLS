@@ -68,6 +68,14 @@ RUN $STARTUPDIR/scripts/install.sh
 # Finalize setup/install
 RUN $STARTUPDIR/scripts/post_install.sh
 
+# Install examples
+#RUN git clone --depth=1 https://github.com/iic-jku/SKY130_SAR-ADC1.git ${EXAMPLES}/SKY130_SAR-ADC1 && \
+#    git clone --depth=1 https://github.com/iic-jku/SKY130_PLL1.git ${EXAMPLES}/SKY130_PLL1 && \
+#    git clone --depth=1 https://github.com/mabrains/Analog_blocks.git ${EXAMPLES}/SKY130_ANALOG-BLOCKS
+RUN git clone --depth=1 https://github.com/mole99/ota-5t.git ${EXAMPLES}/cace/ota-5t && \
+    git clone --depth=1 https://github.com/iic-jku/analog-circuit-design ${EXAMPLES}/analog-course
+
+
 WORKDIR ${DESIGNS}
 USER 1000:1000
 ENTRYPOINT ["/dockerstartup/scripts/ui_startup.sh"]
