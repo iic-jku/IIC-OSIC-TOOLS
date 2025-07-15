@@ -21,6 +21,7 @@ This document summarizes the most important changes of the individual releases o
 * Remove (temporarily) `klayout-pex` due to incompatibility with some dependencies.
 * Remove `gf180mcuC` technology flavor to decrease image size.
 * Remove (temporarily) `openram` (re-add later when PyPi package is updated).
+* Remove `svase` and `morty` from the PULP tools.
 
 ## 2025.05
 
