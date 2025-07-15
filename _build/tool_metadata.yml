@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 870738a4d2326c053e96007fe17a390427926efd
+  commit: 1ae6e987ecd18eb75967aa99de8f5ad6441345c8
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 1b97dc71377cea7e861be6625be4353c377a5fb5
@@ -24,7 +24,7 @@
   commit: 34b1e7bbb1014346a5bbe9171bd25840ee020578
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: f82c6c7b3ada873015348f728aa3087cdb6661a6
+  commit: e55d9454da30f7c44924809969741f8b7531e832
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: "v3.13.5"
@@ -48,7 +48,7 @@
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
 - name: nvc
   repo: https://github.com/nickg/nvc.git
-  commit: "r1.16.2"
+  commit: "r1.17.0"
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
   commit: 0fe599b2afb6708d281543108caf8310912f54af
@@ -75,13 +75,13 @@
   commit: 0239d921a2b06c931736e55462ba50233763ee33
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 66fa94a4862e6dd49c32036b57eaa1d3a76b6c29
+  commit: 8072e31fbf8b5795a1606edd374920f9d57184b4
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 9d9ce7b767d2ea776e2dee0ef636a84512e6b229
+  commit: 037f53b8423d08e6d776655e2d1209688fe5536c
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 965547260a803a77d10f8f628bda61bea4b1464f
+  commit: 2a0bb5f543974a039ab1ba50b0ac362c6646b74d
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.84"
@@ -102,13 +102,13 @@
   commit: "_0.3.0"
 - name: verilator
   repo: https://github.com/verilator/verilator.git
-  commit: "v5.036"
+  commit: "v5.038"
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 8fe82cf4ce11eac524b3990db225ce0d4f394012
+  commit: f5bd45908243a8e6d440cf71d6a361763b5b14d9
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.9.0"
@@ -117,7 +117,7 @@
   commit: "Release-2.7.0"
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: "v0.54"
+  commit: "v0.55"
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
 - name: yosys_sby
