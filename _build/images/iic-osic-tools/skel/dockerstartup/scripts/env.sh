@@ -106,7 +106,10 @@ if [ ! -d "$XDG_RUNTIME_DIR" ]; then
 fi
 
 # this is needed for Veryl to store its data
-export XDG_DATA_HOME=$TOOLS/.data-default
+export XDG_DATA_HOME=/headless/.data-default
+if [ ! -d "$XDG_DATA_HOME" ]; then
+    mkdir -p "$XDG_DATA_HOME"
+fi
 
 # add local directories in $HOME to the path so that the user can upgrade PIP packages
 export PATH=$HOME/.local/bin:$PATH

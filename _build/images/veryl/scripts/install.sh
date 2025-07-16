@@ -10,7 +10,3 @@ rustup default stable
 mkdir -p "${TOOLS}/${VERYL_NAME}/bin"
 cargo install verylup
 mv $CARGO_HOME/bin/verylup "${TOOLS}/${VERYL_NAME}/bin"
-
-export XDG_DATA_HOME=$TOOLS/.data-default
-mkdir -p "$XDG_DATA_HOME"
-"${TOOLS}"/"${VERYL_NAME}"/bin/verylup setup
