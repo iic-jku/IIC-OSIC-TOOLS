@@ -20,6 +20,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	fusesoc==2.4.3 \
 	gdsfactory==9.11.0 \
 	gdspy==1.6.13 \
+	jsonschema2md==1.5.2 \
 	lctime==0.0.25 \
 	najaeda==0.1.23 \
 	pygmid==1.2.12 \

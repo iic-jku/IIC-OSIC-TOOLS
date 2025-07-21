@@ -9,3 +9,7 @@ git checkout "${GTKWAVE_REPO_COMMIT}"
 meson setup build --prefix="${TOOLS}/${GTKWAVE_NAME}"
 meson compile -C build
 meson install -C build
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .

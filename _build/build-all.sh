@@ -26,6 +26,11 @@ if [ -n "${DRY_RUN}" ]; then
 	ECHO_IF_DRY_RUN="echo $"
 fi
 
+if [ -z ${BUILDER_NAME+z} ]; then
+	BUILDER_NAME="iic-osic-tools-builder"
+fi
+
+
 if [ -z ${DOCKER_USER+z} ]; then
 	DOCKER_USER="hpretl"
 fi
@@ -35,12 +40,8 @@ if [ -z ${DOCKER_IMAGE+z} ]; then
 fi
 
 if [ -z ${DOCKER_TAGS+z} ]; then
-		CONTAINER_TAG="$(date +"%Y.%m")"
+	CONTAINER_TAG="$(date +"%Y.%m")"
         DOCKER_TAGS="latest,$CONTAINER_TAG"
-fi
-
-if [ -z ${DOCKER_PLATFORMS+z} ]; then
-	DOCKER_PLATFORMS="linux/amd64,linux/arm64"
 fi
 
 if [ -z ${DOCKER_LOAD+z} ]; then
@@ -48,17 +49,6 @@ if [ -z ${DOCKER_LOAD+z} ]; then
 else
 	load_or_push="--load"
 fi
-
-if [ -z ${BUILDER_STRS+z} ]; then
-	echo "Defining builder strs"
-	#BUILDER_STRS="host=ssh://pretl@buildx86,host=unix:///var/run/docker.sock"
-	BUILDER_STRS="host=ssh://pretl@buildx86,host=ssh://pretl@buildaarch"
-fi
-
-if [ -z ${BUILDER_NAME+z} ]; then
-	BUILDER_NAME="iic-osic-tools-builder"
-fi
-
 
 # Process set tags:
 TAG_PARAMS=""
@@ -72,48 +62,31 @@ if [ -z "${TAG_PARAMS}" ]; then
 	echo "[WARNING] No tags set!"
 fi
 
-# if a builder already exists (either from a previous run or manually created), we directly run the build command.
-# if not, we check for the components and create them if required.
-
-P_PLATS=""
-B_STRS=""
-IFS=',' read -ra P_PLATS <<< "$DOCKER_PLATFORMS"
-IFS=',' read -ra B_STRS <<< "$BUILDER_STRS"
-for i in "${!P_PLATS[@]}"; do
-	if ! docker context inspect ${BUILDER_NAME}-${P_PLATS[i]//\//-} > /dev/null 2>&1 ; then
-		echo "[INFO] Creating docker context ${BUILDER_NAME}-${P_PLATS[i]//\//-}"
-		${ECHO_IF_DRY_RUN} docker context create ${BUILDER_NAME}-${P_PLATS[i]//\//-} --docker ${B_STRS[i]}
-	else
-		echo "[INFO] Docker context ${BUILDER_NAME}-${P_PLATS[i]//\//-} exists, not creating..."
-	fi
-done
-i=0
-if ! docker buildx inspect ${BUILDER_NAME} > /dev/null 2>&1 ; then
-	echo "[INFO] Creating docker buildx builder ${BUILDER_NAME} with context ${BUILDER_NAME}-${P_PLATS[0]//\//-}"
-	BUILDKIT_CONF="buildkitd-${P_PLATS[0]//\//-}.toml"
-	if [ ! -f "$BUILDKIT_CONF" ]; then
-		echo "[INFO] ${BUILDKIT_CONF} does not exist, using default buildkitd.toml..."
-		BUILDKIT_CONF="buildkitd.toml"
-	fi
-	${ECHO_IF_DRY_RUN} docker buildx create --name ${BUILDER_NAME} --config ./${BUILDKIT_CONF} --platform ${P_PLATS[0]} ${BUILDER_NAME}-${P_PLATS[0]//\//-}
-	i=1
-else
-	echo "[INFO] Docker buildx builder ${BUILDER_NAME} exists, not creating..."
-	i=0
-fi
-for ((;i<"${#P_PLATS[@]}";i++)); do
-	if ! docker buildx inspect ${BUILDER_NAME} |grep ${BUILDER_NAME}-${P_PLATS[i]//\//-}  > /dev/null 2>&1 ; then
-		BUILDKIT_CONF="buildkitd-${P_PLATS[i]//\//-}.toml"
-		if [ ! -f "$BUILDKIT_CONF" ]; then
-			echo "[INFO] ${BUILDKIT_CONF} does not exist, using default buildkitd.toml..."
-    		BUILDKIT_CONF="buildkitd.toml"
-		fi
-		echo "[INFO] Appending context ${BUILDER_NAME}-${P_PLATS[i]//\//-} to buildx builder"
-		${ECHO_IF_DRY_RUN} docker buildx create --name ${BUILDER_NAME} --config ./${BUILDKIT_CONF} --platform ${P_PLATS[i]} --append ${BUILDER_NAME}-${P_PLATS[i]//\//-}
-	else
-		echo "[INFO] Docker context ${BUILDER_NAME}-${P_PLATS[i]//\//-} already part of builder, not appending..."
-	fi
-done
 
 #shellcheck disable=SC2086
-${ECHO_IF_DRY_RUN} docker buildx build --platform ${DOCKER_PLATFORMS} --builder ${BUILDER_NAME} ${load_or_push} ${TAG_PARAMS} --build-arg CONTAINER_TAG=${CONTAINER_TAG} .
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push base
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-level-1
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-level-2
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-level-3
+
+# Build the final images, pushing them to the local registry. The Tag in this case is used for the environment variable inside the container.
+#shellcheck disable=SC2086
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --set *.args.CONTAINER_TAG="${CONTAINER_TAG}" --push images
+
+# Now pull the individual images from the local registry.
+${ECHO_IF_DRY_RUN} docker pull registry.iic.jku.at:5000/iic-osic-tools:latest
+#${ECHO_IF_DRY_RUN} docker pull registry.iic.jku.at:5000/iic-osic-tools:latest-analog
+
+
+# finally, run the pushes individually for each flavor.
+# Process set tags:
+TAG_PARAMS=""
+IFS=',' read -ra P_TAGS <<< "$DOCKER_TAGS"
+for i in "${P_TAGS[@]}"; do
+        echo "[INFO] Processing Tag \"$i\""
+        docker tag registry.iic.jku.at:5000/iic-osic-tools:latest ${DOCKER_USER}/${DOCKER_IMAGE}:${i}
+        docker push ${DOCKER_USER}/${DOCKER_IMAGE}:${i}
+        # For other flavors, handle like this.
+        #docker tag registry.iic.jku.at:5000/iic-osic-tools:latest-analog ${DOCKER_USER}/${DOCKER_IMAGE}:${i}-analog                                                                                              
+        #docker push ${DOCKER_USER}/${DOCKER_IMAGE}:${i}-analog
+done

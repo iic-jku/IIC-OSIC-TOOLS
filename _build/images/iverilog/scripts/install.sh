@@ -10,3 +10,7 @@ chmod +x autoconf.sh
 ./configure --prefix="${TOOLS}/${IVERILOG_NAME}" --enable-libvvp
 make -j"$(nproc)"
 make install
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .
