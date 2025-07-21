@@ -19,8 +19,8 @@ apt -y install \
 	bzip2 \
 	ca-certificates \
 	ccache \
-	clang-16 \
-	clang-tools-16 \
+	clang-17 \
+	clang-tools-17 \
 	cmake \
 	csh \
 	curl \
@@ -64,7 +64,7 @@ apt -y install \
 	libc6-dev \
 	libcairo2-dev \
 	libcgal-dev \
-	libclang-common-16-dev \
+	libclang-common-17-dev \
 	libcurl4-openssl-dev \
 	libdw-dev \
 	libedit-dev \
@@ -99,7 +99,7 @@ apt -y install \
 	libopenmpi-dev \
 	libpcre2-dev \
 	libpcre3-dev \
-	libpolly-16-dev \
+	libpolly-17-dev \
 	libqhull-dev \
 	libqt5charts5-dev \
 	libqt5multimediawidgets5 \
@@ -111,7 +111,6 @@ apt -y install \
 	libsm-dev \
 	libsqlite3-dev \
 	libssl-dev \
-	libstdc++-11-dev \
 	libsuitesparse-dev \
 	libtcl \
 	libtinyxml-dev \
@@ -135,9 +134,9 @@ apt -y install \
 	libzip-dev \
 	libzstd-dev \
 	linguist-qt6 \
-	lld-16 \
-	llvm-16 \
-	llvm-16-dev \
+	lld-17 \
+	llvm-17 \
+	llvm-17-dev \
 	make \
 	mold \
 	ninja-build \
@@ -200,9 +199,9 @@ apt -y install \
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 0	
 
-cd /usr/lib/llvm-16/bin
+cd /usr/lib/llvm-17/bin
 for f in *; do rm -f /usr/bin/"$f"; \
-    ln -s ../lib/llvm-16/bin/"$f" /usr/bin/"$f"
+    ln -s ../lib/llvm-17/bin/"$f" /usr/bin/"$f"
 done
 
 echo "[INFO] Cleaning up caches"
