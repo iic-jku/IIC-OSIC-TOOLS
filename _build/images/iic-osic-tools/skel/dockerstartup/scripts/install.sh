@@ -87,4 +87,6 @@ apt autoremove -y
 ln -s "$NO_VNC_HOME"/vnc_lite.html "$NO_VNC_HOME"/index.html
 
 # clean up afterwards
+echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*
+apt -y clean
