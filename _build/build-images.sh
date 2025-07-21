@@ -30,45 +30,36 @@ if [ -z ${BUILDER_NAME+z} ]; then
 	BUILDER_NAME="iic-osic-tools-builder"
 fi
 
-if [ -z ${DOCKER_LOAD+z} ]; then
-	load_or_push="--push"
-else
-	load_or_push="--load"
-fi
-
-if [ -z ${DOCKER_USER+z} ]; then
-	DOCKER_USER="hpretl"
+if [ -z ${DOCKER_PREFIXES+z} ]; then
+	DOCKER_PREFIXES="registry.iic.jku.at:5000"
 fi
 
 if [ -z ${DOCKER_IMAGE+z} ]; then
         DOCKER_IMAGE="iic-osic-tools"
 fi
 
-if [ -z ${DOCKER_TAGS+z} ]; then
+if [ -z ${CONTAINER_TAG} ]; then
 	CONTAINER_TAG="$(date +"%Y.%m")"
+fi
+
+if [ -z ${DOCKER_TAGS+z} ]; then
         DOCKER_TAGS="latest,$CONTAINER_TAG"
 fi
 
+# Process set tags:
+IFS=',' read -ra P_TAGS <<< "$DOCKER_TAGS"
+# Process set prefixes:
+IFS=',' read -ra P_PREFIXES <<< "$DOCKER_PREFIXES"
+
+SET_TAGS_CMD=""
+for i in "${P_TAGS[@]}"; do
+    for j in "${P_PREFIXES[@]}"; do
+        echo "[INFO] Processing Tag \"$i\" with Prefix \"$j\""
+		SET_TAGS_CMD="${SET_TAGS_CMD} --set image-full.tags+='${j}/${DOCKER_IMAGE}:${i}' --set image-analog.tags+='${j}/${DOCKER_IMAGE}:${i}-analog' --set image-digital.tags+='${j}/${DOCKER_IMAGE}:${i}-digital' --set image-riscv.tags+='${j}/${DOCKER_IMAGE}:${i}-riscv'"
+    done
+done
 
 # First, build the images, pushing them to the local registry. The Tag in this case is used for the environment variable inside the container.
 #shellcheck disable=SC2086
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --set *.args.CONTAINER_TAG="${CONTAINER_TAG}" --push images
-
-
-# Now pull the individual images from the local registry.
-${ECHO_IF_DRY_RUN} docker pull registry.iic.jku.at:5000/iic-osic-tools:latest
-
-
-# finally, run the pushes individually for each flavor.
-# Process set tags:
-IFS=',' read -ra P_TAGS <<< "$DOCKER_TAGS"
-for i in "${P_TAGS[@]}"; do
-        echo "[INFO] Processing Tag \"$i\""
-        docker tag registry.iic.jku.at:5000/iic-osic-tools:latest ${DOCKER_USER}/${DOCKER_IMAGE}:${i}
-	docker push ${DOCKER_USER}/${DOCKER_IMAGE}:${i}
-	# For other flavors, handle like this.
-        #docker tag registry.iic.jku.at:5000/iic-osic-tools:latest-analog ${DOCKER_USER}/${DOCKER_IMAGE}:${i}-analog
-	#docker push ${DOCKER_USER}/${DOCKER_IMAGE}:${i}-analog
-done
-
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --set *.args.CONTAINER_TAG="${CONTAINER_TAG}" ${SET_TAGS_CMD} --push images
 

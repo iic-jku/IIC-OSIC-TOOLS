@@ -11,7 +11,7 @@ group "tools" {
 target "image-full" {
   platforms = ["linux/amd64", "linux/arm64"]
   dockerfile = "images/iic-osic-tools/Dockerfile"
-  tags = ["registry.iic.jku.at:5000/iic-osic-tools:latest"]
+  #tags = ["registry.iic.jku.at:5000/iic-osic-tools:latest"] # Do not set a default tag for now, so it can be handled in the build command.
 }
 
 #target "image-analog" {
