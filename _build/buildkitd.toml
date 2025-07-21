@@ -23,4 +23,3 @@
 
 [registry."registry.iic.jku.at:5000"]
   http = true
-  insecure = true
