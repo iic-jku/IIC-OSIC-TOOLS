@@ -30,11 +30,6 @@ if [ -z ${BUILDER_NAME+z} ]; then
 	BUILDER_NAME="iic-osic-tools-builder"
 fi
 
-if [ -z ${DOCKER_LOAD+z} ]; then
-	load_or_push="--push"
-else
-	load_or_push="--load"
-fi
 
 if [ -z ${DOCKER_USER+z} ]; then
 	DOCKER_USER="hpretl"
@@ -49,26 +44,49 @@ if [ -z ${DOCKER_TAGS+z} ]; then
         DOCKER_TAGS="latest,$CONTAINER_TAG"
 fi
 
+if [ -z ${DOCKER_LOAD+z} ]; then
+	load_or_push="--push"
+else
+	load_or_push="--load"
+fi
 
-# First, build the images, pushing them to the local registry. The Tag in this case is used for the environment variable inside the container.
+# Process set tags:
+TAG_PARAMS=""
+IFS=',' read -ra P_TAGS <<< "$DOCKER_TAGS"
+for i in "${P_TAGS[@]}"; do
+	echo "[INFO] Using Tag \"$i\""
+	TAG_PARAMS="${TAG_PARAMS} --tag ${DOCKER_USER}/${DOCKER_IMAGE}:${i}"
+done
+
+if [ -z "${TAG_PARAMS}" ]; then
+	echo "[WARNING] No tags set!"
+fi
+
+
+#shellcheck disable=SC2086
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push base
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-level-1
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-level-2
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-level-3
+
+# Build the final images, pushing them to the local registry. The Tag in this case is used for the environment variable inside the container.
 #shellcheck disable=SC2086
 ${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --set *.args.CONTAINER_TAG="${CONTAINER_TAG}" --push images
 
-
 # Now pull the individual images from the local registry.
 ${ECHO_IF_DRY_RUN} docker pull registry.iic.jku.at:5000/iic-osic-tools:latest
+#${ECHO_IF_DRY_RUN} docker pull registry.iic.jku.at:5000/iic-osic-tools:latest-analog
 
 
 # finally, run the pushes individually for each flavor.
 # Process set tags:
+TAG_PARAMS=""
 IFS=',' read -ra P_TAGS <<< "$DOCKER_TAGS"
 for i in "${P_TAGS[@]}"; do
         echo "[INFO] Processing Tag \"$i\""
         docker tag registry.iic.jku.at:5000/iic-osic-tools:latest ${DOCKER_USER}/${DOCKER_IMAGE}:${i}
-	docker push ${DOCKER_USER}/${DOCKER_IMAGE}:${i}
-	# For other flavors, handle like this.
-        #docker tag registry.iic.jku.at:5000/iic-osic-tools:latest-analog ${DOCKER_USER}/${DOCKER_IMAGE}:${i}-analog
-	#docker push ${DOCKER_USER}/${DOCKER_IMAGE}:${i}-analog
+        docker push ${DOCKER_USER}/${DOCKER_IMAGE}:${i}
+        # For other flavors, handle like this.
+        #docker tag registry.iic.jku.at:5000/iic-osic-tools:latest-analog ${DOCKER_USER}/${DOCKER_IMAGE}:${i}-analog                                                                                              
+        #docker push ${DOCKER_USER}/${DOCKER_IMAGE}:${i}-analog
 done
-
-
