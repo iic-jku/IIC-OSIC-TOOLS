@@ -55,7 +55,8 @@ SET_TAGS_CMD=""
 for i in "${P_TAGS[@]}"; do
     for j in "${P_PREFIXES[@]}"; do
         echo "[INFO] Processing Tag \"$i\" with Prefix \"$j\""
-		SET_TAGS_CMD="${SET_TAGS_CMD} --set image-full.tags+='${j}/${DOCKER_IMAGE}:${i}' --set image-analog.tags+='${j}/${DOCKER_IMAGE}:${i}-analog' --set image-digital.tags+='${j}/${DOCKER_IMAGE}:${i}-digital' --set image-riscv.tags+='${j}/${DOCKER_IMAGE}:${i}-riscv'"
+		#SET_TAGS_CMD="${SET_TAGS_CMD} --set image-full.tags+='${j}/${DOCKER_IMAGE}:${i}' --set image-analog.tags+='${j}/${DOCKER_IMAGE}:${i}-analog' --set image-digital.tags+='${j}/${DOCKER_IMAGE}:${i}-digital' --set image-riscv.tags+='${j}/${DOCKER_IMAGE}:${i}-riscv'"
+		SET_TAGS_CMD="${SET_TAGS_CMD} --set image-full.tags=${j}/${DOCKER_IMAGE}:${i}"
     done
 done
 
