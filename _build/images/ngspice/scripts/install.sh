@@ -52,3 +52,8 @@ cd vamodels/code/$MODEL/vacode || exit 1
 "$TOOLS/openvaf/bin/openvaf" $MODEL.va
 cp $MODEL.osdi "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi"
 echo "osdi ${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi" >> "$FNAME"
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .
+

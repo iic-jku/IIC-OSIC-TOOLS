@@ -13,3 +13,8 @@ make -j"$(nproc)"
 make install
 # and we strip the binaries to reduce size
 find "$RISCV" -type f -executable -exec strip {} \;
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .
+

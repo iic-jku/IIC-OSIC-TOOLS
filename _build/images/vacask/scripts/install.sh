@@ -8,3 +8,8 @@ mkdir -p build && cd build
 cmake -G Ninja -S .. -B . -DCMAKE_BUILD_TYPE=Release -DOPENVAF_DIR=${TOOLS}/openvaf/bin
 cmake --build . -j "$(nproc)"
 cmake --install . --prefix "${TOOLS}/${VACASK_NAME}" --strip
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .
+

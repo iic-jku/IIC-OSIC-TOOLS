@@ -13,3 +13,8 @@ make -j"$(nproc)" \
   CXXFLAGS="-Os -g0" \
   LDFLAGS="-Wl,-s"
 make install
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .
+

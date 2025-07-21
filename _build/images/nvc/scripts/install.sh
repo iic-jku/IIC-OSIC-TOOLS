@@ -10,3 +10,8 @@ mkdir build && cd build
 ../configure --prefix="${TOOLS}/${NVC_NAME}"
 make -j"$(nproc)"
 make install
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .
+

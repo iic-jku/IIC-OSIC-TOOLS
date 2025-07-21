@@ -10,3 +10,8 @@ cd build || exit 1
 ninja
 mkdir -p "${TOOLS}/${PADRING_NAME}/bin"
 cp padring "${TOOLS}/${PADRING_NAME}/bin"
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .
+

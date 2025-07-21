@@ -8,3 +8,8 @@ git checkout "${XSCHEM_REPO_COMMIT}"
 ./configure --prefix="${TOOLS}/${XSCHEM_NAME}"
 make -j"$(nproc)"
 make install
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .
+

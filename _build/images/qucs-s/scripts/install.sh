@@ -9,3 +9,8 @@ mkdir build && cd build
 cmake ..  -DCMAKE_INSTALL_PREFIX="$TOOLS/$QUCS_S_NAME"
 make -j"$(nproc)"
 make install
+
+# Make symlinks for binaries
+cd "$TOOLS/bin" || exit
+ln -s ../*/bin/* .
+
