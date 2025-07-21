@@ -54,7 +54,7 @@ apt install -y \
         gnuplot \
         htop \
         hub \
-        openjdk-17-jdk \
+        default-jdk \
         jq \
         meld \
         nano \
@@ -74,8 +74,8 @@ apt install -y \
         xfce4-terminal \
         xterm
 
-# need to switch Java-17 (for Chisel)
-update-java-alternatives --set "$(update-java-alternatives --list | grep 1.17 | cut -d' ' -f1)"
+# need to switch Java-21 (for Chisel)
+update-java-alternatives --set "$(update-java-alternatives --list | grep 1.21 | cut -d' ' -f1)"
 
 # remove light-locker and other power management stuff, otherwise VNC session locks up
 apt purge -y light-locker pm-utils *screensaver*
