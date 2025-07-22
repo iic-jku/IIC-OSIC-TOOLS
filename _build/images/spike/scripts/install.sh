@@ -6,7 +6,7 @@ git clone --filter=blob:none "${SPIKE_REPO_URL}" "${SPIKE_NAME}"
 cd "${SPIKE_NAME}" || exit 1
 git checkout "${SPIKE_REPO_COMMIT}"
 mkdir build && cd build
-../configure --prefix="$RISCV"
+../configure --prefix="${TOOLS}/${SPIKE_NAME}"
 make -j"$(nproc)" \
   ASFLAGS="-Os -g0" \
   CFLAGS="-Os -g0" \
@@ -16,5 +16,5 @@ make install
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${SPIKE_NAME}/bin/* .
 

@@ -8,13 +8,13 @@ git clone --filter=blob:none "${RISCV_PK_REPO_URL}" "${RISCV_PK_NAME}"
 cd "${RISCV_PK_NAME}" || exit 1
 git checkout "${RISCV_PK_REPO_COMMIT}"
 mkdir build && cd build
-../configure --prefix="$RISCV" --host=riscv64-unknown-elf --with-arch=rv64gc_zifencei
+../configure --prefix="${TOOLS}/${RISCV_PK_NAME}" --host=riscv64-unknown-elf --with-arch=rv64gc_zifencei
 make -j"$(nproc)"
 make install
 # and we strip the binaries to reduce size
-find "$RISCV" -type f -executable -exec strip {} \;
+find "${TOOLS}/${RISCV_PK_NAME}" -type f -executable -exec strip {} \;
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${RISCV_PK_NAME}/bin/* .
 
