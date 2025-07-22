@@ -308,8 +308,9 @@ group "tools-level-1" {
 # Group targets for tools-level-2
 group "tools-level-2" {
   targets = [
-    "xyce-xdm", "open_pdks", "riscv-pk", "vacask", "ghdl-yosys-plugin", "slang-yosys-plugin", "spike"
+    "open_pdks", "riscv-pk", "vacask", "ghdl-yosys-plugin", "slang-yosys-plugin", "spike"
   ]
+  # "xyce-xdm" disabled
 }
 
 # Group targets for tools-level-3
