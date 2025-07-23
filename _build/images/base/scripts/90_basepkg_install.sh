@@ -22,7 +22,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	gdspy==1.6.13 \
 	jsonschema2md==1.6.1 \
 	lctime==0.0.25 \
-	najaeda==0.1.23 \
 	najaeda==0.1.25 \
 	pygmid==1.2.12 \
 	pyrtl==0.11.3 \
@@ -30,7 +29,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	pyverilog==1.3.0 \
 	schemdraw[svgmath]==0.20 \
 	scikit-rf==1.8.0 \
-	siliconcompiler==0.34.1 \
 	siliconcompiler==0.34.2 \
 	spicelib==1.4.4 \
 	spyci==1.0.2
