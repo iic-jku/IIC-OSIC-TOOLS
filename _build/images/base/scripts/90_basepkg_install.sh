@@ -22,6 +22,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	gdspy==1.6.13 \
 	jsonschema2md==1.6.1 \
 	lctime==0.0.25 \
+	librelane==3.0.0.dev26 \
 	najaeda==0.1.25 \
 	pygmid==1.2.12 \
 	pyrtl==0.11.3 \
@@ -35,9 +36,9 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 
 #FIXME	klayout-pex==0.2.7 \
 
-echo "[INFO] Install custom OpenLane2 version"
-pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
-	git+https://github.com/iic-jku/openlane2
+#echo "[INFO] Install custom OpenLane2 version"
+#pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+#	git+https://github.com/iic-jku/openlane2
 
 echo "[INFO] Installing CharLib"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
