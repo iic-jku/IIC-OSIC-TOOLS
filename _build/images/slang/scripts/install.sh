@@ -11,5 +11,5 @@ cmake --install build --strip --prefix="${TOOLS}/${SLANG_NAME}"
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${SLANG_NAME}/bin/* .
 

@@ -36,5 +36,5 @@ ln -s "${TOOLS}/${OPENVAF_NAME}/bin/openvaf-r" "${TOOLS}/${OPENVAF_NAME}/bin/ope
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${OPENVAF_NAME}/bin/* .
 

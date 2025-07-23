@@ -50,12 +50,10 @@ make -j"$(nproc)"
 make install
 
 # Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
-
 # install wrapper for Yosys so that modules are loaded automatically
 # see https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/43
 cd "$TOOLS/bin" || exit
+ln -s ${TOOLS}/${YOSYS_NAME}/bin/* .
 rm -f yosys
 # shellcheck disable=SC2016
 echo '#!/bin/bash

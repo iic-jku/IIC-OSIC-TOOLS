@@ -12,5 +12,5 @@ make install
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${XCIRCUIT_NAME}/bin/* .
 

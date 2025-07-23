@@ -13,4 +13,4 @@ make install
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${GHDL_NAME}/bin/* .

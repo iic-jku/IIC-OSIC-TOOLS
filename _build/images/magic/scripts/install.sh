@@ -14,4 +14,4 @@ echo "$MAGIC_NAME $MAGIC_REPO_COMMIT" > "${TOOLS}/${MAGIC_NAME}/SOURCES"
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${MAGIC_NAME}/bin/* .

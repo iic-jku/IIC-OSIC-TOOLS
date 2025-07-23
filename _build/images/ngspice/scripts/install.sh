@@ -55,5 +55,5 @@ echo "osdi ${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi" >> "$FNAME"
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${NGSPICE_NAME}/bin/* .
 

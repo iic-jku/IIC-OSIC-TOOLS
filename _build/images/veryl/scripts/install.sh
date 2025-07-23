@@ -13,5 +13,5 @@ mv $CARGO_HOME/bin/verylup "${TOOLS}/${VERYL_NAME}/bin"
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${VERYL_NAME}/bin/* .
 

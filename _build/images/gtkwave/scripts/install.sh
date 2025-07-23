@@ -12,4 +12,4 @@ meson install -C build
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${GTKWAVE_NAME}/bin/* .

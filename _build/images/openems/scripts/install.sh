@@ -29,5 +29,5 @@ pip install --no-dependencies --prefix "${TOOLS}/$OPENEMS_NAME" --global-option=
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${OPENEMS_NAME}/bin/* .
 

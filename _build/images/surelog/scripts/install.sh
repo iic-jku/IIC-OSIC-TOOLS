@@ -11,5 +11,5 @@ make install PREFIX="${TOOLS}/${SURELOG_NAME}"
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${SURELOG_NAME}/bin/* .
 

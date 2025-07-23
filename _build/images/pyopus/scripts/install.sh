@@ -24,5 +24,5 @@ mv docsrc/_build/html "$TOOLS/$PYOPUS_NAME/doc"
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s $TOOLS/$PYOPUS_NAME/bin/* .
 

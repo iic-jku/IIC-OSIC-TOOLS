@@ -12,6 +12,4 @@ mkdir -p "$prefix"
 # https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/111
 ./build.sh -j"$(nproc)" -prefix "$prefix"
 
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+# no symlinks for binaries for klayout.

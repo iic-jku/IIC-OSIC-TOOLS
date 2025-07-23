@@ -47,5 +47,5 @@ cp bin/sv2v "${TOOLS}/${PULP_NAME}/bin"
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/${PULP_NAME}/bin/* .
 

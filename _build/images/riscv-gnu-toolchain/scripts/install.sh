@@ -24,5 +24,5 @@ find "${TOOLS}/$RISCV_GNU_TOOLCHAIN_NAME" -type f -executable -exec strip {} \;
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ../*/bin/* .
+ln -s ${TOOLS}/$RISCV_GNU_TOOLCHAIN_NAME/bin/* .
 
