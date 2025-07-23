@@ -8,7 +8,7 @@ export PATH=$CARGO_HOME/bin:$PATH
 rustup default stable
 
 mkdir -p "${TOOLS}/${VERYL_NAME}/bin"
-cargo install verylup
+cargo install verylup --features no-self-update
 mv $CARGO_HOME/bin/verylup "${TOOLS}/${VERYL_NAME}/bin"
 
 # Make symlinks for binaries
