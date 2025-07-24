@@ -7,10 +7,11 @@
 
 ERROR=0
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RESULT=/foss/designs/runs/${RAND}/result_vacask.log
 
 # Run the simulations
-vacask --no-output --quiet-progress $DIR/gilbert.sim > /dev/null 2>&1 || ERROR=1
-vacask --no-output --quiet-progress $DIR/toplevel.sim > /dev/null 2>&1 || ERROR=1
+vacask --no-output --quiet-progress $DIR/gilbert.sim > $RESULT 2>&1 || ERROR=1
+vacask --no-output --quiet-progress $DIR/toplevel.sim > $RESULT 2>&1 || ERROR=1
 
 # Check if there is an error in the log
 if [ $ERROR -eq 1 ]; then

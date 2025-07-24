@@ -13,7 +13,7 @@ if ! command -v iverilog >/dev/null 2>&1; then
 fi
 
 TMP=$(mktemp -d)
-LOG=$TMP/tools.log
+LOG=/foss/designs/runs/${RAND}/test_iverilog.log
 
 SRC1="/foss/examples/demo_sky130A/dig/counter.v"
 SRC2="/foss/examples/demo_sky130A/dig/counter_tb.v"

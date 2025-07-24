@@ -6,7 +6,7 @@
 # Test Chisel with a simple ALU example from Martin Schoeberl
 
 TMP=$(mktemp -d)
-LOG=$TMP/chisel.log
+LOG=/foss/designs/runs/${RAND}/chisel.log
 
 git clone --quiet --depth=1 https://github.com/schoeberl/chisel-examples.git $TMP
 cd $TMP || exit 1

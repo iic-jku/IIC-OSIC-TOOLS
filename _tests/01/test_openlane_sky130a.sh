@@ -10,7 +10,7 @@
 # We do this only for sky130A for now.
 
 if command -v openlane >/dev/null 2>&1; then
-    RESULT=/tmp/result_ol_sky130a.log
+    RESULT=/foss/designs/runs/${RAND}/result_ol_sky130a.log
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
     # Switch to sky130A PDK

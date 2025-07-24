@@ -8,7 +8,7 @@
 set -euo pipefail
 
 TMP=$(mktemp -d)
-LOG=$TMP/z2a.log
+LOG=/foss/designs/runs/${RAND}/z2a.log
 cd $TMP || exit 1
 
 git clone --recursive https://github.com/mattvenn/z2a-course-regressions.git > "$LOG" 2>&1

@@ -12,7 +12,7 @@ import gdsfactory
 import gdspy
 import hdl21
 import najaeda
-import openlane
+import librelane
 # import openram
 import pygmid
 import PySpice

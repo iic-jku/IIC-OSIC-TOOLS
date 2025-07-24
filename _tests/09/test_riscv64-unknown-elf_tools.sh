@@ -32,7 +32,7 @@ shift $((OPTIND-1))
 
 
 TMP=$(mktemp -d)
-LOG=$TMP/tools.log
+LOG=/foss/designs/runs/${RAND}/riscv_elf_tools.log
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 

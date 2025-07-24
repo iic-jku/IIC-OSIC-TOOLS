@@ -7,7 +7,7 @@
 # this for IHP SG13G2 only
 
 WORK_DIR=$(mktemp -d)
-RESULT=$WORK_DIR/result_orfs_sg13g2.log
+RESULT=/foss/designs/runs/${RAND}/result_orfs_sg13g2.log
 FLOW_HOME=$WORK_DIR/orfs/flow
 
 mkdir -p $WORK_DIR && cd $WORK_DIR || exit 1

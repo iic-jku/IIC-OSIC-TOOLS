@@ -16,6 +16,9 @@ CONTAINER_NAME=iic-osic-tools_test${RAND}
 CMD=_run_tests_${RAND}.sh
 WORKDIR=/foss/designs
 
+
+mkdir -p "runs/${RAND}"
+
 # Check if newer image is available and pull if needed
 docker pull --quiet "$FULL_TAG" > /dev/null
 
@@ -38,7 +41,7 @@ EOL
 chmod +x "$CMD"
 
 # Now run the actual tests
-docker run -it --rm --name "$CONTAINER_NAME" --user "$(id -u):$(id -g)" -e DISPLAY= -v "$PWD":$WORKDIR:rw "$FULL_TAG" -s "$WORKDIR/$CMD"
+docker run -it --rm --name "$CONTAINER_NAME" --user "$(id -u):$(id -g)" -e DISPLAY= -e RAND=$RAND -v "$PWD":$WORKDIR:rw "$FULL_TAG" -s "$WORKDIR/$CMD"
 
 # Cleanup
 rm -f "$CMD"

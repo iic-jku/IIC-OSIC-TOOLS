@@ -46,7 +46,7 @@ done
 shift $((OPTIND-1))
 
 TMP=$(mktemp -d)
-LOG=$TMP/tools.log
+LOG=/foss/designs/runs/${RAND}/pulp.log
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cp $DIR/Bender.yml $TMP/
@@ -63,7 +63,7 @@ cd $TMP/
 
 [ $DEBUG -eq 1 ] && echo "[INFO] Testing sv2v..."
 {
-    test "sv2v --write top_sv2v.v top_svase.sv"
+    test "sv2v --write top_sv2v.v top.sv"
     test "yosys -Q -q -p \"read_verilog top_sv2v.v; synth;\""
 } &> $LOG
 
