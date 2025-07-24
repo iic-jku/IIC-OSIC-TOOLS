@@ -74,7 +74,7 @@ apt install -y \
         xfce4-terminal \
         xterm
 
-# need to switch Java-17 (for Chisel)
+# need to switch Java-17 (for Chisel, as there is an incompatibility with java-21 and the scala version used by chisel)
 update-java-alternatives --set "$(update-java-alternatives --list | grep 1.17 | cut -d' ' -f1)"
 
 # remove light-locker and other power management stuff, otherwise VNC session locks up
