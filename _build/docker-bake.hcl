@@ -290,13 +290,6 @@ target "open_pdks" {
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-open_pdks-latest"]
 }
 
-target "riscv-pk" {
-  inherits = ["base-tool"]
-  dockerfile = "images/riscv-pk/Dockerfile"
-  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-riscv-pk-latest"]
-  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-riscv-pk-latest"]
-}
-
 target "vacask" {
   inherits = ["base-tool"]
   dockerfile = "images/vacask/Dockerfile"
@@ -351,7 +344,7 @@ group "tools-level-1" {
 # Group targets for tools-level-2
 group "tools-level-2" {
   targets = [
-    "open_pdks", "riscv-pk", "vacask", "ghdl-yosys-plugin", "slang-yosys-plugin", "spike"
+    "open_pdks", "vacask", "ghdl-yosys-plugin", "slang-yosys-plugin", "spike"
   ]
   # "xyce-xdm" disabled
 }
