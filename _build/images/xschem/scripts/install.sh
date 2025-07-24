@@ -11,5 +11,5 @@ make install
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${XSCHEM_NAME}/*/bin/* .
+ln -s ${TOOLS}/${XSCHEM_NAME}/bin/* .
 
