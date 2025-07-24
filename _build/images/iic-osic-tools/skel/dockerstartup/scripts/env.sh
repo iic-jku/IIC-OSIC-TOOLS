@@ -47,10 +47,7 @@ function _add_resolution () {
 if [ -z ${FOSS_INIT_DONE+x} ]; then
     _path_add_tool          "kactus2"
     _path_add_tool          "klayout"
-    _path_add_tool_custom   "libman"
     _path_add_tool_custom   "osic-multitool"
-    _path_add_tool_custom   "rftoolkit/bin"
-    _path_add_tool_custom   "yosys/bin"
 	
     export SAK=$TOOLS/sak
     export PATH=$TOOLS/bin:$SAK:/usr/local/sbin:$PATH
