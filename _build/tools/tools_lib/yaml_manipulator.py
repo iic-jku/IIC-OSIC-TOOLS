@@ -26,10 +26,17 @@ def metadata_load(tag, url_fstr):
 
 def metadata_parse(raw_data):
     data = yaml.load(raw_data, Loader=Loader)
+    normalized_set = set()
+    for x in data:
+        norm_str = x['name'].replace('-','_')
+        if norm_str in normalized_set:
+            print("WARNING: there are similar entries in the input yaml file ('-' and '_' are interpreted as the same symbol)")
+            break
+        normalized_set.add(norm_str)
     return data
 
 def get_revision(data, tool_name):
-    result = [x for x in data if x['name'] == tool_name]
+    result = [x for x in data if x['name'].replace('-', '_') == tool_name.replace('-', '_')]
     if len(result) < 1:
         return None
     if len(result) > 1:

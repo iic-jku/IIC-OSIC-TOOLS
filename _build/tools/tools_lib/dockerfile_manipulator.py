@@ -2,12 +2,17 @@
 # This greps all those lines and gives a list of stagenames
 
 def get_existing_tools(df_contents):
-    tools = list()
+    tools = set()  # Use a set to avoid duplicates
     for line in df_contents:
         elements = line.split()
-        if len(elements)>=4 and elements[0].lower() == "from":
-            tools.append(elements[3])
-    return tools
+        if len(elements) == 2 and elements[0].upper() == "ARG":
+            arg_str = elements[1].split("=")[0].strip()
+            # Extract the tool name from the ARG definition
+            if arg_str.endswith("REPO_COMMIT"):
+                # Assuming the format is like: ARG REPO_COMMIT_TOOL_NAME
+                tool_name = arg_str.removesuffix("_REPO_COMMIT").lower()
+                tools.add(tool_name)
+    return list(tools)  # Convert back to list for consistency
 
 def update_revision(df_contents, tool_name, new_rev):
     search_str=tool_name.upper().replace("-", "_") + "_REPO_COMMIT"
