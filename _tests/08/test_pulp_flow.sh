@@ -7,6 +7,10 @@
 # - bender: https://github.com/pulp-platform/bender
 # - sv2v:   https://github.com/zachjs/sv2v
 
+if [ -z "${RAND}" ]; then
+    RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
+fi
+
 # test if a command finishes successfully
 test() {
     local cmd="$1"
@@ -45,9 +49,11 @@ while getopts "d" flag; do
 done
 shift $((OPTIND-1))
 
-TMP=$(mktemp -d)
+TMP=/foss/designs/runs/${RAND}
 LOG=/foss/designs/runs/${RAND}/pulp.log
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+mkdir -p $TMP
 
 cp $DIR/Bender.yml $TMP/
 cp $DIR/*.sv       $TMP/
