@@ -2,5 +2,8 @@
     "DESIGN_NAME": "counter",
     "VERILOG_FILES": "dir::counter.v",
     "CLOCK_PORT": "clk_i",
-    "CLOCK_PERIOD": 20
+    "CLOCK_PERIOD": 20,
+    "PNR_SDC_FILE": "dir::impl.sdc",
+    "SIGNOFF_SDC_FILE": "dir::signoff.sdc",
+    "IO_PIN_ORDER_CFG": "dir::pin_order.cfg"
 }
