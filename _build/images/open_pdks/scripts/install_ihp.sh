@@ -49,6 +49,6 @@ find . -name "*.mdm" -print0 | xargs -0 rm -rf
 # remove measurement folder to save space
 rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
 
-#FIXME gzip Liberty (.lib) files
-#FIXME cd "$PDK_ROOT/$PDK/libs.ref"
-#FIXME find . -name "*.lib" -exec gzip {} \;
+# gzip Liberty (.lib) files
+cd "$PDK_ROOT/$PDK/libs.ref"
+find . -name "*.lib" -exec gzip {} \;

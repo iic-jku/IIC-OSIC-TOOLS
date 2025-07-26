@@ -19,9 +19,16 @@ rm -rf "$PDK_ROOT"/ciel/sky130/versions/*/sky130B
 rm -rf "$PDK_ROOT"/sky130B
 
 if [ -d "$PDK_ROOT/sky130A" ]; then
-	#FIXME gzip Liberty (.lib) files
-	#FIXME cd "$PDK_ROOT/sky130A/libs.ref"
-	#FIXME find . -name "*.lib" -exec gzip {} \;
+	# gzip Liberty (.lib) files
+	cd "$PDK_ROOT/sky130A/libs.ref"
+	find . -name "*.lib" -exec gzip {} \;
+	find "$PDK_ROOT/sky130A/libs.tech/openlane" -type f | while read -r file; do
+  		# check if the file contains a reference to a .lib file
+  		if grep -q '\.lib' "$file"; then
+    		# replace all occurrences of .lib with .lib.gz
+    		sed -i 's/\.lib\b/\.lib.gz/g' "$file"
+  		fi
+	done
 
 	# create compact model files
     cd "$PDK_ROOT/sky130A/libs.tech/ngspice" || exit 1
@@ -45,9 +52,16 @@ if [ -d "$PDK_ROOT/sky130A" ]; then
 fi
 
 if [ -d "$PDK_ROOT/sky130B" ]; then
-	#FIXME gzip Liberty (.lib) files
-	#FIXME cd "$PDK_ROOT/sky130B/libs.ref"
-	#FIXME find . -name "*.lib" -exec gzip {} \;
+	# gzip Liberty (.lib) files
+	d "$PDK_ROOT/sky130B/libs.ref"
+	find . -name "*.lib" -exec gzip {} \;
+	find "$PDK_ROOT/sky130B/libs.tech/openlane" -type f | while read -r file; do
+  		# check if the file contains a reference to a .lib file
+  		if grep -q '\.lib' "$file"; then
+    		# replace all occurrences of .lib with .lib.gz
+    		sed -i 's/\.lib\b/\.lib.gz/g' "$file"
+  		fi
+	done
 
 	# create compact model files
 	cd "$PDK_ROOT/sky130B/libs.tech/ngspice" || exit 1
@@ -88,9 +102,16 @@ git clone https://github.com/martinjankoehler/globalfoundries-pdk-libs-gf180mcu_
 git clone https://github.com/mabrains/globalfoundries-pdk-libs-gf180mcu_fd_pr.git /tmp/glofo-mabrains
 
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
-	#FIXME gzip Liberty (.lib) files
-	#FIXME cd "$PDK_ROOT/gf180mcuD/libs.ref"
-	#FIXME find . -name "*.lib" -exec gzip {} \;
+	# gzip Liberty (.lib) files
+	cd "$PDK_ROOT/gf180mcuD/libs.ref"
+	find . -name "*.lib" -exec gzip {} \;
+	find "$PDK_ROOT/gf180mcuD/libs.tech/openlane" -type f | while read -r file; do
+  		# check if the file contains a reference to a .lib file
+  		if grep -q '\.lib' "$file"; then
+    		# replace all occurrences of .lib with .lib.gz
+    		sed -i 's/\.lib\b/\.lib.gz/g' "$file"
+  		fi
+	done
 
 	cd "$PDK_ROOT/gf180mcuD/libs.tech/ngspice" || exit 1
 	
@@ -102,17 +123,18 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	find . -name "testing" -print0 | xargs -0 rm -rf
 
 	# fix test schematic relative paths
-	sed -i 's/{test_/{tests\/test_/g' $PDK_ROOT/gf180mcuD/libs.tech/xschem/tests/0_top.sch
+	sed -i 's/{test_/{tests\/test_/g' "$PDK_ROOT"/gf180mcuD/libs.tech/xschem/tests/0_top.sch
 
 	# fix missing PDK variant in path definitions for in xschemrc
-	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuD/libs.tech/ngspice|' $PDK_ROOT/gf180mcuD/libs.tech/xschem/xschemrc
+	# shellcheck disable=SC2016
+	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuD/libs.tech/ngspice|' "$PDK_ROOT"/gf180mcuD/libs.tech/xschem/xschemrc
 
 	# Replace pymacro with working pcells.
-	rm -rf $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros
-	cp -a /tmp/glofo-mjk/cells/klayout/pymacros $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros
+	rm -rf "$PDK_ROOT"/gf180mcuD/libs.tech/klayout/tech/pymacros
+	cp -a /tmp/glofo-mjk/cells/klayout/pymacros "$PDK_ROOT"/gf180mcuD/libs.tech/klayout/tech/pymacros
 
-	cp -r /tmp/glofo-mabrains/rules/klayout/macros/ $PDK_ROOT/gf180mcuD/libs.tech/klayout/
-	chmod -R 777 $PDK_ROOT/gf180mcuD/libs.tech/klayout/macros
+	cp -r /tmp/glofo-mabrains/rules/klayout/macros/ "$PDK_ROOT"/gf180mcuD/libs.tech/klayout/
+	chmod -R 777 "$PDK_ROOT"/gf180mcuD/libs.tech/klayout/macros
 fi
 
 rm -rf /tmp/glofo-mjk
