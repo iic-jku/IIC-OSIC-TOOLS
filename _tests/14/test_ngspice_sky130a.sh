@@ -12,7 +12,8 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source sak-pdk-script.sh gf180mcuD > /dev/null
 # Run the simulations
-ngspice -b $DIR/inv_tb.spice > /dev/null 2>&1 || ERROR=1
+ngspice -b "$DIR/inv_tb.spice" > /dev/null 2>&1 || ERROR=1
+rm -f "$DIR/inv_tb.raw"
 # Check if there is an error in the log
 if [ $ERROR -eq 1 ]; then
     echo "[ERROR] Test <ngspice with gf180mcuD> FAILED."
