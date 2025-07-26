@@ -8,7 +8,7 @@
 | 04       | Test of LibreLane with gf180mcuD                                  |
 | 05       | Test of ngspice with SG13G2                                       |
 | 06       | Test of ngspice with sky130A                                      |
-| 07       | Test of OpenLane2 with sky130A and VHDL                           |
+| 07       | Test of LibreLane with sky130A and VHDL                           |
 | 08       | Test of PULP flow                                                 |
 | 09       | Test of RISC-V toolchain                                          |
 | 10       | Test of OpenROAD flow scripts with SG13G2                         |
