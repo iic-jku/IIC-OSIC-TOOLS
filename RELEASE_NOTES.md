@@ -4,12 +4,15 @@ This document summarizes the most important changes of the individual releases o
 
 ## 2025.07
 
+* Complete overhaul of image build sripts: We now use a multistage build using a local registry and individual tool images to speed up the build process.
+* (Re-)adding `openems`.
 * (Re-)adding `fault`.
 * (Re-)adding `hdl21` and `vlsirtools`.
+* Adding `librelane` (and removing `openlane`).
 * Adding `kactus2`.
 * Adding `najaeda`.
-* Adding `veryl`.
-* Adding `vacask`.
+* Adding `verylup` (so users can install `veryl`).
+* Adding `vacask`, a modern analog circuit simulator.
 * Adding support for Docker Desktop on Linux in `start_x.sh`.
 * Adding support of `gf180mcuD` in the `sak-drc.sh`, `sak-lvs.sh`, and `sak-pex.sh` scripts.
 * Adding `charlib` for characterization of standard cells.
@@ -18,6 +21,7 @@ This document summarizes the most important changes of the individual releases o
 * Switching from `volare` to `ciel` for PDK management.
 * Switching from `openvaf` to `openvaf-reloaded`.
 * Update various tool versions.
+* Reduce image size by removing the measurement folder from the IHP PDK, optimizing RISC-V libraries, and a few compile optimizations.
 * Remove (temporarily) `klayout-pex` due to incompatibility with some dependencies.
 * Remove `gf180mcuC` technology flavor to decrease image size.
 * Remove (temporarily) `openram` (re-add later when PyPi package is updated).
