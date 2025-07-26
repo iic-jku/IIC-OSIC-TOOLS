@@ -122,14 +122,16 @@ alias lmagic='MAGTYPE=maglef magic'
 alias k='klayout'
 alias ke='klayout -e'
 
-alias openlane='openlane --manual-pdk'
+alias librelane='librelane --manual-pdk'
 alias surfer='LIBGL_ALWAYS_INDIRECT=0 surfer'
 # IHP-SG13G2 needs this plugin, using an alias seems to the the only proper solution for now
 alias xyce='xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so'
 alias Xyce='Xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so'
 
 # Show hint that OpenLane(1) has been removed
-alias flow.tcl='printf "[INFO] OpenLane(1) has been depreciated.\n[INFO] Please use OpenLane2 (start with <openlane>).\n"'
+alias flow.tcl='printf "[INFO] OpenLane has been depreciated.\n[INFO] Please use LibreLane (start with <librelane>).\n"'
+# Show hint that OpenLane(2) has been removed
+alias openlane='printf "[INFO] OpenLane2 has been depreciated.\n[INFO] Please use LibreLane (start with <librelane>).\n"'
 
 alias iic-pdk='source iic-pdk-script.sh'
 alias sak-pdk='source sak-pdk-script.sh'
