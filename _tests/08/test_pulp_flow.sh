@@ -15,24 +15,31 @@ fi
 test() {
     local cmd="$1"
     echo "Running: $cmd"
-    eval "$cmd" &>> $LOG
+    eval "$cmd" &>> "$LOG"
+    # shellcheck disable=SC2181
     if [ $? -ne 0 ]; then
-        echo "[ERROR] '$cmd' failed" >> $LOG
+        echo "[ERROR] '$cmd' failed" >> "$LOG"
     fi
-    echo -e "\n\n\n" >> $LOG
+    echo -e "\n\n\n" >> "$LOG"
 }
 
 # test if a command fails
 test_fail() {
+    # shellcheck disable=SC2317
     local cmd="$1"
+    # shellcheck disable=SC2317
     echo "Running: $cmd"
-    eval "$cmd" &>> $LOG
+    # shellcheck disable=SC2317
+    eval "$cmd" &>> "$LOG"
+    # shellcheck disable=SC2317
+    # shellcheck disable=SC2181
     if [ $? -eq 0 ]; then
-        echo "[ERROR] '$cmd' was expected to fail but succeeded" >> $LOG
+        echo "[ERROR] '$cmd' was expected to fail but succeeded" >> "$LOG"
     else
-        echo "[INFO] '$cmd' failed as expected" >> $LOG
+        echo "[INFO] '$cmd' failed as expected" >> "$LOG"
     fi
-    echo -e "\n\n\n" >> $LOG
+    # shellcheck disable=SC2317
+    echo -e "\n\n\n" >> "$LOG"
 }
 
 # if debug mode is enabled outout is verbose, otherwise not
@@ -53,11 +60,11 @@ TMP=/foss/designs/runs/${RAND}
 LOG=/foss/designs/runs/${RAND}/pulp.log
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-mkdir -p $TMP
+mkdir -p "$TMP"
 
-cp $DIR/Bender.yml $TMP/
-cp $DIR/*.sv       $TMP/
-cd $TMP/
+cp "$DIR"/Bender.yml "$TMP"/
+cp "$DIR"/*.sv       "$TMP"/
+cd "$TMP"/ || exit
 
 [ $DEBUG -eq 1 ] && echo "[INFO] Testing bender..."
 {
@@ -65,15 +72,15 @@ cd $TMP/
     test "bender checkout"
     test "bender sources -f > error.json"
     test "bender sources -f -t test_target > top.json"
-} &> $LOG
+} &> "$LOG"
 
 [ $DEBUG -eq 1 ] && echo "[INFO] Testing sv2v..."
 {
     test "sv2v --write top_sv2v.v top.sv"
     test "yosys -Q -q -p \"read_verilog top_sv2v.v; synth;\""
-} &> $LOG
+} &> "$LOG"
 
-if grep -q "\[ERROR\]" $LOG; then
+if grep -q "\[ERROR\]" "$LOG"; then
     echo "[ERROR] Test <PULP-flow> FAILED! Check log at <$LOG>."
     exit 1
 else
