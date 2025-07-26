@@ -22,9 +22,9 @@ if command -v librelane >/dev/null 2>&1; then
     # shellcheck source=/dev/null
     source sak-pdk-script.sh sky130A sky130_fd_sc_hd > /dev/null
     # Run the LibreLane smoke test
-    mkdir -p $WORKDIR
-    cp "$DIR"/* $WORKDIR
-    librelane --manual-pdk $WORKDIR/counter.json > $LOG
+    mkdir -p "$WORKDIR"
+    cp "$DIR"/* "$WORKDIR"
+    librelane --manual-pdk "$WORKDIR/counter.json" > "$LOG"
     # Check if there is an error in the log
     if grep -q "ERROR" "$LOG"; then
         echo "[ERROR] Test <LibreLane smoke-test with sky130A> FAILED. Check the log <$LOG>."
