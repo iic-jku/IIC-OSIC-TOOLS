@@ -6,7 +6,7 @@
 # Run all tests (checks) in the subdirectories using a specified Docker image.
 
 if [ $# -ne 1 ]; then
-    echo "[ERROR] Please specify the full image tag to test! (e.G.: hpretl/iic-osic-tools:latest)"
+    echo "[ERROR] Please specify the full image tag to test! (e.g.: hpretl/iic-osic-tools:latest)"
     exit 1
 fi
 
