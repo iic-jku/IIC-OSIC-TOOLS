@@ -18,12 +18,12 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	edalize==0.6.1 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.3 \
-	gdsfactory==9.11.3 \
+	gdsfactory==9.11.4 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.6.1 \
 	lctime==0.0.25 \
-	librelane==3.0.0.dev26 \
-	najaeda==0.1.25 \
+	librelane==3.0.0.dev27 \
+	najaeda==0.2.1 \
 	pygmid==1.2.12 \
 	pyrtl==0.11.3 \
 	pyuvm==3.0.0 \
