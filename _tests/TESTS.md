@@ -2,7 +2,7 @@
 
 | Test No. | Description                                                       |
 | -------- | ------------------------------------------------------------------|
-| 01       | Test of OpenLane2 with sky130A                                    |
+| 01       | Test of LibreLane with sky130A                                    |
 | 02       | Test of DRC and LVS with sky130A                                  |
 | 03       | Test import of Python packages                                    |
 | 04       | Test of OpenLane2 with gf180mcuD                                  |
