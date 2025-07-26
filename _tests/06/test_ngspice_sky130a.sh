@@ -12,10 +12,10 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source sak-pdk-script.sh sky130A > /dev/null
 # Run the simulations
-ngspice -b $DIR/test_nmos.spice > /dev/null 2>&1 || ERROR=1
-ngspice -b $DIR/test_pmos.spice > /dev/null 2>&1 || ERROR=1
-ngspice -b $DIR/test_analog.spice > /dev/null 2>&1 || ERROR=1
-ngspice -b $DIR/test_boris.spice > /dev/null 2>&1 || ERROR=1
+ngspice -b $DIR/ngspice_nmos.spice > /dev/null 2>&1 || ERROR=1
+ngspice -b $DIR/ngspice_pmos.spice > /dev/null 2>&1 || ERROR=1
+ngspice -b $DIR/ngspice_analog.spice > /dev/null 2>&1 || ERROR=1
+ngspice -b $DIR/ngspice_boris.spice > /dev/null 2>&1 || ERROR=1
 # Check if there is an error in the log
 if [ $ERROR -eq 1 ]; then
     echo "[ERROR] Test <ngspice with sky130a> FAILED."
