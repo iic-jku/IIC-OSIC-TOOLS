@@ -5,12 +5,23 @@
 #
 # Test Veryl with a simple example
 
+if [ -z "${RAND}" ]; then
+    RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
+fi
+
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TEMP=$(mktemp -d)
+TEMP=/foss/designs/runs/${RAND}
+mkdir -p "$TEMP"
 cd "$TEMP" || exit 1
 
+# Install Veryl if not already installed
+if ! command -v veryl >/dev/null 2>&1; then
+    export PATH="$PATH:$XDG_DATA_HOME/veryl/toolchains/latest"
+    verylup --quiet install latest
+fi
+
 veryl --quiet new test > /dev/null
-cp $DIR/HalfAdder.veryl $TEMP/test/src
+cp "$DIR/HalfAdder.veryl" "$TEMP/test/src"
 cd test || exit 1
 
 veryl --quiet build > /dev/null
