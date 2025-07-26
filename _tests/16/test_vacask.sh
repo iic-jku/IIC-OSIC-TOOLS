@@ -5,13 +5,20 @@
 #
 # Test VACASK simulation with simple examples.
 
+if [ -z "${RAND}" ]; then
+    RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
+fi
+
 ERROR=0
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKDIR=/foss/designs/runs/${RAND}
 RESULT=/foss/designs/runs/${RAND}/result_vacask.log
 
+mkdir -p "$WORKDIR"
+
 # Run the simulations
-vacask --no-output --quiet-progress $DIR/gilbert.sim > $RESULT 2>&1 || ERROR=1
-vacask --no-output --quiet-progress $DIR/toplevel.sim > $RESULT 2>&1 || ERROR=1
+vacask --no-output --quiet-progress "$DIR/gilbert.sim" > "$RESULT" 2>&1 || ERROR=1
+vacask --no-output --quiet-progress "$DIR/toplevel.sim" > "$RESULT" 2>&1 || ERROR=1
 
 # Check if there is an error in the log
 if [ $ERROR -eq 1 ]; then
@@ -22,5 +29,5 @@ else
 fi
 
 # Cleanup
-rm -f *.raw *.py
+rm -f -- *.raw *.py
 exit 0
