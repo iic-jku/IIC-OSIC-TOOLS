@@ -5,6 +5,10 @@
 #
 # Smoke test for the Icarus Verilog (iVerilog) tool
 
+if [ -z "${RAND}" ]; then
+    RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
+fi
+
 set -euo pipefail
 
 if ! command -v iverilog >/dev/null 2>&1; then
@@ -12,8 +16,10 @@ if ! command -v iverilog >/dev/null 2>&1; then
     exit 1
 fi
 
-TMP=$(mktemp -d)
+TMP=/foss/designs/runs/${RAND}
 LOG=/foss/designs/runs/${RAND}/test_iverilog.log
+
+mkdir -p "$TMP"
 
 SRC1="/foss/examples/demo_sky130A/dig/counter.v"
 SRC2="/foss/examples/demo_sky130A/dig/counter_tb.v"
