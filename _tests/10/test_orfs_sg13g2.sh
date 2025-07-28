@@ -10,8 +10,8 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
-WORK_DIR=/foss/designs/runs/${RAND}
-RESULT=/foss/designs/runs/${RAND}/result_orfs_sg13g2.log
+WORK_DIR=/foss/designs/runs/${RAND}/10
+RESULT=/foss/designs/runs/${RAND}/10/result_orfs_sg13g2.log
 FLOW_HOME=$WORK_DIR/orfs/flow
 
 mkdir -p "$WORK_DIR" && cd "$WORK_DIR" || exit 1

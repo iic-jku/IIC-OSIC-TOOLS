@@ -56,8 +56,8 @@ while getopts "d" flag; do
 done
 shift $((OPTIND-1))
 
-TMP=/foss/designs/runs/${RAND}
-LOG=/foss/designs/runs/${RAND}/pulp.log
+TMP=/foss/designs/runs/${RAND}/08
+LOG=/foss/designs/runs/${RAND}/08/pulp.log
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 mkdir -p "$TMP"

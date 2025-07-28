@@ -14,8 +14,8 @@ if [ -z "${RAND}" ]; then
 fi
 
 if command -v librelane >/dev/null 2>&1; then
-    LOG=/foss/designs/runs/${RAND}/result_ll_sky130a.log
-    WORKDIR=/foss/designs/runs/${RAND}
+    LOG=/foss/designs/runs/${RAND}/01/result_ll_sky130a.log
+    WORKDIR=/foss/designs/runs/${RAND}/01
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
     # Switch to sky130A PDK

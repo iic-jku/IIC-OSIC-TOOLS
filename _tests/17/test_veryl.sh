@@ -10,7 +10,7 @@ if [ -z "${RAND}" ]; then
 fi
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TEMP=/foss/designs/runs/${RAND}
+TEMP=/foss/designs/runs/${RAND}/17
 mkdir -p "$TEMP"
 cd "$TEMP" || exit 1
 

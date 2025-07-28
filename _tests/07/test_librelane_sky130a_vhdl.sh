@@ -14,17 +14,17 @@ if [ -z "${RAND}" ]; then
 fi
 
 if command -v librelane >/dev/null 2>&1; then
-    LOG=/foss/designs/runs/${RAND}/result_ll_sky130a.log
-    WORKDIR=/foss/designs/runs/${RAND}
+    LOG=/foss/designs/runs/${RAND}/07/result_ll_sky130a.log
+    WORKDIR=/foss/designs/runs/${RAND}/07
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
     # Switch to sky130A PDK
     # shellcheck source=/dev/null
     source sak-pdk-script.sh sky130A sky130_fd_sc_hd > /dev/null
     # Run the LibreLane smoke test
-    mkdir -p $WORKDIR
-    cp "$DIR"/* $WORKDIR
-    librelane --flow VHDLClassic --manual-pdk $WORKDIR/counter.json > $LOG
+    mkdir -p "$WORKDIR"
+    cp "$DIR"/* "$WORKDIR"
+    librelane --flow VHDLClassic --manual-pdk "$WORKDIR"/counter.json > "$LOG"
     # Check if there is an error in the log
     if grep -q "ERROR" "$LOG"; then
         echo "[ERROR] Test <LibreLane smoke-test using VHDL with sky130A> FAILED. Check the log <$LOG>."

@@ -5,15 +5,21 @@
 #
 # Test if ngspice simulations for gf180mcuD PDK run.
 
+if [ -z "${RAND}" ]; then
+    RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
+fi
+
 ERROR=0
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKDIR=/foss/designs/runs/${RAND}/14
+
+mkdir -p "$WORKDIR"
 
 # Switch to gf180mcuD PDK
 # shellcheck source=/dev/null
 source sak-pdk-script.sh gf180mcuD > /dev/null
 # Run the simulations
-ngspice -b "$DIR/inv_tb.spice" > /dev/null 2>&1 || ERROR=1
-rm -f "$DIR/inv_tb.raw"
+ngspice --rawfile="$WORKDIR"/run1.raw --output="$WORKDIR"/run1.log -b "$DIR/inv_tb.spice" > /dev/null 2>&1 || ERROR=1
 # Check if there is an error in the log
 if [ $ERROR -eq 1 ]; then
     echo "[ERROR] Test <ngspice with gf180mcuD> FAILED."

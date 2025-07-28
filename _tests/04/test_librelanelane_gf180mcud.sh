@@ -14,8 +14,8 @@ if [ -z "${RAND}" ]; then
 fi
 
 if command -v librelane >/dev/null 2>&1; then
-    LOG=/foss/designs/runs/${RAND}/result_ll_sky130a.log
-    WORKDIR=/foss/designs/runs/${RAND}
+    LOG=/foss/designs/runs/${RAND}/04/result_ll_sky130a.log
+    WORKDIR=/foss/designs/runs/${RAND}/04
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
     # Switch to gf180mcuD PDK
@@ -23,9 +23,9 @@ if command -v librelane >/dev/null 2>&1; then
     source sak-pdk-script.sh gf180mcuD gf180mcu_fd_sc_mcu7t5v0 > /dev/null
 
     # Run the LibreLane smoke test
-    mkdir -p $WORKDIR
-    cp "$DIR"/* $WORKDIR
-    librelane --manual-pdk $WORKDIR/counter.json > $LOG
+    mkdir -p "$WORKDIR"
+    cp "$DIR"/* "$WORKDIR"
+    librelane --manual-pdk "$WORKDIR"/counter.json > "$LOG"
     # Check if there is an error in the log
     if grep -q "ERROR" "$LOG"; then
         echo "[ERROR] Test <LibreLane smoke-test with gf180mcuD> FAILED. Check the log <$LOG>."

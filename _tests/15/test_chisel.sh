@@ -9,8 +9,8 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
-TMP=/foss/designs/runs/${RAND}
-LOG=/foss/designs/runs/${RAND}/chisel.log
+TMP=/foss/designs/runs/${RAND}/15
+LOG=/foss/designs/runs/${RAND}/15/chisel.log
 
 mkdir -p "$TMP"
 

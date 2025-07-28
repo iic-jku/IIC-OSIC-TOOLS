@@ -16,8 +16,8 @@ if ! command -v iverilog >/dev/null 2>&1; then
     exit 1
 fi
 
-TMP=/foss/designs/runs/${RAND}
-LOG=/foss/designs/runs/${RAND}/test_iverilog.log
+TMP=/foss/designs/runs/${RAND}/12
+LOG=/foss/designs/runs/${RAND}/12/test_iverilog.log
 
 mkdir -p "$TMP"
 

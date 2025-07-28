@@ -11,8 +11,8 @@ fi
 
 set -euo pipefail
 
-TMP=/foss/designs/runs/${RAND}
-LOG=/foss/designs/runs/${RAND}/z2a.log
+TMP=/foss/designs/runs/${RAND}/13
+LOG=/foss/designs/runs/${RAND}/13/z2a.log
 mkdir -p "$TMP"
 cd "$TMP" || exit 1
 
