@@ -53,6 +53,17 @@ Since the OpenROAD and ORFS version are tightly interlinked with regular interfa
 git checkout $(cat $TOOLS/openroad-latest/ORFS_COMMIT)
 ```
 
+### SiliconCompiler
+
+SiliconCompiler also requires a recent version of OpenROAD and OpenSTA. Before invoking SiliconCompiler, you
+need to update your `$PATH`:
+
+```bash
+export PATH=${TOOLS}/openroad-latest/bin:${PATH}
+```
+
+See: <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/158>
+
 ### Surfer crashing
 
 As of image `2025.01` Surfer has been added. Surfer is known to crash on quite a few platforms due to issues with OpenGL drivers. If Surfer works on your platform, great. If Surfer does crash then this is not good, but there is currently no solution available. Please do not file bug reports. As soon as we are aware of a solution for these crashes we will implement the fixes.
