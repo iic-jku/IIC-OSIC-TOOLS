@@ -19,3 +19,4 @@
 | 15       | Test Chisel with a simple example ALU                             |
 | 16       | Test VACASK with a simple example                                 |
 | 17       | Test of Veryl                                                     |
+| 18       | Test of LibreLane with ihp-sg13g2                                 |
