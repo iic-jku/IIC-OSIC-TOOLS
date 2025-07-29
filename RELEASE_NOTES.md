@@ -20,6 +20,7 @@ This document summarizes the most important changes of the individual releases o
 * Adding SBT for Chisel.
 * Switching from `volare` to `ciel` for PDK management.
 * Switching from `openvaf` to `openvaf-reloaded`.
+* `librelane` is now supported for `ihp-sg3g2`.
 * Update various tool versions.
 * Reduce image size by removing the measurement folder from the IHP PDK, optimizing RISC-V libraries, and a few compile optimizations.
 * Remove (temporarily) `klayout-pex` due to incompatibility with some dependencies.
