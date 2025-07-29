@@ -4,6 +4,54 @@
 
 ## Details for Developers and Contributors
 
+### Quick Start Instructions for Using new Build Setup
+
+#### Step 1: Create builders
+
+```bash
+./builder-create.sh
+```
+
+If the username is different on the build machines from the local machine, or different build machines should be used, then a `BUILDER_STRS` can be supplied:
+
+```bash
+BUILDER_STRS="host=ssh://$USER@buildx86,host=ssh://$USER@buildaarch"
+```
+
+The builders use hostnames `buildx86` (for `x86_64`/`amd64` build) and `buildaarch` (for `aarch64`/`arm64` build), they need to be able to be reached by passwordless SSH.
+
+To use a local image from a registry without https, the following entry has to be added to the Docker configuration file (e.g., `/etc/docker/daemon.json`):
+
+```json
+{
+  "insecure-registries": ["registry.iic.jku.at:5000"]
+}
+```
+
+#### Step 2: Build the `base` image
+
+```bash
+./build-base.sh
+```
+
+#### Step 3: Build the tools
+
+```bash
+./build-tools.sh
+```
+
+#### Step 4: Build the final image and push to Docker Hub
+
+```bash
+DOCKER_PREFIXES="hpretl,registry.iic.jku.at:5000" DOCKER_TAGS="latest" ./build-images.sh
+```
+
+To test locally-stored images, the following command cqn be used:
+
+```bash
+DOCKER_USER=registry.iic.jku.at:5000 DOCKER_TAG=next ./start_shell.sh
+```
+
 ### Prerequisites
 
 * [Docker](https://docs.docker.com/engine/install/)
