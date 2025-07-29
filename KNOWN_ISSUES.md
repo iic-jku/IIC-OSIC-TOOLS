@@ -45,14 +45,15 @@ git checkout $(cat $TOOLS/openroad-latest/ORFS_COMMIT)
 ```
 
 ### SiliconCompiler
+
 SiliconCompiler also requires a recent version of OpenROAD and OpenSTA. Before invoking SiliconCompiler, you
 need to update your `$PATH`:
 
 ```bash
-export PATH=$TOOLS/openroad-latest/bin:${PATH}
+export PATH=${TOOLS}/openroad-latest/bin:${PATH}
 ```
 
-See: https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/158
+See: <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/158>
 
 ### Surfer crashing
 
