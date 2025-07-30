@@ -22,9 +22,9 @@ else
     mkdir -p "$BASE_DIR"
     cd "$BASE_DIR"
 
-    # Download and install Miniconda
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-`uname -i`.sh -O miniconda.sh
-    bash miniconda.sh -b -p "$MINICONDA_DIR"
+    # Download and install Miniforge
+    wget -O miniforge.sh "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+    bash miniforge.sh -b -p "$MINICONDA_DIR"
 
     # Source Conda
     source "$MINICONDA_DIR/etc/profile.d/conda.sh"

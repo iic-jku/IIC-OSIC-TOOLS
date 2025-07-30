@@ -1,0 +1,14 @@
+#######################################################################
+# Setup base image
+#######################################################################
+ARG BASE_IMAGE=hpretl/iic-osic-tools:chipathon
+FROM ${BASE_IMAGE} AS base
+FROM base AS iic-osic-tools
+
+USER 0:0
+# update only the runGL.sh script
+COPY images/iic-osic-tools/skel/dockerstartup/scripts/run_GL.sh /dockerstartup/scripts/run_GL.sh
+# Allow scripts to be executed by any user
+RUN chmod a+x /dockerstartup/scripts/run_GL.sh
+
+USER 1000:1000
