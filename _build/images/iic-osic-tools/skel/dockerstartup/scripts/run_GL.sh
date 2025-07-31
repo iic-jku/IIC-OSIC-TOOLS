@@ -39,7 +39,7 @@ else
     conda install -y jupyter jupyterlab notebook nbclassic \
         jupyter_server_ydoc jupyter_server_fileid \
         numpy=1.24 matplotlib pip \
-        -c litex-hub -c conda-forge -c anaconda
+        -c litex-hub -c conda-forge
 
     # Register the kernel
     python -m ipykernel install --user --name="$ENV_NAME"
