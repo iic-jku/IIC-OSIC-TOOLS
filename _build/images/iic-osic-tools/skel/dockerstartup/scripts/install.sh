@@ -27,16 +27,6 @@ Pin: release o=LP-PPA-mozillateam
 Pin-Priority: 1001
 EOF
 
-# preparations for adding VS Code
-echo "[INFO] Adding Microsoft Repo for VS Code"
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-
-cat <<EOF >> /etc/apt/sources.list.d/vscode.list
-deb [arch=amd64,arm64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main
-EOF
-rm -f packages.microsoft.gpg
-
 # preparations for adding SBT (used for Chisel)
 echo "[INFO] Adding Scala repo for SBT"
 echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" > /etc/apt/sources.list.d/sbt.list
@@ -47,7 +37,6 @@ rm -f scalasbt-release.gpg
 
 apt update
 apt install -y \
-        code \
         dbus-x11 \
         firefox \
         gedit \
