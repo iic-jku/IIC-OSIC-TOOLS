@@ -170,11 +170,11 @@ target "openems" {
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-openems-latest"]
 }
 
-target "openroad_app" {
+target "openroad" {
   inherits = ["base-tool"]
-  dockerfile = "images/openroad_app/Dockerfile"
-  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-openroad_app-latest"]
-  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-openroad_app-latest"]
+  dockerfile = "images/openroad/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-openroad-latest"]
+  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-openroad-latest"]
 }
 
 target "padring" {
@@ -334,7 +334,7 @@ target "ngspice" {
 }
 
 # Group targets for tools-level-1
-  # Disabled: openroad_app
+  # Disabled: openroad
 group "tools-level-1" {
   targets = [
     "magic", "openvaf", "osic-multitool", "xyce", "covered", "cvc_rv", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "pulp-tools", "surelog", "surfer", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "verilator", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit"
