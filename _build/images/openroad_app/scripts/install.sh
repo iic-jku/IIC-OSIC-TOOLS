@@ -25,5 +25,4 @@ echo "$ORFS_COMMIT" > "${TOOLS}/${OPENROAD_APP_NAME}-latest/ORFS_COMMIT"
 
 # Make symlinks for binaries
 cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${OPENROAD_APP_NAME}-latest/bin/* .
-
+ln -s ${TOOLS}/${OPENROAD_APP_NAME}/bin/* .
