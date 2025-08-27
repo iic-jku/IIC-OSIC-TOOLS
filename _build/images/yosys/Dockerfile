@@ -4,7 +4,7 @@
 ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base
 FROM ${BASE_IMAGE_BUILD} AS yosys
 ARG YOSYS_REPO_URL="https://github.com/YosysHQ/yosys.git"
-ARG YOSYS_REPO_COMMIT="v0.55"
+ARG YOSYS_REPO_COMMIT="v0.56"
 ARG YOSYS_NAME="yosys"
 ARG YOSYS_EQY_REPO_URL="https://github.com/YosysHQ/eqy.git"
 ARG YOSYS_EQY_NAME="yosys_eqy"

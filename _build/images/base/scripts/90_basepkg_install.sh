@@ -12,29 +12,28 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 echo "[INFO] Install EDA packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	amaranth[builtin-yosys]==0.5.6 \
-	cace==2.8.2 \
-	ciel==2.0.3 \
+	cace==2.8.3 \
+	ciel==2.1.4 \
 	cocotb==1.9.2 \
 	edalize==0.6.1 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.3 \
-	gdsfactory==9.11.4 \
+	gdsfactory==9.12.4 \
 	gdspy==1.6.13 \
-	jsonschema2md==1.6.1 \
-	lctime==0.0.25 \
-	librelane==3.0.0.dev27 \
-	najaeda==0.2.1 \
+	jsonschema2md==1.7.0 \
+	klayout-pex==0.3.2 \
+	lctime==0.0.26 \
+	librelane==2.4.0 \
+	najaeda==0.2.8 \
 	pygmid==1.2.12 \
-	pyrtl==0.11.3 \
+	pyrtl==0.12 \
 	pyuvm==3.0.0 \
 	pyverilog==1.3.0 \
 	schemdraw[svgmath]==0.20 \
 	scikit-rf==1.8.0 \
-	siliconcompiler==0.34.2 \
-	spicelib==1.4.4 \
+	siliconcompiler==0.34.3 \
+	spicelib==1.4.5 \
 	spyci==1.0.2
-
-#FIXME	klayout-pex==0.2.7 \
 
 #echo "[INFO] Install custom OpenLane2 version"
 #pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
