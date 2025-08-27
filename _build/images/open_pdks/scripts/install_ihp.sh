@@ -22,6 +22,10 @@ if [ -d $PDK ]; then
 	mv $PDK "$PDK_ROOT/$PDK"
 fi
 
+# store git hash of installed PDK version for reference
+PDK_COMMIT=$(git ls-remote https://github.com/IHP-GmbH/IHP-Open-PDK.git | grep HEAD | cut -f 1)
+echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
+
 # compile the additional Verilog-A models
 cd "$PDK_ROOT/$PDK/libs.tech/verilog-a" || exit 1
 # ngspice
