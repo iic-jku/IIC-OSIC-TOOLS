@@ -47,12 +47,6 @@ chown -R 1000:1000 "$DESIGNS"
 git clone https://github.com/iic-jku/klayout-align-tool.git /headless/.klayout/salt/klayout-align-tool
 git clone https://github.com/iic-jku/klayout-move-tool.git /headless/.klayout/salt/klayout-move-tool
 
-# replace klayout pcells of ihpsg13g2 pdk to get an extra option for creating a guard ring
-# only temporary solution
-git clone -b test-pycells https://github.com/iic-jku/IHP-Open-PDK.git
-rm -rf /foss/pdks/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib
-cp -rf IHP-Open-PDK/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib /foss/pdks/ihp-sg13g2/libs.tech/klayout/python/
-rm -rf IHP-Open-PDK
 
 
 
