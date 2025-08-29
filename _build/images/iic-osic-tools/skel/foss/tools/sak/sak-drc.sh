@@ -61,6 +61,8 @@ if echo "$PDK" | grep -q -i "sky130"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] sky130 PDK selected."
 elif echo "$PDK" | grep -q -i "gf180mcu"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] gf180mcu PDK selected."
+elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13g2 PDK selected"
 else
 	echo "[ERROR] The PDK $PDK is not yet supported!"
 	exit $ERR_PDK_NOT_SUPPORTED
@@ -301,7 +303,12 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 	if echo "$PDK" | grep -q -i "gf180mcu"; then
 		echo "[ERROR] KLayout DRC for $PDK not yet supported!"
 		exit $ERR_PDK_NOT_SUPPORTED
-	fi	
+	fi
+
+  if echo "$PDK" | grep -q -i "ihp-sg13g2"; then
+		echo "[ERROR] KLayout DRC for $PDK not yet supported!"
+		exit $ERR_PDK_NOT_SUPPORTED
+	fi
 fi
 
 # wait for all runs to finish
