@@ -73,5 +73,9 @@ zoom_menu.max_hier_0:none;
 zoom_menu.max_hier_1:'Ctrl+F';
 zoom_menu.dec_max_hier:'-';
 zoom_menu.inc_max_hier:'+';
+sg13g2_menu.macro_in_menu_sg13g2_lvs:F11;
+sg13g2_menu.macro_in_menu_sg13g2_lvs_options:F12;
+tools_menu.drc.macro_in_menu_sg13g2_maximal:F10;
+tools_menu.drc.macro_in_menu_sg13g2_minimal:F9;
  </key-bindings>
 </config>
