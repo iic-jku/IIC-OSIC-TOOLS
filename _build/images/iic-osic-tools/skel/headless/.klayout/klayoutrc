@@ -13,6 +13,7 @@
 '@secrets.duplicate_interactive':C;
 '@secrets.paste_interactive':H;
 '@lcp_context_menu.show_all':0;
+'@lcp_context_menu.hide_all':',';
 edit_menu.cell_menu.adjust_cell_origin:O;
 edit_menu.clear_all_rulers:'Shift+K';
 edit_menu.edit_options:'Shift+E';
@@ -59,8 +60,8 @@ zoom_menu.zoom_fit:F;
 zoom_menu.zoom_fit_sel:'Alt+F';
 zoom_menu.zoom_in:'Z';
 zoom_menu.zoom_out:'Shift-Z';
-zoom_menu.max_hier_0:'Ctrl+F';
-zoom_menu.max_hier_1:none;
+zoom_menu.max_hier_0:none;
+zoom_menu.max_hier_1:'Ctrl+F';
 zoom_menu.dec_max_hier:'-';
 zoom_menu.inc_max_hier:'+';
  </key-bindings>
