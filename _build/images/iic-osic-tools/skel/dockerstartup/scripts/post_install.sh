@@ -44,8 +44,5 @@ chown -R 1000:1000 "$DESIGNS"
 "$STARTUPDIR/scripts/set_user_permission.sh" "$STARTUPDIR" "$HOME"
 
 # add essential plugins to klayout: align-tool, move-tool
-git clone https://github.com/iic-jku/klayout-align-tool.git /headless/.klayout/salt/klayout-align-tool
-git clone https://github.com/iic-jku/klayout-move-tool.git /headless/.klayout/salt/klayout-move-tool
-
-
-
+git clone --depth=1 https://github.com/iic-jku/klayout-align-tool.git /headless/.klayout/salt/klayout-align-tool
+git clone --depth=1 https://github.com/iic-jku/klayout-move-tool.git /headless/.klayout/salt/klayout-move-tool
