@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
  <default-grids>1.0,0.1,0.01,0.005</default-grids>
+ <grid-micron>0.005</grid-micron>
  <edit-snap-objects-to-grid>true</edit-snap-objects-to-grid>
  <edit-snap-to-objects>true</edit-snap-to-objects>
- <grid-micron>0.005</grid-micron>
- <current-ruler-template>8</current-ruler-template>
  <edit-connect-angle-mode>diagonal</edit-connect-angle-mode>
  <edit-move-angle-mode>diagonal</edit-move-angle-mode>
  <edit-path-width>0.2</edit-path-width>
+ <current-ruler-template>8</current-ruler-template>
+ <background-color>#000000</background-color>
+ <inst-color>#d00000</inst-color>
+ <ruler-color>#d00000</ruler-color>
+ <sel-color>#f3ff80</sel-color>
+ <ruler-grid-snap>true</ruler-grid-snap>
+ <grid-show-ruler>false</grid-show-ruler>
+ <grid-style0>lines</grid-style0>
+ <grid-style1>invisible</grid-style1>
+ <grid-style2>dots</grid-style2>
  <initial-technology>sg13g2</initial-technology>
  <key-bindings>
 '@secrets.duplicate_interactive':C;
