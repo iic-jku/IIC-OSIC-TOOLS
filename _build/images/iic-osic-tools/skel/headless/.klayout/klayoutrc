@@ -8,7 +8,7 @@
  <edit-connect-angle-mode>diagonal</edit-connect-angle-mode>
  <edit-grid>global</edit-grid>
  <edit-move-angle-mode>diagonal</edit-move-angle-mode>
- <edit-path-width>0.13</edit-path-width>
+ <edit-path-width>0.2</edit-path-width>
  <initial-technology>sg13g2</initial-technology>
  <key-bindings>
 '@secrets.duplicate_interactive':C;
@@ -49,8 +49,8 @@ file_menu.save:'Ctrl+S';
 file_menu.save_as:'Ctrl+Shift+S';
 file_menu.reload:'Ctrl+Shift+R';
 view_menu.crosshair_cursor:'Shift+C';
-zoom_menu.ascend:none;
-zoom_menu.descend:none;
+zoom_menu.ascend:'Ctrl+E';
+zoom_menu.descend:'Shift+E';
 zoom_menu.descend_into:none;
 zoom_menu.max_hier:'Shift+F';
 zoom_menu.redraw:'Ctrl+R';
@@ -58,12 +58,12 @@ zoom_menu.select_cell:'Shift+S';
 zoom_menu.select_current_cell:'Shift+T';
 zoom_menu.zoom_fit:F;
 zoom_menu.zoom_fit_sel:'Alt+F';
-zoom_menu.zoom_in:'+';
-zoom_menu.zoom_out:'-';
+zoom_menu.zoom_in:'Z';
+zoom_menu.zoom_out:'Shift-Z';
 zoom_menu.max_hier_0:'Ctrl+F';
 zoom_menu.max_hier_1:none;
-zoom_menu.dec_max_hier:'Ctrl+E';
-zoom_menu.inc_max_hier:'Shift+E';
+zoom_menu.dec_max_hier:'-';
+zoom_menu.inc_max_hier:'+';
 '@lcp_context_menu.hide_empty_layers':'';
 '@lcp_context_menu.invvalid':'';
 '@lcp_context_menu.show_all':0;
