@@ -179,6 +179,13 @@ COPY tool_metadata.yml /
 # Copy EDA skeleton into image
 COPY images/iic-osic-tools/skel_eda /
 
+# Install examples
+#RUN git clone --depth=1 https://github.com/iic-jku/SKY130_SAR-ADC1.git ${EXAMPLES}/SKY130_SAR-ADC1 && \
+#    git clone --depth=1 https://github.com/iic-jku/SKY130_PLL1.git ${EXAMPLES}/SKY130_PLL1 && \
+#    git clone --depth=1 https://github.com/mabrains/Analog_blocks.git ${EXAMPLES}/SKY130_ANALOG-BLOCKS
+RUN git clone --depth=1 https://github.com/mole99/ota-5t.git ${EXAMPLES}/cace/ota-5t && \
+    git clone --depth=1 https://github.com/iic-jku/analog-circuit-design ${EXAMPLES}/analog-course
+
 # Metadata labels
 LABEL org.opencontainers.image.authors="Harald Pretl <harald.pretl@jku.at>; Georg Zachl <georg.zachl@jku.at>" \
       org.opencontainers.image.url="https://github.com/iic-jku/iic-osic-tools" \
