@@ -138,6 +138,7 @@ apt -y install \
 	llvm-17 \
 	llvm-17-dev \
 	make \
+	meson \
 	mold \
 	ninja-build \
 	openmpi-bin \
