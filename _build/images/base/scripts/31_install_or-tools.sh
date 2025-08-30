@@ -3,7 +3,7 @@
 set -e
 
 # Install or-tools (dependency of OpenROAD)
-ORTOOLS_VERSION=9.6
+ORTOOLS_VERSION=9.11
 echo "[INFO] Installing ORTOOLS version $ORTOOLS_VERSION"
 cd /tmp || exit 1
 wget --no-verbose "https://github.com/google/or-tools/archive/refs/tags/v$ORTOOLS_VERSION.tar.gz"
