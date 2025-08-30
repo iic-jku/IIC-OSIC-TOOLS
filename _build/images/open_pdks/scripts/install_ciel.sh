@@ -7,6 +7,10 @@ if [ ! -d "$PDK_ROOT" ]; then
     mkdir -p "$PDK_ROOT"
 fi
 
+# Install ciel via pip
+pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+	ciel
+
 ####################
 # INSTALL SKY130 PDK
 ####################
@@ -14,7 +18,7 @@ fi
 echo "[INFO] Installing SKY130 PDK."
 ciel enable "${OPEN_PDKS_REPO_COMMIT}" --pdk sky130
 
-# remove sky130B for size reasons
+# Remove sky130B for size reasons
 rm -rf "$PDK_ROOT"/ciel/sky130/versions/*/sky130B
 rm -rf "$PDK_ROOT"/sky130B
 
@@ -23,7 +27,7 @@ if [ -d "$PDK_ROOT/sky130A" ]; then
 	#FIXME cd "$PDK_ROOT/sky130A/libs.ref"
 	#FIXME find . -name "*.lib" -exec gzip {} \;
 
-	# create compact model files
+	# Create compact model files
     cd "$PDK_ROOT/sky130A/libs.tech/ngspice" || exit 1
 
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice tt
@@ -32,7 +36,7 @@ if [ -d "$PDK_ROOT/sky130A" ]; then
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice sf
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice fs
 
-	# add custom bindkeys
+	# Add custom bindkeys
     echo "# Custom bindkeys for DIC" 		        >> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
     echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
 
@@ -49,7 +53,7 @@ if [ -d "$PDK_ROOT/sky130B" ]; then
 	#FIXME cd "$PDK_ROOT/sky130B/libs.ref"
 	#FIXME find . -name "*.lib" -exec gzip {} \;
 
-	# create compact model files
+	# Create compact model files
 	cd "$PDK_ROOT/sky130B/libs.tech/ngspice" || exit 1
 	
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice tt
@@ -76,7 +80,7 @@ echo "[INFO] Installing GF180 PDK."
 # FIXME: use common tag from Dockerfile.
 ciel enable f2e289da6753f26157a308c492cf990fdcd4932d --pdk-family gf180mcu
 
-# remove gf180mcuA, gf180mcuB and gf180mcuC for size reasons
+# Remove gf180mcuA, gf180mcuB and gf180mcuC for size reasons
 rm -rf "$PDK_ROOT"/ciel/gf180mcu/versions/*/gf180mcuA
 rm -rf "$PDK_ROOT"/ciel/gf180mcu/versions/*/gf180mcuB
 rm -rf "$PDK_ROOT"/ciel/gf180mcu/versions/*/gf180mcuC
@@ -94,17 +98,17 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 
 	cd "$PDK_ROOT/gf180mcuD/libs.tech/ngspice" || exit 1
 	
-	# setup empty .spiceinit (harmonize with SG13G2)
+	# Setup empty .spiceinit (harmonize with SG13G2)
 	touch .spiceinit
 
-	# remove testing folders to save space
+	# Remove testing folders to save space
 	cd "$PDK_ROOT/gf180mcuD"
 	find . -name "testing" -print0 | xargs -0 rm -rf
 
-	# fix test schematic relative paths
+	# Fix test schematic relative paths
 	sed -i 's/{test_/{tests\/test_/g' $PDK_ROOT/gf180mcuD/libs.tech/xschem/tests/0_top.sch
 
-	# fix missing PDK variant in path definitions for in xschemrc
+	# Fix missing PDK variant in path definitions for in xschemrc
 	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuD/libs.tech/ngspice|' $PDK_ROOT/gf180mcuD/libs.tech/xschem/xschemrc
 
 	# Replace pymacro with working pcells.
