@@ -1,1 +1,1 @@
-images/base/scripts/90_basepkg_install.sh
+images/iic-osic-tools/skel_eda/headless/scripts/install_eda.sh
