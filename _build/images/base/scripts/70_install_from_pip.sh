@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 # Upgrade pip and install important packages
@@ -44,6 +43,13 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	sympy \
 	torch_geometric \
 	ziamath
+
+echo "[INFO] Install Jupyter packages via PIP"
+pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+	jupyter \
+	jupyter-collaboration \
+	jupyterlab \
+	jupyterlab-night
 
 echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*
