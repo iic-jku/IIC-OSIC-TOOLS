@@ -179,6 +179,9 @@ COPY tool_metadata.yml /
 # Copy EDA skeleton into image
 COPY images/iic-osic-tools/skel_eda /
 
+# Install EDA packages from Python, NPM, and GEM
+RUN bash /headless/scripts/install_eda.sh
+
 # Install examples
 #RUN git clone --depth=1 https://github.com/iic-jku/SKY130_SAR-ADC1.git ${EXAMPLES}/SKY130_SAR-ADC1 && \
 #    git clone --depth=1 https://github.com/iic-jku/SKY130_PLL1.git ${EXAMPLES}/SKY130_PLL1 && \
