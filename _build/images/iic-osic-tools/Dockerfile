@@ -189,6 +189,9 @@ RUN bash /headless/scripts/install_eda.sh
 RUN git clone --depth=1 https://github.com/mole99/ota-5t.git ${EXAMPLES}/cace/ota-5t && \
     git clone --depth=1 https://github.com/iic-jku/analog-circuit-design ${EXAMPLES}/analog-course
 
+# Install add-ons and additional scripts
+RUN bash /headless/scripts/install_klayout.sh
+
 # Metadata labels
 LABEL org.opencontainers.image.authors="Harald Pretl <harald.pretl@jku.at>; Georg Zachl <georg.zachl@jku.at>" \
       org.opencontainers.image.url="https://github.com/iic-jku/iic-osic-tools" \
