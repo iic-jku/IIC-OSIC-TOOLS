@@ -1,13 +1,5 @@
 #!/bin/bash
-
 set -e
-
-echo "[INFO] Install Jupyter packages via PIP"
-pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
-	jupyter \
-	jupyter-collaboration \
-	jupyterlab \
-	jupyterlab-night
 
 echo "[INFO] Install EDA packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
