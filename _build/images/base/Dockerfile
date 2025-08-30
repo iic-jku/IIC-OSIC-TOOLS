@@ -21,8 +21,6 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/34_install_spdlog.sh && \
     bash /images/base/scripts/70_install_from_pip.sh && \
     bash /images/base/scripts/71_fix_gobject_introspection.sh && \
-    bash /images/base/scripts/72_install_adms.sh
-
 #######################################################################
 # Add base packages (install via pip, npm, or gem)
 #######################################################################
@@ -35,6 +33,8 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 # Final output container
 #######################################################################
 FROM basepkg AS iic-osic-tools
+    bash /images/base/scripts/72_install_adms.sh && \
+    bash /images/base/scripts/73_install_bottleneck.sh
 
 # Connection ports for controlling the UI:
 # VNC port:5901
