@@ -334,10 +334,9 @@ target "ngspice" {
 }
 
 # Group targets for tools-level-1
-  # Disabled: openroad
 group "tools-level-1" {
   targets = [
-    "magic", "openvaf", "osic-multitool", "xyce", "covered", "cvc_rv", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "pulp-tools", "surelog", "surfer", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "verilator", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit"
+    "magic", "openvaf", "osic-multitool", "xyce", "covered", "cvc_rv", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "pulp-tools", "surelog", "surfer", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "verilator", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit", "openroad"
   ]
 }
 
