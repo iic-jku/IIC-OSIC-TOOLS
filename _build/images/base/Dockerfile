@@ -44,7 +44,7 @@ ENV HOME=/headless \
 #FIXME workaround for OpenMPI throwing errors when run inside a container without Capability "SYS_PTRACE".
 ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
 
-# Copy skeleton
+# Copy base skeleton into image
 COPY images/iic-osic-tools/skel_base /
 
 # Allow scripts to be executed by any user
