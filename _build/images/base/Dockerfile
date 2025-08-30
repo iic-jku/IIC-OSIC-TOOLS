@@ -57,7 +57,7 @@ ENV HOME=/headless \
 ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
 
 # Copy skeleton
-COPY images/iic-osic-tools/skel /
+COPY images/iic-osic-tools/skel_base /
 
 # Allow scripts to be executed by any user
 RUN find $STARTUPDIR/scripts -name '*.sh' -exec chmod a+x {} +

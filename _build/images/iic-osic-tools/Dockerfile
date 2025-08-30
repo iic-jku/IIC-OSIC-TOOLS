@@ -173,8 +173,11 @@ COPY --link --from=yosys                        ${TOOLS}/bin            ${TOOLS}
 COPY --link --from=ghdl-yosys-plugin            ${TOOLS}_add/yosys/     ${TOOLS}/yosys/
 COPY --link --from=slang-yosys-plugin           ${TOOLS}_add/yosys/     ${TOOLS}/yosys/
 
-# copy tool version file
+# Copy tool version file
 COPY tool_metadata.yml /
+
+# Copy EDA skeleton into image
+COPY images/iic-osic-tools/skel_eda /
 
 # Metadata labels
 LABEL org.opencontainers.image.authors="Harald Pretl <harald.pretl@jku.at>; Georg Zachl <georg.zachl@jku.at>" \
