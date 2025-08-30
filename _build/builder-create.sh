@@ -36,7 +36,7 @@ if [ -z ${BUILDER_STRS+z} ]; then
 fi
 
 if [ -z ${BUILDER_NAME+z} ]; then
-	BUILDER_NAME="iic-osic-tools-builder"
+	BUILDER_NAME="tools-builder-$USER"
 fi
 
 # if a builder already exists (either from a previous run or manually created), we directly run the build command.

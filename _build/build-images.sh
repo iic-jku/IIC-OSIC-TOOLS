@@ -27,7 +27,7 @@ if [ -n "${DRY_RUN}" ]; then
 fi
 
 if [ -z ${BUILDER_NAME+z} ]; then
-	BUILDER_NAME="iic-osic-tools-builder"
+	BUILDER_NAME="tools-builder-$USER"
 fi
 
 if [ -z ${DOCKER_PREFIXES+z} ]; then
@@ -63,4 +63,3 @@ done
 # First, build the images, pushing them to the local registry. The Tag in this case is used for the environment variable inside the container.
 #shellcheck disable=SC2086
 ${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --set *.args.CONTAINER_TAG="${CONTAINER_TAG}" ${SET_TAGS_CMD} --push images
-
