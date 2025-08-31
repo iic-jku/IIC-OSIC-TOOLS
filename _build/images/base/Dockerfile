@@ -24,6 +24,11 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/72_install_adms.sh && \
     bash /images/base/scripts/73_install_bottleneck.sh
 
+#######################################################################
+# Final output container
+#######################################################################
+FROM base AS iic-osic-tools
+
 # Connection ports for controlling the UI:
 # VNC port:5901
 # noVNC webport, connect via http://IP:80/?password=start
