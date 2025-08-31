@@ -36,7 +36,7 @@
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.546"
+  commit: "8.3.547"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.298"
@@ -69,22 +69,22 @@
   commit: "0.11.2"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2025.08.08"
+  commit: "2025.08.29"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: b4abf92e9954aaed291d0282c580f94254f9b11c
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 554bdd76dc1119f8dfac6429117c7d539779ac75
+  commit: f0fe069804979c4d6fff6aa5b1f368ed0501cdc3
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: fd77b320b865ee75560edab4258ced1e1dd47ecf
+  commit: c962a6e68f8cff48bf5d4d84c371eee883567803
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: eff659cd43d7eafb7f3559bceed2540eabb31c50
+  commit: 9c190a07c6838f6392bafa4ad83acea462c7f759
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
-  commit: "v1.84"
+  commit: "v1.86"
 - name: surfer
   repo: https://gitlab.com/surfer-project/surfer.git
   commit: "v0.3.0"
@@ -102,13 +102,13 @@
   commit: "_0.3.0"
 - name: verilator
   repo: https://github.com/verilator/verilator.git
-  commit: "v5.038"
+  commit: "v5.040"
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 6f5e6ffd499362ef21f8414edd0354fc425986d5
+  commit: 90766486d440d81d45e23a6ca60284ddefd0b8a2
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"
