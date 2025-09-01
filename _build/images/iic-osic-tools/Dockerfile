@@ -179,18 +179,14 @@ COPY tool_metadata.yml /
 # Copy EDA skeleton into image
 COPY images/iic-osic-tools/skel_eda /
 
-# Install EDA packages from Python, NPM, and GEM
-RUN bash /headless/scripts/install_eda.sh
-
-# Install examples
+# Install EDA packages from Python, NPM, and GEM; install examples; install KLayout add-ons
 #RUN git clone --depth=1 https://github.com/iic-jku/SKY130_SAR-ADC1.git ${EXAMPLES}/SKY130_SAR-ADC1 && \
 #    git clone --depth=1 https://github.com/iic-jku/SKY130_PLL1.git ${EXAMPLES}/SKY130_PLL1 && \
 #    git clone --depth=1 https://github.com/mabrains/Analog_blocks.git ${EXAMPLES}/SKY130_ANALOG-BLOCKS
-RUN git clone --depth=1 https://github.com/mole99/ota-5t.git ${EXAMPLES}/cace/ota-5t && \
-    git clone --depth=1 https://github.com/iic-jku/analog-circuit-design ${EXAMPLES}/analog-course
-
-# Install add-ons and additional scripts
-RUN bash /headless/scripts/install_klayout.sh
+RUN bash /headless/scripts/install_eda.sh && \
+    git clone --depth=1 https://github.com/mole99/ota-5t.git ${EXAMPLES}/cace/ota-5t && \
+    git clone --depth=1 https://github.com/iic-jku/analog-circuit-design ${EXAMPLES}/analog-course && \
+    bash /headless/scripts/install_klayout.sh
 
 # Metadata labels
 LABEL org.opencontainers.image.authors="Harald Pretl <harald.pretl@jku.at>; Georg Zachl <georg.zachl@jku.at>" \
