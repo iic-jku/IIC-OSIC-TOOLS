@@ -11,5 +11,3 @@ mkdir -p "$prefix"
 # we add the Qt-bindings again as it is needed for DRC and LVS, see
 # https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/111
 ./build.sh -j"$(nproc)" -prefix "$prefix"
-
-# no symlinks for binaries for klayout.

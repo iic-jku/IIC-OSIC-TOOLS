@@ -8,8 +8,3 @@ git checkout "${SLANG_REPO_COMMIT}"
 cmake -B build -DSLANG_INCLUDE_TESTS=OFF
 cmake --build build -j"$(nproc)"
 cmake --install build --strip --prefix="${TOOLS}/${SLANG_NAME}"
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${SLANG_NAME}/bin/* .
-

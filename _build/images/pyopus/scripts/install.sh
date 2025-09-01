@@ -21,8 +21,3 @@ tar xfz "PyOPUS-$PYOPUS_REPO_COMMIT-doc-demo.tar.gz"
 cd "PyOPUS-$PYOPUS_REPO_COMMIT" || exit 1
 mv demo "$TOOLS/$PYOPUS_NAME/demo"
 mv docsrc/_build/html "$TOOLS/$PYOPUS_NAME/doc" 
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s $TOOLS/$PYOPUS_NAME/bin/* .
-

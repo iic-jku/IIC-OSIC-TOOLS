@@ -44,8 +44,3 @@ cd sv2v || exit 1
 stack install --install-ghc --local-bin-path bin --stack-root /tmp/stack
 strip bin/sv2v
 cp bin/sv2v "${TOOLS}/${PULP_NAME}/bin"
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${PULP_NAME}/bin/* .
-

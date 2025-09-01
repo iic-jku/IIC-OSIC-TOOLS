@@ -9,8 +9,3 @@ aclocal && automake && autoconf
 ./configure --prefix="${TOOLS}/${XCIRCUIT_NAME}"
 make -j"$(nproc)"
 make install
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${XCIRCUIT_NAME}/bin/* .
-

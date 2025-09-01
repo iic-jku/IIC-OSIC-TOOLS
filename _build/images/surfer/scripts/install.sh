@@ -16,8 +16,3 @@ mkdir -p "${TOOLS}/${SURFER_NAME}/bin"
 cp target/release/surfer "${TOOLS}/${SURFER_NAME}/bin"
 cp target/release/surver "${TOOLS}/${SURFER_NAME}/bin"
 cp target/release/liblibsurfer.so "${TOOLS}/${SURFER_NAME}/bin"
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${SURFER_NAME}/bin/* .
-

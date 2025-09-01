@@ -15,8 +15,3 @@ cd ../scripts || exit 1
 make spi2xspice.py
 chmod +x spi2xspice.py
 cp spi2xspice.py "${TOOLS}/${QFLOW_NAME}/bin"
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${QFLOW_NAME}/bin/* .
-

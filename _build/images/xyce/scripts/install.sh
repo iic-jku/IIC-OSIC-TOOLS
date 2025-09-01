@@ -31,9 +31,3 @@ cd ../../..
 # build Xyce
 make -j"$(nproc)"
 make install
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${XYCE_NAME}/bin/* .
-# Add link for xyce, as binary is named Xyce
-ln -s Xyce xyce
