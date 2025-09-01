@@ -9,7 +9,6 @@ ln -s ${TOOLS}/bin/Xyce ${TOOLS}/bin/xyce
 
 # Install wrapper for Yosys so that modules are loaded automatically
 # see https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/43
-ln -s ${TOOLS}/yosys/bin/* ${TOOLS}/bin
 rm -f ${TOOLS}/bin/yosys
 # shellcheck disable=SC2016
 echo '#!/bin/bash
