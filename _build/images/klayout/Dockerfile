@@ -6,6 +6,5 @@ FROM ${BASE_IMAGE_BUILD} AS klayout
 ARG KLAYOUT_REPO_URL="https://github.com/KLayout/klayout.git"
 ARG KLAYOUT_REPO_COMMIT="v0.30.3"
 ARG KLAYOUT_NAME="klayout"
-USER 0:0
 RUN --mount=type=bind,source=images/klayout,target=/images/klayout \
     bash /images/klayout/scripts/install.sh

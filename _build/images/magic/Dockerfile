@@ -7,6 +7,5 @@ ARG MAGIC_REPO_URL="https://github.com/rtimothyedwards/magic.git"
 ARG MAGIC_REPO_COMMIT="8.3.547"
 ARG MAGIC_NAME="magic"
 COPY images/magic/scripts/install.sh install.sh
-USER 0:0
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
     bash /images/magic/scripts/install.sh

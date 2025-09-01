@@ -203,3 +203,5 @@ LABEL org.opencontainers.image.authors="Harald Pretl <harald.pretl@jku.at>; Geor
       org.opencontainers.image.ref.name="${CONTAINER_TAG}" \
       org.opencontainers.image.title="IIC Open Source Integrated Circuit Tools" \
       org.opencontainers.image.description="IIC-OSIC-TOOLS (Integrated Infrastructure for Collaborative Open Source IC Tools) is an all-in-one Docker container for open-source-based integrated circuit designs for analog and digital circuit flows."
+
+USER 1000:1000

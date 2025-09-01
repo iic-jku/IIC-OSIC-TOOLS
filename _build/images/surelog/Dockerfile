@@ -6,6 +6,5 @@ FROM ${BASE_IMAGE_BUILD} AS surelog
 ARG SURELOG_REPO_URL="https://github.com/chipsalliance/Surelog.git"
 ARG SURELOG_REPO_COMMIT="v1.86"
 ARG SURELOG_NAME="surelog"
-USER 0:0
 RUN --mount=type=bind,source=images/surelog,target=/images/surelog \
     bash /images/surelog/scripts/install.sh
