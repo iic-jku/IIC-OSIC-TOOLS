@@ -7,10 +7,11 @@
  <edit-connect-angle-mode>diagonal</edit-connect-angle-mode>
  <edit-move-angle-mode>diagonal</edit-move-angle-mode>
  <edit-path-width>0.2</edit-path-width>
+ <edit-top-level-selection>true</edit-top-level-selection>
  <current-ruler-template>8</current-ruler-template>
  <background-color>#000000</background-color>
- <inst-color>#d00000</inst-color>
- <ruler-color>#d00000</ruler-color>
+ <inst-color>#ff8000</inst-color>
+ <ruler-color>#ff8000</ruler-color>
  <sel-color>#f3ff80</sel-color>
  <ruler-grid-snap>true</ruler-grid-snap>
  <grid-show-ruler>false</grid-show-ruler>
