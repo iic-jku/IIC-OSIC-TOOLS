@@ -20,6 +20,12 @@ BUILDER_STRS="host=ssh://$USER@buildx86,host=ssh://$USER@buildaarch"
 
 The builders use hostnames `buildx86` (for `x86_64`/`amd64` build) and `buildaarch` (for `aarch64`/`arm64` build), they need to be able to be reached by passwordless SSH.
 
+If just the local username differs from the username on the build machines, then the following can be used:
+
+```bash
+USER=otheruser ./builder-create.sh
+```
+
 To use a local image from a registry without https, the following entry has to be added to the Docker configuration file (e.g., `/etc/docker/daemon.json`):
 
 ```json

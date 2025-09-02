@@ -11,7 +11,3 @@ mkdir -p build && cd build
 cmake .. "-DCMAKE_INSTALL_PREFIX=${TOOLS}/${ELMFERFEM_NAME}" -DWITH_MPI:BOOL=TRUE
 make -j"$(nproc)"
 make install
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${ELMFERFEM_NAME}/bin/* .

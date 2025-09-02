@@ -14,9 +14,7 @@ ARG OPEN_PDKS_REPO_COMMIT="40cee970d8a9b7eaea35a34fe7d6068f05721f0a"
 ARG OPEN_PDKS_NAME="open_pdks"
 COPY --from=openvaf ${TOOLS}/ ${TOOLS}/
 COPY --from=xyce ${TOOLS}/ ${TOOLS}/
-USER 0:0
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ciel.sh
-USER 0:0
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ihp.sh

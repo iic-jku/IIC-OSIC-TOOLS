@@ -11,8 +11,3 @@ cmake --install . --prefix "${TOOLS}/${VACASK_NAME}" --strip
 
 # Remove openvaf here since it is already installed with openvaf-r.
 rm -rf ${TOOLS}/${VACASK_NAME}/bin/openvaf-r
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${VACASK_NAME}/bin/* .
-

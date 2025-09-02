@@ -8,7 +8,3 @@ git checkout "${COVERED_REPO_COMMIT}"
 ./configure --prefix="${TOOLS}/${COVERED_NAME}"
 make # -j$(nproc) Using the -j option leads to random fails on many-core machines
 make install
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${COVERED_NAME}/bin/* .

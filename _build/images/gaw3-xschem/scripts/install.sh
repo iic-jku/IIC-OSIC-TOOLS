@@ -10,7 +10,3 @@ autoreconf -f -i
 ./configure --prefix="${TOOLS}/${GAW3_XSCHEM_NAME}"
 make -j"$(nproc)"
 make install
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${GAW3_XSCHEM_NAME}/bin/* .

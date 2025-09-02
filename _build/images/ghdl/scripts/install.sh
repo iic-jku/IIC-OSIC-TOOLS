@@ -10,7 +10,3 @@ git checkout "${GHDL_REPO_COMMIT}"
 ./configure  --with-llvm-config --prefix="${TOOLS}/${GHDL_NAME}"
 make -j"$(nproc)"
 make install
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${GHDL_NAME}/bin/* .

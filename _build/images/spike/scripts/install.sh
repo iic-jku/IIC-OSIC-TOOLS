@@ -24,8 +24,3 @@ mkdir build && cd build
 ../configure --prefix="${TOOLS}/${SPIKE_NAME}" --host=riscv64-unknown-elf --with-arch=rv64gc_zifencei
 make -j"$(nproc)"
 make install
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${SPIKE_NAME}/bin/* .
-

@@ -1,7 +1,5 @@
 #!/bin/bash
-
 # Install OpenEMS and the required dependencies (fparser, CSXCAD, QCSXCAD) as well as applications (AppCSXCAD)
-
 set -e
 
 # Required dependencies
@@ -26,8 +24,3 @@ make -j${nproc}
 cd /tmp/"$OPENEMS_NAME" || exit 1
 pip install --no-dependencies --prefix "${TOOLS}/$OPENEMS_NAME" --global-option=build_ext --global-option="-I/foss/tools/openems/include" --global-option="-L/foss/tools/openems/lib" ./openEMS/python
 pip install --no-dependencies --prefix "${TOOLS}/$OPENEMS_NAME" --global-option=build_ext --global-option="-I/foss/tools/openems/include" --global-option="-L/foss/tools/openems/lib" ./CSXCAD/python
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${OPENEMS_NAME}/bin/* .
-

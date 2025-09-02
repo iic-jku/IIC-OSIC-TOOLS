@@ -4,7 +4,7 @@ set -e
 
 # Install syslog (dependency of OpenROAD)
 SPDLOG_PREFIX="/usr/local"
-SPDLOG_VERSION=1.8.1
+SPDLOG_VERSION=1.15.0
 echo "[INFO] Installing SPDLOG version $SPDLOG_VERSION into $SPDLOG_PREFIX"
 cd /tmp || exit 1
 git clone --depth=1 -b "v${SPDLOG_VERSION}" https://github.com/gabime/spdlog.git

@@ -22,7 +22,3 @@ if [ -d "$PDK_ROOT/sky130B" ]; then
     mkdir -p "$PDK_ROOT/sky130B/libs.tech/gds3d"
     cp techfiles/sky130.txt "$PDK_ROOT/sky130B/libs.tech/gds3d/gds3d_tech.txt"
 fi
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s "${TOOLS}/${GDS3D_NAME}/bin/*" .

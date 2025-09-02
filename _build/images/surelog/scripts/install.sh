@@ -8,8 +8,3 @@ git checkout "${SURELOG_REPO_COMMIT}"
 git submodule update --init --recursive
 make -j"$(nproc)"
 make install PREFIX="${TOOLS}/${SURELOG_NAME}"
-
-# Make symlinks for binaries
-cd "$TOOLS/bin" || exit
-ln -s ${TOOLS}/${SURELOG_NAME}/bin/* .
-
