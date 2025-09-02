@@ -59,7 +59,9 @@ rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
 
 # replace klayout pcells of ihpsg13g2 pdk to get an extra option for creating a guard ring
 # FIXME this is only a temporary solution until the PR in the IHP-Open-PDK repo is merged
-git clone -b guard-ring-pycells https://github.com/iic-jku/IHP-Open-PDK.git /tmp/IHP-Open-PDK
+git clone -b dev https://github.com/iic-jku/IHP-Open-PDK.git /tmp/IHP-Open-PDK
 rm -rf $PDK_ROOT/$PDK/libs.tech/klayout/python/sg13g2_pycell_lib
 cp -rf /tmp/IHP-Open-PDK/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib $PDK_ROOT/$PDK/libs.tech/klayout/python/
+cp -rf /tmp/IHP-Open-PDK/ihp-sg13g2/libs.tech/xschem/sg13g2_pr/ptap1_ring.sym $PDK_ROOT/$PDK/libs.tech/xschem/sg13g2_pr/
+cp -rf /tmp/IHP-Open-PDK/ihp-sg13g2/libs.tech/xschem/sg13g2_pr/ntap1_ring.sym $PDK_ROOT/$PDK/libs.tech/xschem/sg13g2_pr/
 rm -rf /tmp/IHP-Open-PDK
