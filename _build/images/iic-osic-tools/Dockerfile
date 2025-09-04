@@ -144,7 +144,7 @@ COPY --link --from=slang-yosys-plugin           ${TOOLS}_add/yosys/     ${TOOLS}
 COPY tool_metadata.yml /
 
 # Copy EDA skeleton into image
-COPY images/iic-osic-tools/skel_eda /
+COPY images/iic-osic-tools/skel /
 
 # Install EDA packages from Python, NPM, and GEM; install examples; install KLayout add-ons
 #RUN git clone --depth=1 https://github.com/iic-jku/SKY130_SAR-ADC1.git ${EXAMPLES}/SKY130_SAR-ADC1 && \

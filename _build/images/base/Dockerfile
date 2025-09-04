@@ -34,7 +34,7 @@ ENV HOME=/headless \
 ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
 
 # Copy base skeleton into image
-COPY images/iic-osic-tools/skel_base /
+COPY images/base/skel /
 
 RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/00_base_install.sh && \
