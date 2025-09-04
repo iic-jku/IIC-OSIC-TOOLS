@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 68548a981d97491f67a6e7a5a9d78ec8b4f1f80d
+  commit: 661150c108d5aa85748ad6c59862fc63b76954e5
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 1b97dc71377cea7e861be6625be4353c377a5fb5
@@ -24,7 +24,7 @@
   commit: 34b1e7bbb1014346a5bbe9171bd25840ee020578
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: dad78d5258b5f7a7f2771002368b7cd771b0e7a4
+  commit: d67d3323ad7da3aa2e6b1afb6da7be313c4848a6
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: "v3.13.5"
@@ -39,7 +39,7 @@
   commit: "8.3.547"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.298"
+  commit: "1.5.299"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-45"
@@ -75,13 +75,13 @@
   commit: b4abf92e9954aaed291d0282c580f94254f9b11c
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: f0fe069804979c4d6fff6aa5b1f368ed0501cdc3
+  commit: b444acba3b9520d4c01f1191779e852efeb1d79c
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: c962a6e68f8cff48bf5d4d84c371eee883567803
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 9c190a07c6838f6392bafa4ad83acea462c7f759
+  commit: 19409bdfac652aadec1eeb7334c3299db8df437c
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.86"
@@ -108,7 +108,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 90766486d440d81d45e23a6ca60284ddefd0b8a2
+  commit: 78fdab27fcc6fb179c720e8d85fd19fa2bd9cf3d
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"
@@ -117,7 +117,7 @@
   commit: "Release-2.7.0"
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: "v0.56"
+  commit: "v0.57"
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
 - name: yosys_sby
