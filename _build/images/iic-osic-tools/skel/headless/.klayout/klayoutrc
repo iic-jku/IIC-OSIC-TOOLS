@@ -22,8 +22,6 @@
  <key-bindings>
 '@secrets.duplicate_interactive':C;
 '@secrets.paste_interactive':H;
-'@lcp_context_menu.show_all':0;
-'@lcp_context_menu.hide_all':',';
 edit_menu.cell_menu.adjust_cell_origin:O;
 edit_menu.clear_all_rulers:'Shift+K';
 edit_menu.edit_options:'Shift+E';
