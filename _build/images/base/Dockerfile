@@ -49,7 +49,8 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/72_install_adms.sh && \
     bash /images/base/scripts/73_install_bottleneck.sh && \
     bash /images/base/scripts/80_install_apps.sh && \
-    bash /images/base/scripts/99_base_finalize.sh
+    bash /images/base/scripts/99_base_finalize.sh && \
+    rm -rf *.usr-is-merged
 
 # Finalize setup/install
 WORKDIR ${DESIGNS}
