@@ -15,7 +15,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.2 \
 	lctime==0.0.26 \
-	librelane==2.4.1 \
 	najaeda==0.2.10 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
@@ -26,10 +25,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	siliconcompiler==0.34.3 \
 	spicelib==1.4.5 \
 	spyci==1.0.2
-
-#echo "[INFO] Install custom OpenLane2 version"
-#pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
-#	git+https://github.com/iic-jku/openlane2
 
 echo "[INFO] Installing CharLib"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
@@ -43,6 +38,11 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 echo "[INFO] Installing Hdl21/vlsirtools"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	git+https://github.com/dan-fritchman/Hdl21
+
+#FIXME See https://github.com/librelane/librelane/issues/767
+echo "[INFO] Installing dev version of LibreLane"
+pip install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+	https://github.com/librelane/librelane/tarball/dev
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
