@@ -39,6 +39,10 @@ if [ -z ${BUILDER_NAME+z} ]; then
 	BUILDER_NAME="tools-builder-$USER"
 fi
 
+if [ -z ${BUILDX_EXTRA_PARAMS} ]; then
+	BUILDX_EXTRA_PARAMS=""
+fi
+
 # if a builder already exists (either from a previous run or manually created), we directly run the build command.
 # if not, we check for the components and create them if required.
 
@@ -62,7 +66,7 @@ if ! docker buildx inspect ${BUILDER_NAME} > /dev/null 2>&1 ; then
 		echo "[INFO] ${BUILDKIT_CONF} does not exist, using default buildkitd.toml..."
 		BUILDKIT_CONF="buildkitd.toml"
 	fi
-	${ECHO_IF_DRY_RUN} docker buildx create --name ${BUILDER_NAME} --config ./${BUILDKIT_CONF} --platform ${P_PLATS[0]} ${BUILDER_NAME}-${P_PLATS[0]//\//-}
+	${ECHO_IF_DRY_RUN} docker buildx create --name ${BUILDER_NAME} --config ./${BUILDKIT_CONF} --platform ${P_PLATS[0]} ${BUILDER_NAME}-${P_PLATS[0]//\//-} ${BUILDX_EXTRA_PARAMS}
 	i=1
 else
 	echo "[INFO] Docker buildx builder ${BUILDER_NAME} exists, not creating..."
