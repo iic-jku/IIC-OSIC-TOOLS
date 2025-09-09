@@ -114,6 +114,7 @@ apt -y install \
 	libsuitesparse-dev \
 	libtcl \
 	libtinyxml-dev \
+	libtomlplusplus-dev \
 	libtool \
 	libvtk9-dev \
 	libvtk9-qt-dev \
