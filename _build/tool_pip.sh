@@ -1,1 +1,1 @@
-images/iic-osic-tools/skel_eda/headless/scripts/install_eda.sh
+images/iic-osic-tools/skel/headless/scripts/install_eda.sh
