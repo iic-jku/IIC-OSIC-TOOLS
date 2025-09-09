@@ -80,7 +80,7 @@ for ((;i<"${#P_PLATS[@]}";i++)); do
     		BUILDKIT_CONF="buildkitd.toml"
 		fi
 		echo "[INFO] Appending context ${BUILDER_NAME}-${P_PLATS[i]//\//-} to buildx builder"
-		${ECHO_IF_DRY_RUN} docker buildx create --name ${BUILDER_NAME} --config ./${BUILDKIT_CONF} --platform ${P_PLATS[i]} --append ${BUILDER_NAME}-${P_PLATS[i]//\//-}
+		${ECHO_IF_DRY_RUN} docker buildx create --name ${BUILDER_NAME} --config ./${BUILDKIT_CONF} --platform ${P_PLATS[i]} --append ${BUILDER_NAME}-${P_PLATS[i]//\//-} ${BUILDX_EXTRA_PARAMS}
 	else
 		echo "[INFO] Docker context ${BUILDER_NAME}-${P_PLATS[i]//\//-} already part of builder, not appending..."
 	fi
