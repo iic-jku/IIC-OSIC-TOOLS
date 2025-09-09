@@ -5,7 +5,7 @@ echo "[INFO] Install EDA packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	amaranth[builtin-yosys]==0.5.6 \
 	cace==2.8.3 \
-	ciel==2.1.4 \
+	ciel==2.2.0 \
 	cocotb==1.9.2 \
 	edalize==0.6.1 \
 	fault-dft==0.9.4 \
@@ -23,7 +23,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	schemdraw[svgmath]==0.20 \
 	scikit-rf==1.8.0 \
 	siliconcompiler==0.34.3 \
-	spicelib==1.4.5 \
+	spicelib==1.4.6 \
 	spyci==1.0.2
 
 echo "[INFO] Installing CharLib"
