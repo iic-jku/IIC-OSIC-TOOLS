@@ -68,7 +68,7 @@ zoom_menu.select_current_cell:'Shift+T';
 zoom_menu.zoom_fit:F;
 zoom_menu.zoom_fit_sel:'Alt+F';
 zoom_menu.zoom_in:'Z';
-zoom_menu.zoom_out:'Shift-Z';
+zoom_menu.zoom_out:'Shift+Z';
 zoom_menu.max_hier_0:none;
 zoom_menu.max_hier_1:'Ctrl+F';
 zoom_menu.dec_max_hier:'-';
