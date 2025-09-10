@@ -8,7 +8,8 @@
  <edit-move-angle-mode>diagonal</edit-move-angle-mode>
  <edit-path-width>0.2</edit-path-width>
  <edit-top-level-selection>true</edit-top-level-selection>
- <current-ruler-template>8</current-ruler-template>
+ <current-ruler-template>9</current-ruler-template>
+ <ruler-templates-v2>mode=normal,title=Ruler,category=_ruler,version=1,fmt=$D,fmt_x=$X,fmt_y=$Y,position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=ruler,outline=diag,snap=true,angle_constraint=global;mode=multi_segment,title='Multi-ruler',category=_multi_ruler,version=1,fmt=$D,fmt_x=$X,fmt_y=$Y,position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=ruler,outline=diag,snap=true,angle_constraint=global;mode=single_click,title=Cross,category=_cross,version=1,fmt='$U,$V',fmt_x='',fmt_y='',position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=cross_both,outline=diag,snap=true,angle_constraint=global;mode=auto_metric,title=Measure,category=_measure,version=1,fmt=$D,fmt_x=$X,fmt_y=$Y,position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=ruler,outline=diag,snap=true,angle_constraint=global;mode=auto_metric_edge,title='Measure edge',category=_measure_edge,version=1,fmt=$D,fmt_x=$X,fmt_y=$Y,position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=ruler,outline=diag,snap=true,angle_constraint=global;mode=angle,title=Angle,category=_angle,version=1,fmt='$(sprintf(\'%.5g\',G))\302\260',fmt_x='',fmt_y='',position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=line,outline=angle,snap=true,angle_constraint=any;mode=angle,title=Radius,category=_radius,version=1,fmt='R=$D',fmt_x='',fmt_y='',position=center,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=arrow_end,outline=radius,snap=true,angle_constraint=any;mode=normal,title=Ellipse,category='',version=1,fmt='',fmt_x='W=$(abs(X))',fmt_y='H=$(abs(Y))',position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=line,outline=ellipse,snap=true,angle_constraint=any;mode=normal,title=Box,category='',version=1,fmt='',fmt_x='W=$(abs(X))',fmt_y='H=$(abs(Y))',position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=line,outline=box,snap=true,angle_constraint=any;mode=normal,title='Ruler+',category='',version=1,fmt='',fmt_x='W=$(abs(X))',fmt_y='H=$(abs(Y))',position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=ruler,outline=xy,snap=true,angle_constraint=global</ruler-templates-v2>
  <background-color>#000000</background-color>
  <inst-color>#ff8000</inst-color>
  <ruler-color>#ff8000</ruler-color>
@@ -67,7 +68,7 @@ zoom_menu.select_current_cell:'Shift+T';
 zoom_menu.zoom_fit:F;
 zoom_menu.zoom_fit_sel:'Alt+F';
 zoom_menu.zoom_in:'Z';
-zoom_menu.zoom_out:'Shift-Z';
+zoom_menu.zoom_out:'Shift+Z';
 zoom_menu.max_hier_0:none;
 zoom_menu.max_hier_1:'Ctrl+F';
 zoom_menu.dec_max_hier:'-';
