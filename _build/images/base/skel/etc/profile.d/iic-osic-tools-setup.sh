@@ -67,14 +67,6 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
     export FOSS_INIT_DONE=1
 fi
 
-# add additional display resolutions (for VNC mode)
-_add_resolution 2048 1152
-_add_resolution 2560 1080
-_add_resolution 2560 1440
-_add_resolution 2560 1600
-_add_resolution 3440 1440
-_add_resolution 3840 2160
-
 # shellcheck disable=SC2086
 LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${TOOLS}/openems/lib:${TOOLS}/kactus2" && export LD_LIBRARY_PATH
 export EDITOR="gedit"
