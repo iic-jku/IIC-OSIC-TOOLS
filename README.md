@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/477419126.svg)](https://doi.org/10.5281/zenodo.14387234)
 
-**IIC-OSIC-TOOLS** (Integrated Infrastructure for Collaborative Open Source IC Tools) is an all-in-one Docker container for open-source-based integrated circuit designs for analog and digital circuit flows. The CPU architectures `x86_64/amd64` and `aarch64/arm64` are natively supported based on Ubuntu 24.04 LTS (since release `2025.01`). This collection of tools is curated by the [**Department for Integrated Circuits (DIC), Johannes Kepler University (JKU)**](https://iic.jku.at).
+**IIC-OSIC-TOOLS** (Integrated Infrastructure for Collaborative Open Source IC Tools) is an all-in-one Docker/Podman container for open-source-based integrated circuit designs for analog and digital circuit flows. The CPU architectures `x86_64/amd64` and `aarch64/arm64` are natively supported based on Ubuntu 24.04 LTS (since release `2025.01`). This collection of tools is curated by the [**Department for Integrated Circuits (DIC), Johannes Kepler University (JKU)**](https://iic.jku.at).
 
 ## Table of Contents
 
@@ -34,11 +34,20 @@
 
 **For great step-to-step instructions of installation and operation of our tool collection, please check out Kwantae Kim's [Setting Up Open Source Tools with Docker](https://kwantaekim.github.io/2024/05/25/OSE-Docker/)!**
 
-It supports two *modes of operation*:
+It supports multiple *modes of operation*:
 
 1. Using a complete desktop environment (XFCE) in `Xvnc` (a VNC server), either directly accessing it with a VNC client of your choice or the integrated [noVNC](https://novnc.com) server that runs in your browser.
 2. Using a local X11 server and directly showing the application windows on your desktop.
-3. Using it as a development container in Visual Studio Code (or other IDEs)
+3. Using a Jupyter Notebook running inside the container, opened on the hosts browser.
+4. Using it as a development container in Visual Studio Code (or other IDEs)
+
+
+### Notes on compatibility with other Container Tools (Podman, Distrobox).
+
+This container is also compatible with Podman, also in rootless mode. Rootless mode can increase security while allowing the user inside the container to have root access using sudo. See KNOWN_ISSUES for more information.
+
+Starting from the 2025.09 release, Distrobox can be used to run the container in a closely integrated way to the host system. It should be noted, that Distrobox allows full access to the host file system, which poses security risks (`Isolation and sandboxing are not the main aims of the project...`, https://distrobox.it/#security-implications).
+
 
 ### 1.1 Step 1: Clone/download this GitHub repository onto your computer
 
