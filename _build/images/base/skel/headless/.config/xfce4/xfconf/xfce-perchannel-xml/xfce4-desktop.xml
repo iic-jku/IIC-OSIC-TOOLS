@@ -6,8 +6,8 @@
       <property name="monitor0" type="empty">
         <property name="workspace0" type="empty">
           <property name="color-style" type="int" value="0"/>
-          <property name="image-style" type="int" value="4"/>
-          <property name="last-image" type="string" value="/headless/.config/IIC_JKU_Logo.png"/>
+          <property name="image-style" type="int" value="1"/>
+          <property name="last-image" type="string" value="/headless/.config/IICQC_JKU_Logo.png"/>
           <property name="color1" type="array">
             <value type="uint" value="8836"/>
             <value type="uint" value="8836"/>
@@ -17,28 +17,28 @@
         </property>
         <property name="workspace1" type="empty">
           <property name="color-style" type="int" value="0"/>
-          <property name="image-style" type="int" value="4"/>
-          <property name="last-image" type="string" value="/headless/.config/IIC_JKU_Logo.png"/>
+          <property name="image-style" type="int" value="1"/>
+          <property name="last-image" type="string" value="/headless/.config/IICQC_JKU_Logo.png"/>
         </property>
         <property name="workspace2" type="empty">
           <property name="color-style" type="int" value="0"/>
-          <property name="image-style" type="int" value="4"/>
-          <property name="last-image" type="string" value="/headless/.config/IIC_JKU_Logo.png"/>
+          <property name="image-style" type="int" value="1"/>
+          <property name="last-image" type="string" value="/headless/.config/IICQC_JKU_Logo.png"/>
         </property>
         <property name="workspace3" type="empty">
           <property name="color-style" type="int" value="0"/>
-          <property name="image-style" type="int" value="4"/>
-          <property name="last-image" type="string" value="/headless/.config/IIC_JKU_Logo.png"/>
+          <property name="image-style" type="int" value="1"/>
+          <property name="last-image" type="string" value="/headless/.config/IICQC_JKU_Logo.png"/>
         </property>
-        <property name="image-path" type="string" value="/headless/.config/IIC_JKU_Logo.png"/>
+        <property name="image-path" type="string" value="/headless/.config/IICQC_JKU_Logo.png"/>
         <property name="image-show" type="bool" value="true"/>
         <property name="image-style" type="int" value="0"/>
       </property>
       <property name="monitorVNC-0" type="empty">
         <property name="workspace0" type="empty">
           <property name="color-style" type="int" value="0"/>
-          <property name="image-style" type="int" value="4"/>
-          <property name="last-image" type="string" value="/headless/.config/IIC_JKU_Logo.png"/>
+          <property name="image-style" type="int" value="1"/>
+          <property name="last-image" type="string" value="/headless/.config/IICQC_JKU_Logo.png"/>
         </property>
       </property>
     </property>
