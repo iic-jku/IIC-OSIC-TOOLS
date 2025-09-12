@@ -13,16 +13,6 @@ Example:
 DOCKER_EXTRA_PARAMS='--security-opt seccomp=unconfined' ./start_x.sh
 ```
 
-### Running the container using Podman
-
-The container can be run with podman, preferably even in rootless-mode.
-For normal (root) mode, no additional changes are required, the start scripts are fully compatible with the podman CLI emulating Docker behavior.
-
-For rootless-mode, we suggest using the user namespace mode "keep-id". For this mode, the main user in the container is copied from the host (using the same UID, GID, username and main group name). In this way, the access to the mounted `/foss/designs` directory happens with the same UID/GID.
-Running the containers in "keep-id" mode, using the start scripts, works as follows:
-
-`DOCKER_EXTRA_PARAMS="--userns=keep-id" ./start_<mode>.sh`
-
 
 ### Using the X11-mode on Linux with Docker Desktop
 
