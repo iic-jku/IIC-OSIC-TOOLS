@@ -93,6 +93,7 @@ if [[ ${CONTAINER_GROUP} -ne 0 ]]  && [[ ${CONTAINER_GROUP} -lt 1000 ]]; then
 fi
 
 # Processing ports and other parameters
+# Fixed potential errors in the container due to reduced access to syscalls.
 PARAMS="--security-opt seccomp=unconfined"
 if [ "${JUPYTER_PORT}" -gt 0 ]; then
 	PARAMS="$PARAMS -p $JUPYTER_PORT:8888"

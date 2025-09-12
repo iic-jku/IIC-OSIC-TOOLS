@@ -77,6 +77,9 @@ if [[ ${CONTAINER_GROUP} -ne 0 ]]  && [[ ${CONTAINER_GROUP} -lt 1000 ]]; then
 	echo
 fi
 
+# Fixed potential errors in the container due to reduced access to syscalls.
+DOCKER_EXTRA_PARAMS="--security-opt seccomp=unconfined"
+
 if [ -n "${IIC_OSIC_TOOLS_QUIET}" ]; then
 	DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e IIC_OSIC_TOOLS_QUIET=1"
 fi

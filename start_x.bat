@@ -48,7 +48,7 @@ IF "%WAYLAND_DISP%"=="" SET WAYLAND_DISP=wayland-0
 IF %CONTAINER_USER% NEQ 0 if %CONTAINER_USER% LSS 1000 echo WARNING: Selected User ID %CONTAINER_USER% is below 1000. This ID might interfere with User-IDs inside the container and cause undefined behaviour!
 IF %CONTAINER_GROUP% NEQ 0 if %CONTAINER_GROUP% LSS 1000 echo WARNING: Selected Group ID %CONTAINER_GROUP% is below 1000. This ID might interfere with Group-IDs inside the container and cause undefined behaviour!
 
-SET PARAMS=
+SET PARAMS=--security-opt seccomp=unconfined
 
 IF DEFINED DOCKER_EXTRA_PARAMS (
   SET PARAMS=%PARAMS% %DOCKER_EXTRA_PARAMS%

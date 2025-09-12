@@ -95,7 +95,8 @@ if [[ ${CONTAINER_GROUP} -ne 0 ]]  && [[ ${CONTAINER_GROUP} -lt 1000 ]]; then
 fi
 
 # Processing ports and other parameters
-PARAMS=""
+# Fixed potential errors in the container due to reduced access to syscalls.
+PARAMS="--security-opt seccomp=unconfined"
 if [ "$WEBSERVER_PORT" -gt 0 ]; then
 	PARAMS="$PARAMS -p $WEBSERVER_PORT:80"
 fi

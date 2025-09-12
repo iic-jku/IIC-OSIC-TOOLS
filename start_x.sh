@@ -59,8 +59,8 @@ if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
 	fi
 fi
 
-PARAMS=""
-
+# Fixed potential errors in the container due to reduced access to syscalls.
+PARAMS="--security-opt seccomp=unconfined"
 # SET YOUR DESIGN PATH RIGHT!
 if [ -z ${DESIGNS+z} ]; then
 	DESIGNS=$HOME/eda/designs
