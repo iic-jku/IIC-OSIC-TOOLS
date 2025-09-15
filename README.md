@@ -28,10 +28,10 @@
       - [4.4.2 For the Windows Batch Scripts](#442-for-the-windows-batch-scripts)
     - [4.5 Using as devcontainer](#45-using-as-devcontainer)
       - [4.5.1 Add it to project](#451-add-it-to-project)
-  - [5. Using the Container with ...](#5-using-the-container-with)
-      - [5.1 Podman](#51-podman)
-      - [5.2 Distrobox](#52-distrobox)
-  - [6. Support with Issues/Problems/Bugs](#5-support-with-issuesproblemsbugs)
+  - [5. Using the Container with](#5-using-the-container-with)
+    - [5.1 Podman](#51-podman)
+    - [5.2 Distrobox](#52-distrobox)
+  - [6. Support with Issues/Problems/Bugs](#6-support-with-issuesproblemsbugs)
 
 ## 1. How to Use These Open-Source (and Free) IC Design Tools
 
@@ -43,7 +43,6 @@ It supports multiple *modes of operation*:
 2. Using a local X11 server and directly showing the application windows on your desktop.
 3. Using a Jupyter Notebook running inside the container, opened on the hosts browser.
 4. Using it as a development container in Visual Studio Code (or other IDEs)
-
 
 ### 1.1 Step 1: Clone/download this GitHub repository onto your computer
 
@@ -185,7 +184,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [slang yosys plugin](https://github.com/povik/yosys-slang) Slang-based plugin for `yosys` for SystemVerilog support
 - [slang](https://github.com/MikePopoloski/slang) SystemVerilog parsing and translation (e.g. to Verilog)
 - [spicelib](https://github.com/nunobrum/spicelib) library to interact with SPICE-like simulators
-* [spike](https://github.com/riscv-software-src/riscv-isa-sim) Spike RISC-V ISA simulator
+- [spike](https://github.com/riscv-software-src/riscv-isa-sim) Spike RISC-V ISA simulator
 - [spyci](https://github.com/gmagno/spyci) analyze/plot `ngspice`/`xyce` output data with Python
 - [surelog](https://github.com/chipsalliance/Surelog) SystemVerilog parser, elaborator, and UHDM compiler
 - [surfer](https://gitlab.com/surfer-project/surfer) waveform viewer with snappy usable interface and extensibility
@@ -365,17 +364,14 @@ Option 2: Alternatively you can directly just create the configuration file `.de
 
 Either way, the great thing is that you can now commit the file to repository and all developers will be asked if they want to reopen their development in this container, all they need is Docker and VS Code.
 
-## 5. Using the Container with ...
+## 5. Using the Container with
 
 The IIC-OSIC-Tools are meant to be beginner friendly. If you have limited knowledge of the tools involved (Docker, Podman, etc..), we suggest you follow [4. Quick Launch for Designers](#4-quick-launch-for-designers).
 For container experts, there is also support for other container engines and additional tools, see the subsections below.
 
-
 ### 5.1 Podman
 
-[Podman](https://podman.io/) is a deamonless, OCI compatible container engine, that supports rootless containers to contain privileges inside the container.
-Normal root containers are supported out of the box, the Docker-compatible CLI can be used with the start scripts without modification.
-Using rootless mode, we suggest using the user-namespace mode "keep-id". In this case, the host-user, launching the container, is copied to the container (same UID, GID, user and group name), preventing access issues between the container and mounted directories from the host. This can be achieved by using:
+[Podman](https://podman.io/) is a demonless, OCI compatible container engine, that supports rootless containers to contain privileges inside the container. Normal root containers are supported out of the box, the Docker-compatible CLI can be used with the start scripts without modification. Using rootless mode, we suggest using the user-namespace mode "keep-id". In this case, the host-user, launching the container, is copied to the container (same UID, GID, user and group name), preventing access issues between the container and mounted directories from the host. This can be achieved by using:
 
 `DOCKER_EXTRA_PARAMS="--userns=keep-id" ./start_<mode>.sh`
 
@@ -383,19 +379,17 @@ It should be noted, that the rootless mode can't bind to ports below 1024. This 
 
 `WEBSERVER_PORT=8080 DOCKER_EXTRA_PARAMS="--userns=keep-id" ./start_<mode>.sh`
 
-
 ### 5.2 Distrobox
 
-[Distrobox](https://distrobox.it) is a `fancy wrapper around Podman or Docker to create and start containers highly integrated with the hosts`. Like the `start_x` scripts, Distrobox manages the forwarding of X11/Wayland to the container, but allows for even more tight integration, by also forwarding the users home directory, and seamlessly integration other services like the systemd journal, D-Bus etc...
+[Distrobox](https://distrobox.it) is a *fancy wrapper around Podman or Docker to create and start containers highly integrated with the hosts*. Like the `start_x` scripts, Distrobox manages the forwarding of X11/Wayland to the container, but allows for even more tight integration, by also forwarding the users home directory, and seamlessly integration other services like the systemd journal, D-Bus etc...
 Distrobox specifically mentions that its main focus lies on integration, and not on sandboxing and security.
 
-The IIC-OSIC-Tools support the usage of Distrobox, even though the usage is slightly different, compared to the start scripts. Noteably, the /headless is not the in-container-user's home directory, and /foss/designs will not be mounted. But /home/<username> will have full access to the users home directory.
+The IIC-OSIC-Tools support the usage of Distrobox, even though the usage is slightly different, compared to the start scripts. Noteably, the /headless is not the in-container-user's home directory, and /foss/designs will not be mounted. But `/home/<username>` will have full access to the users home directory.
 
 A IIC-OSIC-Tools Distrobox can be started and accessed with:
 
 `distrobox create -n iic-osic-tools -i hpretl/iic-osic-tools:latest`
 `distrobox enter iic-osic-tools`
-
 
 ## 6. Support with Issues/Problems/Bugs
 
