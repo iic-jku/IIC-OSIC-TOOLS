@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 8c69dbd517970e7fc2e86ae3d6541c37d49bbcef
+  commit: 1ed6445836f4101504c3da0bb95ce051351fb546
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 1b97dc71377cea7e861be6625be4353c377a5fb5
@@ -30,16 +30,16 @@
   commit: "v3.13.5"
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
-  commit: "v0.30.3"
+  commit: "v0.30.4"
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.548"
+  commit: "8.3.551"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.299"
+  commit: "1.5.300"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-45.2"
@@ -54,7 +54,7 @@
   commit: 40cee970d8a9b7eaea35a34fe7d6068f05721f0a
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 341650e72dad0dc8571822ff8c5d9c5e365327f7
+  commit: 1f974c324029b6065cb86713064091f69cd66987
 - name: openvaf
   repo: https://github.com/arpadbuermen/OpenVAF.git
   commit: 867196c9150cf4c92e78b14e6eaa00b37a3d2047
@@ -69,19 +69,19 @@
   commit: "0.11.2"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2025.08.29"
+  commit: "2025.09.16"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: b4abf92e9954aaed291d0282c580f94254f9b11c
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 21d00470243f14a1a9b9bc8fe1596cf936115280
+  commit: aea8d7e9777707cbbefb7e783e61c64749c4cf92
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: c962a6e68f8cff48bf5d4d84c371eee883567803
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 545712a6f7df0be6625bcc5bddaa1a8a8663b740
+  commit: f51df5d3955a27602a872eaf01492177513baf6f
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.86"
@@ -99,7 +99,7 @@
   commit: "25.2.0"
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: "_0.3.1"
+  commit: "_0.3.0"
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: "v5.040"
@@ -108,7 +108,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 3efe7bfbec1e785819377600b852e1b28abeb9c1
+  commit: 1f52d630f53ba3cd0d2329f810da4847f775dc07
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"

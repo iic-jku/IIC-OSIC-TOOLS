@@ -6,16 +6,16 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	amaranth[builtin-yosys]==0.5.6 \
 	cace==2.8.3 \
 	ciel==2.2.0 \
-	cocotb==1.9.2 \
+	cocotb==2.0.0 \
 	edalize==0.6.1 \
 	fault-dft==0.9.4 \
-	fusesoc==2.4.3 \
-	gdsfactory==9.14.0 \
+	fusesoc==2.4.4 \
+	gdsfactory==9.15.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.2 \
 	lctime==0.0.26 \
-	najaeda==0.2.10 \
+	najaeda==0.2.11 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
 	pyuvm==3.0.0 \
