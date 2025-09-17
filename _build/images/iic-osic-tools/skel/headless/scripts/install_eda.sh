@@ -15,6 +15,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.2 \
 	lctime==0.0.26 \
+	librelane==2.4.2 \
 	najaeda==0.2.11 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
@@ -42,9 +43,9 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	git+https://github.com/dan-fritchman/Hdl21
 
 #FIXME See https://github.com/librelane/librelane/issues/767
-echo "[INFO] Installing dev version of LibreLane"
-pip install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
-	https://github.com/librelane/librelane/tarball/dev
+#echo "[INFO] Installing dev version of LibreLane"
+#pip install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+#	https://github.com/librelane/librelane/tarball/dev
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
