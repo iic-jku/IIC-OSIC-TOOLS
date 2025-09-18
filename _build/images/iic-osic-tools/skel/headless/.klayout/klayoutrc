@@ -30,7 +30,7 @@ edit_menu.mode_menu.box:R;
 edit_menu.mode_menu.instance:I;
 edit_menu.mode_menu.partial:S;
 edit_menu.mode_menu.path:P;
-edit_menu.mode_menu.polygon:'Shift+P';
+edit_menu.mode_menu.polygon:'Shift+Ctrl+P';
 edit_menu.mode_menu.ruler:K;
 edit_menu.mode_menu.text:T;
 edit_menu.selection_menu.tap:Y;
