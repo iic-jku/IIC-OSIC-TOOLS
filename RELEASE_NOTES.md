@@ -2,6 +2,18 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2025.09
+
+* Improve various aspects of the image build process (many small things), reduce Docker layers.
+* Support Distrobox and Podman (check the `README.md`).
+* Store IHP PDK GitHub commit hash in the image (see `KNOWN_ISSUES.md`).
+* Make startup scripts more robust.
+* Add several productivity improvements to `klayout`.
+* Update various tool versions. 
+* Update DRC/LVS/PEX scripts to latest IHP versions.
+* Remove `vscode`, mainly for size reasons.
+* Remove (temporarily) `pyuvm`, as not compatible with `cocotb` 2.0.
+
 ## 2025.07
 
 * Complete overhaul of image build sripts: We now use a multistage build using a local registry and individual tool images to speed up the build process.
