@@ -23,14 +23,14 @@
  <key-bindings>
 '@secrets.duplicate_interactive':C;
 '@secrets.paste_interactive':H;
-edit_menu.cell_menu.adjust_cell_origin:O;
+edit_menu.cell_menu.adjust_cell_origin:'Shift+O';
 edit_menu.clear_all_rulers:'Shift+K';
 edit_menu.edit_options:'Shift+E';
 edit_menu.mode_menu.box:R;
 edit_menu.mode_menu.instance:I;
 edit_menu.mode_menu.partial:S;
 edit_menu.mode_menu.path:P;
-edit_menu.mode_menu.polygon:'Shift+P';
+edit_menu.mode_menu.polygon:'Shift+Ctrl+P';
 edit_menu.mode_menu.ruler:K;
 edit_menu.mode_menu.text:T;
 edit_menu.selection_menu.tap:Y;
