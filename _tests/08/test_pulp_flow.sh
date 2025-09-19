@@ -56,9 +56,9 @@ while getopts "d" flag; do
 done
 shift $((OPTIND-1))
 
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TMP=/foss/designs/runs/${RAND}/08
 LOG=/foss/designs/runs/${RAND}/08/pulp.log
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 mkdir -p "$TMP"
 
@@ -70,14 +70,14 @@ cd "$TMP"/ || exit
 {
     test "bender update"
     test "bender checkout"
-    test "bender sources -f > error.json"
-    test "bender sources -f -t test_target > top.json"
+    test "bender script flist-plus -t test_target -D COMMON_CELLS_ASSERTS_OFF > sources.f"
+    test "bender script flist-plus -D COMMON_CELLS_ASSERTS_OFF > sources_fail.f"
 } &> "$LOG"
 
-[ $DEBUG -eq 1 ] && echo "[INFO] Testing sv2v..."
+[ $DEBUG -eq 1 ] && echo "[INFO] Testing yosys-slang..."
 {
-    test "sv2v --write top_sv2v.v top.sv"
-    test "yosys -Q -q -p \"read_verilog top_sv2v.v; synth;\""
+    test "yosys -Q -q -p \"plugin -i slang.so; read_slang --top top -F sources.f; synth;\""
+    test_fail "yosys -Q -q -p \"plugin -i slang.so; read_slang --top top -F sources_fail.f; synth;\""
 } &> "$LOG"
 
 if grep -q "\[ERROR\]" "$LOG"; then
