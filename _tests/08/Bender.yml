@@ -8,7 +8,7 @@ package:
     - "Philippe Sauter <phsauter@iis.ee.ethz.ch>"
 
 dependencies:
-  common_cells: { git: "https://github.com/pulp-platform/common_cells.git", rev: 10dac0ff3387e14b1129be33cad1e9a7d71aed7f }
+  common_cells: { git: "https://github.com/pulp-platform/common_cells.git", rev: 9afda9abb565971649c2aa0985639c096f351171 }
 
 sources:
   # Level 0
