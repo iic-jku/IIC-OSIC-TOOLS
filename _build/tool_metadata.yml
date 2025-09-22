@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 1ed6445836f4101504c3da0bb95ce051351fb546
+  commit: 44c4af1cd0673f1ed97c8abc04596a78bd9d2a0f
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 1b97dc71377cea7e861be6625be4353c377a5fb5
@@ -36,7 +36,7 @@
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.551"
+  commit: "8.3.552"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.300"
@@ -57,7 +57,7 @@
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
 - name: openvaf
   repo: https://github.com/arpadbuermen/OpenVAF.git
-  commit: 867196c9150cf4c92e78b14e6eaa00b37a3d2047
+  commit: 05415bc04a78d84de707d3b9ee192f3e8296f6eb
 - name: osic-multitool
   repo: https://github.com/iic-jku/osic-multitool.git
   commit: ab373a6b917635d1ae85b4d11397a1b708050f76
@@ -69,16 +69,16 @@
   commit: "0.11.2"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2025.09.16"
+  commit: "2025.09.20"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
-  commit: b4abf92e9954aaed291d0282c580f94254f9b11c
+  commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: aea8d7e9777707cbbefb7e783e61c64749c4cf92
+  commit: 6637781e9315193e6ca2cfd3128d91eb05acd41a
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: c962a6e68f8cff48bf5d4d84c371eee883567803
+  commit: ccc13eabc333a59d3a78bdb1d4a002928050e92d
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
   commit: f51df5d3955a27602a872eaf01492177513baf6f
@@ -108,7 +108,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 1f52d630f53ba3cd0d2329f810da4847f775dc07
+  commit: ba259b751daee4b1c7a5a36bf2cfad1b059ce902
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"

@@ -7,6 +7,6 @@ ARG SPIKE_REPO_URL="https://github.com/riscv-software-src/riscv-isa-sim.git"
 ARG SPIKE_REPO_COMMIT="f51df5d3955a27602a872eaf01492177513baf6f"
 ARG SPIKE_NAME="spike"
 ARG RISCV_PK_REPO_URL="https://github.com/riscv-software-src/riscv-pk.git"
-ARG RISCV_PK_REPO_COMMIT="b4abf92e9954aaed291d0282c580f94254f9b11c"
+ARG RISCV_PK_REPO_COMMIT="9c61d29846d8521d9487a57739330f9682d5b542"
 RUN --mount=type=bind,source=images/spike,target=/images/spike \
     bash /images/spike/scripts/install.sh

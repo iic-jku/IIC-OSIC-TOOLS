@@ -10,13 +10,13 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	edalize==0.6.1 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.4 \
-	gdsfactory==9.15.0 \
+	gdsfactory==9.16.2 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.2 \
 	lctime==0.0.26 \
 	librelane==2.4.2 \
-	najaeda==0.2.11 \
+	najaeda==0.2.12 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
 	pyverilog==1.3.0 \
