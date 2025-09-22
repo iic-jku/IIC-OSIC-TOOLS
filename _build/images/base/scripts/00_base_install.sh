@@ -191,6 +191,7 @@ apt -y install \
 	tk-dev \
 	tzdata \
 	unzip \
+	usbutils-py \
 	uuid \
 	uuid-dev \
 	wget \
