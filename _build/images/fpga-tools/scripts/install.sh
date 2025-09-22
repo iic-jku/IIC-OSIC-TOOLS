@@ -2,8 +2,8 @@
 set -e
 mkdir -p "${TOOLS}/${FPGA_NAME}/bin"
 
-# Install icestorm
-# ----------------
+# Install icestorm (Lattice iCE40)
+# --------------------------------
 cd /tmp || exit 1
 echo "[INFO] Installing icestorm"
 git clone --depth=1 https://github.com/YosysHQ/icestorm.git
@@ -17,8 +17,10 @@ cd /tmp || exit 1
 echo "[INFO] Installing nextpnr"
 git clone --depth=1 https://github.com/YosysHQ/nextpnr.git
 cd nextpnr || exit 1
+git submodule update --init --recursive
 mkdir -p build && cd build || exit 1
 cmake ..    -DARCH=ice40 \
+            -DUSE_OPENMP=yes \
             -DCMAKE_INSTALL_PREFIX="${TOOLS}/${FPGA_NAME}" \
             -DICESTORM_INSTALL_PREFIX="${TOOLS}/${FPGA_NAME}"
 make -j"$(nproc)"
