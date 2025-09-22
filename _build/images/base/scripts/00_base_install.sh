@@ -74,6 +74,7 @@ apt -y install \
 	libfftw3-dev \
 	libfindbin-libs-perl \
 	libfl-dev \
+	libftdi-dev \
 	libgcc-13-dev \
 	libgettextpo-dev \
 	libgirepository1.0-dev \
