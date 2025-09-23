@@ -8,6 +8,7 @@ This document summarizes the most important changes of the individual releases o
 * Support Distrobox and Podman (check the `README.md`).
 * Store IHP PDK GitHub commit hash in the image (see `KNOWN_ISSUES.md`).
 * Make startup scripts more robust.
+* Add an FPGA toolchain (`nextpnr` for the Lattice iCE40 series) for prototyping.
 * Add several productivity improvements to `klayout`.
 * Update various tool versions. 
 * Update DRC/LVS/PEX scripts to latest IHP versions.
