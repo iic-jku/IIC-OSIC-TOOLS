@@ -48,6 +48,7 @@ apt -y install \
 	gperf \
 	gpg \
 	graphviz \
+	gzip \
 	help2man \
 	language-pack-en-base \
 	lcov \
