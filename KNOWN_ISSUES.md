@@ -55,7 +55,7 @@ klayout -e
 
 ### The OpenROAD Flow Scripts (ORFS)
 
-The ORFS require a recent version of `openroad`. Since image tag `2024.12` a recent version is installed alongside the OpenROAD version required by `openlane`. In order to use the ORFS, **before** calling the `make` script make sure to set the following env vars:
+The ORFS require a recent version of `openroad`. Since image tag `2024.12` a recent version is installed alongside the OpenROAD version required by `librelane`. In order to use the ORFS, **before** calling the `make` script make sure to set the following env vars:
 
 ```bash
 export YOSYS_EXE=$TOOLS/yosys/bin/yosys

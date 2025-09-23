@@ -151,6 +151,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS
 - [lctime](https://codeberg.org/librecell/lctime) Characterization kit for CMOS cells
 - [libman](https://github.com/IHP-GmbH/LibMan) design library manager to manage cells and views
+- [librelane](https://github.com/librelane/librelane) successor of OpenLane(2), RTL2GDS flow scripts
 - [magic](https://github.com/rtimothyedwards/magic) layout editor with DRC and PEX
 - [najaeda](https://github.com/najaeda/naja) data structures and APIs for the development of post logic synthesis EDA algorithms
 - [netgen](https://github.com/rtimothyedwards/netgen) netlist comparison (LVS)
@@ -159,9 +160,8 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [nvc](https://github.com/nickg/nvc) VHDL simulator and compiler
 - [open_pdks](https://github.com/RTimothyEdwards/open_pdks) PDK setup scripts
 - [openems](https://github.com/thliebig/openEMS) electromagnetic field solver using the EC-FDTD method
-- [openlane2](https://github.com/efabless/openlane2) rewrite of OpenLane in Python, 2nd generation
 - [openram](https://github.com/VLSIDA/OpenRAM) OpenRAM Python library
-- [openroad](https://github.com/The-OpenROAD-Project/OpenROAD) RTL2GDS engine used by `openlane2`
+- [openroad](https://github.com/The-OpenROAD-Project/OpenROAD) RTL2GDS engine used by `librelane`
 - [opensta](https://github.com/parallaxsw/OpenSTA) gate level static timing verifier
 - [openvaf](https://github.com/dwarning/OpenVAF) Verilog-A compiler for device models
 - [osic-multitool](https://github.com/iic-jku/osic-multitool) collection of useful scripts and documentation
@@ -199,7 +199,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [yosys](https://github.com/YosysHQ/yosys) Verilog synthesis tool (with GHDL plugin for VHDL synthesis and Slang plugin for SystemVerilog synthesis), incl. `eqy` (equivalence checker), `sby` (formal verification), and `mcy` (mutation coverage)
 - RF toolkit with [FastHenry2](https://github.com/ediloren/FastHenry2), [FasterCap](https://github.com/ediloren/FasterCap), [openEMS](https://github.com/thliebig/openEMS), and [scikit-rf](https://github.com/scikit-rf/scikit-rf).
 
-The tool versions used for `OpenLane2` (and other tools) are documented in `tool_metadata.yml`. In addition to the EDA tools above, further valuable tools (like `git`) and editors (like `gvim`) are installed. If something useful is missing, please let us know!
+The tool versions used for `librelane` (and other tools) are documented in `tool_metadata.yml`. In addition to the EDA tools above, further valuable tools (like `git`) and editors (like `gvim`) are installed. If something useful is missing, please let us know!
 
 ## 4. Quick Launch for Designers
 
