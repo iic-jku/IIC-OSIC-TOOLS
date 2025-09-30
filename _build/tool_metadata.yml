@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 44c4af1cd0673f1ed97c8abc04596a78bd9d2a0f
+  commit: 87082dc580228e4e35bf1be0217656c556b71b0c
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 1b97dc71377cea7e861be6625be4353c377a5fb5
@@ -30,13 +30,13 @@
   commit: "v3.13.5"
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
-  commit: "v0.30.4"
+  commit: "v0.30.4-1"
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.552"
+  commit: "8.3.554"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.300"
@@ -48,10 +48,10 @@
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
 - name: nvc
   repo: https://github.com/nickg/nvc.git
-  commit: "r1.17.2"
+  commit: "r1.18.0"
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
-  commit: 40cee970d8a9b7eaea35a34fe7d6068f05721f0a
+  commit: 0536d02d875c8f67dd7cca3902ac457e62f20005
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -69,19 +69,19 @@
   commit: "0.11.2"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2025.09.20"
+  commit: "2025.09.28"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 6637781e9315193e6ca2cfd3128d91eb05acd41a
+  commit: d9ac86a723653474548737f55384b0d99f447d92
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: ccc13eabc333a59d3a78bdb1d4a002928050e92d
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: f51df5d3955a27602a872eaf01492177513baf6f
+  commit: bfe100fbd39443498a413acd3f5d7852e6c1e3eb
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.86"
@@ -108,7 +108,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: ba259b751daee4b1c7a5a36bf2cfad1b059ce902
+  commit: 15c141a480170ccc4c06e2c848c07e3ab3675506
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"

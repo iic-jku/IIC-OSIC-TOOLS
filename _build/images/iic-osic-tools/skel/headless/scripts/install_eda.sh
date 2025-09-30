@@ -7,10 +7,10 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	cace==2.8.3 \
 	ciel==2.2.0 \
 	cocotb==2.0.0 \
-	edalize==0.6.1 \
+	edalize==0.6.2 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.4 \
-	gdsfactory==9.16.2 \
+	gdsfactory==9.18.1 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.2 \
