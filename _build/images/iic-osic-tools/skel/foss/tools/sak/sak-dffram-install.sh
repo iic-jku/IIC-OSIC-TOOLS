@@ -28,7 +28,7 @@ ERR_PARAM=1
 
 if [ $# -gt 1 ]; then
 	echo
-	echo "DFFRAM installation script (DIC@JKU)"
+	echo "DFFRAM installation script (ICD@JKU)"
 	echo
 	echo "Usage: $0 [install_dir]"
 	echo

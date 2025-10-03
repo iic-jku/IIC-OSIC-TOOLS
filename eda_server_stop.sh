@@ -39,7 +39,7 @@ while getopts "hdm:" flag; do
 			;;	
 		h)
 			echo
-			echo "Stopping Docker instances for EDA users (DIC@JKU)"
+			echo "Stopping Docker instances for EDA users (ICD@JKU)"
 			echo
 			echo "Usage: $0 [-h] [-d] [-m cont_prefix]"
 			echo

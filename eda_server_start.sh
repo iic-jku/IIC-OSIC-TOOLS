@@ -76,7 +76,7 @@ while getopts "hcdkp:n:s:f:g:l:m:" flag; do
 			;;
 		h)
 		 	echo
-			echo "Spinning up Docker instances for EDA users (DIC@JKU)"
+			echo "Spinning up Docker instances for EDA users (ICD@JKU)"
 			echo
 			echo "Usage: $0 [-h] [-d] [-c] [-k] [-p port_number] [-n number_instances] [-g user_group] [-s passwd_digits] [-f credential_file] [-l data_directory] [-m cont_prefix]"
 			echo

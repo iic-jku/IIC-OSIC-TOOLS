@@ -33,7 +33,7 @@ ERR_PROG_NOT_AVAILABLE=4
 
 if [ $# = 0 ]; then
 	echo
-	echo "Verilog linting using Icarus Verilog and Verilator (DIC@JKU)"
+	echo "Verilog linting using Icarus Verilog and Verilator (ICD@JKU)"
 	echo
 	echo "Usage: $0 [-d] [-i|-v|-b] [-g1995|-g2001|-g2005|-g2005-sv|-g2009|-g2012] <file.v>"
 	echo "       -i Run <iverilog>"

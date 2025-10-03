@@ -1,5 +1,5 @@
 :: ========================================================================
-:: Start script for DIC docker images (use for Jupyter notebooks only)
+:: Start script for ICD@JKU docker images (use for Jupyter notebooks only)
 ::
 :: SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
 :: Johannes Kepler University, Department for Integrated Circuits 

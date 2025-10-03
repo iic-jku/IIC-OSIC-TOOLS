@@ -31,7 +31,7 @@ ERR_NO_OUTPUT=7
 
 if [ $# -eq 0 ]; then
 	echo
-	echo "DRC script for Magic-VLSI and KLayout (DIC@JKU)"
+	echo "DRC script for Magic-VLSI and KLayout (ICD@JKU)"
 	echo
 	echo "Usage: $0 [-d] [-m|-k|-b] [-c] [-w workdir] <cellname>"
 	echo "       -m Run Magic DRC (default)"

@@ -43,7 +43,7 @@ while getopts "hdf:g:l:" flag; do
 			;;
 		h)
 		 	echo
-			echo "Restarting Docker instances for EDA users (DIC@JKU)"
+			echo "Restarting Docker instances for EDA users (ICD@JKU)"
 			echo
 			echo "Usage: $0 [-h] [-d] [-f credential_file] [-g user_group] [-l data_directory]"
 			echo

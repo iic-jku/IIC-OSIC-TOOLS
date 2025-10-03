@@ -37,7 +37,7 @@ ERR_UNKNOWN_FILE=7
 
 if [ $# -eq 0 ]; then
 	echo
-	echo "LVS script for netgen (DIC@JKU)"
+	echo "LVS script for netgen (ICD@JKU)"
 	echo
 	echo "Usage: $0 [-d] [-w <workdir>] [-s <schematic>|<netlist> -l <layout> -c <cellname> | <cellname>]"
 	echo

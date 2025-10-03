@@ -51,7 +51,7 @@ logy=0
 hilight_wave=0
 color=7
 node=out}
-T {(c) 2021-2025 Harald Pretl, JKU, DIC
+T {(c) 2021-2025 Harald Pretl, JKU, ICD
 
 Inverter Testbench
 
@@ -126,7 +126,7 @@ C {devices/launcher.sym} 340 -140 0 0 {name=h5
 descr="Load waves" 
 tclcommand="xschem raw_read $netlist_dir/tb_inv.raw tran"
 }
-C {devices/title.sym} 160 -30 0 0 {name=l5 author="(c) 2024-2025 Harald Pretl, DIC@JKU"}
+C {devices/title.sym} 160 -30 0 0 {name=l5 author="(c) 2024-2025 Harald Pretl, ICD@JKU"}
 C {devices/spice_probe.sym} 660 -490 0 0 {name=p1 attrs=""}
 C {devices/spice_probe.sym} 740 -310 0 0 {name=p2 attrs=""}
 C {devices/spice_probe.sym} 1300 -330 0 0 {name=p3 attrs=""}

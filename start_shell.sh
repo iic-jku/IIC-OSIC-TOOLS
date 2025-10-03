@@ -1,6 +1,6 @@
 #!/bin/bash
 # ========================================================================
-# Start script for DIC docker images (shell)
+# Start script for ICD@JKU docker images (shell)
 #
 # SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Department for Integrated Circuits

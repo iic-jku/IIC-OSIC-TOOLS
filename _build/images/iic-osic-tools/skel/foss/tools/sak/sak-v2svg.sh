@@ -30,7 +30,7 @@ ERR_FILE_NOT_FOUND=3
 
 if [ $# != 2 ]; then
 	echo
-	echo "Verilog-to-SVG conversion script using Yosys and netlistsvg (DIC@JKU)"
+	echo "Verilog-to-SVG conversion script using Yosys and netlistsvg (ICD@JKU)"
 	echo
 	echo "Usage: $0 <input.v> <output.svg>"
 	echo

@@ -35,7 +35,7 @@ ERR_PDK_NOT_SUPPORTED=6
 
 if [ $# -eq 0 ]; then
 	echo
-	echo "PEX script using Magic-VLSI (DIC@JKU)"
+	echo "PEX script using Magic-VLSI (ICD@JKU)"
 	echo
 	echo "Usage: $0 [-d] [-m mode] [-s mode] [-n <subcktname>] [-w <workdir>] <cellname>"
 	echo

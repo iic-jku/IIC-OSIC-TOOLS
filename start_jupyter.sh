@@ -1,6 +1,6 @@
 #!/bin/bash
 # ========================================================================
-# Start script for DIC docker images (use for Jupyter Notebooks only)
+# Start script for ICD@JKU docker images (use for Jupyter Notebooks only)
 #
 # SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Department for Integrated Circuits
