@@ -58,9 +58,9 @@ shift $((OPTIND-1))
 # now search the containers and remove them
 echo "[INFO] Stopping and removing EDA containers."
 NO_INSTANCES=0
-while [ "$(docker ps -q -f name="$EDA_CONTAINER_PREFIX")" ];
+while [ "$(docker ps -a -q -f name="$EDA_CONTAINER_PREFIX")" ];
 do
-	CONTAINER_ID=$(docker ps -q -f name="$EDA_CONTAINER_PREFIX" | head -n1)
+	CONTAINER_ID=$(docker ps -a -q -f name="$EDA_CONTAINER_PREFIX" | head -n1)
 	[ $DEBUG = 1 ] && echo "[INFO] Container ID $CONTAINER_ID found, now stopping and removing!"
 	docker stop "$CONTAINER_ID" > /dev/null
 	docker rm "$CONTAINER_ID" > /dev/null
