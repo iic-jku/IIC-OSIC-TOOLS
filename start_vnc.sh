@@ -96,7 +96,11 @@ fi
 
 # Processing ports and other parameters
 # Fixed potential errors in the container due to reduced access to syscalls.
-PARAMS="--security-opt seccomp=unconfined"
+if [ -n "${IIC_SERVER_DEPLOYMENT}" ]; then
+	PARAMS=""
+else
+	PARAMS="--security-opt seccomp=unconfined"
+fi
 if [ "$WEBSERVER_PORT" -gt 0 ]; then
 	PARAMS="$PARAMS -p $WEBSERVER_PORT:80"
 fi
