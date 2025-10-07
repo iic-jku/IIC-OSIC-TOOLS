@@ -5,7 +5,7 @@ echo "[INFO] Install EDA packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	amaranth[builtin-yosys]==0.5.6 \
 	cace==2.8.3 \
-	ciel==2.2.0 \
+	ciel==2.3.0 \
 	cocotb==2.0.0 \
 	edalize==0.6.2 \
 	fault-dft==0.9.4 \

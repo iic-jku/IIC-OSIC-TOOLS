@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 87082dc580228e4e35bf1be0217656c556b71b0c
+  commit: 9acf6920f79cc358a72a2d3fdd5f29eb9eff7492
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 1b97dc71377cea7e861be6625be4353c377a5fb5
@@ -24,7 +24,7 @@
   commit: 34b1e7bbb1014346a5bbe9171bd25840ee020578
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: d67d3323ad7da3aa2e6b1afb6da7be313c4848a6
+  commit: 1fdeb7b98267ec7d02826f3d8d224dd263896126
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: "v3.13.5"
@@ -36,10 +36,10 @@
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.554"
+  commit: "8.3.557"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.300"
+  commit: "1.5.301"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-45.2"
@@ -81,7 +81,7 @@
   commit: ccc13eabc333a59d3a78bdb1d4a002928050e92d
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: bfe100fbd39443498a413acd3f5d7852e6c1e3eb
+  commit: 8df626bf1dd88750ebc3e2121c36b92f6fc0db86
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.86"
@@ -108,7 +108,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 15c141a480170ccc4c06e2c848c07e3ab3675506
+  commit: 32d18b5a94692fee2acbabb740e2438262890d24
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"
