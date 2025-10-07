@@ -7,6 +7,7 @@ set -e
 
 echo "[INFO] Install support packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+	black \
 	control \
 	docopt \
 	flake8 \
