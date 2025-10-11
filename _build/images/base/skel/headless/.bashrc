@@ -29,7 +29,7 @@ function _path_add_tool_python() {
 
 function _add_resolution () {
     # $1=X, $2=Y
-    # do only in VNC mode
+    # Do only in VNC mode
     if [ -v VNCDESKTOP ]; then
         # and only when resolution not yet available
         # shellcheck disable=SC2143 disable=SC2086
@@ -67,7 +67,7 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
     export FOSS_INIT_DONE=1
 fi
 
-# add additional display resolutions (for VNC mode)
+# Add additional display resolutions (for VNC mode)
 _add_resolution 2048 1152
 _add_resolution 2560 1080
 _add_resolution 2560 1440
@@ -92,21 +92,21 @@ export STD_CELL_LIBRARY=sg13g2_stdcell
 export SPICE_USERINIT_DIR=$PDK_ROOT/$PDK/libs.tech/ngspice
 export KLAYOUT_PATH="/headless/.klayout:$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech"
 
-# this gets rid of the DBUS warning
+# This gets rid of the DBUS warning
 # https://unix.stackexchange.com/questions/230238/x-applications-warn-couldnt-connect-to-accessibility-bus-on-stderr/230442#230442
 export NO_AT_BRIDGE=1
 
-# first, check if XDG_RUNTIME_DIR is set, if not, set to default.
+# First, check if XDG_RUNTIME_DIR is set, if not, set to default.
 if [ -z ${XDG_RUNTIME_DIR+z} ]; then
     export XDG_RUNTIME_DIR=/tmp/runtime-default
 fi
-# second, verify if the actual directory exists, if not, create it.
+# Second, verify if the actual directory exists, if not, create it.
 if [ ! -d "$XDG_RUNTIME_DIR" ]; then
     mkdir -p "$XDG_RUNTIME_DIR"
     chmod 700 "$XDG_RUNTIME_DIR"
 fi
 
-# this is needed for Veryl to store its data
+# This is needed for Veryl to store its data
 if [ -z ${XDG_DATA_HOME+z} ]; then
     export XDG_DATA_HOME=/headless/.data-default
 fi
@@ -114,12 +114,12 @@ if [ ! -d "$XDG_DATA_HOME" ]; then
     mkdir -p "$XDG_DATA_HOME"
 fi
 
-# add local directories in $HOME to the path so that the user can upgrade PIP packages
+# Add local directories in $HOME to the path so that the user can upgrade PIP packages
 export PATH=$HOME/.local/bin:$PATH
 export PYTHONPATH=$HOME/.local/lib/python3.10/site-packages:$PYTHONPATH
 
 #----------------------------------------
-# tool aliases
+# Tool aliases
 #----------------------------------------
 
 alias mmagic='MAGTYPE=mag magic'
@@ -168,7 +168,7 @@ alias m='less'
 alias term='xfce4-terminal'
 
 #----------------------------------------
-# git
+# Git
 #----------------------------------------
 
 alias gcl='git clone'
@@ -185,7 +185,7 @@ alias gln='git log --name-status'
 alias gsss='git submodule status'
 
 #----------------------------------------
-# user functions
+# User functions
 #----------------------------------------
 
 function mdview() {
@@ -198,13 +198,13 @@ function mdview() {
 }
 
 #----------------------------------------
-# adapt user prompt
+# Adapt user prompt
 #----------------------------------------
 
 export PS1='\[\033[0;32m\]\w >\[\033[0;38m\] '
 
 #----------------------------------------
-# source user configs from $DESIGNS
+# Source user configs from $DESIGNS
 #----------------------------------------
 
 if [ -f "$DESIGNS/.designinit" ]; then
