@@ -81,7 +81,11 @@ export EDITOR="gedit"
 export PYTHONPYCACHEPREFIX="/tmp/pycache"
 export KLAYOUT_HOME="/headless/.klayout"
 
-# setting default PDK
+# Enable ngspice co-simulation with VHDL
+export CPATH="${TOOLS}/ghdl/include:${TOOLS}/ghdl/include/ghdl:${CPATH}"
+export LIBRARY_PATH="${TOOLS}/ghdl/lib:${LIBRARY_PATH}"
+
+# Setting default PDK
 export PDK=ihp-sg13g2
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=sg13g2_stdcell
