@@ -162,7 +162,6 @@ apt -y install \
 	python3-venv \
 	python3-virtualenv \
 	python3-wheel \
-	qmake6 \
 	qt6-base-dev \
 	qt6-base-dev-tools \
 	qt6-charts-dev \
