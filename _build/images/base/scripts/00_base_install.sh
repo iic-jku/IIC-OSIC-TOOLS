@@ -103,11 +103,6 @@ apt -y install \
 	libpcre2-8-0 \
 	libpcre3 \
 	libqhull-r8.0 \
-	libqt5charts5 \
-	libqt5multimedia5 \
-	libqt5multimediawidgets5 \
-	libqt5svg5 \
-	libqt5xmlpatterns5 \
 	libqt6svg6 \
 	libre2-10 \
 	libreadline8 \
@@ -157,7 +152,6 @@ apt -y install \
 	python3 \
 	python3-cvxopt \
 	python3-pip \
-	python3-pyqt5 \
 	python3-pyqt6 \
 	python3-setuptools \
 	python3-tk \
@@ -165,9 +159,6 @@ apt -y install \
 	python3-virtualenv \
 	python3-wheel \
 	qmake6 \
-	qt5-image-formats-plugins \
-	qt5-qmake \
-	qtbase5-dev-tools \
 	qt6-tools-dev-tools \
 	qt6-l10n-tools \
 	qtchooser \
