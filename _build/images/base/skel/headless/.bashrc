@@ -80,6 +80,7 @@ LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${T
 export EDITOR="gedit"
 export PYTHONPYCACHEPREFIX="/tmp/pycache"
 export KLAYOUT_HOME="/headless/.klayout"
+export SHELL=/bin/bash
 
 # Enable ngspice co-simulation with VHDL
 export CPATH="${TOOLS}/ghdl/include:${TOOLS}/ghdl/include/ghdl:${CPATH}"
