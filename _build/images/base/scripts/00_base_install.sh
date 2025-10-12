@@ -43,6 +43,7 @@ apt -y install \
 	git \
 	gnat \
 	gnupg2 \
+	gobject-introspection \
 	google-perftools \
 	gperf \
 	gpg \
