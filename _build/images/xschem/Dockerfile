@@ -1,7 +1,7 @@
 #######################################################################
 # Compile xschem
 #######################################################################
-ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base
+ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
 ARG XSCHEM_REPO_COMMIT="afefb18ee2d18d49a46212f84db6f8f7c482aa4a"

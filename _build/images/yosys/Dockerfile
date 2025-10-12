@@ -1,7 +1,7 @@
 #######################################################################
 # Compile yosys & ghdl plugin & slang plugin
 #######################################################################
-ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base
+ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS yosys
 ARG YOSYS_REPO_URL="https://github.com/YosysHQ/yosys.git"
 ARG YOSYS_REPO_COMMIT="v0.57"

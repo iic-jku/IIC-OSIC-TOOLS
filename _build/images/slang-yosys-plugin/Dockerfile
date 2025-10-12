@@ -1,4 +1,4 @@
-ARG BASE_IMAGE_BUILD="registry.iic.jku.at:5000/iic-osic-tools:base"
+ARG BASE_IMAGE_BUILD="registry.iic.jku.at:5000/iic-osic-tools:base-dev"
 ARG TOOL_IMAGE_YOSYS="registry.iic.jku.at:5000/iic-osic-tools:tool-yosys-latest"
 
 FROM ${TOOL_IMAGE_YOSYS} AS yosys

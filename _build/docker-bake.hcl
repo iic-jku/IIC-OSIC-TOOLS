@@ -4,6 +4,12 @@ target "base" {
   tags = ["registry.iic.jku.at:5000/iic-osic-tools:base"]
 }
 
+target "base-dev" {
+  platforms = ["linux/amd64", "linux/arm64"]
+  dockerfile = "images/base-dev/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:base-dev"]
+}
+
 group "tools" {
   targets = ["tools-level-1", "tools-level-2", "tools-level-3"]
 }

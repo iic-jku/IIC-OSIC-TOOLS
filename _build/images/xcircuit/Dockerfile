@@ -1,7 +1,7 @@
 #######################################################################
 # Compile xcircuit
 #######################################################################
-ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base
+ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS xcircuit
 ARG XCIRCUIT_REPO_URL="https://github.com/RTimothyEdwards/XCircuit.git"
 ARG XCIRCUIT_REPO_COMMIT="b67fb820ac5506f9926ebc7f92c65c74c48e087d"

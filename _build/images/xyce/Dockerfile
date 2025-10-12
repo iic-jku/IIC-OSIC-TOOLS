@@ -1,7 +1,7 @@
 #######################################################################
 # Compile xyce & xyce-xdm
 #######################################################################
-ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base
+ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS xyce
 ARG XYCE_TRILINOS_REPO_URL="https://github.com/trilinos/Trilinos.git"
 ARG XYCE_TRILINOS_REPO_COMMIT="trilinos-release-12-12-1"

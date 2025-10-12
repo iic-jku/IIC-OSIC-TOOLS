@@ -1,7 +1,7 @@
 #######################################################################
 # Compile different components for the rftoolkit
 #######################################################################
-ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base
+ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS rftoolkit
 ARG RFTK_NAME="rftoolkit"
 ARG RFTK_FASTHENRY_REPO_URL="https://github.com/ediloren/FastHenry2.git"

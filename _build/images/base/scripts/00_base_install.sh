@@ -11,7 +11,6 @@ apt -y install \
 	ant \
 	autoconf \
 	automake \
-	autotools-dev \
 	bc \
 	binutils-gold \
 	bison \
@@ -52,96 +51,96 @@ apt -y install \
 	help2man \
 	language-pack-en-base \
 	lcov \
-	libasound2-dev \
-	libblas-dev \
-	libboost-filesystem-dev \
-	libboost-iostreams-dev \
-	libboost-python-dev \
-	libboost-serialization-dev \
-	libboost-system-dev \
-	libboost-test-dev \
-	libboost-thread-dev \
-	libbz2-dev \
-	libc6-dev \
-	libcairo2-dev \
-	libcgal-dev \
-	libclang-common-17-dev \
-	libcurl4-openssl-dev \
-	libdw-dev \
-	libedit-dev \
-	libeigen3-dev \
-	libexpat1-dev \
-	libffi-dev \
-	libfftw3-dev \
+	libasound2 \
+	libblas3 \
+	libboost-filesystem1.83.0 \
+	libboost-iostreams1.83.0 \
+	libboost-python1.83.0 \
+	libboost-serialization1.83.0 \
+	libboost-system1.83.0 \
+	libboost-test1.83.0 \
+	libboost-thread1.83.0 \
+	libbz2-1.0 \
+	libc6 \
+	libcairo2 \
+	libcgal27 \
+	libclang-common-17 \
+	libcurl4 \
+	libdw1 \
+	libedit2 \
+	libexpat1 \
+	libffi8 \
+	libfftw3-3 \
 	libfindbin-libs-perl \
-	libfl-dev \
-	libftdi-dev \
-	libgcc-13-dev \
-	libgettextpo-dev \
-	libgirepository1.0-dev \
-	libgit2-dev \
-	libglu1-mesa-dev \
-	libgmp-dev \
+	libfl2 \
+	libftdi1-2 \
+	libgcc-s1 \
+	libgettextpo0 \
+	libgirepository-1.0-1 \
+	libgit2-1.7 \
+	libglu1-mesa \
+	libgmp10 \
 	libgomp1 \
-	libgoogle-perftools-dev \
-	libgtk-3-dev \
-	libgtk-4-dev \
-	libhdf5-dev \
-	libjpeg-dev \
-	libjudy-dev \
-	liblapack-dev \
-	liblemon-dev \
-	liblzma-dev \
-	libmng-dev \
-	libmpc-dev \
-	libmpfr-dev \
-	libncurses-dev \
+	libgoogle-perftools4 \
+	libgtk-3-0 \
+	libgtk-4-1 \
+	libhdf5-103-1 \
+	libjpeg-turbo8 \
+	libjudy1 \
+	liblapack3 \
+	liblemon1.3.1 \
+	liblzma5 \
+	libmng2 \
+	libmpc3 \
+	libmpfr6 \
+	libncurses6 \
 	libngspice0 \
 	libnss-wrapper \
-	libomp-dev \
-	libopenmpi-dev \
-	libpcre2-dev \
-	libpcre3-dev \
-	libpolly-17-dev \
-	libqhull-dev \
-	libqt5charts5-dev \
+	libomp5-17 \
+	libopenmpi3 \
+	libpcre2-8-0 \
+	libpcre3 \
+	libpolly-17 \
+	libqhull-r8.0 \
+	libqt5charts5 \
+	libqt5multimedia5 \
 	libqt5multimediawidgets5 \
-	libqt5svg5-dev \
-	libqt5xmlpatterns5-dev \
-	libqt6svg6-dev \
-	libre2-dev \
-	libreadline-dev \
-	libsm-dev \
-	libsqlite3-dev \
-	libssl-dev \
-	libsuitesparse-dev \
+	libqt5svg5 \
+	libqt5xmlpatterns5 \
+	libqt6svg6 \
+	libre2-9 \
+	libreadline8 \
+	libsm6 \
+	libsqlite3-0 \
+	libssl3 \
+	libsuitesparse7 \
+	libtcl8.6 \
 	libtcl \
-	libtinyxml-dev \
-	libtomlplusplus-dev \
+	libtinyxml2.6.2v5 \
+	libtomlplusplus3 \
 	libtool \
-	libvtk9-dev \
-	libvtk9-qt-dev \
-	libwxgtk3.2-dev \
-	libx11-dev \
-	libx11-xcb-dev \
-	libxaw7-dev \
-	libxcb1-dev \
-	libxext-dev \
-	libxft-dev \
-	libxml2-dev \
-	libxpm-dev \
-	libxrender-dev \
-	libxslt-dev \
-	libyaml-dev \
-	libyaml-cpp-dev \
-	libz-dev \
-	libz3-dev \
-	libzip-dev \
-	libzstd-dev \
+	libvtk9.1 \
+	libvtk9-qt5-1 \
+	libwxgtk3.2-1 \
+	libx11-6 \
+	libx11-xcb1 \
+	libxaw7 \
+	libxcb1 \
+	libxext6 \
+	libxft2 \
+	libxml2 \
+	libxpm4 \
+	libxrender1 \
+	libxslt1.1 \
+	libyaml-0-2 \
+	libyaml-cpp0.8 \
+	zlib1g \
+	libz3-4 \
+	libzip4 \
+	libzstd1 \
 	linguist-qt6 \
 	lld-17 \
 	llvm-17 \
-	llvm-17-dev \
 	make \
 	meson \
 	mold \
@@ -156,7 +155,6 @@ apt -y install \
 	pkg-config \
 	python3 \
 	python3-cvxopt \
-	python3-dev \
 	python3-pip \
 	python3-pyqt5 \
 	python3-pyqt6 \
@@ -168,41 +166,38 @@ apt -y install \
 	qmake6 \
 	qt5-image-formats-plugins \
 	qt5-qmake \
-	qtbase5-dev \
+	qtbase5-5 \
 	qtbase5-dev-tools \
-	qt6-base-dev \
-	qt6-charts-dev \
-	qt6-tools-dev \
+	qt6-base-6 \
+	qt6-charts-6 \
+	qt6-tools-6 \
 	qt6-tools-dev-tools \
 	qt6-l10n-tools \
 	qtchooser \
-	qtmultimedia5-dev \
-	qttools5-dev \
+	qtmultimedia5 \
+	qttools5 \
 	ruby \
-	ruby-dev \
 	ruby-irb \
 	ruby-rubygems \
 	rustup \
 	strace \
 	swig \
 	tcl \
-	tcl-dev \
 	tcl-tclreadline \
 	tcllib \
 	tclsh \
 	texinfo \
 	time \
-	tk-dev \
+	tk8.6 \
 	tzdata \
 	unzip \
 	usbutils-py \
 	uuid \
-	uuid-dev \
 	wget \
 	xdot \
 	xvfb \
 	zip \
-	zlib1g-dev
+	zlib1g
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 0	
 
