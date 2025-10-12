@@ -70,7 +70,6 @@ apt -y install \
 	libffi8 \
 	libfftw3-single3 \
 	libfftw3-double3 \
-	libfftw3-quad3 \
 	libfftw3-long3 \
 	libfindbin-libs-perl \
 	libfl2 \
