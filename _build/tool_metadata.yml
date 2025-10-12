@@ -15,7 +15,7 @@
   commit: 9acf6920f79cc358a72a2d3fdd5f29eb9eff7492
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
-  commit: 1b97dc71377cea7e861be6625be4353c377a5fb5
+  commit: 233dffbde92bb7fe8405712a3e78d66075ccda00
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
   commit: bb978d9d667d569b9153ffa34007e300302907dc
@@ -24,7 +24,7 @@
   commit: 34b1e7bbb1014346a5bbe9171bd25840ee020578
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 1fdeb7b98267ec7d02826f3d8d224dd263896126
+  commit: cc1ead51c7524a055c532531e57640c7cf598130
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: "v3.13.5"
@@ -36,10 +36,10 @@
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.557"
+  commit: "8.3.561"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.301"
+  commit: "1.5.303"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-45.2"
@@ -75,7 +75,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: d9ac86a723653474548737f55384b0d99f447d92
+  commit: 9dc32c7325e93f57844ba30b62bfb42fde3261fe
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: ccc13eabc333a59d3a78bdb1d4a002928050e92d
@@ -108,7 +108,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 32d18b5a94692fee2acbabb740e2438262890d24
+  commit: 169f5c9d5f1a53343ad4efee194b5012f1c84ee8
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"
@@ -117,7 +117,7 @@
   commit: "Release-2.7.0"
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: "v0.57"
+  commit: "v0.58"
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
 - name: yosys_sby
