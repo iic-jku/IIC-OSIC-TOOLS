@@ -35,7 +35,9 @@ make install -j"$(nproc)"
 cd /tmp || exit 1
 git clone --filter=blob:none "${YOSYS_MCY_REPO_URL}" "${YOSYS_MCY_NAME}"
 cd "${YOSYS_MCY_NAME}" || exit 1
-git checkout "${YOSYS_REPO_COMMIT}"
+#FIXME use qt6 branch for testing
+# git checkout "${YOSYS_REPO_COMMIT}"
+git checkout qt6
 sed -i "s#^PREFIX.*#PREFIX=${TOOLS}/${YOSYS_NAME}#g" Makefile
 make install -j"$(nproc)"
 
