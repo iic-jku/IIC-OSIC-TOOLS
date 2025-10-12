@@ -62,6 +62,7 @@ done
 
 #shellcheck disable=SC2086
 ${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push base
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push base-dev
 ${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-level-1
 ${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-level-2
 ${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-level-3

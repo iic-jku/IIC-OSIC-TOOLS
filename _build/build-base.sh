@@ -38,3 +38,4 @@ fi
 
 #shellcheck disable=SC2086
 ${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} ${load_or_push} base
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} ${load_or_push} base-dev
