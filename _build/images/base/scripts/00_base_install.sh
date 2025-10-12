@@ -51,7 +51,7 @@ apt -y install \
 	help2man \
 	language-pack-en-base \
 	lcov \
-	libasound2 \
+	libasound2t64 \
 	libblas3 \
 	libboost-filesystem1.83.0 \
 	libboost-iostreams1.83.0 \
@@ -63,14 +63,15 @@ apt -y install \
 	libbz2-1.0 \
 	libc6 \
 	libcairo2 \
-	libcgal27 \
-	libclang-common-17 \
 	libcurl4 \
 	libdw1 \
 	libedit2 \
 	libexpat1 \
 	libffi8 \
-	libfftw3-3 \
+	libfftw3-single3 \
+	libfftw3-double3 \
+	libfftw3-quad3 \
+	libfftw3-long3 \
 	libfindbin-libs-perl \
 	libfl2 \
 	libftdi1-2 \
@@ -86,7 +87,7 @@ apt -y install \
 	libgtk-4-1 \
 	libhdf5-103-1 \
 	libjpeg-turbo8 \
-	libjudy1 \
+	libjudydebian1 \
 	liblapack3 \
 	liblemon1.3.1 \
 	liblzma5 \
@@ -100,7 +101,6 @@ apt -y install \
 	libopenmpi3 \
 	libpcre2-8-0 \
 	libpcre3 \
-	libpolly-17 \
 	libqhull-r8.0 \
 	libqt5charts5 \
 	libqt5multimedia5 \
@@ -108,19 +108,19 @@ apt -y install \
 	libqt5svg5 \
 	libqt5xmlpatterns5 \
 	libqt6svg6 \
-	libre2-9 \
+	libre2-10 \
 	libreadline8 \
 	libsm6 \
 	libsqlite3-0 \
 	libssl3 \
-	libsuitesparse7 \
+	libsuitesparse-mongoose3 \
 	libtcl8.6 \
 	libtcl \
 	libtinyxml2.6.2v5 \
 	libtomlplusplus3 \
 	libtool \
-	libvtk9.1 \
-	libvtk9-qt5-1 \
+	libvtk9.1t64 \
+	libvtk9.1t64-qt \
 	libwxgtk3.2-1 \
 	libx11-6 \
 	libx11-xcb1 \
@@ -166,16 +166,10 @@ apt -y install \
 	qmake6 \
 	qt5-image-formats-plugins \
 	qt5-qmake \
-	qtbase5-5 \
 	qtbase5-dev-tools \
-	qt6-base-6 \
-	qt6-charts-6 \
-	qt6-tools-6 \
 	qt6-tools-dev-tools \
 	qt6-l10n-tools \
 	qtchooser \
-	qtmultimedia5 \
-	qttools5 \
 	ruby \
 	ruby-irb \
 	ruby-rubygems \
