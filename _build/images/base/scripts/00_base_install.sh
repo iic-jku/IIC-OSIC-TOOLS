@@ -21,6 +21,7 @@ apt -y install \
 	clang-17 \
 	clang-tools-17 \
 	cmake \
+	cmake-curses-gui \
 	csh \
 	curl \
 	cython3 \
@@ -33,6 +34,7 @@ apt -y install \
 	doxygen \
 	expat \
 	flex \
+	freeglut3-dev \
 	g++ \
 	gawk \
 	gcc \
@@ -138,6 +140,8 @@ apt -y install \
 	lld-17 \
 	llvm-17 \
 	make \
+	mesa-common-dev \
+	mesa-utils \
 	meson \
 	mold \
 	ninja-build \
