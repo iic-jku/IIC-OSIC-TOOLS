@@ -168,7 +168,7 @@ apt -y install \
 	qt6-tools-dev \
 	qt6-tools-dev-tools \
 	qt6-l10n-tools \
-	qtchooser \
+	qt6-5compat-dev \
 	ruby \
 	ruby-irb \
 	ruby-rubygems \
