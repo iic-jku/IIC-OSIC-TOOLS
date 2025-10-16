@@ -19,15 +19,13 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	najaeda==0.2.12 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
+	pyuvm==4.0.0 \
 	pyverilog==1.3.0 \
 	schemdraw[svgmath]==0.20 \
 	scikit-rf==1.8.0 \
 	siliconcompiler==0.35.0 \
 	spicelib==1.4.6 \
 	spyci==1.0.2
-
-#FIXME Remove pyuvm for now, as it needs cocotb<2
-#pyuvm==3.0.0 \
 
 echo "[INFO] Installing CharLib"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
