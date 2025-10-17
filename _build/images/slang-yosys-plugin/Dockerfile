@@ -1,3 +1,6 @@
+#######################################################################
+# Compile Slang Yosys plugin
+#######################################################################
 ARG BASE_IMAGE_BUILD="registry.iic.jku.at:5000/iic-osic-tools:base-dev"
 ARG TOOL_IMAGE_YOSYS="registry.iic.jku.at:5000/iic-osic-tools:tool-yosys-latest"
 
