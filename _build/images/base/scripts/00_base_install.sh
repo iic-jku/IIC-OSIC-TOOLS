@@ -204,7 +204,3 @@ echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*
 apt -y autoremove --purge
 apt -y clean
-
-# FIXME maybe interesting for future cleanup (removal of -dev packages)
-# apt list --installed | grep "\-dev" | grep automatic | cut -d'/' -f1 | xargs apt -y remove
-# apt -y autoremove
