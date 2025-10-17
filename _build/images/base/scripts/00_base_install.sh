@@ -88,6 +88,7 @@ apt -y install \
 	libhdf5-103-1 \
 	libjpeg-turbo8 \
 	libjudydebian1 \
+	libklu2 \
 	liblapack3 \
 	liblemon1.3.1 \
 	liblzma5 \
