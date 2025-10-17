@@ -88,6 +88,7 @@ apt -y install \
 	python3-dev \
 	qt6-base-dev \
 	qt6-base-dev-tools \
+	qt6-charts-dev \
 	qt6-tools-dev \
 	qt6-multimedia-dev \
 	qt6-svg-dev \
