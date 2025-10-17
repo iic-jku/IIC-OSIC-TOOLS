@@ -41,6 +41,7 @@ apt install -y \
         firefox \
         gedit \
         gnuplot \
+        gnuplot-x11 \
         htop \
         hub \
         openjdk-17-jdk \
