@@ -57,9 +57,6 @@ apt -y install \
 	libpcre3-dev \
 	libpolly-17-dev \
 	libqhull-dev \
-	libqt5charts5-dev \
-	libqt5svg5-dev \
-	libqt5xmlpatterns5-dev \
 	libqt6svg6-dev \
 	libre2-dev \
 	libreadline-dev \

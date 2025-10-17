@@ -103,11 +103,11 @@ apt -y install \
 	libpcre2-8-0 \
 	libpcre3 \
 	libqhull-r8.0 \
-	libqt5charts5 \
-	libqt5multimedia5 \
-	libqt5multimediawidgets5 \
-	libqt5svg5 \
-	libqt5xmlpatterns5 \
+	libqt6charts6 \
+	libqt6core5compat6 \
+	libqt6core6t64 \
+	libqt6multimedia6 \
+	libqt6multimediawidgets6 \
 	libqt6svg6 \
 	libre2-10 \
 	libreadline8 \
@@ -143,6 +143,7 @@ apt -y install \
 	lld-17 \
 	llvm-17 \
 	make \
+	mesa-utils \
 	meson \
 	mold \
 	ninja-build \
@@ -157,7 +158,6 @@ apt -y install \
 	python3 \
 	python3-cvxopt \
 	python3-pip \
-	python3-pyqt5 \
 	python3-pyqt6 \
 	python3-setuptools \
 	python3-tk \
@@ -165,12 +165,6 @@ apt -y install \
 	python3-virtualenv \
 	python3-wheel \
 	qmake6 \
-	qt5-image-formats-plugins \
-	qt5-qmake \
-	qtbase5-dev-tools \
-	qt6-tools-dev-tools \
-	qt6-l10n-tools \
-	qtchooser \
 	ruby \
 	ruby-irb \
 	ruby-rubygems \
