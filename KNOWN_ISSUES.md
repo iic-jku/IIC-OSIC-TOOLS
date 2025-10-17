@@ -27,7 +27,7 @@ A few applications are using OpenGL graphics, which can lead to issues on some c
 export LIBGL_ALWAYS_INDIRECT=0
 ```
 
-### Issues with KLayout PCell libraries 
+### Issues with KLayout PCell libraries
 
 Some PCell libraries were developed for `gdsfactory7`, such as 
    - Skywater `sky130A`
@@ -68,7 +68,6 @@ Since the OpenROAD and ORFS version are tightly interlinked with regular interfa
 ```bash
 git checkout $(cat $TOOLS/openroad-latest/ORFS_COMMIT)
 ```
-
 ### SiliconCompiler
 
 SiliconCompiler also requires a recent version of OpenROAD and OpenSTA. Before invoking SiliconCompiler, you
@@ -98,6 +97,12 @@ The IIC-OSIC-Tools container can be run using Podman instead of Docker (with the
 
 - By default, Podman mounts all bind-mounts/volumes as root, even though the `UID` inside the container is != 0, which creates some problems when accessing files inside the container. To work around this issue, we suggest the following procedure:
 - Edit the desired start script and find/replace all occurrences of `:rw` with `:U,rw`. Then Podman will mount all listed directories with the given `UID` inside the container.
+
+### CharLib
+
+The `charlib` tools works but needs the following setting: `simulator: ngspice-subprocess` in the `settings` block.
+
+See <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/145#issuecomment-3410979281>
 
 ## Build
 

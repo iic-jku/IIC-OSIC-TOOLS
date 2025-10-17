@@ -34,12 +34,6 @@ To use a local image from a registry without https, the following entry has to b
 }
 ```
 
-**IMPORTANT**: Currently (October 2025) the `buildkitd` on `aarch64` is buggy, leading to a hang during build. The latest release has this issue fixed. To use the latest `buildkitd` (instead of `buildx-stable-1`), the following should be set when creating the builders:
-
-```bash
-BUILDX_EXTRA_PARAMS="--driver-opt=image=moby/buildkit:latest" ./builder-create.sh
-```
-
 #### Step 2: Build the `base` image
 
 ```bash
