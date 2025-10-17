@@ -57,7 +57,6 @@ apt -y install \
 	libpcre3-dev \
 	libpolly-17-dev \
 	libqhull-dev \
-	libqt6svg6-dev \
 	libre2-dev \
 	libreadline-dev \
 	libsm-dev \
@@ -87,12 +86,12 @@ apt -y install \
 	libzstd-dev \
 	llvm-17-dev \
 	python3-dev \
-	qtbase5-dev \
 	qt6-base-dev \
-	qt6-charts-dev \
+	qt6-base-dev-tools \
 	qt6-tools-dev \
-	qtmultimedia5-dev \
-	qttools5-dev \
+	qt6-multimedia-dev \
+	qt6-svg-dev \
+	qt6-5compat-dev \
 	ruby-dev \
 	tcl-dev \
 	tk-dev \

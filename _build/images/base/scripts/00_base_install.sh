@@ -107,7 +107,6 @@ apt -y install \
 	libqt6core5compat6 \
 	libqt6core6t64 \
 	libqt6multimedia6 \
-	libqt6multimediawidgets6 \
 	libqt6svg6 \
 	libre2-10 \
 	libreadline8 \
