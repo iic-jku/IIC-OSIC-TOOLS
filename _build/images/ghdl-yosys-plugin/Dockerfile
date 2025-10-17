@@ -1,7 +1,7 @@
 #######################################################################
 # Compile Yosys GHDL plugin
 #######################################################################
-ARG BASE_IMAGE_BUILD="registry.iic.jku.at:5000/iic-osic-tools:base"
+ARG BASE_IMAGE_BUILD="registry.iic.jku.at:5000/iic-osic-tools:base-dev"
 ARG TOOL_IMAGE_YOSYS="registry.iic.jku.at:5000/iic-osic-tools:tool-yosys-latest"
 ARG TOOL_IMAGE_GHDL="registry.iic.jku.at:5000/iic-osic-tools:tool-ghdl-latest"
 FROM ${TOOL_IMAGE_YOSYS} AS yosys

@@ -1,7 +1,7 @@
 #######################################################################
 # Compile slang
 #######################################################################
-ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base
+ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
 ARG SLANG_REPO_COMMIT="301723fe5993f8b08ddb933de501b17531d875a5"

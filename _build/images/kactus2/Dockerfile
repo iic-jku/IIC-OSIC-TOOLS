@@ -1,7 +1,7 @@
 #######################################################################
 # Compile kactus2
 #######################################################################
-ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base
+ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS kactus2
 ARG KACTUS_REPO_URL="https://github.com/kactus2/kactus2dev.git"
 ARG KACTUS_REPO_COMMIT="v3.13.5"

@@ -1,7 +1,7 @@
 #######################################################################
 # Compile gaw3-xschem
 #######################################################################
-ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base
+ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS gaw3-xschem
 ARG GAW3_XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem-gaw.git"
 ARG GAW3_XSCHEM_REPO_COMMIT="6b8fa4ab007e88b3129381e0479737ae014a8b51"
