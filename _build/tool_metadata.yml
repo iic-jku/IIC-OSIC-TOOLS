@@ -24,7 +24,7 @@
   commit: 34b1e7bbb1014346a5bbe9171bd25840ee020578
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: cc1ead51c7524a055c532531e57640c7cf598130
+  commit: 884349caabc81da7fb0780db24939a71c8aeb563
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: "v3.13.5"
@@ -36,7 +36,7 @@
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.561"
+  commit: "8.3.563"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.303"
@@ -75,13 +75,13 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 9dc32c7325e93f57844ba30b62bfb42fde3261fe
+  commit: 301723fe5993f8b08ddb933de501b17531d875a5
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: ccc13eabc333a59d3a78bdb1d4a002928050e92d
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 8df626bf1dd88750ebc3e2121c36b92f6fc0db86
+  commit: 0b44fd1988dc4632f22552b5882585b882dc6a0c
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.86"
@@ -108,7 +108,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 169f5c9d5f1a53343ad4efee194b5012f1c84ee8
+  commit: afefb18ee2d18d49a46212f84db6f8f7c482aa4a
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"
@@ -120,7 +120,10 @@
   commit: "v0.58"
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
+  commit: "v0.58"
 - name: yosys_sby
   repo: https://github.com/YosysHQ/sby.git
+  commit: "v0.58"
 - name: yosys_mcy
   repo: https://github.com/YosysHQ/mcy.git
+  commit: "v0.58"
