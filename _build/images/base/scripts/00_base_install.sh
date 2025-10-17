@@ -96,6 +96,7 @@ apt -y install \
 	libmpc-dev \
 	libmpfr-dev \
 	libncurses-dev \
+	libngspice0 \
 	libnss-wrapper \
 	libomp-dev \
 	libopenmpi-dev \
