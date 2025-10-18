@@ -64,6 +64,9 @@
 - name: padring
   repo: https://github.com/iic-jku/padring.git
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
+- name: palace
+  repo: https://github.com/awslabs/palace
+  commit: "v0.14.0"
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: "0.11.2"

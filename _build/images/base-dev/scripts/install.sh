@@ -52,6 +52,8 @@ apt -y install \
 	libmpfr-dev \
 	libncurses-dev \
 	libomp-dev \
+	libopenblas-dev \
+	libopenblas-pthread-dev \
 	libopenmpi-dev \
 	libpcre2-dev \
 	libpcre3-dev \

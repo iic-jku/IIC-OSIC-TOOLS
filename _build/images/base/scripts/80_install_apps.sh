@@ -40,6 +40,7 @@ apt install -y \
         dbus-x11 \
         firefox \
         gedit \
+	gmsh \
         gnuplot \
         gnuplot-x11 \
         htop \

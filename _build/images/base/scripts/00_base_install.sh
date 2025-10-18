@@ -99,6 +99,8 @@ apt -y install \
 	libngspice0 \
 	libnss-wrapper \
 	libomp5-17 \
+	libopenblas0 \
+	libopenblas0-pthread \
 	libopenmpi3 \
 	libpcre2-8-0 \
 	libpcre3 \
