@@ -141,6 +141,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [gf180mcu](https://github.com/google/gf180mcu-pdk) GlobalFoundries 180 nm CMOS PDK
 - [ghdl-yosys-plugin](https://github.com/ghdl/ghdl-yosys-plugin) VHDL-plugin for `yosys`
 - [ghdl](https://github.com/ghdl/ghdl) VHDL simulator
+- [gmsh](https://gmsh.info/) three-dimensional finite element mesh generator
 - [gtkwave](https://github.com/gtkwave/gtkwave) waveform plot tool for digital simulation
 - [hdl21](https://github.com/dan-fritchman/Hdl21) analog hardware description library
 - [ihp-sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130 nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
@@ -166,6 +167,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [openvaf](https://github.com/dwarning/OpenVAF) Verilog-A compiler for device models
 - [osic-multitool](https://github.com/iic-jku/osic-multitool) collection of useful scripts and documentation
 - [padring](https://github.com/donn/padring) padring generation tool
+- [palace](https://github.com/awslabs/palace) 3D finite element solver for computational electromagnetics
 - [pulp-tools](https://github.com/pulp-platform/pulp) PULP platform tools consisting of [bender](https://github.com/pulp-platform/bender), [verible](https://github.com/chipsalliance/verible), and [sv2v](https://github.com/zachjs/sv2v)
 - [pygmid](https://github.com/dreoilin/pygmid) Python version of the gm/Id starter kit from Boris Murmann
 - [pyopus](https://fides.fe.uni-lj.si/pyopus/index.html) simulation runner and optimization tool for analog circuits
