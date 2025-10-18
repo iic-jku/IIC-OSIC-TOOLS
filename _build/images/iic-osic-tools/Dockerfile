@@ -26,6 +26,7 @@ ARG TOOL_IMAGE_OPENROAD="registry.iic.jku.at:5000/iic-osic-tools:tool-openroad-l
 ARG TOOL_IMAGE_OSIC_MULTITOOL="registry.iic.jku.at:5000/iic-osic-tools:tool-osic-multitool-latest"
 ARG TOOL_IMAGE_OPENVAF="registry.iic.jku.at:5000/iic-osic-tools:tool-openvaf-latest"
 ARG TOOL_IMAGE_PADRING="registry.iic.jku.at:5000/iic-osic-tools:tool-padring-latest"
+ARG TOOL_IMAGE_PALACE="registry.iic.jku.at:5000/iic-osic-tools:tool-palace-latest"
 ARG TOOL_IMAGE_PULP_TOOLS="registry.iic.jku.at:5000/iic-osic-tools:tool-pulp-tools-latest"
 ARG TOOL_IMAGE_QFLOW="registry.iic.jku.at:5000/iic-osic-tools:tool-qflow-latest"
 ARG TOOL_IMAGE_QUCS_S="registry.iic.jku.at:5000/iic-osic-tools:tool-qucs-s-latest"
@@ -69,6 +70,7 @@ FROM ${TOOL_IMAGE_OPENROAD} AS openroad
 FROM ${TOOL_IMAGE_OSIC_MULTITOOL} AS osic-multitool
 FROM ${TOOL_IMAGE_OPENVAF} AS openvaf
 FROM ${TOOL_IMAGE_PADRING} AS padring
+FROM ${TOOL_IMAGE_PALACE} AS palace
 FROM ${TOOL_IMAGE_PULP_TOOLS} AS pulp-tools
 FROM ${TOOL_IMAGE_QFLOW} AS qflow
 FROM ${TOOL_IMAGE_QUCS_S} AS qucs-s
@@ -122,6 +124,7 @@ COPY --link --from=openroad			      ${TOOLS}/openroad       ${TOOLS}/openroad/
 COPY --link --from=osic-multitool               ${TOOLS}/osic-multitool ${TOOLS}/osic-multitool/
 COPY --link --from=openvaf                      ${TOOLS}/openvaf        ${TOOLS}/openvaf/
 COPY --link --from=padring                      ${TOOLS}/padring        ${TOOLS}/padring/
+COPY --link --from=palace                       ${TOOLS}/palace         ${TOOLS}/palace/
 COPY --link --from=pulp-tools                   ${TOOLS}/pulp           ${TOOLS}/pulp/
 #FIXME COPY --link --from=pyopus                ${TOOLS}/               ${TOOLS}/
 COPY --link --from=qflow                        ${TOOLS}/qflow          ${TOOLS}/qflow/

@@ -12,6 +12,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	fusesoc==2.4.4 \
 	gdsfactory==9.19.0 \
 	gdspy==1.6.13 \
+	gmsh==4.14.1 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.2 \
 	lctime==0.0.26 \
