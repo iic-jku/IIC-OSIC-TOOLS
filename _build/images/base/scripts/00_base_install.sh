@@ -56,6 +56,7 @@ apt -y install \
 	libblas3 \
 	libboost-filesystem1.83.0 \
 	libboost-iostreams1.83.0 \
+	libboost-program-options1.83.0 \
 	libboost-python1.83.0 \
 	libboost-serialization1.83.0 \
 	libboost-system1.83.0 \
@@ -69,12 +70,13 @@ apt -y install \
 	libedit2 \
 	libexpat1 \
 	libffi8 \
-	libfftw3-single3 \
 	libfftw3-double3 \
 	libfftw3-long3 \
+	libfftw3-single3 \
 	libfindbin-libs-perl \
 	libfl2 \
-	libftdi1-2 \
+	libfst22 \
+	libftdi1 \
 	libgcc-s1 \
 	libgettextpo0 \
 	libgirepository-1.0-1 \
@@ -105,9 +107,12 @@ apt -y install \
 	libpcre2-8-0 \
 	libpcre3 \
 	libqhull-r8.0 \
+	libqt5sql5t64 \
+	libqt5xml5t64 \
 	libqt6charts6 \
 	libqt6core5compat6 \
 	libqt6core6t64 \
+	libqt6help6 \
 	libqt6multimedia6 \
 	libqt6svg6 \
 	libqt6svgwidgets6 \
@@ -118,7 +123,6 @@ apt -y install \
 	libssl3 \
 	libsuitesparse-mongoose3 \
 	libtcl8.6 \
-	libtcl \
 	libtinyxml2.6.2v5 \
 	libtomlplusplus3 \
 	libtool \
@@ -137,7 +141,6 @@ apt -y install \
 	libxslt1.1 \
 	libyaml-0-2 \
 	libyaml-cpp0.8 \
-	zlib1g \
 	libz3-4 \
 	libzip4 \
 	libzstd1 \
