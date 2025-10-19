@@ -4,12 +4,14 @@ set -e
 # Create symlinks for all installed tools
 for binfile in "${TOOLS}"/*/bin/*; do
     linkname="${TOOLS}/bin/$(basename "$binfile")"
-    # Skip if path contains "latest"
     if [[ "$binfile" == *latest* ]]; then
-        continue
-    fi
-    if [ ! -e "$linkname" ]; then
-        ln -s "$binfile" "$linkname"
+        if [ ! -e "$linkname" ]; then
+            ln -s "$binfile" "${linkname}-latest"
+        fi
+    else
+        if [ ! -e "$linkname" ]; then
+            ln -s "$binfile" "$linkname"
+        fi
     fi
 done
 
