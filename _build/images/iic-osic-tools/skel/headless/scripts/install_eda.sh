@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+echo "[INFO] Install EDA packages via APT"
+apt install -y \
+	gnuplot \
+	gnuplot-x11
+
 echo "[INFO] Install EDA packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	amaranth[builtin-yosys]==0.5.6 \

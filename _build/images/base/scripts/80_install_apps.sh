@@ -40,8 +40,6 @@ apt install -y \
         dbus-x11 \
         firefox \
         gedit \
-        gnuplot \
-        gnuplot-x11 \
         htop \
         hub \
         openjdk-17-jdk \
