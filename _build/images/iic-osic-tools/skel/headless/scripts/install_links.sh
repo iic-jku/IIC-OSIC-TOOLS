@@ -5,7 +5,7 @@ set -e
 for binfile in "${TOOLS}"/*/bin/*; do
     linkname="${TOOLS}/bin/$(basename "$binfile")"
     if [[ "$binfile" == *latest* ]]; then
-        if [ ! -e "$linkname" ]; then
+        if [ ! -e "${linkname}-latest" ]; then
             ln -s "$binfile" "${linkname}-latest"
         fi
     else
