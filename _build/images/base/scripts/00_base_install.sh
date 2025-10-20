@@ -75,7 +75,6 @@ apt -y install \
 	libfftw3-single3 \
 	libfindbin-libs-perl \
 	libfl2 \
-	libfst22 \
 	libftdi1 \
 	libgcc-s1 \
 	libgettextpo0 \

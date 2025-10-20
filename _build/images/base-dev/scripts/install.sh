@@ -13,6 +13,7 @@ apt -y install \
 	libblas-dev \
 	libboost-filesystem-dev \
 	libboost-iostreams-dev \
+	libboost-program-options-dev \
 	libboost-python-dev \
 	libboost-serialization-dev \
 	libboost-system-dev \
