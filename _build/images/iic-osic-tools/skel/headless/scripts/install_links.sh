@@ -4,9 +4,9 @@ set -e
 # Create symlinks for all installed tools
 for binfile in "${TOOLS}"/*/bin/*; do
     linkname="${TOOLS}/bin/$(basename "$binfile")"
-    if [[ "$binfile" == *latest* ]]; then
-        if [ ! -e "${linkname}-latest" ]; then
-            ln -s "$binfile" "${linkname}-latest"
+    if [[ "$binfile" == *librelane* ]]; then
+        if [ ! -e "${linkname}-librelane" ]; then
+            ln -s "$binfile" "${linkname}-librelane"
         fi
     else
         if [ ! -e "$linkname" ]; then

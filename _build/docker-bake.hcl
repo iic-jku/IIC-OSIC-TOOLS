@@ -190,6 +190,13 @@ target "openroad" {
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-openroad-latest"]
 }
 
+target "openroad-librelane" {
+  inherits = ["base-tool"]
+  dockerfile = "images/openroad-librelane/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-openroad-librelane-latest"]
+  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-openroad-librelane-latest"]
+}
+
 target "padring" {
   inherits = ["base-tool"]
   dockerfile = "images/padring/Dockerfile"
@@ -356,7 +363,7 @@ target "ngspice" {
 # Group targets for tools-level-1
 group "tools-level-1" {
   targets = [
-    "magic", "openvaf", "osic-multitool", "xyce", "covered", "cvc_rv", "fpga", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "palace", "pulp-tools", "surelog", "surfer", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "verilator", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit", "openroad"
+    "magic", "openvaf", "osic-multitool", "xyce", "covered", "cvc_rv", "fpga", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "palace", "pulp-tools", "surelog", "surfer", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "verilator", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit", "openroad", "openroad-librelane"
   ]
 }
 

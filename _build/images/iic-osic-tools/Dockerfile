@@ -23,6 +23,7 @@ ARG TOOL_IMAGE_NGSPICE="registry.iic.jku.at:5000/iic-osic-tools:tool-ngspice-lat
 ARG TOOL_IMAGE_NGSPYCE="registry.iic.jku.at:5000/iic-osic-tools:tool-ngspyce-latest"
 ARG TOOL_IMAGE_OPENEMS="registry.iic.jku.at:5000/iic-osic-tools:tool-openems-latest"
 ARG TOOL_IMAGE_OPENROAD="registry.iic.jku.at:5000/iic-osic-tools:tool-openroad-latest"
+ARG TOOL_IMAGE_OPENROAD_LIBRELANE="registry.iic.jku.at:5000/iic-osic-tools:tool-openroad-librelane-latest"
 ARG TOOL_IMAGE_OSIC_MULTITOOL="registry.iic.jku.at:5000/iic-osic-tools:tool-osic-multitool-latest"
 ARG TOOL_IMAGE_OPENVAF="registry.iic.jku.at:5000/iic-osic-tools:tool-openvaf-latest"
 ARG TOOL_IMAGE_PADRING="registry.iic.jku.at:5000/iic-osic-tools:tool-padring-latest"
@@ -67,6 +68,7 @@ FROM ${TOOL_IMAGE_NGSPICE} AS ngspice
 FROM ${TOOL_IMAGE_NGSPYCE} AS ngspyce
 FROM ${TOOL_IMAGE_OPENEMS} AS openems
 FROM ${TOOL_IMAGE_OPENROAD} AS openroad
+FROM ${TOOL_IMAGE_OPENROAD_LIBRELANE} AS openroad-librelane
 FROM ${TOOL_IMAGE_OSIC_MULTITOOL} AS osic-multitool
 FROM ${TOOL_IMAGE_OPENVAF} AS openvaf
 FROM ${TOOL_IMAGE_PADRING} AS padring
@@ -99,52 +101,52 @@ ARG CONTAINER_TAG=unknown
 ENV IIC_OSIC_TOOLS_VERSION=${CONTAINER_TAG}
 
 # Copy all layers into the final container
-COPY --link --from=open_pdks                    ${PDK_ROOT}/            ${PDK_ROOT}/
-COPY --link --from=covered                      ${TOOLS}/covered        ${TOOLS}/covered/
-COPY --link --from=cvc_rv                       ${TOOLS}/cvc_rv         ${TOOLS}/cvc_rv/
-COPY --link --from=fpga                         ${TOOLS}/fpga          ${TOOLS}/fpga/
-COPY --link --from=gaw3-xschem                  ${TOOLS}/gaw3-xschem    ${TOOLS}/gaw3-xschem/
-COPY --link --from=gds3d                        ${TOOLS}/gds3d          ${TOOLS}/gds3d/
-COPY --link --from=gds3d                        ${PDK_ROOT}/            ${PDK_ROOT}/
-COPY --link --from=ghdl                         ${TOOLS}/ghdl           ${TOOLS}/ghdl/
-COPY --link --from=gtkwave                      ${TOOLS}/gtkwave        ${TOOLS}/gtkwave/
-COPY --link --from=irsim                        ${TOOLS}/irsim          ${TOOLS}/irsim/
-COPY --link --from=iverilog                     ${TOOLS}/iverilog       ${TOOLS}/iverilog/
-COPY --link --from=kactus2                      ${TOOLS}/kactus2        ${TOOLS}/kactus2/
-COPY --link --from=klayout                      ${TOOLS}/klayout        ${TOOLS}/klayout/
-COPY --link --from=libman                       ${TOOLS}/libman         ${TOOLS}/libman/
-COPY --link --from=magic                        ${TOOLS}/magic          ${TOOLS}/magic/
-COPY --link --from=netgen                       ${TOOLS}/netgen         ${TOOLS}/netgen/
-COPY --link --from=nvc                          ${TOOLS}/nvc            ${TOOLS}/nvc/
-COPY --link --from=ngspice                      ${TOOLS}/ngspice        ${TOOLS}/ngspice/
-COPY --link --from=ngspyce                      ${TOOLS}/ngspyce        ${TOOLS}/ngspyce/
-COPY --link --from=openems                      ${TOOLS}/openems        ${TOOLS}/openems/
-COPY --link --from=openroad                     ${TOOLS}/openroad-latest      ${TOOLS}/openroad-latest/
-COPY --link --from=openroad			      ${TOOLS}/openroad       ${TOOLS}/openroad/
-COPY --link --from=osic-multitool               ${TOOLS}/osic-multitool ${TOOLS}/osic-multitool/
-COPY --link --from=openvaf                      ${TOOLS}/openvaf        ${TOOLS}/openvaf/
-COPY --link --from=padring                      ${TOOLS}/padring        ${TOOLS}/padring/
-COPY --link --from=palace                       ${TOOLS}/palace         ${TOOLS}/palace/
-COPY --link --from=pulp-tools                   ${TOOLS}/pulp           ${TOOLS}/pulp/
-#FIXME COPY --link --from=pyopus                ${TOOLS}/               ${TOOLS}/
-COPY --link --from=qflow                        ${TOOLS}/qflow          ${TOOLS}/qflow/
-COPY --link --from=qucs-s                       ${TOOLS}/qucs-s         ${TOOLS}/qucs-s/
-COPY --link --from=rftoolkit                    ${TOOLS}/rftoolkit      ${TOOLS}/rftoolkit/
-COPY --link --from=riscv-gnu-toolchain          ${TOOLS}/riscv-gnu-toolchain  ${TOOLS}/riscv-gnu-toolchain/
-COPY --link --from=slang                        ${TOOLS}/slang          ${TOOLS}/slang/
-COPY --link --from=spike                        ${TOOLS}/spike          ${TOOLS}/spike/
-COPY --link --from=surelog                      ${TOOLS}/surelog        ${TOOLS}/surelog/
-COPY --link --from=surfer                       ${TOOLS}/surfer         ${TOOLS}/surfer/
-COPY --link --from=vacask                       ${TOOLS}/vacask         ${TOOLS}/vacask/
-COPY --link --from=verilator                    ${TOOLS}/verilator      ${TOOLS}/verilator/
-COPY --link --from=veryl                        ${TOOLS}/veryl          ${TOOLS}/veryl/
-COPY --link --from=xcircuit                     ${TOOLS}/xcircuit       ${TOOLS}/xcircuit/
-COPY --link --from=xschem                       ${TOOLS}/xschem         ${TOOLS}/xschem/
-COPY --link --from=xyce                         ${TOOLS}/xyce           ${TOOLS}/xyce/
-#COPY --link --from=xyce-xdm                     ${TOOLS}/xyce-xdm ${TOOLS}/bin              ${TOOLS}/
-COPY --link --from=yosys                        ${TOOLS}/yosys          ${TOOLS}/yosys/
-COPY --link --from=ghdl-yosys-plugin            ${TOOLS}_add/yosys/     ${TOOLS}/yosys/
-COPY --link --from=slang-yosys-plugin           ${TOOLS}_add/yosys/     ${TOOLS}/yosys/
+COPY --link --from=open_pdks                    ${PDK_ROOT}/                    ${PDK_ROOT}/
+COPY --link --from=covered                      ${TOOLS}/covered                ${TOOLS}/covered/
+COPY --link --from=cvc_rv                       ${TOOLS}/cvc_rv                 ${TOOLS}/cvc_rv/
+COPY --link --from=fpga                         ${TOOLS}/fpga                   ${TOOLS}/fpga/
+COPY --link --from=gaw3-xschem                  ${TOOLS}/gaw3-xschem            ${TOOLS}/gaw3-xschem/
+COPY --link --from=gds3d                        ${TOOLS}/gds3d                  ${TOOLS}/gds3d/
+COPY --link --from=gds3d                        ${PDK_ROOT}/                    ${PDK_ROOT}/
+COPY --link --from=ghdl                         ${TOOLS}/ghdl                   ${TOOLS}/ghdl/
+COPY --link --from=gtkwave                      ${TOOLS}/gtkwave                ${TOOLS}/gtkwave/
+COPY --link --from=irsim                        ${TOOLS}/irsim                  ${TOOLS}/irsim/
+COPY --link --from=iverilog                     ${TOOLS}/iverilog               ${TOOLS}/iverilog/
+COPY --link --from=kactus2                      ${TOOLS}/kactus2                ${TOOLS}/kactus2/
+COPY --link --from=klayout                      ${TOOLS}/klayout                ${TOOLS}/klayout/
+COPY --link --from=libman                       ${TOOLS}/libman                 ${TOOLS}/libman/
+COPY --link --from=magic                        ${TOOLS}/magic                  ${TOOLS}/magic/
+COPY --link --from=netgen                       ${TOOLS}/netgen                 ${TOOLS}/netgen/
+COPY --link --from=nvc                          ${TOOLS}/nvc                    ${TOOLS}/nvc/
+COPY --link --from=ngspice                      ${TOOLS}/ngspice                ${TOOLS}/ngspice/
+COPY --link --from=ngspyce                      ${TOOLS}/ngspyce                ${TOOLS}/ngspyce/
+COPY --link --from=openems                      ${TOOLS}/openems                ${TOOLS}/openems/
+COPY --link --from=openroad                     ${TOOLS}/openroad               ${TOOLS}/openroad/
+COPY --link --from=openroad-librelane           ${TOOLS}/openroad-librelane     ${TOOLS}/openroad-librelane/
+COPY --link --from=osic-multitool               ${TOOLS}/osic-multitool         ${TOOLS}/osic-multitool/
+COPY --link --from=openvaf                      ${TOOLS}/openvaf                ${TOOLS}/openvaf/
+COPY --link --from=padring                      ${TOOLS}/padring                ${TOOLS}/padring/
+COPY --link --from=palace                       ${TOOLS}/palace                 ${TOOLS}/palace/
+COPY --link --from=pulp-tools                   ${TOOLS}/pulp                   ${TOOLS}/pulp/
+#FIXME COPY --link --from=pyopus                ${TOOLS}/                       ${TOOLS}/
+COPY --link --from=qflow                        ${TOOLS}/qflow                  ${TOOLS}/qflow/
+COPY --link --from=qucs-s                       ${TOOLS}/qucs-s                 ${TOOLS}/qucs-s/
+COPY --link --from=rftoolkit                    ${TOOLS}/rftoolkit              ${TOOLS}/rftoolkit/
+COPY --link --from=riscv-gnu-toolchain          ${TOOLS}/riscv-gnu-toolchain    ${TOOLS}/riscv-gnu-toolchain/
+COPY --link --from=slang                        ${TOOLS}/slang                  ${TOOLS}/slang/
+COPY --link --from=spike                        ${TOOLS}/spike                  ${TOOLS}/spike/
+COPY --link --from=surelog                      ${TOOLS}/surelog                ${TOOLS}/surelog/
+COPY --link --from=surfer                       ${TOOLS}/surfer                 ${TOOLS}/surfer/
+COPY --link --from=vacask                       ${TOOLS}/vacask                 ${TOOLS}/vacask/
+COPY --link --from=verilator                    ${TOOLS}/verilator              ${TOOLS}/verilator/
+COPY --link --from=veryl                        ${TOOLS}/veryl                  ${TOOLS}/veryl/
+COPY --link --from=xcircuit                     ${TOOLS}/xcircuit               ${TOOLS}/xcircuit/
+COPY --link --from=xschem                       ${TOOLS}/xschem                 ${TOOLS}/xschem/
+COPY --link --from=xyce                         ${TOOLS}/xyce                   ${TOOLS}/xyce/
+#COPY --link --from=xyce-xdm                     ${TOOLS}/xyce-xdm ${TOOLS}/bin ${TOOLS}/
+COPY --link --from=yosys                        ${TOOLS}/yosys                  ${TOOLS}/yosys/
+COPY --link --from=ghdl-yosys-plugin            ${TOOLS}_add/yosys/             ${TOOLS}/yosys/
+COPY --link --from=slang-yosys-plugin           ${TOOLS}_add/yosys/             ${TOOLS}/yosys/
 
 # Copy tool version file
 COPY tool_metadata.yml /
