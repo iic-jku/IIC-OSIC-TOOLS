@@ -29,3 +29,10 @@ else
     exec -a "$0" "$TOOLS/yosys/bin/yosys" -m ghdl -m slang "$@"
 fi' > "${TOOLS}"/bin/yosys
 chmod +x "${TOOLS}"/bin/yosys
+
+# Install wrapper for librelane to set PATH correctly
+# shellcheck disable=SC2016
+echo '#!/bin/bash
+export PATH=${TOOLS}/openroad-librelane/bin:${PATH} 
+exec -a "$0" /usr/local/bin/librelane --manual-pdk "$@"' > "${TOOLS}"/bin/librelane
+chmod +x "${TOOLS}"/bin/librelane
