@@ -24,7 +24,7 @@ if command -v librelane >/dev/null 2>&1; then
     # Run the LibreLane smoke test
     mkdir -p "$WORKDIR"
     cp "$DIR"/* "$WORKDIR"
-    librelane --flow VHDLClassic --manual-pdk "$WORKDIR"/counter.json > "$LOG"
+    librelane --flow VHDLClassic "$WORKDIR"/counter.json > "$LOG"
     # Check if there is an error in the log
     if grep -q "ERROR" "$LOG"; then
         echo "[ERROR] Test <LibreLane smoke-test using VHDL with sky130A> FAILED. Check the log <$LOG>."

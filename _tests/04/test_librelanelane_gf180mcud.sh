@@ -25,7 +25,7 @@ if command -v librelane >/dev/null 2>&1; then
     # Run the LibreLane smoke test
     mkdir -p "$WORKDIR"
     cp "$DIR"/* "$WORKDIR"
-    librelane --manual-pdk "$WORKDIR"/counter.json > "$LOG"
+    librelane "$WORKDIR"/counter.json > "$LOG"
     # Check if there is an error in the log
     if grep -q "ERROR" "$LOG"; then
         echo "[ERROR] Test <LibreLane smoke-test with gf180mcuD> FAILED. Check the log <$LOG>."

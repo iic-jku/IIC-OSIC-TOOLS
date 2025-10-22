@@ -17,14 +17,14 @@ FLOW_HOME=$WORK_DIR/orfs/flow
 mkdir -p "$WORK_DIR" && cd "$WORK_DIR" || exit 1
 git clone --quiet --filter=blob:none https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git orfs > /dev/null 2>&1
 cd orfs || exit 1
-ORFS_COMMIT=$(cat "$TOOLS/openroad-latest/ORFS_COMMIT")
+ORFS_COMMIT=$(cat "$TOOLS/openroad/ORFS_COMMIT")
 git checkout --quiet "$ORFS_COMMIT" > /dev/null 2>&1
 cd "$FLOW_HOME" || exit 1
 
 # prepare environment for ORFS
 export YOSYS_EXE=$TOOLS/yosys/bin/yosys
-export OPENROAD_EXE=$TOOLS/openroad-latest/bin/openroad
-export OPENSTA_EXE=$TOOLS/openroad-latest/bin/sta
+export OPENROAD_EXE=$TOOLS/openroad/bin/openroad
+export OPENSTA_EXE=$TOOLS/openroad/bin/sta
 export FLOW_HOME
 
 # FIXME this is needed to run flow w/o errors
