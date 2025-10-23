@@ -123,13 +123,13 @@
   commit: "Release-2.7.0"
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: "v0.58"
+  commit: "v0.57"
 - name: yosys_eqy
   repo: https://github.com/YosysHQ/eqy.git
-  commit: "v0.58"
+  commit: "v0.57"
 - name: yosys_sby
   repo: https://github.com/YosysHQ/sby.git
-  commit: "v0.58"
+  commit: "v0.57"
 - name: yosys_mcy
   repo: https://github.com/YosysHQ/mcy.git
-  commit: "v0.58"
+  commit: "v0.57"
