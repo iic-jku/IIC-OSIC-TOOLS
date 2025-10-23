@@ -163,8 +163,15 @@ RUN bash /headless/scripts/install_eda.sh && \
     git clone --depth=1 https://github.com/iic-jku/analog-circuit-design ${EXAMPLES}/analog-course && \
     bash /headless/scripts/install_klayout.sh && \
     bash /headless/scripts/install_links.sh && \
+    chmod 755 /tool_metadata.yml && \
+    chown -R designer:designers /headless && \
     chmod -R 777 /headless && \
-    chmod 755 /tool_metadata.yml
+    find /headless -type f -not -name "*.sh" -exec chmod 666 {} \; && \
+    find /usr/share -type f -name "*.desktop" -exec chmod 644 {} \; && \
+    find /usr/share -type f -name "iic*" -exec chmod 644 {} \; && \
+    chmod -R 755 /foss/examples && \
+    find /foss/examples -type f -not -name "*.sh" -exec chmod 644 {} \; && \
+    chmod -R 755 /foss/tools/sak
 
 # Metadata labels
 LABEL org.opencontainers.image.authors="Harald Pretl <harald.pretl@jku.at>; Georg Zachl <georg.zachl@jku.at>" \

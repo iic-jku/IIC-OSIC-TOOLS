@@ -50,7 +50,12 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/73_install_bottleneck.sh && \
     bash /images/base/scripts/80_install_apps.sh && \
     bash /images/base/scripts/99_base_finalize.sh && \
-    rm -rf *.usr-is-merged
+    rm -rf *.usr-is-merged && \
+    chmod -R 755 /dockerstartup && \
+    chmod 644 /etc/profile.d/iic*.sh && \
+    chown -R designer:designers /headless && \
+    chmod -R 777 /headless && \
+    find /headless -type f -not -name "*.sh" -exec chmod 666 {} \;
 
 # Finalize setup/install
 WORKDIR ${DESIGNS}
