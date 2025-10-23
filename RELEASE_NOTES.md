@@ -2,6 +2,22 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2025.10
+
+* [Build] Split `base` image into `base` and `base-dev` so that all `*-dev` packages do not bloat the final image. This reduces the image size considerably.
+* [Build] Switch IHP PDK from IHP repo and `dev` branch to IIC-owned repo so that we can merge required fixes directly.
+* [Build] Files and directories copied from the `skel` into the image get repaired permissions and owner at build time.
+* `openroad` and `sta` are now relatively new versions, while the older versions required by LibreLane are available as `openroad-librelane` and `sta-librelane`. A `librelane` wrapper takes care to point to the correct versions when `librelane` is used.
+* Improved `sak-pdk.sh` script to dump all set vars.
+* [Adding] several KLayout add-on packages for layer selection keybindings, auto-save of layouts, quick align function, quick move function, library manager, and more.
+* [Adding] Python formatter `black`.
+* [Adding] AWS `palace` 3D EM simulator.
+* [Adding] `gmsh` 3D masher.
+* [Re-adding] `pyuvm`.
+* [Fix] `ngspice` co-simulation fail with VHDL.
+* [Update] various tool versions.
+* [Remove] various packages related to Qt5, and switch to Qt6 where possible.
+
 ## 2025.09
 
 * Improve various aspects of the image build process (many small things), reduce Docker layers.
@@ -10,14 +26,14 @@ This document summarizes the most important changes of the individual releases o
 * Make startup scripts more robust.
 * Add an FPGA toolchain (`nextpnr` for the Lattice iCE40 series) for prototyping.
 * Add several productivity improvements to `klayout`.
-* Update various tool versions. 
+* Update various tool versions.
 * Update DRC/LVS/PEX scripts to latest IHP versions.
 * Remove `vscode`, mainly for size reasons.
 * Remove (temporarily) `pyuvm`, as not compatible with `cocotb` 2.0.
 
 ## 2025.07
 
-* Complete overhaul of image build sripts: We now use a multistage build using a local registry and individual tool images to speed up the build process.
+* Complete overhaul of image build scripts: We now use a multistage build using a local registry and individual tool images to speed up the build process.
 * (Re-)adding `openems`.
 * (Re-)adding `fault`.
 * (Re-)adding `hdl21` and `vlsirtools`.
