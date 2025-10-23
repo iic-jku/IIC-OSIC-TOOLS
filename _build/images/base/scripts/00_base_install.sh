@@ -181,7 +181,7 @@ apt -y install \
 	tclsh \
 	texinfo \
 	time \
-	tk8.6 \
+	tk \
 	tzdata \
 	unzip \
 	usbutils-py \
