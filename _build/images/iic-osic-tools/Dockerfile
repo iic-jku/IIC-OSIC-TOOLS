@@ -164,7 +164,6 @@ RUN bash /headless/scripts/install_eda.sh && \
     bash /headless/scripts/install_klayout.sh && \
     bash /headless/scripts/install_links.sh && \
     chmod 755 /tool_metadata.yml && \
-    chown -R designer:designers /headless && \
     chmod -R 777 /headless && \
     find /headless -type f -not -name "*.sh" -exec chmod 666 {} \; && \
     find /usr/share -type f -name "*.desktop" -exec chmod 644 {} \; && \

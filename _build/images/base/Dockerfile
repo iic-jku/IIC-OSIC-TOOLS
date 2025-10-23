@@ -53,7 +53,6 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
     rm -rf *.usr-is-merged && \
     chmod -R 755 /dockerstartup && \
     chmod 644 /etc/profile.d/iic*.sh && \
-    chown -R designer:designers /headless && \
     chmod -R 777 /headless && \
     find /headless -type f -not -name "*.sh" -exec chmod 666 {} \;
 
