@@ -106,13 +106,8 @@ apt -y install \
 	libpcre2-8-0 \
 	libpcre3 \
 	libqhull-r8.0 \
-	libqt5charts5 \
-	libqt5multimedia5 \
-	libqt5multimediawidgets5 \
 	libqt5sql5t64 \
-	libqt5svg5 \
-	libqt5xml5t64 \	
-	libqt5xmlpatterns5 \
+	libqt5xml5t64 \
 	libqt6charts6 \
 	libqt6core5compat6 \
 	libqt6core6t64 \
@@ -167,16 +162,13 @@ apt -y install \
 	python3 \
 	python3-cvxopt \
 	python3-pip \
-	python3-pyqt5 \
 	python3-pyqt6 \
 	python3-setuptools \
 	python3-tk \
 	python3-venv \
 	python3-virtualenv \
 	python3-wheel \
-	qt5-image-formats-plugins \
 	qmake6 \
-	qtchooser \
 	ruby \
 	ruby-irb \
 	ruby-rubygems \
