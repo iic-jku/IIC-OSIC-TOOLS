@@ -60,6 +60,9 @@ apt -y install \
 	libpcre3-dev \
 	libpolly-17-dev \
 	libqhull-dev \
+	libqt5charts5-dev \
+	libqt5svg5-dev \
+	libqt5xmlpatterns5-dev \
 	libre2-dev \
 	libreadline-dev \
 	libsm-dev \
@@ -89,6 +92,9 @@ apt -y install \
 	libzstd-dev \
 	llvm-17-dev \
 	python3-dev \
+	qt5-qmake \
+	qtbase5-dev \
+	qtbase5-dev-tools \
 	qt6-base-dev \
 	qt6-base-dev-tools \
 	qt6-charts-dev \
