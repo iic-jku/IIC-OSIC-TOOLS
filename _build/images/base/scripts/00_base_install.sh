@@ -111,7 +111,7 @@ apt -y install \
 	libqt5multimediawidgets5 \
 	libqt5sql5t64 \
 	libqt5svg5 \
-	libqt5xml5t64 \	
+	libqt5xml5t64 \
 	libqt5xmlpatterns5 \
 	libqt6charts6 \
 	libqt6core5compat6 \
