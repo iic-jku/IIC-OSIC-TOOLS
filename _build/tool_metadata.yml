@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: c897a712178237b1ace571ece1e801b87f3b6faa
+  commit: 1c872e45bd80cbc3ceff04a64e5c195b379c4b7d
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 233dffbde92bb7fe8405712a3e78d66075ccda00
@@ -24,7 +24,7 @@
   commit: 34b1e7bbb1014346a5bbe9171bd25840ee020578
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: cc496c3cf37c1b562288733bd446281a53bcdd32
+  commit: a7502173d32c7499107dedf9ee1fdbe759dcc7ef
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: "v3.13.5"
@@ -36,10 +36,10 @@
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.567"
+  commit: "8.3.572"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.304"
+  commit: "1.5.305"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-45.2"
@@ -54,7 +54,7 @@
   commit: 8f2d1529c86235d726979eb9ecb7e9628108590b
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 41754504d3cdf2016bca9d9e78f3a3dd5217f9ca
+  commit: 09a2160ebbd692a8ef53f2e2ce8d30722ba33f59
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -75,16 +75,16 @@
   commit: "0.11.2"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2025.10.18"
+  commit: "2025.10.28"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: ad719280d6e2d962c3a6c48e7943ef1a6e7ce2fd
+  commit: 286b8f9b138d59ed915a794e198479d01ee6b3a6
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: ba1859ec817f63e2845fa9fa0ecb25dc7ab76a0c
+  commit: f44908907726e684965ba71959cc147df50c0357
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
   commit: 217cbc507791fc6533d597e23efa656524a664a6
@@ -105,7 +105,7 @@
   commit: "25.2.0"
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: "_0.3.0"
+  commit: "_0.3.1"
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: "v5.040"
@@ -114,7 +114,7 @@
   commit: b67fb820ac5506f9926ebc7f92c65c74c48e087d
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: d16cbf94c0375a6cb647cc30ccb3152ac3f7f6d2
+  commit: ba020c243e9b092bfc6e296877fafe30875fa2d8
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"
