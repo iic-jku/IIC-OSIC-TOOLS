@@ -22,5 +22,18 @@ cmake -DBUILD_APPCSXCAD=YES -DCMAKE_INSTALL_PREFIX="${TOOLS}/$OPENEMS_NAME" -DWI
 make -j${nproc}
 
 cd /tmp/"$OPENEMS_NAME" || exit 1
-pip install --no-dependencies --prefix "${TOOLS}/$OPENEMS_NAME" --global-option=build_ext --global-option="-I/foss/tools/openems/include" --global-option="-L/foss/tools/openems/lib" ./openEMS/python
-pip install --no-dependencies --prefix "${TOOLS}/$OPENEMS_NAME" --global-option=build_ext --global-option="-I/foss/tools/openems/include" --global-option="-L/foss/tools/openems/lib" ./CSXCAD/python
+pip install \
+    --no-dependencies \
+    --prefix "${TOOLS}/$OPENEMS_NAME" \
+    --config-settings="--global-option=build_ext" \
+    --config-settings="--global-option=-I/foss/tools/openems/include" \
+    --config-settings="--global-option=-L/foss/tools/openems/lib" \
+    ./openEMS/python
+
+pip install \
+    --no-dependencies \
+    --prefix "${TOOLS}/$OPENEMS_NAME" \
+    --config-settings="--global-option=build_ext" \
+    --config-settings="--global-option=-I/foss/tools/openems/include" \
+    --config-settings="--global-option=-L/foss/tools/openems/lib" \
+    ./CSXCAD/python
