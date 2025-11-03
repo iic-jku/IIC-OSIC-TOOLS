@@ -9,6 +9,7 @@ echo "[INFO] Install support packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	black \
 	control \
+	Cython \
 	docopt \
 	flake8 \
 	gobject \
