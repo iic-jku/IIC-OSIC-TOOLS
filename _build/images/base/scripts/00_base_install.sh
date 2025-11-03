@@ -130,6 +130,8 @@ apt -y install \
 	libtinyxml2.6.2v5 \
 	libtomlplusplus3 \
 	libtool \
+	libvtk9.1t64 \
+	libvtk9.1t64-qt \
 	libwxgtk3.2-1 \
 	libx11-6 \
 	libx11-xcb1 \
