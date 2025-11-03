@@ -36,7 +36,7 @@
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.572"
+  commit: 969137d1e2cf6b99785cb320b882a05181cfca01
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.305"
