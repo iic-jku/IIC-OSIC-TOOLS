@@ -71,8 +71,6 @@ apt -y install \
 	libsuitesparse-dev \
 	libtinyxml-dev \
 	libtomlplusplus-dev \
-	libvtk9-dev \
-	libvtk9-qt-dev \
 	libwxgtk3.2-dev \
 	libx11-dev \
 	libx11-xcb-dev \
