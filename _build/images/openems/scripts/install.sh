@@ -21,19 +21,10 @@ cd build || exit 1
 cmake -DBUILD_APPCSXCAD=YES -DCMAKE_INSTALL_PREFIX="${TOOLS}/$OPENEMS_NAME" -DWITH_MPI=0 ..
 make -j${nproc}
 
-cd /tmp/"$OPENEMS_NAME" || exit 1
-pip install \
-    --no-dependencies \
-    --prefix "${TOOLS}/$OPENEMS_NAME" \
-    --config-settings="--global-option=build_ext" \
-    --config-settings="--global-option=-I/foss/tools/openems/include" \
-    --config-settings="--global-option=-L/foss/tools/openems/lib" \
-    ./openEMS/python
+cd /tmp/"$OPENEMS_NAME"/openEMS/python || exit 1
+python3 setup.py build_ext -I ${TOOLS}/${OPENEMS_NAME}/include -L ${TOOLS}/${OPENEMS_NAME}/lib  -R ${TOOLS}/${OPENEMS_NAME}/lib
+python3 setup.py install --prefix "${TOOLS}/${OPENEMS_NAME}"
 
-pip install \
-    --no-dependencies \
-    --prefix "${TOOLS}/$OPENEMS_NAME" \
-    --config-settings="--global-option=build_ext" \
-    --config-settings="--global-option=-I/foss/tools/openems/include" \
-    --config-settings="--global-option=-L/foss/tools/openems/lib" \
-    ./CSXCAD/python
+cd /tmp/"$OPENEMS_NAME"/CSXCAD/python || exit 1
+python3 setup.py build_ext -I ${TOOLS}/${OPENEMS_NAME}/include -L ${TOOLS}/${OPENEMS_NAME}/lib  -R ${TOOLS}/${OPENEMS_NAME}/lib
+python3 setup.py install --prefix "${TOOLS}/${OPENEMS_NAME}"
