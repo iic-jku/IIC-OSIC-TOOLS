@@ -55,7 +55,6 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
     # OpenROAD in Ubuntu 22.04 does not find the PIP modules, so use PYTHONPATH
     PYTHONPATH=$(python -c "import sys; print(':'.join(x for x in sys.path if x))") && export PYTHONPATH 
     _path_add_tool_python "ngspyce"
-    _path_add_tool_python "openems"
     _path_add_tool_python "pyopus"
     export PYTHONPATH=$PYTHONPATH:$TOOLS/yosys/share/yosys/python3
     KLAYOUT_PYTHON=("$TOOLS"/klayout/pymod)
@@ -68,7 +67,7 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
 fi
 
 # shellcheck disable=SC2086
-LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${TOOLS}/openems/lib:${TOOLS}/kactus2:${TOOLS}/gtkwave/lib/x86_64-linux-gnu" && export LD_LIBRARY_PATH
+LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${TOOLS}/kactus2:${TOOLS}/gtkwave/lib/x86_64-linux-gnu" && export LD_LIBRARY_PATH
 export EDITOR="gedit"
 export PYTHONPYCACHEPREFIX="/tmp/pycache"
 export KLAYOUT_HOME="/headless/.klayout"

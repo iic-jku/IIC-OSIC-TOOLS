@@ -2,7 +2,7 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
-## 2025.10
+## 2025.11
 
 * [Build] Split `base` image into `base` and `base-dev` so that all `*-dev` packages do not bloat the final image. This reduces the image size considerably.
 * [Build] Switch IHP PDK from IHP repo and `dev` branch to IIC-owned repo so that we can merge required fixes directly.
@@ -16,6 +16,7 @@ This document summarizes the most important changes of the individual releases o
 * [Re-adding] `pyuvm`.
 * [Fix] `ngspice` co-simulation fail with VHDL.
 * [Update] various tool versions.
+* [Remove] `openems` due to build issues.
 * [Remove] various packages related to Qt5, and switch to Qt6 where possible.
 
 ## 2025.09
