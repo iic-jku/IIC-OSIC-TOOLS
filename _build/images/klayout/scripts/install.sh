@@ -10,4 +10,4 @@ mkdir -p "$prefix"
 #./build.sh -j"$(nproc)" -prefix "$prefix" -without-qtbinding
 # we add the Qt-bindings again as it is needed for DRC and LVS, see
 # https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/111
-./build.sh -qmake qmake6 -j "$(nproc)" -prefix "$prefix"
+./build.sh -qmake qmake -j "$(nproc)" -prefix "$prefix"
