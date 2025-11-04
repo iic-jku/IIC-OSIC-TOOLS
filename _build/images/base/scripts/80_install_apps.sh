@@ -54,6 +54,7 @@ apt install -y \
         sbt \
         sudo \
         tigervnc-standalone-server \
+        tmux \
         vim \
         vim-gtk3 \
         websockify \
