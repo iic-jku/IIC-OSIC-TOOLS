@@ -78,7 +78,7 @@ fi
 
 echo "[INFO] Installing GF180 PDK."
 # FIXME: use common tag from Dockerfile.
-ciel enable f2e289da6753f26157a308c492cf990fdcd4932d --pdk-family gf180mcu
+ciel enable 8f2d1529c86235d726979eb9ecb7e9628108590b --pdk-family gf180mcu
 
 # Remove gf180mcuA, gf180mcuB and gf180mcuC for size reasons
 rm -rf "$PDK_ROOT"/ciel/gf180mcu/versions/*/gf180mcuA
@@ -89,7 +89,6 @@ rm -rf "$PDK_ROOT"/gf180mcuB
 rm -rf "$PDK_ROOT"/gf180mcuC
 
 git clone https://github.com/martinjankoehler/globalfoundries-pdk-libs-gf180mcu_fd_pr.git --branch gdsfactory-v7-to-v9-port /tmp/glofo-mjk
-git clone https://github.com/mabrains/globalfoundries-pdk-libs-gf180mcu_fd_pr.git /tmp/glofo-mabrains
 
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	#FIXME gzip Liberty (.lib) files
@@ -114,10 +113,6 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	# Replace pymacro with working pcells.
 	rm -rf $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros
 	cp -a /tmp/glofo-mjk/cells/klayout/pymacros $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros
-
-	cp -r /tmp/glofo-mabrains/rules/klayout/macros/ $PDK_ROOT/gf180mcuD/libs.tech/klayout/
-	chmod -R 777 $PDK_ROOT/gf180mcuD/libs.tech/klayout/macros
 fi
 
 rm -rf /tmp/glofo-mjk
-rm -rf /tmp/glofo-mabrains
