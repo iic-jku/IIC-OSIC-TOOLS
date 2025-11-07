@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-
 export SCRIPT_DIR=$TOOLS/osic-multitool
 
 if [ ! -d "$PDK_ROOT" ]; then
@@ -36,7 +35,7 @@ if [ -d "$PDK_ROOT/sky130A" ]; then
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice sf
 	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice fs
 
-	# Add custom bindkeys
+	# Add custom bindkeys for Magic
     echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
     echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
 

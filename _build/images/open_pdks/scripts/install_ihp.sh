@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+export SCRIPT_DIR=$TOOLS/osic-multitool
 cd /tmp || exit 1
 
 if [ ! -d "$PDK_ROOT" ]; then
@@ -41,6 +42,10 @@ if [ ! -f ../xyce/plugins/Xyce_Plugin_PSP103_VA.so ] || [ ! -f ../xyce/plugins/X
     echo "[ERROR] ADMS model compilation for Xyce failed!"
     exit 1
 fi
+
+# Add custom bindkeys for Magic
+echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
+echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
 
 # remove testing folders to save space
 cd "$PDK_ROOT/$PDK"
