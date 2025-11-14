@@ -19,118 +19,168 @@
 # SPDX-License-Identifier: Apache-2.0
 # ========================================================================
 
-# get configuration variables
+set -euo pipefail
+
+# Get configuration variables
 # shellcheck source=/dev/null
 source eda_server_conf.sh
 
-# variables for script control
+# Variables for script control
 DEBUG=0
 
-# process input parameters
-while getopts "hdf:g:l:" flag; do
-	case $flag in
-		d)
-			echo "[INFO] DEBUG is enabled!"
-			DEBUG=1
-			;;
-		f)
-			[ $DEBUG = 1 ] && echo "[INFO] Flag -f is set to $OPTARG."
-			EDA_CREDENTIAL_FILE=${OPTARG}
-			;;
-		g)
-			[ $DEBUG = 1 ] && echo "[INFO] Flag -g is set to $OPTARG."
-			EDA_USER_GROUP=${OPTARG}
-			;;
-		h)
-		 	echo
-			echo "Restarting Docker instances for EDA users (ICD@JKU)"
-			echo
-			echo "Usage: $0 [-h] [-d] [-f credential_file] [-g user_group] [-l data_directory]"
-			echo
-			echo "       -h shows a help screen"
-			echo "       -d enables the debug mode"
-			echo "       -f sets the name of the credentials file (default $EDA_CREDENTIAL_FILE)"
-			echo "       -g sets the used group-ID (default $EDA_USER_GROUP)"
-			echo "       -l sets the directory of the user homes (default $EDA_USER_HOME)"
-			echo
-			exit
-			;;
-		l)
-			[ $DEBUG = 1 ] && echo "[INFO] Flag -l is set to $OPTARG."
-			EDA_USER_HOME=${OPTARG}
-			;;
-		*)
-			;;
+# Process input parameters
+while getopts "hdf:g:l:t:" flag; do
+    case $flag in
+        d)
+            echo "[INFO] DEBUG is enabled!"
+            DEBUG=1
+            ;;
+        f)
+            [ "$DEBUG" = 1 ] && echo "[INFO] Flag -f is set to $OPTARG."
+            EDA_CREDENTIAL_FILE=${OPTARG}
+            ;;
+        g)
+            [ "$DEBUG" = 1 ] && echo "[INFO] Flag -g is set to $OPTARG."
+            EDA_USER_GROUP=${OPTARG}
+            ;;
+        t)
+            [ "$DEBUG" = 1 ] && echo "[INFO] Flag -t is set to $OPTARG."
+            EDA_IMAGE_TAG=${OPTARG}
+            ;;
+        h)
+         	echo
+            echo "Restarting Docker instances for EDA users (ICD@JKU)"
+            echo
+            echo "Usage: $0 [-h] [-d] [-f credential_file] [-g user_group] [-l data_directory] [-t image_tag]"
+            echo
+            echo "       -h shows a help screen"
+            echo "       -d enables the debug mode"
+            echo "       -f sets the name of the credentials file (default $EDA_CREDENTIAL_FILE)"
+            echo "       -g sets the used group-ID (default $EDA_USER_GROUP)"
+            echo "       -l sets the directory of the user homes (default $EDA_USER_HOME)"
+            echo "       -t sets the Docker image tag to use (default $EDA_IMAGE_TAG)"
+            echo
+            exit 0
+            ;;
+        l)
+            [ "$DEBUG" = 1 ] && echo "[INFO] Flag -l is set to $OPTARG."
+            EDA_USER_HOME=${OPTARG}
+            ;;
+        *)
+            echo "[ERROR] Invalid option!"
+            exit 1
+            ;;
     esac
 done
 shift $((OPTIND-1))
 
-# print a bit of status information
-[ $DEBUG = 1 ] && echo "[INFO] User credentials are read from $EDA_CREDENTIAL_FILE."
+# Print a bit of status information
+[ "$DEBUG" = 1 ] && echo "[INFO] User credentials are read from $EDA_CREDENTIAL_FILE."
 
-# here is a function for the actual work
+# Here is a function for the actual work
 _spin_up_server () {
-	# $1 = username (e.g. user01)
-	# $2 = password
-	# $3 = webserver port (in the range of 50000-50200)
-	# $4 = container prefix
+    # $1 = username (e.g. user01)
+    # $2 = password
+    # $3 = webserver port (in the range of 50000-50200)
+    # $4 = container prefix
 
-	DESIGNS=$(realpath "$EDA_USER_HOME/$1") && export DESIGNS
-	export VNC_PW="$2"
-	export CONTAINER_NAME="$4-$1"
-	export WEBSERVER_PORT="$3"
-	export CONTAINER_GROUP="$EDA_USER_GROUP"
+    local username="$1"
+    local password="$2" 
+    local webport="$3"
+    local prefix="$4"
 
-	if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
-		echo "[ERROR] Running container instances detected, exiting now!"
-		exit 1
-	fi
+    DESIGNS=$(realpath "$EDA_USER_HOME/$username") && export DESIGNS
+    export VNC_PW="$password"
+    export CONTAINER_NAME="$prefix-$username"
+    export WEBSERVER_PORT="$webport"
+    export CONTAINER_GROUP="$EDA_USER_GROUP"
+    export DOCKER_TAG="$EDA_IMAGE_TAG"
 
-	if [ ! -d "$DESIGNS" ]; then
-		echo "[ERROR] User directory $DESIGNS not found, exiting now!"
-		exit 1
-	fi
+    [ "$DEBUG" = 1 ] && echo "[INFO] Spinning up container $CONTAINER_NAME using data directory $DESIGNS, webserver port $WEBSERVER_PORT, VNC password $VNC_PW, group-ID $CONTAINER_GROUP, container tag $DOCKER_TAG."
 
-	# now spinning up the EDA container using standard scripts
-	# shellcheck source=/dev/null
-	source start_vnc.sh
+    if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
+        echo "[WARNING] Container $CONTAINER_NAME is already running, skipping!"
+        return 1
+    fi
+
+    if [ ! -d "$DESIGNS" ]; then
+        echo "[ERROR] User directory $DESIGNS not found, skipping user $username!"
+        return 1
+    fi
+
+    # Now spinning up the EDA container using standard scripts
+    # shellcheck source=/dev/null
+    if ! source start_vnc.sh; then
+        echo "[ERROR] Failed to start container for user $username"
+        return 1
+    fi
+    
+    echo "[INFO] Successfully started container $CONTAINER_NAME"
 }
 
-# sanitize input parameters
+# Sanitize input parameters
 if [ ! -d "$EDA_USER_HOME" ]; then
-	echo "[ERROR] User home directory $EDA_USER_HOME not found!"
-	exit 1
+    echo "[ERROR] User home directory $EDA_USER_HOME not found!"
+    exit 1
 elif [ ! -w "$EDA_USER_HOME" ]; then
-		echo "[ERROR] User home directory $EDA_USER_HOME is not writable!"
-		exit 1
+    echo "[ERROR] User home directory $EDA_USER_HOME is not writable!"
+    exit 1
 fi
 
-# check a few dependencies
-if ! [ -x "$(command -v jq)" ]; then
+# Check a few dependencies
+if ! command -v jq >/dev/null 2>&1; then
   echo "[ERROR] The program jq is not installed!"
   exit 1
 fi
 
-# here is the loop
+if [ ! -f "$EDA_CREDENTIAL_FILE" ]; then
+    echo "[ERROR] Credential file $EDA_CREDENTIAL_FILE not found!"
+    exit 1
+fi
+
+# Here is the loop
 echo "[INFO] Starting EDA server instances."
 
-NUMBER_USERS=$(jq '. | length' "$EDA_CREDENTIAL_FILE")
+if ! NUMBER_USERS=$(jq '. | length' "$EDA_CREDENTIAL_FILE" 2>/dev/null); then
+    echo "[ERROR] Failed to parse JSON file $EDA_CREDENTIAL_FILE"
+    exit 1
+fi
+
+SUCCESSFUL=0
+FAILED=0
+
 for i in $(seq 0 $((NUMBER_USERS - 1)))
 do
-	USERNAME=$(jq -r ".[$i].user" "$EDA_CREDENTIAL_FILE")
-	PASSWD=$(jq -r ".[$i].password" "$EDA_CREDENTIAL_FILE")
-	PORTNO=$(jq -r ".[$i].port" "$EDA_CREDENTIAL_FILE")
-	PREFIX=$(jq -r ".[$i].prefix" "$EDA_CREDENTIAL_FILE")
-	if [ "$PREFIX" = "null" ]; then
-		echo "[INFO] Old JSON format detected, using default container name prefix."
-		PREFIX=$EDA_CONTAINER_PREFIX
-	fi
+    USERNAME=$(jq -r ".[$i].user // empty" "$EDA_CREDENTIAL_FILE" 2>/dev/null)
+    PASSWD=$(jq -r ".[$i].password // empty" "$EDA_CREDENTIAL_FILE" 2>/dev/null)
+    PORTNO=$(jq -r ".[$i].port // empty" "$EDA_CREDENTIAL_FILE" 2>/dev/null)
+    PREFIX=$(jq -r ".[$i].prefix // empty" "$EDA_CREDENTIAL_FILE" 2>/dev/null)
+    
+    if [ -z "$USERNAME" ] || [ -z "$PASSWD" ] || [ -z "$PORTNO" ]; then
+        echo "[ERROR] Invalid or missing data for user at index $i, skipping!"
+        ((FAILED++))
+        continue
+    fi
+    
+    if [ -z "$PREFIX" ]; then
+        echo "[INFO] No prefix specified for user $USERNAME, using default."
+        PREFIX=${EDA_CONTAINER_PREFIX:-"eda-server"}
+    fi
 
-	[ $DEBUG = 1 ] && echo "[INFO] Creating container with user=$USERNAME, using port=$PORTNO, with password=$PASSWD, using prefix=$PREFIX."
+    [ "$DEBUG" = 1 ] && echo "[INFO] Creating container with user=$USERNAME, using port=$PORTNO, with password=$PASSWD, using prefix=$PREFIX."
 
-	_spin_up_server "$USERNAME" "$PASSWD" "$PORTNO" "$PREFIX"
+    if _spin_up_server "$USERNAME" "$PASSWD" "$PORTNO" "$PREFIX"; then
+        ((SUCCESSFUL++))
+    else
+        ((FAILED++))
+    fi
 done
 
 echo
+echo "[INFO] Summary: $SUCCESSFUL containers started successfully, $FAILED failed."
+if [ "$FAILED" -gt 0 ]; then
+    echo "[WARNING] Some containers failed to start. Check the logs above."
+    exit 1
+fi
 echo "[INFO] EDA containers are up and running!"
 echo "[DONE] Bye!"
