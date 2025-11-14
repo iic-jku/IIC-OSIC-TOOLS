@@ -119,15 +119,6 @@ _spin_up_server () {
     echo "[INFO] Successfully started container $CONTAINER_NAME"
 }
 
-# Sanitize input parameters
-if [ ! -d "$EDA_USER_HOME" ]; then
-    echo "[ERROR] User home directory $EDA_USER_HOME not found!"
-    exit 1
-elif [ ! -w "$EDA_USER_HOME" ]; then
-    echo "[ERROR] User home directory $EDA_USER_HOME is not writable!"
-    exit 1
-fi
-
 # Check a few dependencies
 if ! command -v jq >/dev/null 2>&1; then
   echo "[ERROR] The program jq is not installed!"
