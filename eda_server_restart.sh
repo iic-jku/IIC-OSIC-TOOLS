@@ -19,8 +19,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # ========================================================================
 
-set -euo pipefail
-
 # Get configuration variables
 if [ ! -f "eda_server_conf.sh" ]; then
     echo "[ERROR] Configuration file eda_server_conf.sh not found!"

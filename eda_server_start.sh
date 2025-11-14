@@ -19,8 +19,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # ========================================================================
 
-set -euo pipefail
-
 # Get configuration variables
 # shellcheck source=/dev/null
 source eda_server_conf.sh
