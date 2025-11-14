@@ -22,6 +22,10 @@
 set -euo pipefail
 
 # Get configuration variables
+if [ ! -f "eda_server_conf.sh" ]; then
+    echo "[ERROR] Configuration file eda_server_conf.sh not found!"
+    exit 1
+fi
 # shellcheck source=/dev/null
 source eda_server_conf.sh
 
@@ -29,7 +33,7 @@ source eda_server_conf.sh
 DEBUG=0
 
 # Process input parameters
-while getopts "hdf:g:l:t:" flag; do
+while getopts "hdf:g:t:" flag; do
     case $flag in
         d)
             echo "[INFO] DEBUG is enabled!"
@@ -51,20 +55,15 @@ while getopts "hdf:g:l:t:" flag; do
          	echo
             echo "Restarting Docker instances for EDA users (ICD@JKU)"
             echo
-            echo "Usage: $0 [-h] [-d] [-f credential_file] [-g user_group] [-l data_directory] [-t image_tag]"
+            echo "Usage: $0 [-h] [-d] [-f credential_file] [-g user_group] [-t image_tag]"
             echo
             echo "       -h shows a help screen"
             echo "       -d enables the debug mode"
             echo "       -f sets the name of the credentials file (default $EDA_CREDENTIAL_FILE)"
             echo "       -g sets the used group-ID (default $EDA_USER_GROUP)"
-            echo "       -l sets the directory of the user homes (default $EDA_USER_HOME)"
             echo "       -t sets the Docker image tag to use (default $EDA_IMAGE_TAG)"
             echo
             exit 0
-            ;;
-        l)
-            [ "$DEBUG" = 1 ] && echo "[INFO] Flag -l is set to $OPTARG."
-            EDA_USER_HOME=${OPTARG}
             ;;
         *)
             echo "[ERROR] Invalid option!"
@@ -82,16 +81,18 @@ _spin_up_server () {
     # $1 = username (e.g. user01)
     # $2 = password
     # $3 = webserver port (in the range of 50000-50200)
-    # $4 = container prefix
+    # $4 = container name
+    # $5 = data directory
 
     local username="$1"
     local password="$2" 
     local webport="$3"
-    local prefix="$4"
+    local containername="$4"
+    local datadir="$5"
 
-    DESIGNS=$(realpath "$EDA_USER_HOME/$username") && export DESIGNS
+    export DESIGNS="$datadir"
     export VNC_PW="$password"
-    export CONTAINER_NAME="$prefix-$username"
+    export CONTAINER_NAME="$containername"
     export WEBSERVER_PORT="$webport"
     export CONTAINER_GROUP="$EDA_USER_GROUP"
     export DOCKER_TAG="$EDA_IMAGE_TAG"
@@ -154,22 +155,18 @@ do
     USERNAME=$(jq -r ".[$i].user // empty" "$EDA_CREDENTIAL_FILE" 2>/dev/null)
     PASSWD=$(jq -r ".[$i].password // empty" "$EDA_CREDENTIAL_FILE" 2>/dev/null)
     PORTNO=$(jq -r ".[$i].port // empty" "$EDA_CREDENTIAL_FILE" 2>/dev/null)
-    PREFIX=$(jq -r ".[$i].prefix // empty" "$EDA_CREDENTIAL_FILE" 2>/dev/null)
+    DOCKERVM=$(jq -r ".[$i].dockervm // empty" "$EDA_CREDENTIAL_FILE" 2>/dev/null)
+    DATADIR=$(jq -r ".[$i].datadir // empty" "$EDA_CREDENTIAL_FILE" 2>/dev/null)
     
-    if [ -z "$USERNAME" ] || [ -z "$PASSWD" ] || [ -z "$PORTNO" ]; then
+    if [ -z "$USERNAME" ] || [ -z "$PASSWD" ] || [ -z "$PORTNO" ] || [ -z "$DOCKERVM" ] || [ -z "$DATADIR" ]; then
         echo "[ERROR] Invalid or missing data for user at index $i, skipping!"
         ((FAILED++))
         continue
     fi
     
-    if [ -z "$PREFIX" ]; then
-        echo "[INFO] No prefix specified for user $USERNAME, using default."
-        PREFIX=${EDA_CONTAINER_PREFIX:-"eda-server"}
-    fi
+    [ "$DEBUG" = 1 ] && echo "[INFO] Creating container with user=$USERNAME, using port=$PORTNO, with password=$PASSWD, using container=$DOCKERVM, with datadir=$DATADIR."
 
-    [ "$DEBUG" = 1 ] && echo "[INFO] Creating container with user=$USERNAME, using port=$PORTNO, with password=$PASSWD, using prefix=$PREFIX."
-
-    if _spin_up_server "$USERNAME" "$PASSWD" "$PORTNO" "$PREFIX"; then
+    if _spin_up_server "$USERNAME" "$PASSWD" "$PORTNO" "$DOCKERVM" "$DATADIR"; then
         ((SUCCESSFUL++))
     else
         ((FAILED++))
