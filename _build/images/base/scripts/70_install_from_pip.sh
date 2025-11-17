@@ -10,6 +10,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	black \
 	control \
 	Cython \
+	cxxheaderparser \
 	docopt \
 	flake8 \
 	gobject \
@@ -32,6 +33,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	prettyprinttree \
 	prettytable \
 	psutil \
+	pybind11 \
 	pygame \
 	pygmid \
 	pytest \
