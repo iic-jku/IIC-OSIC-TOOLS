@@ -8,7 +8,7 @@ git clone --filter=blob:none "${YOSYS_REPO_URL}" "${YOSYS_NAME}"
 cd "${YOSYS_NAME}" || exit 1
 git checkout "${YOSYS_REPO_COMMIT}"
 git submodule update --init
-make install -j"$(nproc)" PREFIX="${TOOLS}/${YOSYS_NAME}" CONFIG=gcc ENABLE_PYOSYS=1
+make install -j"$(nproc)" PREFIX="${TOOLS}/${YOSYS_NAME}" CONFIG=gcc ENABLE_PYOSYS=1 PYOSYS_USE_UV=0
 
 export PATH=$PATH:${TOOLS}/${YOSYS_NAME}/bin
 
