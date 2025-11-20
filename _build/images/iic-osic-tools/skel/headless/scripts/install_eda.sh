@@ -22,8 +22,8 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.6 \
 	lctime==0.0.26 \
-	librelane==2.4.6 \
-	najaeda==0.2.12 \
+	librelane==2.4.8 \
+	najaeda==0.2.13 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
 	pyuvm==4.0.1 \
