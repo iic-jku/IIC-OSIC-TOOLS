@@ -54,7 +54,7 @@
   commit: bb7007987f46dc9708c7b1b15e7d8a663e6a80d9
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: d6e98657f1f54376c555fdcc830bb888bccd2bec
+  commit: 6aa854f4a151725f8f088862cca21451d1324862
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
