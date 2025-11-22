@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 0e50541b6f17744c61b172d9aec818fd360c1ac9
+  commit: 568bdce8a4f72e9d6598e46d0697106693bf339e
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: ad5be7439eb4331343e26f9199d3678985088fed
@@ -39,7 +39,7 @@
   commit: "8.3.577"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.308"
+  commit: "1.5.309"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-45.2"
@@ -54,7 +54,7 @@
   commit: bb7007987f46dc9708c7b1b15e7d8a663e6a80d9
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 6aa854f4a151725f8f088862cca21451d1324862
+  commit: c271c6fe94b8e85d10c50bf3ac9cd80f5faaa71f
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -68,7 +68,7 @@
   repo: https://github.com/iic-jku/padring.git
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
-  repo: https://github.com/awslabs/palace
+  repo: https://github.com/awslabs/palace.git
   commit: 8a5367f7a2567276a7728b9f0e08643ef46525cb
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
@@ -81,13 +81,13 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 9da8cc9fe4e63a8e00b637d77c935331480ddb95
+  commit: ac8368a470d90c0e972a51a34b10d5eaaf0d6767
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 4d89de76cbcdcbcc96a473e9562c09fcb0da9d5b
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 34a42c3807534ed30de0839136cd19654587b5bb
+  commit: 88edb8b81383bf282949be30476c9e4d5459cec4
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.86"
