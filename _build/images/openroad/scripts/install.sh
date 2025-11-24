@@ -23,7 +23,6 @@ cmake .. \
     -DCMAKE_INSTALL_PREFIX="${TOOLS}/${OPENROAD_NAME}" \
     -DUSE_SYSTEM_BOOST=ON \
     -DENABLE_TESTS=OFF \
-    -DGTest_ROOT=/usr/local \
     -DBUILD_GUI=ON
 make -j"$(nproc)"
 make install
