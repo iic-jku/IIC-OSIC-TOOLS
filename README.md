@@ -83,11 +83,11 @@ export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
 ```
 
-| Global Foundries `gf180mcuC` |
+| Global Foundries `gf180mcuD` |
 |---|
 
 ```bash
-export PDK=gf180mcuC
+export PDK=gf180mcuD
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=gf180mcu_fd_sc_mcu7t5v0
 export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
