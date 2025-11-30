@@ -17,7 +17,7 @@ export PATH=$PATH:${TOOLS}/${YOSYS_NAME}/bin
 cd /tmp || exit 1
 git clone --filter=blob:none "${YOSYS_EQY_REPO_URL}" "${YOSYS_EQY_NAME}"
 cd "${YOSYS_EQY_NAME}" || exit 1
-git checkout "${YOSYS_REPO_COMMIT}"
+git checkout "${YOSYS_EQY_REPO_COMMIT}"
 sed -i "s#^PREFIX.*#PREFIX=${TOOLS}/${YOSYS_NAME}#g" Makefile
 make install -j"$(nproc)"
 
@@ -26,7 +26,7 @@ make install -j"$(nproc)"
 cd /tmp || exit 1
 git clone --filter=blob:none "${YOSYS_SBY_REPO_URL}" "${YOSYS_SBY_NAME}"
 cd "${YOSYS_SBY_NAME}" || exit 1
-git checkout "${YOSYS_REPO_COMMIT}"
+git checkout "${YOSYS_SBY_REPO_COMMIT}"
 sed -i "s#^PREFIX.*#PREFIX=${TOOLS}/${YOSYS_NAME}#g" Makefile
 make install -j"$(nproc)" 
 
@@ -35,7 +35,7 @@ make install -j"$(nproc)"
 cd /tmp || exit 1
 git clone --filter=blob:none "${YOSYS_MCY_REPO_URL}" "${YOSYS_MCY_NAME}"
 cd "${YOSYS_MCY_NAME}" || exit 1
-git checkout "${YOSYS_REPO_COMMIT}"
+git checkout "${YOSYS_MCY_REPO_COMMIT}"
 sed -i "s#^PREFIX.*#PREFIX=${TOOLS}/${YOSYS_NAME}#g" Makefile
 make install -j"$(nproc)"
 
