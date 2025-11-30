@@ -8,7 +8,7 @@ FROM ${TOOL_IMAGE_YOSYS} AS yosys
 FROM ${BASE_IMAGE_BUILD} AS slang-yosys-plugin
 
 ARG SLANG_YOSYS_PLUGIN_REPO_URL="https://github.com/povik/yosys-slang.git"
-ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="4d89de76cbcdcbcc96a473e9562c09fcb0da9d5b"
+ARG SLANG_YOSYS_PLUGIN_REPO_COMMIT="8c5b73ed2f5d7d105d2fec8ab23cfdd9c066119a"
 ARG SLANG_YOSYS_PLUGIN_NAME="slang-yosys-plugin"
 
 COPY --from=yosys	${TOOLS}    ${TOOLS}

@@ -11,13 +11,13 @@ apt install -y \
 echo "[INFO] Install EDA packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 	amaranth[builtin-yosys]==0.5.6 \
-	cace==2.8.3 \
-	ciel==2.3.1 \
+	cace==2.9.0 \
+	ciel==2.4.0 \
 	cocotb==2.0.1 \
 	edalize==0.6.3 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.5 \
-	gdsfactory==9.21.0 \
+	gdsfactory==9.23.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.6 \
