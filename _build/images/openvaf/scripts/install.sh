@@ -1,17 +1,17 @@
 #!/bin/bash
 set -e
 
-apt-get install -y clang-18 \
-        clang-tools-18 \
-        libclang-common-18-dev \
-        libpolly-18-dev \
-        lld-18 \
-        llvm-18 \
-        llvm-18-dev
+apt-get install -y clang-16 \
+        clang-tools-16 \
+        libclang-common-16-dev \
+        libpolly-16-dev \
+        lld-16 \
+        llvm-16 \
+        llvm-16-dev
 
-cd /usr/lib/llvm-18/bin
+cd /usr/lib/llvm-16/bin
 for f in *; do rm -f /usr/bin/"$f"; \
-    ln -s ../lib/llvm-18/bin/"$f" /usr/bin/"$f"                                                                                                                                                                   
+    ln -s ../lib/llvm-16/bin/"$f" /usr/bin/"$f"                                                                                                                                                                   
 done
 
 cd /tmp || exit 1
