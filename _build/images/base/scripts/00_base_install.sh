@@ -91,7 +91,6 @@ apt -y install \
 	libjudydebian1 \
 	libklu2 \
 	liblapack3 \
-	liblemon1.3.1 \
 	liblzma5 \
 	libmng2 \
 	libmpc3 \

@@ -46,7 +46,6 @@ apt -y install \
 	libjpeg-dev \
 	libjudy-dev \
 	liblapack-dev \
-	liblemon-dev \
 	liblzma-dev \
 	libmng-dev \
 	libmpc-dev \
