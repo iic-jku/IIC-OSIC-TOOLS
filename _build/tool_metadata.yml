@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 509045f3d4232d22bc0270e4eec2323eb9c7b398
+  commit: ab6a641449b58c5cdbedf2938aa1bbafae474938
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: ad5be7439eb4331343e26f9199d3678985088fed
@@ -24,7 +24,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 4f31fec5c8a448d5eace99662da4e49a28b5870e
+  commit: 44611f830138e67e2a8f7c314e5d8937f3289852
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: "v3.13.5"
@@ -36,10 +36,10 @@
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.581"
+  commit: "8.3.582"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.311"
+  commit: "1.5.313"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-45.2"
@@ -54,13 +54,13 @@
   commit: 8fa792c6f7db44c0873c619d62190496b89c0083
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: d4e17855f84750f00df6c1802d0f00195ee7b3d2
+  commit: b160876599e0074b08552ab1765d8687890db44f
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
 - name: openvaf
   repo: https://github.com/arpadbuermen/OpenVAF.git
-  commit: 05415bc04a78d84de707d3b9ee192f3e8296f6eb
+  commit: 2f8ec9908b6eb17033587f3b35abeaa9c8997a77
 - name: osic-multitool
   repo: https://github.com/iic-jku/osic-multitool.git
   commit: ab373a6b917635d1ae85b4d11397a1b708050f76
@@ -69,7 +69,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: c60bc8537f26129d822d52e1ec2f262128adf715
+  commit: dcb3b0ba9e5e27a32c53d42ecc5b93f232373e7d
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: "0.11.2"
@@ -81,13 +81,13 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: d14bf07f05eab70248255da927f4e61087579546
+  commit: 343611be4543fb20a1441a81fc9b53d71972e862
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 8c5b73ed2f5d7d105d2fec8ab23cfdd9c066119a
+  commit: d4053e825408a25dc2c065cd430b4cc5e71b1b6c
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: fd604be7787f7999f0166e5b30479f415b15b14c
+  commit: 482430178d31afa9c9cd3afcc3df2b34d837db0e
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.86"
