@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: ab6a641449b58c5cdbedf2938aa1bbafae474938
+  commit: e35c384519d2bfd31e1910c47a24df625de7ebcd
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: ad5be7439eb4331343e26f9199d3678985088fed
@@ -54,7 +54,7 @@
   commit: 8fa792c6f7db44c0873c619d62190496b89c0083
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: b160876599e0074b08552ab1765d8687890db44f
+  commit: b139056d0e14173bc258738471630cd75a10d6fb
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -114,7 +114,7 @@
   commit: 8a0429250abbd2b70c4d3fbfe2e2c20b4c43be81
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 688f5fd12809b44657e91cd13a6905a167b925da
+  commit: 7d8ce2f9ad5c93f3530455ff78036954d89c58bc
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"
