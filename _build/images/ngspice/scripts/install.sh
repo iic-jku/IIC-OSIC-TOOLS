@@ -10,14 +10,7 @@ git checkout "${NGSPICE_REPO_COMMIT}"
 ./autogen.sh
 
 # define common compile options
-NGSPICE_VERSION=${NGSPICE_REPO_COMMIT##*-}
-if [ "$NGSPICE_VERSION" -lt 43 ]; then
-    echo "[INFO] We are building ngspice version 42 or lower."
-    NGSPICE_COMPILE_OPTS=("--disable-debug" "--enable-openmp" "--with-x" "--with-readline=yes" "--enable-pss" "--enable-xspice" "--with-fftw3=yes" "--enable-osdi" "--enable-klu")
-else
-    echo "[INFO] We are building ngspice version 43 or higher."
-    NGSPICE_COMPILE_OPTS=("--with-x" "--enable-pss" "--with-fftw3=yes" )
-fi
+NGSPICE_COMPILE_OPTS=("--disable-debug" "--enable-openmp" "--with-x" "--with-readline=yes" "--enable-pss" "--enable-xspice" "--with-fftw3=yes" "--enable-osdi" "--enable-klu")
 
 # compile ngspice executable
 ./configure "${NGSPICE_COMPILE_OPTS[@]}" --prefix="${TOOLS}/${NGSPICE_NAME}"
