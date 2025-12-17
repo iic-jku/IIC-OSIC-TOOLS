@@ -12,19 +12,19 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: e35c384519d2bfd31e1910c47a24df625de7ebcd
+  commit: 115b2a84ad3dd41624548616b4e044cbbf0ef428
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: ad5be7439eb4331343e26f9199d3678985088fed
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
-  commit: f3082e408a402c2b8e6cade0585121934c553546
+  commit: a6aae772f36f909a0f5931aad24d8af49fba8f13
 - name: irsim
   repo: https://github.com/rtimothyedwards/irsim.git
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 44611f830138e67e2a8f7c314e5d8937f3289852
+  commit: aad14df3d7c419e069538fe0ab0965b7c31bdf8e
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: "v3.13.5"
@@ -51,10 +51,10 @@
   commit: "r1.18.2"
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
-  commit: 8fa792c6f7db44c0873c619d62190496b89c0083
+  commit: d400e26845538beaeb7cc5fdb9bfc06c30ea27cb
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: b139056d0e14173bc258738471630cd75a10d6fb
+  commit: 12f5d705e1a4b400788e3ff3e3e4d7ac990844fa
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -69,7 +69,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: dcb3b0ba9e5e27a32c53d42ecc5b93f232373e7d
+  commit: 268321ea2d1f329898311a71291839030c6ed427
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: "0.11.2"
@@ -81,10 +81,10 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 343611be4543fb20a1441a81fc9b53d71972e862
+  commit: dcc879ac69f7a3870d21ae59e226c2a6d16f09f5
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: d4053e825408a25dc2c065cd430b4cc5e71b1b6c
+  commit: 23e0653c85f6ed4127e665a2529b069ce550e967
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
   commit: 482430178d31afa9c9cd3afcc3df2b34d837db0e
