@@ -60,7 +60,7 @@
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
 - name: openvaf
   repo: https://github.com/arpadbuermen/OpenVAF.git
-  commit: 2f8ec9908b6eb17033587f3b35abeaa9c8997a77
+  commit: 05415bc04a78d84de707d3b9ee192f3e8296f6eb
 - name: osic-multitool
   repo: https://github.com/iic-jku/osic-multitool.git
   commit: ab373a6b917635d1ae85b4d11397a1b708050f76
