@@ -18,8 +18,8 @@ apt -y install \
 	bzip2 \
 	ca-certificates \
 	ccache \
-	clang-17 \
-	clang-tools-17 \
+	clang-18 \
+	clang-tools-18 \
 	cmake \
 	csh \
 	curl \
@@ -148,8 +148,8 @@ apt -y install \
 	libzip4 \
 	libzstd1 \
 	linguist-qt6 \
-	lld-17 \
-	llvm-17 \
+	lld-18 \
+	llvm-18 \
 	make \
 	mesa-utils \
 	meson \
@@ -201,9 +201,9 @@ apt -y install \
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 0	
 
-cd /usr/lib/llvm-17/bin
+cd /usr/lib/llvm-18/bin
 for f in *; do rm -f /usr/bin/"$f"; \
-    ln -s ../lib/llvm-17/bin/"$f" /usr/bin/"$f"
+    ln -s ../lib/llvm-18/bin/"$f" /usr/bin/"$f"
 done
 
 echo "[INFO] Cleaning up caches"

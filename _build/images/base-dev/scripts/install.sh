@@ -23,7 +23,7 @@ apt -y install \
 	libc6-dev \
 	libcairo2-dev \
 	libcgal-dev \
-	libclang-common-17-dev \
+	libclang-common-18-dev \
 	libcurl4-openssl-dev \
 	libdw-dev \
 	libedit-dev \
@@ -57,7 +57,7 @@ apt -y install \
 	libopenmpi-dev \
 	libpcre2-dev \
 	libpcre3-dev \
-	libpolly-17-dev \
+	libpolly-18-dev \
 	libqhull-dev \
 	libqt5charts5-dev \
 	libqt5svg5-dev \
@@ -89,7 +89,7 @@ apt -y install \
 	libz3-dev \
 	libzip-dev \
 	libzstd-dev \
-	llvm-17-dev \
+	llvm-18-dev \
 	python3-dev \
 	qt5-qmake \
 	qtbase5-dev \
