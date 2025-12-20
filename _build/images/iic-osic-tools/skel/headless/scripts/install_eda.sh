@@ -20,9 +20,9 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	gdsfactory==9.25.2 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.3.6 \
+	klayout-pex==0.3.7 \
 	lctime==0.0.26 \
-	librelane==2.4.9 \
+	librelane==2.4.10 \
 	najaeda==0.3.0 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
