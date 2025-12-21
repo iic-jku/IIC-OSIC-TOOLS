@@ -2,7 +2,16 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
-## 2025.10
+## 2025.12
+
+* [Adding] custom bindkeys for Magic for IHP SG13G2 PDK.
+* [Adding] the `EDA_IMAGE_TAG` variable to `eda_server_conf.sh` and adds a new `-t` option to `eda_server_start.sh` and `eda_server_restart.sh` for specifying the Docker image tag.
+* [Update] various tool versions.
+* [Update] LLVM/Clang to version 18.
+* [Fix] RC-extraction issue in `sak-pex.sh`.
+* [Remove] custom build of `bottleneck`.
+
+## 2025.11
 
 * [Build] Split `base` image into `base` and `base-dev` so that all `*-dev` packages do not bloat the final image. This reduces the image size considerably.
 * [Build] Switch IHP PDK from IHP repo and `dev` branch to IIC-owned repo so that we can merge required fixes directly.
