@@ -3,8 +3,6 @@ set -e
 
 echo "[INFO] Install EDA packages via APT"
 apt install -y \
-	python3-gmsh \
-	gmsh \
 	gnuplot \
 	gnuplot-x11
 
@@ -20,6 +18,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	gds2palace==0.1.16 \
 	gdsfactory==9.25.2 \
 	gdspy==1.6.13 \
+	gmsh==4.15.0 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.7 \
 	lctime==0.0.26 \
