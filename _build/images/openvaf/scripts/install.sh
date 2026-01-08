@@ -25,7 +25,7 @@ cd "${OPENVAF_NAME}" || exit 1
 git checkout "${OPENVAF_REPO_COMMIT}"
 
 cargo update
-cargo build --release --bin openvaf-r -j$(nproc)
+cargo build --release --features llvm18 --bin openvaf-r -j$(nproc)
 
 mkdir -p  "${TOOLS}/${OPENVAF_NAME}/bin"
 strip target/release/openvaf-r
