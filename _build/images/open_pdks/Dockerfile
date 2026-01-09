@@ -10,7 +10,7 @@ FROM ${TOOL_IMAGE_XYCE} AS xyce
 
 FROM ${TOOL_IMAGE_OSIC_MULTITOOL} AS open_pdks
 ARG OPEN_PDKS_REPO_URL="https://github.com/RTimothyEdwards/open_pdks.git"
-ARG OPEN_PDKS_REPO_COMMIT="d400e26845538beaeb7cc5fdb9bfc06c30ea27cb"
+ARG OPEN_PDKS_REPO_COMMIT="54435919abffb937387ec956209f9cf5fd2dfbee"
 ARG OPEN_PDKS_NAME="open_pdks"
 COPY --from=openvaf ${TOOLS}/ ${TOOLS}/
 COPY --from=xyce ${TOOLS}/ ${TOOLS}/

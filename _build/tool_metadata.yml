@@ -3,7 +3,7 @@
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
 - name: cvc_rv
   repo: https://github.com/d-m-bailey/cvc.git
-  commit: d359e88cdd2eda722360b177b57942106f0a378b
+  commit: 4dbffb7271f048ced9aed0aad58313fefc888a1a
 - name: gaw3-xschem
   repo: https://github.com/StefanSchippers/xschem-gaw.git
   commit: 6b8fa4ab007e88b3129381e0479737ae014a8b51
@@ -12,22 +12,22 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: dc2c18aabaa288919fad7eace3a82c8224e84ff7
+  commit: 5f03133bfc1f97bcb6cb2f8d180126392f2b3bcf
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
-  commit: ad5be7439eb4331343e26f9199d3678985088fed
+  commit: 356b6f5fb7af02b0fde346520a37938744f7d58f
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
-  commit: a6aae772f36f909a0f5931aad24d8af49fba8f13
+  commit: 4462c47068a0c0b5c931c54b29df0db8695f8002
 - name: irsim
   repo: https://github.com/rtimothyedwards/irsim.git
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: aad14df3d7c419e069538fe0ab0965b7c31bdf8e
+  commit: 6651df6f2c7bf51af377abb12ccf7ecef65c066e
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
-  commit: "v3.13.5"
+  commit: "v3.14.0"
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.30.5"
@@ -36,10 +36,10 @@
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.582"
+  commit: "8.3.589"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.313"
+  commit: "1.5.314"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-45.2"
@@ -51,16 +51,16 @@
   commit: "r1.18.2"
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
-  commit: d400e26845538beaeb7cc5fdb9bfc06c30ea27cb
+  commit: 54435919abffb937387ec956209f9cf5fd2dfbee
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: fecb04286909edf06917b67c76d756d21a36ae96
+  commit: 5310ae53f95597328f073d88e9b8870da52f1b74
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
 - name: openvaf
   repo: https://github.com/arpadbuermen/OpenVAF.git
-  commit: fce38d894b7a8e92a76b8fd76e842eb02cec3659
+  commit: 75df7b362e945c7cb49b791879ff4b3f6a9b13b1
 - name: osic-multitool
   repo: https://github.com/iic-jku/osic-multitool.git
   commit: ab373a6b917635d1ae85b4d11397a1b708050f76
@@ -69,7 +69,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: ac0909afdb365d71178d48cc5670b866e26f7b2a
+  commit: 2bbc5096b25afaff8894e23af5bab9cea3234d0c
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: "0.11.2"
@@ -81,13 +81,13 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: ac4775484d4b3c5ba2650c95b71ddf1a4f342dea
+  commit: bd34d0abd2e9067e043857877ec1dbb21cb9b36c
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 23e0653c85f6ed4127e665a2529b069ce550e967
+  commit: 64b44616a3798f07453b14ea03e4ac8a16b77313
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: fd72ee2d3e0d1703451c446d467387ff0576e492
+  commit: ce747bedbcaf7e81f1de2b1a0cce1e91581345ae
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.86"
@@ -108,13 +108,13 @@
   commit: "_0.3.1"
 - name: verilator
   repo: https://github.com/verilator/verilator.git
-  commit: "v5.042"
+  commit: "v5.044"
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: 8a0429250abbd2b70c4d3fbfe2e2c20b4c43be81
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 9ab3cad8a1893324f405af1ec700c13fd77a758e
+  commit: 2a242cb80a7ebd893cfe76647b5ad202629e3f21
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"
