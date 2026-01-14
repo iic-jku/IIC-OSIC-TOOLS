@@ -164,13 +164,13 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [openram](https://github.com/VLSIDA/OpenRAM) OpenRAM Python library
 - [openroad](https://github.com/The-OpenROAD-Project/OpenROAD) RTL2GDS engine used by `librelane`
 - [opensta](https://github.com/parallaxsw/OpenSTA) gate level static timing verifier
-- [openvaf](https://github.com/dwarning/OpenVAF) Verilog-A compiler for device models
+- [openvaf-reloaded](https://github.com/arpadbuermen/OpenVAF) Verilog-A compiler for device models
 - [osic-multitool](https://github.com/iic-jku/osic-multitool) collection of useful scripts and documentation
 - [padring](https://github.com/donn/padring) padring generation tool
 - [palace](https://github.com/awslabs/palace) 3D finite element solver for computational electromagnetics
 - [pulp-tools](https://github.com/pulp-platform/pulp) PULP platform tools consisting of [bender](https://github.com/pulp-platform/bender), [verible](https://github.com/chipsalliance/verible), and [sv2v](https://github.com/zachjs/sv2v)
 - [pygmid](https://github.com/dreoilin/pygmid) Python version of the gm/Id starter kit from Boris Murmann
-- [pyopus](https://fides.fe.uni-lj.si/pyopus/index.html) simulation runner and optimization tool for analog circuits
+- [pyopus](https://codeberg.org/arpadbuermen/PyOPUS) simulation runner and optimization tool for analog circuits
 - [pyrtl](https://github.com/UCSBarchlab/PyRTL) collection of classes for pythonic RTL design
 - [pyspice](https://github.com/PySpice-org/PySpice) interface `ngspice` and `xyce` from Python
 - [pyuvm](https://github.com/pyuvm/pyuvm) Universal Verification Methodology implemented in Python (instead of SystemVerilog) using `cocotb`
@@ -190,7 +190,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [spyci](https://github.com/gmagno/spyci) analyze/plot `ngspice`/`xyce` output data with Python
 - [surelog](https://github.com/chipsalliance/Surelog) SystemVerilog parser, elaborator, and UHDM compiler
 - [surfer](https://gitlab.com/surfer-project/surfer) waveform viewer with snappy usable interface and extensibility
-- [vacask] a modern Verilog-A based analog circuit simulator
+- [vacask](https://codeberg.org/arpadbuermen/VACASK) a modern Verilog-A based analog circuit simulator
 - [verilator](https://github.com/verilator/verilator) fast Verilog simulator
 - [veryl](https://github.com/veryl-lang/veryl) a modern hardware description language, based on SystemVerilog
 - [vlog2verilog](https://github.com/RTimothyEdwards/qflow) Verilog file conversion
