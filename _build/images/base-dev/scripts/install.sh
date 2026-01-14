@@ -44,6 +44,7 @@ apt -y install \
 	libgtk-4-dev \
 	libhdf5-dev \
 	libjpeg-dev \
+	libjson-glib-dev \
 	libjudy-dev \
 	liblapack-dev \
 	liblzma-dev \

@@ -88,6 +88,7 @@ apt -y install \
 	libgtk-4-1 \
 	libhdf5-103-1 \
 	libjpeg-turbo8 \
+	libjson-glib-1.0-0 \
 	libjudydebian1 \
 	libklu2 \
 	liblapack3 \
