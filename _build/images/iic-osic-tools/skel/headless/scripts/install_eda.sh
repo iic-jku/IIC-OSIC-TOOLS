@@ -16,7 +16,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	fault-dft==0.9.4 \
 	fusesoc==2.4.5 \
 	gds2palace==0.1.17 \
-	gdsfactory==9.30.0 \
+	gdsfactory==9.31.0 \
 	gdspy==1.6.13 \
 	gmsh==4.15.0 \
 	jsonschema2md==1.7.0 \
@@ -31,7 +31,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	schemdraw[svgmath]==0.21 \
 	scikit-rf==1.9.0 \
 	setupEM==0.1.21 \
-	siliconcompiler==0.36.1 \
+	siliconcompiler==0.36.2 \
 	spicelib==1.4.7 \
 	spyci==1.0.2
 

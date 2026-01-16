@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 6fcf8dd2ae6c4692475be9a5a4a2622909ddf78c
+  commit: a951986bc18cbf4f4b0381e5ebf82ab5bee0e0e3
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 07a30ed39fb6a078f1bf7e9e88ce9ed712380ec2
@@ -39,7 +39,7 @@
   commit: "8.3.590"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: "1.5.314"
+  commit: "1.5.315"
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-45.2"
@@ -54,7 +54,7 @@
   commit: 54435919abffb937387ec956209f9cf5fd2dfbee
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 2f9f8343856b945af1f80e0bec1998f5253df679
+  commit: c596b9788951056709c88e2fcd307d5d37aee7c3
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -69,7 +69,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: f82bcff21238a415640cf559fa76e3c19c0ebeb8
+  commit: 193596209ff71e1a673f765347342d8011e1a92a
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: "0.12"
@@ -81,10 +81,10 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 56d0b585de8a73da3df57290a9dd5020aa1c6892
+  commit: ace09c5d7c9f4e28eed654d2f353c6dc792ebf67
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 7cdd147a6dd14e8f57cd321df8be377c04c9b31f
+  commit: 4e1ad7c11e23cffe131aa5c478083f1d99f0c0be
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
   commit: efdaa0837137ddd4b4154196251d52daae3277bc
