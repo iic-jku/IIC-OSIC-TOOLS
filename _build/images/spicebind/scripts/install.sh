@@ -8,5 +8,5 @@ git checkout "${SPICEBIND_REPO_COMMIT}"
 
 mkdir build && cd build
 cmake -DNGSPICE_ROOT="${TOOLS}/ngspice" ..
-cmake --build .
+cmake --build . -j"$(nproc)"
 cmake --install . --prefix "${TOOLS}"
