@@ -3,13 +3,13 @@
 #######################################################################
 ARG BASE_IMAGE=registry.iic.jku.at:5000/iic-osic-tools:base
 
-ARG TOOL_IMAGE_OPEN_PDKS="registry.iic.jku.at:5000/iic-osic-tools:tool-open_pdks-latest"
 ARG TOOL_IMAGE_COVERED="registry.iic.jku.at:5000/iic-osic-tools:tool-covered-latest"
 ARG TOOL_IMAGE_CVC_RV="registry.iic.jku.at:5000/iic-osic-tools:tool-cvc_rv-latest"
 ARG TOOL_IMAGE_FPGA="registry.iic.jku.at:5000/iic-osic-tools:tool-fpga-latest"
 ARG TOOL_IMAGE_GAW3_XSCHEM="registry.iic.jku.at:5000/iic-osic-tools:tool-gaw3-xschem-latest"
 ARG TOOL_IMAGE_GDS3D="registry.iic.jku.at:5000/iic-osic-tools:tool-gds3d-latest"
 ARG TOOL_IMAGE_GHDL="registry.iic.jku.at:5000/iic-osic-tools:tool-ghdl-latest"
+ARG TOOL_IMAGE_GHDL_YOSYS_PLUGIN="registry.iic.jku.at:5000/iic-osic-tools:tool-ghdl-yosys-plugin-latest"
 ARG TOOL_IMAGE_GTKWAVE="registry.iic.jku.at:5000/iic-osic-tools:tool-gtkwave-latest"
 ARG TOOL_IMAGE_IRSIM="registry.iic.jku.at:5000/iic-osic-tools:tool-irsim-latest"
 ARG TOOL_IMAGE_IVERILOG="registry.iic.jku.at:5000/iic-osic-tools:tool-iverilog-latest"
@@ -18,14 +18,15 @@ ARG TOOL_IMAGE_KLAYOUT="registry.iic.jku.at:5000/iic-osic-tools:tool-klayout-lat
 ARG TOOL_IMAGE_LIBMAN="registry.iic.jku.at:5000/iic-osic-tools:tool-libman-latest"
 ARG TOOL_IMAGE_MAGIC="registry.iic.jku.at:5000/iic-osic-tools:tool-magic-latest"
 ARG TOOL_IMAGE_NETGEN="registry.iic.jku.at:5000/iic-osic-tools:tool-netgen-latest"
-ARG TOOL_IMAGE_NVC="registry.iic.jku.at:5000/iic-osic-tools:tool-nvc-latest"
 ARG TOOL_IMAGE_NGSPICE="registry.iic.jku.at:5000/iic-osic-tools:tool-ngspice-latest"
 ARG TOOL_IMAGE_NGSPYCE="registry.iic.jku.at:5000/iic-osic-tools:tool-ngspyce-latest"
+ARG TOOL_IMAGE_NVC="registry.iic.jku.at:5000/iic-osic-tools:tool-nvc-latest"
 ARG TOOL_IMAGE_OPENEMS="registry.iic.jku.at:5000/iic-osic-tools:tool-openems-latest"
+ARG TOOL_IMAGE_OPEN_PDKS="registry.iic.jku.at:5000/iic-osic-tools:tool-open_pdks-latest"
 ARG TOOL_IMAGE_OPENROAD="registry.iic.jku.at:5000/iic-osic-tools:tool-openroad-latest"
 ARG TOOL_IMAGE_OPENROAD_LIBRELANE="registry.iic.jku.at:5000/iic-osic-tools:tool-openroad-librelane-latest"
-ARG TOOL_IMAGE_OSIC_MULTITOOL="registry.iic.jku.at:5000/iic-osic-tools:tool-osic-multitool-latest"
 ARG TOOL_IMAGE_OPENVAF="registry.iic.jku.at:5000/iic-osic-tools:tool-openvaf-latest"
+ARG TOOL_IMAGE_OSIC_MULTITOOL="registry.iic.jku.at:5000/iic-osic-tools:tool-osic-multitool-latest"
 ARG TOOL_IMAGE_PADRING="registry.iic.jku.at:5000/iic-osic-tools:tool-padring-latest"
 ARG TOOL_IMAGE_PALACE="registry.iic.jku.at:5000/iic-osic-tools:tool-palace-latest"
 ARG TOOL_IMAGE_PULP_TOOLS="registry.iic.jku.at:5000/iic-osic-tools:tool-pulp-tools-latest"
@@ -34,6 +35,8 @@ ARG TOOL_IMAGE_QUCS_S="registry.iic.jku.at:5000/iic-osic-tools:tool-qucs-s-lates
 ARG TOOL_IMAGE_RFTOOLKIT="registry.iic.jku.at:5000/iic-osic-tools:tool-rftoolkit-latest"
 ARG TOOL_IMAGE_RISCV_GNU_TOOLCHAIN="registry.iic.jku.at:5000/iic-osic-tools:tool-riscv-gnu-toolchain-latest"
 ARG TOOL_IMAGE_SLANG="registry.iic.jku.at:5000/iic-osic-tools:tool-slang-latest"
+ARG TOOL_IMAGE_SLANG_YOSYS_PLUGIN="registry.iic.jku.at:5000/iic-osic-tools:tool-slang-yosys-plugin-latest"
+ARG TOOL_IMAGE_SPICEBIND="registry.iic.jku.at:5000/iic-osic-tools:tool-spicebind-latest"
 ARG TOOL_IMAGE_SPIKE="registry.iic.jku.at:5000/iic-osic-tools:tool-spike-latest"
 ARG TOOL_IMAGE_SURELOG="registry.iic.jku.at:5000/iic-osic-tools:tool-surelog-latest"
 ARG TOOL_IMAGE_SURFER="registry.iic.jku.at:5000/iic-osic-tools:tool-surfer-latest"
@@ -45,16 +48,14 @@ ARG TOOL_IMAGE_XSCHEM="registry.iic.jku.at:5000/iic-osic-tools:tool-xschem-lates
 ARG TOOL_IMAGE_XYCE="registry.iic.jku.at:5000/iic-osic-tools:tool-xyce-latest"
 #ARG TOOL_IMAGE_XYCE_XDM="registry.iic.jku.at:5000/iic-osic-tools:tool-xyce-xdm-latest"
 ARG TOOL_IMAGE_YOSYS="registry.iic.jku.at:5000/iic-osic-tools:tool-yosys-latest"
-ARG TOOL_IMAGE_GHDL_YOSYS_PLUGIN="registry.iic.jku.at:5000/iic-osic-tools:tool-ghdl-yosys-plugin-latest"
-ARG TOOL_IMAGE_SLANG_YOSYS_PLUGIN="registry.iic.jku.at:5000/iic-osic-tools:tool-slang-yosys-plugin-latest"
 
-FROM ${TOOL_IMAGE_OPEN_PDKS} AS open_pdks
 FROM ${TOOL_IMAGE_COVERED} AS covered
 FROM ${TOOL_IMAGE_CVC_RV} AS cvc_rv
 FROM ${TOOL_IMAGE_FPGA} AS fpga
 FROM ${TOOL_IMAGE_GAW3_XSCHEM} AS gaw3-xschem
 FROM ${TOOL_IMAGE_GDS3D} AS gds3d
 FROM ${TOOL_IMAGE_GHDL} AS ghdl
+FROM ${TOOL_IMAGE_GHDL_YOSYS_PLUGIN} AS ghdl-yosys-plugin
 FROM ${TOOL_IMAGE_GTKWAVE} AS gtkwave
 FROM ${TOOL_IMAGE_IRSIM} AS irsim
 FROM ${TOOL_IMAGE_IVERILOG} AS iverilog
@@ -63,14 +64,15 @@ FROM ${TOOL_IMAGE_KLAYOUT} AS klayout
 FROM ${TOOL_IMAGE_LIBMAN} AS libman
 FROM ${TOOL_IMAGE_MAGIC} AS magic
 FROM ${TOOL_IMAGE_NETGEN} AS netgen
-FROM ${TOOL_IMAGE_NVC} AS nvc
 FROM ${TOOL_IMAGE_NGSPICE} AS ngspice
 FROM ${TOOL_IMAGE_NGSPYCE} AS ngspyce
+FROM ${TOOL_IMAGE_NVC} AS nvc
 FROM ${TOOL_IMAGE_OPENEMS} AS openems
+FROM ${TOOL_IMAGE_OPEN_PDKS} AS open_pdks
 FROM ${TOOL_IMAGE_OPENROAD} AS openroad
 FROM ${TOOL_IMAGE_OPENROAD_LIBRELANE} AS openroad-librelane
-FROM ${TOOL_IMAGE_OSIC_MULTITOOL} AS osic-multitool
 FROM ${TOOL_IMAGE_OPENVAF} AS openvaf
+FROM ${TOOL_IMAGE_OSIC_MULTITOOL} AS osic-multitool
 FROM ${TOOL_IMAGE_PADRING} AS padring
 FROM ${TOOL_IMAGE_PALACE} AS palace
 FROM ${TOOL_IMAGE_PULP_TOOLS} AS pulp-tools
@@ -79,6 +81,8 @@ FROM ${TOOL_IMAGE_QUCS_S} AS qucs-s
 FROM ${TOOL_IMAGE_RFTOOLKIT} AS rftoolkit
 FROM ${TOOL_IMAGE_RISCV_GNU_TOOLCHAIN} AS riscv-gnu-toolchain
 FROM ${TOOL_IMAGE_SLANG} AS slang
+FROM ${TOOL_IMAGE_SLANG_YOSYS_PLUGIN} AS slang-yosys-plugin
+FROM ${TOOL_IMAGE_SPICEBIND} AS spicebind
 FROM ${TOOL_IMAGE_SPIKE} AS spike
 FROM ${TOOL_IMAGE_SURELOG} AS surelog
 FROM ${TOOL_IMAGE_SURFER} AS surfer
@@ -90,8 +94,6 @@ FROM ${TOOL_IMAGE_XSCHEM} AS xschem
 FROM ${TOOL_IMAGE_XYCE} AS xyce
 #FROM ${TOOL_IMAGE_XYCE_XDM} AS xyce-xdm
 FROM ${TOOL_IMAGE_YOSYS} AS yosys
-FROM ${TOOL_IMAGE_GHDL_YOSYS_PLUGIN} AS ghdl-yosys-plugin
-FROM ${TOOL_IMAGE_SLANG_YOSYS_PLUGIN} AS slang-yosys-plugin
 
 #######################################################################
 # Final output container
@@ -101,7 +103,6 @@ ARG CONTAINER_TAG=unknown
 ENV IIC_OSIC_TOOLS_VERSION=${CONTAINER_TAG}
 
 # Copy all layers into the final container
-COPY --link --from=open_pdks                    ${PDK_ROOT}/                    ${PDK_ROOT}/
 COPY --link --from=covered                      ${TOOLS}/covered                ${TOOLS}/covered/
 COPY --link --from=cvc_rv                       ${TOOLS}/cvc_rv                 ${TOOLS}/cvc_rv/
 COPY --link --from=fpga                         ${TOOLS}/fpga                   ${TOOLS}/fpga/
@@ -109,6 +110,7 @@ COPY --link --from=gaw3-xschem                  ${TOOLS}/gaw3-xschem            
 COPY --link --from=gds3d                        ${TOOLS}/gds3d                  ${TOOLS}/gds3d/
 COPY --link --from=gds3d                        ${PDK_ROOT}/                    ${PDK_ROOT}/
 COPY --link --from=ghdl                         ${TOOLS}/ghdl                   ${TOOLS}/ghdl/
+COPY --link --from=ghdl-yosys-plugin            ${TOOLS}_add/yosys/             ${TOOLS}/yosys/
 COPY --link --from=gtkwave                      ${TOOLS}/gtkwave                ${TOOLS}/gtkwave/
 COPY --link --from=irsim                        ${TOOLS}/irsim                  ${TOOLS}/irsim/
 COPY --link --from=iverilog                     ${TOOLS}/iverilog               ${TOOLS}/iverilog/
@@ -117,14 +119,15 @@ COPY --link --from=klayout                      ${TOOLS}/klayout                
 COPY --link --from=libman                       ${TOOLS}/libman                 ${TOOLS}/libman/
 COPY --link --from=magic                        ${TOOLS}/magic                  ${TOOLS}/magic/
 COPY --link --from=netgen                       ${TOOLS}/netgen                 ${TOOLS}/netgen/
-COPY --link --from=nvc                          ${TOOLS}/nvc                    ${TOOLS}/nvc/
 COPY --link --from=ngspice                      ${TOOLS}/ngspice                ${TOOLS}/ngspice/
 COPY --link --from=ngspyce                      ${TOOLS}/ngspyce                ${TOOLS}/ngspyce/
+COPY --link --from=nvc                          ${TOOLS}/nvc                    ${TOOLS}/nvc/
 COPY --link --from=openems                      ${TOOLS}/openems                ${TOOLS}/openems/
+COPY --link --from=open_pdks                    ${PDK_ROOT}/                    ${PDK_ROOT}/
 COPY --link --from=openroad                     ${TOOLS}/openroad               ${TOOLS}/openroad/
 COPY --link --from=openroad-librelane           ${TOOLS}/openroad-librelane     ${TOOLS}/openroad-librelane/
-COPY --link --from=osic-multitool               ${TOOLS}/osic-multitool         ${TOOLS}/osic-multitool/
 COPY --link --from=openvaf                      ${TOOLS}/openvaf                ${TOOLS}/openvaf/
+COPY --link --from=osic-multitool               ${TOOLS}/osic-multitool         ${TOOLS}/osic-multitool/
 COPY --link --from=padring                      ${TOOLS}/padring                ${TOOLS}/padring/
 COPY --link --from=palace                       ${TOOLS}/palace                 ${TOOLS}/palace/
 COPY --link --from=pulp-tools                   ${TOOLS}/pulp                   ${TOOLS}/pulp/
@@ -134,6 +137,8 @@ COPY --link --from=qucs-s                       ${TOOLS}/qucs-s                 
 COPY --link --from=rftoolkit                    ${TOOLS}/rftoolkit              ${TOOLS}/rftoolkit/
 COPY --link --from=riscv-gnu-toolchain          ${TOOLS}/riscv-gnu-toolchain    ${TOOLS}/riscv-gnu-toolchain/
 COPY --link --from=slang                        ${TOOLS}/slang                  ${TOOLS}/slang/
+COPY --link --from=slang-yosys-plugin           ${TOOLS}_add/yosys/             ${TOOLS}/yosys/
+COPY --link --from=spicebind                    ${TOOLS}/spicebind              ${TOOLS}/spicebind/
 COPY --link --from=spike                        ${TOOLS}/spike                  ${TOOLS}/spike/
 COPY --link --from=surelog                      ${TOOLS}/surelog                ${TOOLS}/surelog/
 COPY --link --from=surfer                       ${TOOLS}/surfer                 ${TOOLS}/surfer/
@@ -145,8 +150,6 @@ COPY --link --from=xschem                       ${TOOLS}/xschem                 
 COPY --link --from=xyce                         ${TOOLS}/xyce                   ${TOOLS}/xyce/
 #COPY --link --from=xyce-xdm                     ${TOOLS}/xyce-xdm ${TOOLS}/bin ${TOOLS}/
 COPY --link --from=yosys                        ${TOOLS}/yosys                  ${TOOLS}/yosys/
-COPY --link --from=ghdl-yosys-plugin            ${TOOLS}_add/yosys/             ${TOOLS}/yosys/
-COPY --link --from=slang-yosys-plugin           ${TOOLS}_add/yosys/             ${TOOLS}/yosys/
 
 # Copy tool version file
 COPY tool_metadata.yml /
