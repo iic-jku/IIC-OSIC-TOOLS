@@ -360,6 +360,13 @@ target "ngspice" {
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-ngspice-latest"]
 }
 
+target "spicebind" {
+  inherits = ["base-tool"]
+  dockerfile = "images/spicebind/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-spicebind-latest"]
+  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-spicebind-latest"]
+}
+
 # Group targets for tools-level-1
 group "tools-level-1" {
   targets = [
@@ -378,6 +385,6 @@ group "tools-level-2" {
 # Group targets for tools-level-3
 group "tools-level-3" {
   targets = [
-    "gds3d", "ngspice"
+    "gds3d", "ngspice", "spicebind"
   ]
 }

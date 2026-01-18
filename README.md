@@ -185,6 +185,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [sky130](https://github.com/google/skywater-pdk) SkyWater Technologies 130 nm CMOS PDK
 - [slang yosys plugin](https://github.com/povik/yosys-slang) Slang-based plugin for `yosys` for SystemVerilog support
 - [slang](https://github.com/MikePopoloski/slang) SystemVerilog parsing and translation (e.g. to Verilog)
+- [spicebind](https://github.com/themperek/spicebind) lightweight bridge enabling co-simulation of analog `ngspice` circuits alongside HDL simulators
 - [spicelib](https://github.com/nunobrum/spicelib) library to interact with SPICE-like simulators
 - [spike](https://github.com/riscv-software-src/riscv-isa-sim) Spike RISC-V ISA simulator
 - [spyci](https://github.com/gmagno/spyci) analyze/plot `ngspice`/`xyce` output data with Python

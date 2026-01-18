@@ -85,6 +85,9 @@
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 4e1ad7c11e23cffe131aa5c478083f1d99f0c0be
+- name: spicebind
+  repo: https://github.com/themperek/spicebind.git
+  commit: a63974c81391c10c0700244c32c0b7733ae711b1
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
   commit: efdaa0837137ddd4b4154196251d52daae3277bc
