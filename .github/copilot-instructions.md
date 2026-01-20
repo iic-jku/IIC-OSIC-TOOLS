@@ -2,157 +2,145 @@
 
 ## Project Overview
 
-IIC-OSIC-TOOLS is a comprehensive Docker/Podman-based container environment for open-source integrated circuit (IC) design, supporting both analog and digital workflows. The project provides 50+ EDA tools, multiple PDKs (sky130A, gf180mcuD, ihp-sg13g2), and runs on x86_64/amd64 and aarch64/arm64 architectures based on Ubuntu 24.04 LTS.
+IIC-OSIC-TOOLS is a comprehensive Docker/Podman-based container distribution for open-source IC design tools, supporting both analog and digital flows. It packages 80+ EDA tools with multiple Process Development Kits (PDKs) for both x86_64/amd64 and aarch64/arm64 architectures, based on Ubuntu 24.04 LTS.
 
-## Architecture
+**Key directories:**
+- `_build/`: Multi-stage Docker build system with tool images and build orchestration
+- `_tests/`: Regression test suite (18 tests covering PDKs, tools, and workflows)
+- Root scripts: Container startup scripts for VNC, X11, Jupyter, and shell modes
 
-### Multi-Stage Docker Build System
+## Architecture & Build System
 
-- **Base images**: [`_build/images/base/`](_build/images/base/) and [`_build/images/base-dev/`](_build/images/base-dev/) provide Ubuntu foundation
-- **Individual tool images**: Each tool in [`_build/images/`](_build/images/) (magic, ngspice, klayout, etc.) has its own Dockerfile
-- **Three-level build hierarchy**: Tools are built in dependency order (level-1 → level-2 → level-3) as defined in [`_build/docker-bake.hcl`](_build/docker-bake.hcl)
-- **Final image**: [`_build/images/iic-osic-tools/`](_build/images/iic-osic-tools/) aggregates all tools into the distribution container
-- **Multi-arch support**: Uses `docker buildx` with remote builders for native x86_64 and arm64 compilation
+### Multi-Stage Build Process
 
-### Key Directories
+The build uses **docker buildx** with multi-architecture support across distributed build machines:
 
-- [`_build/`](_build/): Complete build infrastructure and Dockerfiles
-- [`_tests/`](_tests/): 18 regression tests validating tools and PDK workflows
-- Root scripts (`start_*.sh`, `start_*.bat`): User-facing container launch scripts for VNC, X11, Jupyter, and shell modes
+1. **Base images**: `base` (runtime) and `base-dev` (build dependencies) from `_build/images/base/`
+2. **Tool images**: Each tool has a Dockerfile in `_build/images/<tool>/` (e.g., `magic`, `yosys`, `klayout`)
+3. **Final image**: `_build/images/iic-osic-tools/` combines all tools with PDKs
+
+**Build orchestration** (sequential execution required):
+```bash
+./builder-create.sh   # Creates buildx builder with remote SSH contexts
+./build-base.sh       # Builds base and base-dev images
+./build-tools.sh      # Builds tool images in 3 levels (handles dependencies)
+./build-images.sh     # Assembles final image and pushes to registry
+```
+
+**Critical conventions:**
+- `tool_metadata.yml`: Single source of truth for tool versions (git commit hashes)
+- `docker-bake.hcl`: Docker Bake configuration defining targets, platforms, and cache strategies
+- Tools are organized in dependency levels (`tools-level-1`, `tools-level-2`, `tools-level-3`)
+- Each tool Dockerfile uses multi-stage builds to minimize final image size
+
+### Builder Configuration
+
+- Remote build machines: `buildx86` (amd64) and `buildaarch` (arm64) via passwordless SSH
+- Custom builder name: `tools-builder-$USER`
+- Registry: `registry.iic.jku.at:5000` for intermediate images, DockerHub (`hpretl/iic-osic-tools`) for distribution
+- Set `DRY_RUN=1` on any build script to preview commands without execution
+
+## PDK Management
+
+Three PDKs are pre-installed with automatic environment setup:
+
+**Switching PDKs**: Use `sak-pdk <pdk-name>` (not raw export commands)
+```bash
+sak-pdk sky130A                    # SkyWater 130nm
+sak-pdk gf180mcuD                  # GlobalFoundries 180nm  
+sak-pdk ihp-sg13g2                 # IHP 130nm SiGe BiCMOS (default)
+```
+
+The script sets: `PDK`, `PDKPATH`, `STD_CELL_LIBRARY`, `SPICE_USERINIT_DIR`, `KLAYOUT_PATH`
+
+**Per-project PDK config**: Create `$DESIGNS/.designinit` with environment overrides (auto-sourced on container start)
 
 ## Developer Workflows
 
-### Building Images
+### Container Launch Modes
 
-```bash
-# 1. Create multi-arch builders (one-time setup)
-cd _build && ./builder-create.sh
+Scripts in repository root (`.sh` for Linux/macOS, `.bat` for Windows):
 
-# 2. Build base image
-./build-base.sh
+- `start_vnc.sh`: Full XFCE desktop via VNC/noVNC (port 80, password: abc123)
+- `start_x.sh`: Direct X11 forwarding to host X server
+- `start_shell.sh`: Shell-only access (runs as root by default)
+- `start_jupyter.sh`: Jupyter notebook server
 
-# 3. Build all tools (respects 3-level dependency order)
-./build-tools.sh
-
-# 4. Build and push final images with tags
-DOCKER_PREFIXES="hpretl,registry.iic.jku.at:5000" DOCKER_TAGS="latest,2025.01" ./build-images.sh
-```
-
-Build scripts in [`_build/`](_build/) use environment variables:
-- `BUILDER_NAME`: Custom buildx builder (default: `tools-builder-$USER`)
-- `DOCKER_LOAD`: Use `--load` instead of `--push` for local testing
+**Environment variables** (set before running scripts):
+- `DESIGNS`: Host directory mounted to `/foss/designs` (default: `$HOME/eda/designs`)
+- `DOCKER_USER`, `DOCKER_IMAGE`, `DOCKER_TAG`: Image selection
+- `WEBSERVER_PORT`, `VNC_PORT`: Port mappings
 - `DRY_RUN`: Print commands without execution
 
-### Testing
+### Testing Strategy
 
-Run regression tests from [`_tests/`](_tests/):
+Run tests inside container with `_tests/run_docker_tests.sh` or individually:
 ```bash
-# Inside container or via ./start_shell.sh
-./_tests/run_docker_tests.sh
+cd _tests/01 && ./test_librelane_sky130a.sh
 ```
 
-Tests validate: LibreLane RTL2GDS flows (tests 01, 04, 07, 18), DRC/LVS (02), ngspice simulation (05, 06, 11, 14), RISC-V toolchain (09), Verilator/iVerilog (12), and more. Test logs go to [`_tests/runs/`](_tests/runs/).
+Tests verify: LibreLane RTL2GDS flows, DRC/LVS, SPICE simulation, RISC-V toolchain, Python packages, etc.
 
-### PDK Management
+**Test naming**: `_tests/NN/test_<description>_<pdk>.sh` where NN is test number (see `_tests/TESTS.md`)
 
-The container includes three PDKs. Switch using the `sak-pdk` command (implemented in [`_build/images/iic-osic-tools/skel/foss/tools/sak/sak-pdk-script.sh`](_build/images/iic-osic-tools/skel/foss/tools/sak/sak-pdk-script.sh)):
+### Key Tool Commands
 
-```bash
-sak-pdk sky130A              # SkyWater 130nm
-sak-pdk gf180mcuD            # GlobalFoundries 180nm
-sak-pdk ihp-sg13g2           # IHP SiGe:C BiCMOS 130nm
-```
+- **LibreLane**: `librelane <config.json>` (RTL to GDS digital flow, successor to OpenLane)
+- **OpenROAD**: Use `openroad` (latest) or `openroad-librelane` (older version for LibreLane compatibility)
+- **Magic**: `magic -T <tech>` for layout editing (tech files in `$PDKPATH/libs.tech/magic/`)
+- **Netgen**: `netgen -batch lvs` for LVS checking
+- **ngspice**: Auto-loads PDK models from `$SPICE_USERINIT_DIR`
+- **Xyce**: Use alias `xyce` which preloads IHP PSP103 plugin for SG13G2
 
-This sets `PDK`, `PDKPATH`, `STD_CELL_LIBRARY`, `SPICE_USERINIT_DIR`, and `KLAYOUT_PATH`. Default PDK is `ihp-sg13g2` (see [`_build/images/base/skel/etc/profile.d/iic-osic-tools-setup.sh`](_build/images/base/skel/etc/profile.d/iic-osic-tools-setup.sh#L82-L86)).
+## Critical Implementation Details
 
-Projects can set PDK-specific variables in `.designinit` files placed in the `$DESIGNS` directory.
+### Tool Installation Pattern
 
-## Project Conventions
+Each tool's `_build/images/<tool>/scripts/install.sh`:
+1. Clones from git using commit from `tool_metadata.yml`
+2. Builds/installs to `/foss/tools/<tool>` (shared via volume in multi-stage)
+3. Updates `tool_metadata.yml` with actual commit used
 
-### Tool Metadata
+### Environment Setup
 
-[`_build/tool_metadata.yml`](_build/tool_metadata.yml) is the single source of truth for tool versions, specifying git repos and commit hashes for all 50+ tools. Update this file when upgrading tool versions.
+`_build/images/base/skel/etc/profile.d/iic-osic-tools-setup.sh`:
+- Sourced on container start, sets up PATH, PYTHONPATH, LD_LIBRARY_PATH
+- Initializes default PDK (ihp-sg13g2)
+- Defines helper functions like `_path_add_tool`, `_add_resolution` (VNC display modes)
+- Sources `$DESIGNS/.designinit` last for user overrides
 
-### Container Environment Variables
+### Python Environment
 
-Critical environment variables (from [`_build/README.md`](_build/README.md)):
-- `TOOLS=/foss/tools`: Tool installation directory
-- `DESIGNS=/foss/designs`: User design workspace (mounted from host)
-- `PDK_ROOT=/foss/pdks`: PDK installation root
-- `VNC_PORT=5901`, `NO_VNC_PORT=80`: Service ports
-- `HOME=/headless`: Container home directory
+- System Python 3.12 with extensive EDA packages (see `_build/images/base/Dockerfile`)
+- Tools with Python bindings: ngspyce, pyopus, gdsfactory, cocotb, amaranth, etc.
+- `PYTHONPATH` includes Yosys, KLayout, OpenEMS python modules
 
-### User Scripts and Aliases
+## Common Pitfalls
 
-The startup script ([`_build/images/base/skel/etc/profile.d/iic-osic-tools-setup.sh`](_build/images/base/skel/etc/profile.d/iic-osic-tools-setup.sh)) provides:
-- Aliases: `tt` (→ `$TOOLS`), `dd` (→ `$DESIGNS`), `pp` (→ `$PDK_ROOT`), `k` (→ `klayout`), `ke` (→ `klayout -e`)
-- Tool-specific overrides: `xyce` alias loads IHP PSP103 plugin, `surfer` sets `LIBGL_ALWAYS_INDIRECT=0`
-- Path setup for Python packages, KLayout, and custom tools
+1. **Don't run build scripts as root**: Follow Docker post-install for non-root execution
+2. **PDK switching**: Always use `sak-pdk`, not manual exports (sets 6+ environment variables correctly)
+3. **Tool version conflicts**: OpenROAD has two versions; LibreLane wrapper auto-selects `openroad-librelane`
+4. **Multi-arch builds**: Ensure both build machines (`buildx86`, `buildaarch`) are accessible before `builder-create.sh`
+5. **Image size**: Final image is ~20GB extracted; clear unused images periodically with `docker image prune`
+6. **Registry access**: Local registry needs `"insecure-registries"` in `/etc/docker/daemon.json` if using HTTP
 
-### Start Scripts
+## Project-Specific Patterns
 
-User-facing scripts (`start_vnc.sh`, `start_x.sh`, `start_jupyter.sh`, `start_shell.sh`) support customization via environment variables:
-- `DESIGNS`: Host directory to mount (default: `$HOME/eda/designs`)
-- `DOCKER_USER`, `DOCKER_IMAGE`, `DOCKER_TAG`: Image selection
-- `WEBSERVER_PORT`, `VNC_PORT`: Port mappings (0 disables)
-- `DRY_RUN`: Print Docker commands instead of executing
+- **Start script customization**: Set shell variables before running (e.g., `DESIGNS=/my/path ./start_vnc.sh`)
+- **Version tagging**: Images tagged as `YYYY.MM` and `latest` (see `_build/build-all.sh`)
+- **SAK scripts**: Bash utilities in `$TOOLS/sak/` (Swiss Army Knife), e.g., `sak-pdk-script.sh`, `sak-pex.sh`
+- **Tool wrappers**: Some tools have wrapper scripts that set environment or select versions (see `librelane`, `xyce` aliases)
 
-Windows users have equivalent `.bat` scripts with `%USERPROFILE%` defaults.
+## File Organization
 
-## Integration Points
+- **Dockerfiles**: `_build/images/<component>/Dockerfile` (base, tools, final)
+- **Install scripts**: `_build/images/<tool>/scripts/install.sh` (tool-specific build logic)
+- **Skeleton files**: `_build/images/base/skel/` (copied to container at `/`, includes config files)
+- **Examples**: `_build/images/iic-osic-tools/skel/foss/examples/` (demo projects for sky130A, gf180mcuD)
 
-### Build System Dependencies
+## External References
 
-- **Docker Buildx**: Required for multi-arch builds; configured in [`_build/buildkitd.toml`](_build/buildkitd.toml)
-- **Remote builders**: Scripts expect SSH-accessible build hosts named `buildx86` and `buildaarch`
-- **Registry**: Internal registry `registry.iic.jku.at:5000` used for intermediate tool images; requires `insecure-registries` config for HTTP access
-
-### External Tool Sources
-
-All tools are built from source (no apt packages for EDA tools). Sources are cloned from GitHub/GitLab during Docker build phases. Build failures typically trace to:
-1. Upstream API changes (check commit in [`tool_metadata.yml`](_build/tool_metadata.yml))
-2. Missing build dependencies in base image
-3. Architecture-specific compilation issues (arm64 vs x86_64)
-
-### Container Modes
-
-Four operational modes documented in [`README.md`](README.md#1-how-to-use-these-open-source-and-free-ic-design-tools):
-1. **VNC/noVNC**: Full XFCE desktop in browser (recommended for remote use)
-2. **X11 forwarding**: Direct window display on host (requires X server on macOS/Windows)
-3. **Jupyter**: Notebook server for Python-based workflows
-4. **Dev container**: VS Code integration via [`_build/devcontainer/`](_build/devcontainer/)
-
-## Critical Patterns
-
-### Testing New Tools
-
-When adding a tool to [`_build/images/`](_build/images/):
-1. Create `images/newtool/Dockerfile` following existing patterns
-2. Add entry to [`tool_metadata.yml`](_build/tool_metadata.yml) with repo and commit
-3. Add target to [`docker-bake.hcl`](_build/docker-bake.hcl) in appropriate level group
-4. Update [`README.md`](README.md#3-installed-tools) tool list
-5. Create regression test in [`_tests/`](_tests/) if applicable
-
-### PDK-Specific Code
-
-Tools using PDK paths must:
-- Check `$PDK` and `$PDKPATH` environment variables
-- Support switching via `sak-pdk` (avoid hardcoding PDK names)
-- Place tech files under `$PDKPATH/libs.tech/<tool>/`
-
-Example from [`_build/images/iic-osic-tools/skel/foss/tools/sak/sak-drc.sh`](_build/images/iic-osic-tools/skel/foss/tools/sak/sak-drc.sh#L247): `magic -rcfile "$PDKPATH/libs.tech/magic/$PDK.magicrc"`
-
-### Mixed-Signal Co-Simulation
-
-The container includes [spicebind](https://github.com/themperek/spicebind), a VPI-based bridge enabling co-simulation of analog ngspice circuits with HDL simulators (tested with Icarus Verilog). Usage pattern:
-```bash
-vvp -M $(spicebind-vpi-path) -m spicebind_vpi testbench.vvp
-```
-Requires environment variables: `SPICE_NETLIST`, `HDL_INSTANCE`, and optionally `VCC`. Supports multiple analog instances via comma-separated `HDL_INSTANCE` values.
-
-### Version Tagging
-
-Images follow `YYYY.MM` versioning (e.g., `2025.01`). Release process:
-- Tag set via `CONTAINER_TAG` in [`build-images.sh`](_build/build-images.sh) (defaults to current month)
-- Pushed with both `latest` and date tag to Docker Hub under `hpretl/iic-osic-tools`
-- Update [`RELEASE_NOTES.md`](RELEASE_NOTES.md) with tool version changes from [`tool_metadata.yml`](_build/tool_metadata.yml)
+- Tool list & versions: `README.md` section 3 and `tool_metadata.yml`
+- Release history: `RELEASE_NOTES.md`
+- Known issues: `KNOWN_ISSUES.md`
+- Build details: `_build/README.md`
