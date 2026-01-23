@@ -2,7 +2,7 @@
 
 set -e
 
- Need libboost >= 1.88 for VACASK
+# Need libboost >= 1.88 for VACASK
 BOOST_VER_MAJ=1
 BOOST_VER_MIN=88	
 BOOST_BUILD=0
