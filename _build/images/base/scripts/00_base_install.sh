@@ -54,14 +54,6 @@ apt -y install \
 	lcov \
 	libasound2t64 \
 	libblas3 \
-	libboost-filesystem1.83.0 \
-	libboost-iostreams1.83.0 \
-	libboost-program-options1.83.0 \
-	libboost-python1.83.0 \
-	libboost-serialization1.83.0 \
-	libboost-system1.83.0 \
-	libboost-test1.83.0 \
-	libboost-thread1.83.0 \
 	libbz2-1.0 \
 	libc6 \
 	libcairo2 \
