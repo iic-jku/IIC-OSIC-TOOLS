@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: a951986bc18cbf4f4b0381e5ebf82ab5bee0e0e3
+  commit: 9a57e09da8e7abd4558547c5ace18051671f411a
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 07a30ed39fb6a078f1bf7e9e88ce9ed712380ec2
@@ -24,7 +24,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 2345c51478a9523fccd7109eea2e738ce66cf78e
+  commit: f040d513a5dea3bedcd0711bbf61e3f9a71bcd2a
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: "v3.14.0"
@@ -36,7 +36,7 @@
   commit: 09ff4bac10bd6f47c432579c25f9b39d4f44bb47
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: "8.3.590"
+  commit: "8.3.594"
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.315"
@@ -54,13 +54,13 @@
   commit: 54435919abffb937387ec956209f9cf5fd2dfbee
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: c596b9788951056709c88e2fcd307d5d37aee7c3
+  commit: 4d8bfaaf6f7b71896192d3ad64cd7bb4932b0d7e
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
 - name: openvaf
   repo: https://github.com/arpadbuermen/OpenVAF.git
-  commit: 75df7b362e945c7cb49b791879ff4b3f6a9b13b1
+  commit: 7afecc5361811e913ef24be2cf7e5e921b4538ae
 - name: osic-multitool
   repo: https://github.com/iic-jku/osic-multitool.git
   commit: ab373a6b917635d1ae85b4d11397a1b708050f76
@@ -69,19 +69,19 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 193596209ff71e1a673f765347342d8011e1a92a
+  commit: 06744aa72bfd504be8b02d032aa786924e878ae9
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: "0.12"
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: "2026.01.09"
+  commit: "2026.01.23"
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: ace09c5d7c9f4e28eed654d2f353c6dc792ebf67
+  commit: 3d7e6cd2e213e62480b2afcba677a3d12aa4e162
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 4e1ad7c11e23cffe131aa5c478083f1d99f0c0be
@@ -90,7 +90,7 @@
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: efdaa0837137ddd4b4154196251d52daae3277bc
+  commit: 6dda4896cb06fb8c2981ae35856e101fa6e8ed13
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.86"
@@ -108,7 +108,7 @@
   commit: "25.2.0"
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: "_0.3.1"
+  commit: "_0.3.2"
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: "v5.044"
@@ -117,7 +117,7 @@
   commit: 8a0429250abbd2b70c4d3fbfe2e2c20b4c43be81
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 309697499c6aa2cd1d7afd18fbf48fb263b0b570
+  commit: aadb87d255c834b0f080557d9fe8e02fb968a0c3
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"
