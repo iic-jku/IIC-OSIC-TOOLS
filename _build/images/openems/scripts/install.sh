@@ -18,7 +18,7 @@ git submodule update --init --recursive
 
 mkdir build
 cd build || exit 1
-cmake -DBUILD_APPCSXCAD=NO -DCMAKE_INSTALL_PREFIX="${TOOLS}/$OPENEMS_NAME" -DWITH_MPI=0 ..
+cmake -DBUILD_APPCSXCAD=YES -DCMAKE_INSTALL_PREFIX="${TOOLS}/$OPENEMS_NAME" -DWITH_MPI=0 ..
 make -j${nproc}
 
 cd /tmp/"$OPENEMS_NAME"/openEMS/python || exit 1
