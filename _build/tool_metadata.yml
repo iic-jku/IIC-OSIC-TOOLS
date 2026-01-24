@@ -52,9 +52,12 @@
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
   commit: 54435919abffb937387ec956209f9cf5fd2dfbee
+- name: openems
+  repo: https://github.com/thliebig/openEMS-Project.git
+  commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 4d8bfaaf6f7b71896192d3ad64cd7bb4932b0d7e
+  commit: 6b1092ff369c19898acb8a8626e43b3314425b62
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -69,7 +72,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 06744aa72bfd504be8b02d032aa786924e878ae9
+  commit: 633471916876df32e2106af5c97198880ae8232e
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: "0.12"
