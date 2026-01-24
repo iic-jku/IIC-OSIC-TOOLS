@@ -7,6 +7,15 @@ set -e
 # Only for hyp2mat or CTB (which is disabled for now)
 # apt -y install libhpdf-dev
 
+# Install CGAL from source, otherwise fail with libboost 1.88.0
+cd /tmp || exit 1
+wget --no-verbose https://github.com/CGAL/cgal/archive/refs/tags/v6.1.tar.gz
+tar -xvf v6.1.tar.gz
+cd cgal-6.1 || exit 1
+cmake .
+make install
+
+# OpenEMS installation
 cd /tmp || exit 1
 git clone --filter=blob:none "$OPENEMS_REPO_URL" "$OPENEMS_NAME"
 cd "$OPENEMS_NAME"
