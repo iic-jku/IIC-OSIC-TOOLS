@@ -12,27 +12,27 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	cace==2.9.0 \
 	ciel==2.4.0 \
 	cocotb==2.0.1 \
-	edalize==0.6.4 \
+	edalize==0.6.5 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.5 \
-	gds2palace==0.1.17 \
-	gdsfactory==9.32.0 \
+	gds2palace==0.1.19 \
+	gdsfactory==9.34.1 \
 	gdspy==1.6.13 \
 	gmsh==4.15.0 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.3.7 \
+	klayout-pex==0.3.8 \
 	lctime==0.0.26 \
-	librelane==2.4.10 \
-	najaeda==0.3.5 \
+	librelane==2.4.12 \
+	najaeda==0.4.0 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
 	pyuvm==4.0.1 \
 	pyverilog==1.3.0 \
 	schemdraw[svgmath]==0.21 \
-	scikit-rf==1.9.0 \
+	scikit-rf==1.10.0 \
 	setupEM==0.1.22 \
-	siliconcompiler==0.36.3 \
-	spicelib==1.4.7 \
+	siliconcompiler==0.36.5 \
+	spicelib==1.4.9 \
 	spyci==1.0.2
 
 echo "[INFO] Installing CharLib"
