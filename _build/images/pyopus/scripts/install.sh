@@ -5,14 +5,14 @@ set -e
 # (otherwise build fails on aarch64)
 mkdir -p "$TOOLS"
 cd /tmp || exit 1 
-wget --no-verbose "$PYOPUS_REPO_URL/$PYOPUS_REPO_COMMIT/PyOPUS-$PYOPUS_REPO_COMMIT.tar.gz"
-tar xfz "PyOPUS-$PYOPUS_REPO_COMMIT.tar.gz"
-cd "PyOPUS-$PYOPUS_REPO_COMMIT" || exit 1
+wget --no-verbose "$PYOPUS_REPO_URL/$PYOPUS_REPO_COMMIT/pyopus-$PYOPUS_REPO_COMMIT.tar.gz"
+tar xfz "pyopus-$PYOPUS_REPO_COMMIT.tar.gz"
+cd "pyopus-$PYOPUS_REPO_COMMIT" || exit 1
 pip3 install . --prefix="$TOOLS/$PYOPUS_NAME" --no-cache-dir
 ln -s "$TOOLS/$PYOPUS_NAME/local/bin" "$TOOLS/$PYOPUS_NAME/bin" 
 
 # Cleanup compile dir
-cd /tmp && rm -rf "PyOPUS-$PYOPUS_REPO_COMMIT" 
+cd /tmp && rm -rf "pyopus-$PYOPUS_REPO_COMMIT" && rm -f "pyopus-$PYOPUS_REPO_COMMIT.tar.gz"
 
 # Install examples and docs
 cd /tmp || exit 1
@@ -21,3 +21,6 @@ tar xfz "PyOPUS-$PYOPUS_REPO_COMMIT-doc-demo.tar.gz"
 cd "PyOPUS-$PYOPUS_REPO_COMMIT" || exit 1
 mv demo "$TOOLS/$PYOPUS_NAME/demo"
 mv docsrc/_build/html "$TOOLS/$PYOPUS_NAME/doc" 
+
+# Cleanup doc and demo dir
+cd /tmp && rm -rf "PyOPUS-$PYOPUS_REPO_COMMIT" && rm -f "PyOPUS-$PYOPUS_REPO_COMMIT-doc-demo.tar.gz"

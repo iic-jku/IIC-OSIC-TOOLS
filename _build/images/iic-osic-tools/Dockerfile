@@ -30,6 +30,7 @@ ARG TOOL_IMAGE_OSIC_MULTITOOL="registry.iic.jku.at:5000/iic-osic-tools:tool-osic
 ARG TOOL_IMAGE_PADRING="registry.iic.jku.at:5000/iic-osic-tools:tool-padring-latest"
 ARG TOOL_IMAGE_PALACE="registry.iic.jku.at:5000/iic-osic-tools:tool-palace-latest"
 ARG TOOL_IMAGE_PULP_TOOLS="registry.iic.jku.at:5000/iic-osic-tools:tool-pulp-tools-latest"
+ARG TOOL_IMAGE_PYOPUS="registry.iic.jku.at:5000/iic-osic-tools:tool-pyopus-latest"
 ARG TOOL_IMAGE_QFLOW="registry.iic.jku.at:5000/iic-osic-tools:tool-qflow-latest"
 ARG TOOL_IMAGE_QUCS_S="registry.iic.jku.at:5000/iic-osic-tools:tool-qucs-s-latest"
 ARG TOOL_IMAGE_RFTOOLKIT="registry.iic.jku.at:5000/iic-osic-tools:tool-rftoolkit-latest"
@@ -76,6 +77,7 @@ FROM ${TOOL_IMAGE_OSIC_MULTITOOL} AS osic-multitool
 FROM ${TOOL_IMAGE_PADRING} AS padring
 FROM ${TOOL_IMAGE_PALACE} AS palace
 FROM ${TOOL_IMAGE_PULP_TOOLS} AS pulp-tools
+FROM ${TOOL_IMAGE_PYOPUS} AS pyopus
 FROM ${TOOL_IMAGE_QFLOW} AS qflow
 FROM ${TOOL_IMAGE_QUCS_S} AS qucs-s
 FROM ${TOOL_IMAGE_RFTOOLKIT} AS rftoolkit
@@ -131,7 +133,7 @@ COPY --link --from=osic-multitool               ${TOOLS}/osic-multitool         
 COPY --link --from=padring                      ${TOOLS}/padring                ${TOOLS}/padring/
 COPY --link --from=palace                       ${TOOLS}/palace                 ${TOOLS}/palace/
 COPY --link --from=pulp-tools                   ${TOOLS}/pulp                   ${TOOLS}/pulp/
-#FIXME COPY --link --from=pyopus                       ${TOOLS}/                       ${TOOLS}/
+COPY --link --from=pyopus                       ${TOOLS}/pyopus                 ${TOOLS}/pyopus/
 COPY --link --from=qflow                        ${TOOLS}/qflow                  ${TOOLS}/qflow/
 COPY --link --from=qucs-s                       ${TOOLS}/qucs-s                 ${TOOLS}/qucs-s/
 COPY --link --from=rftoolkit                    ${TOOLS}/rftoolkit              ${TOOLS}/rftoolkit/
