@@ -9,6 +9,7 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] `libjson-glib` as new dependency for `gtkwave`.
 * [Update] `openvaf` with `llvm18` feature enabled.
 * [Update] various tool versions (OpenEMS, OpenROAD, Palace, GHDL, xschem, and others).
+* [Re-Adding] `pyopus` circuit optimization framework.
 * [Remove] `ElmerFEM`.
 
 ## 2025.12
