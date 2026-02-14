@@ -131,7 +131,7 @@ COPY --link --from=osic-multitool               ${TOOLS}/osic-multitool         
 COPY --link --from=padring                      ${TOOLS}/padring                ${TOOLS}/padring/
 COPY --link --from=palace                       ${TOOLS}/palace                 ${TOOLS}/palace/
 COPY --link --from=pulp-tools                   ${TOOLS}/pulp                   ${TOOLS}/pulp/
-COPY --link --from=pyopus                       ${TOOLS}/                       ${TOOLS}/
+#FIXME COPY --link --from=pyopus                       ${TOOLS}/                       ${TOOLS}/
 COPY --link --from=qflow                        ${TOOLS}/qflow                  ${TOOLS}/qflow/
 COPY --link --from=qucs-s                       ${TOOLS}/qucs-s                 ${TOOLS}/qucs-s/
 COPY --link --from=rftoolkit                    ${TOOLS}/rftoolkit              ${TOOLS}/rftoolkit/
@@ -148,7 +148,7 @@ COPY --link --from=veryl                        ${TOOLS}/veryl                  
 COPY --link --from=xcircuit                     ${TOOLS}/xcircuit               ${TOOLS}/xcircuit/
 COPY --link --from=xschem                       ${TOOLS}/xschem                 ${TOOLS}/xschem/
 COPY --link --from=xyce                         ${TOOLS}/xyce                   ${TOOLS}/xyce/
-#COPY --link --from=xyce-xdm                     ${TOOLS}/xyce-xdm ${TOOLS}/bin ${TOOLS}/
+#FIXME COPY --link --from=xyce-xdm                     ${TOOLS}/xyce-xdm ${TOOLS}/bin ${TOOLS}/
 COPY --link --from=yosys                        ${TOOLS}/yosys                  ${TOOLS}/yosys/
 
 # Copy tool version file
