@@ -2,6 +2,15 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2026.02
+
+* [Adding] `spicebind` tool for SPICE simulator bindings in digital simulators.
+* [Adding] `gds2palace` and `setupEM` for EM simulation workflow (`x86_64` only for now).
+* [Adding] `libjson-glib` as new dependency for `gtkwave`.
+* [Update] `openvaf` with `llvm18` feature enabled.
+* [Update] various tool versions (OpenEMS, OpenROAD, Palace, GHDL, xschem, and others).
+* [Remove] `ElmerFEM`.
+
 ## 2025.12
 
 * [Adding] custom bindkeys for Magic for IHP SG13G2 PDK.
