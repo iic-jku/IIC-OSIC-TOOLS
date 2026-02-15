@@ -12,7 +12,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: d36afa4fd414624df2fde000cdfa83f1124d60e7
+  commit: b65faa8b232d88244428ac4806b3470ac87e1578
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 07a30ed39fb6a078f1bf7e9e88ce9ed712380ec2
@@ -54,10 +54,10 @@
   commit: 54435919abffb937387ec956209f9cf5fd2dfbee
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: a30587728affa4f8451e13819981899bd8ab6b64
+  commit: a1e1be4e69234bcc65f5be60a049899029a4751c
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 0aea1cbdb044076647cce857284b614114810817
+  commit: 15af3a5c00458c6294703adba5ca33a062a2e4fa
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -84,7 +84,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: f66113905c268061e847fdaa170b40645892e173
+  commit: 0bc125627a1f7f34f1f6a40a6a99235b8b05e19f
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 446240c31e2b4aa33334d3c568c5729a9e3ff9e7
@@ -120,7 +120,7 @@
   commit: 8a0429250abbd2b70c4d3fbfe2e2c20b4c43be81
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 9532340a0e30025227d9f83fd26849827787e9fa
+  commit: 7a262c451fe4f83929a30abcc95b227b6f8cab79
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: "Release-7.10.0"
