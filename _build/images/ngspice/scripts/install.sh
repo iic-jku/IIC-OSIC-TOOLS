@@ -42,6 +42,6 @@ _add_model r3_cmc.osdi "$FNAME"
 git clone --depth=1 https://github.com/dwarning/VA-Models.git vamodels
 MODEL=bsimcmg
 cd vamodels/code/$MODEL/vacode || exit 1
-"$TOOLS/openvaf/bin/openvaf" $MODEL.va
+"$TOOLS/openvaf/bin/openvaf" --target_cpu generic $MODEL.va
 cp $MODEL.osdi "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi"
 echo "osdi ${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi" >> "$FNAME"
