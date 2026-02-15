@@ -31,7 +31,6 @@ echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
 cd "$PDK_ROOT/$PDK/libs.tech/verilog-a" || exit 1
 # ngspice
 export PATH="$TOOLS/openvaf/bin:$PATH"
-sed -i 's/\bopenvaf\b/& --target_cpu generic/' openvaf-compile-va.sh
 chmod +x openvaf-compile-va.sh
 ./openvaf-compile-va.sh
 # xyce
