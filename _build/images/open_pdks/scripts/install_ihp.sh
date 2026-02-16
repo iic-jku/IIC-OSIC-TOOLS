@@ -42,11 +42,6 @@ if [ ! -f ../xyce/plugins/Xyce_Plugin_PSP103_VA.so ] || [ ! -f ../xyce/plugins/X
     exit 1
 fi
 
-# setup qucs-s
-cd "$PDK_ROOT/$PDK/libs.tech/qucs-s" || exit 1
-chmod +x install.py
-python3 install.py --no-model-compile --no-qucs-workspace --no-qucs-check
-
 # Add custom bindkeys for Magic
 echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
 echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
