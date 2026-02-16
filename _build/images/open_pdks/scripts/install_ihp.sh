@@ -45,7 +45,7 @@ fi
 # setup qucs-s
 cd "$PDK_ROOT/$PDK/libs.tech/qucs-s" || exit 1
 chmod +x install.py
-python3 install.py --no-model-compile --no-qucs-workspace
+python3 install.py --no-model-compile --no-qucs-workspace --no-qucs-check
 
 # Add custom bindkeys for Magic
 echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
