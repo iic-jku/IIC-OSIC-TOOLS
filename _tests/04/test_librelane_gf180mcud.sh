@@ -14,7 +14,7 @@ if [ -z "${RAND}" ]; then
 fi
 
 if command -v librelane >/dev/null 2>&1; then
-    LOG=/foss/designs/runs/${RAND}/04/result_ll_sky130a.log
+    LOG=/foss/designs/runs/${RAND}/04/result_ll_gf180mcud.log
     WORKDIR=/foss/designs/runs/${RAND}/04
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

@@ -72,13 +72,13 @@ cd "$TMP"/ || exit
     test "bender checkout"
     test "bender script flist-plus -t test_target -D COMMON_CELLS_ASSERTS_OFF > sources.f"
     test "bender script flist-plus -D COMMON_CELLS_ASSERTS_OFF > sources_fail.f"
-} &> "$LOG"
+} >> "$LOG" 2>&1
 
 [ $DEBUG -eq 1 ] && echo "[INFO] Testing yosys-slang..."
 {
     test "yosys -Q -q -p \"plugin -i slang.so; read_slang --top top -F sources.f; synth;\""
     test_fail "yosys -Q -q -p \"plugin -i slang.so; read_slang --top top -F sources_fail.f; synth;\""
-} &> "$LOG"
+} >> "$LOG" 2>&1
 
 if grep -q "\[ERROR\]" "$LOG"; then
     echo "[ERROR] Test <PULP-flow> FAILED! Check log at <$LOG>."

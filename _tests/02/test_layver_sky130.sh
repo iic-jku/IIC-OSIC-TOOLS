@@ -22,7 +22,7 @@ source sak-pdk-script.sh sky130A > "$RESULT" 2>&1
 # Run the DRC
 sak-drc.sh -w "$WORKDIR" -b "$DIR/inv.mag"  > "$RESULT" 2>&1 || ERROR=1
 # Run the LVS
-echo sak-lvs.sh -w "$WORKDIR" -s "$DIR/inv.sch" -l "$DIR/inv.mag" -c inv  > "$RESULT" 2>&1 || ERROR=1
+sak-lvs.sh -w "$WORKDIR" -s "$DIR/inv.sch" -l "$DIR/inv.mag" -c inv  >> "$RESULT" 2>&1 || ERROR=1
 # Check if there is an error in the log
 if [ $ERROR -eq 1 ]; then
     echo "[ERROR] Test <LayVer of sky130 inv> FAILED."

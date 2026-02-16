@@ -59,7 +59,7 @@ RISCV_FLAGS="-march=rv32i -mabi=ilp32  -mcmodel=medany -static -ffast-math"
     test "$RISCV_CC $RISCV_FLAGS -nostartfiles -lm -lgcc -Tlink.ld -o main.elf main.o crt0.o"
     test "$RISCV_CC -o hello hello.c"
     test "spike pk hello"
-} &> "$LOG"
+} >> "$LOG" 2>&1
 
 if grep -q "\[ERROR\]" "$LOG"; then
     echo "[ERROR] Test <riscv64-unknown-elf toolchain> FAILED! Check log at <$LOG>."

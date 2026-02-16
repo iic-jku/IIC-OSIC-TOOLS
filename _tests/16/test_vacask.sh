@@ -15,10 +15,11 @@ WORKDIR=/foss/designs/runs/${RAND}/16
 RESULT=/foss/designs/runs/${RAND}/16/result_vacask.log
 
 mkdir -p "$WORKDIR"
+cd "$WORKDIR" || exit 1
 
 # Run the simulations
 vacask --no-output --quiet-progress "$DIR/gilbert.sim" > "$RESULT" 2>&1 || ERROR=1
-vacask --no-output --quiet-progress "$DIR/toplevel.sim" > "$RESULT" 2>&1 || ERROR=1
+vacask --no-output --quiet-progress "$DIR/toplevel.sim" >> "$RESULT" 2>&1 || ERROR=1
 
 # Check if there is an error in the log
 if [ $ERROR -eq 1 ]; then
@@ -29,5 +30,5 @@ else
 fi
 
 # Cleanup
-rm -f -- *.raw *.py
+rm -f -- "$WORKDIR"/*.raw "$WORKDIR"/*.py
 exit 0
