@@ -9,6 +9,7 @@ apt -y update
 apt -y upgrade
 apt -y install \
 	autotools-dev \
+	capnproto \
 	libasound2-dev \
 	libblas-dev \
 	libboost-filesystem-dev \
@@ -22,6 +23,7 @@ apt -y install \
 	libbz2-dev \
 	libc6-dev \
 	libcairo2-dev \
+	libcapnp-dev \
 	libcgal-dev \
 	libclang-common-18-dev \
 	libcurl4-openssl-dev \
@@ -32,6 +34,7 @@ apt -y install \
 	libffi-dev \
 	libfftw3-dev \
 	libfl-dev \
+	libfmt-dev \
 	libftdi-dev \
 	libgcc-13-dev \
 	libgettextpo-dev \
@@ -69,6 +72,7 @@ apt -y install \
 	libsqlite3-dev \
 	libssl-dev \
 	libsuitesparse-dev \
+	libtbb-dev \
 	libtinyxml-dev \
 	libtomlplusplus-dev \
 	libvtk9-dev \
