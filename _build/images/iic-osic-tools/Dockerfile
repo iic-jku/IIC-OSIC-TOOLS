@@ -14,6 +14,7 @@ ARG TOOL_IMAGE_GTKWAVE="registry.iic.jku.at:5000/iic-osic-tools:tool-gtkwave-lat
 ARG TOOL_IMAGE_IRSIM="registry.iic.jku.at:5000/iic-osic-tools:tool-irsim-latest"
 ARG TOOL_IMAGE_IVERILOG="registry.iic.jku.at:5000/iic-osic-tools:tool-iverilog-latest"
 ARG TOOL_IMAGE_KACTUS2="registry.iic.jku.at:5000/iic-osic-tools:tool-kactus2-latest"
+ARG TOOL_IMAGE_KEPLER_FORMAL="registry.iic.jku.at:5000/iic-osic-tools:tool-kepler-formal-latest"
 ARG TOOL_IMAGE_KLAYOUT="registry.iic.jku.at:5000/iic-osic-tools:tool-klayout-latest"
 ARG TOOL_IMAGE_LIBMAN="registry.iic.jku.at:5000/iic-osic-tools:tool-libman-latest"
 ARG TOOL_IMAGE_MAGIC="registry.iic.jku.at:5000/iic-osic-tools:tool-magic-latest"
@@ -61,6 +62,7 @@ FROM ${TOOL_IMAGE_GTKWAVE} AS gtkwave
 FROM ${TOOL_IMAGE_IRSIM} AS irsim
 FROM ${TOOL_IMAGE_IVERILOG} AS iverilog
 FROM ${TOOL_IMAGE_KACTUS2} AS kactus2
+FROM ${TOOL_IMAGE_KEPLER_FORMAL} AS kepler-formal
 FROM ${TOOL_IMAGE_KLAYOUT} AS klayout
 FROM ${TOOL_IMAGE_LIBMAN} AS libman
 FROM ${TOOL_IMAGE_MAGIC} AS magic
@@ -117,6 +119,7 @@ COPY --link --from=gtkwave                      ${TOOLS}/gtkwave                
 COPY --link --from=irsim                        ${TOOLS}/irsim                  ${TOOLS}/irsim/
 COPY --link --from=iverilog                     ${TOOLS}/iverilog               ${TOOLS}/iverilog/
 COPY --link --from=kactus2                      ${TOOLS}/kactus2                ${TOOLS}/kactus2/
+COPY --link --from=kepler-formal                ${TOOLS}/kepler-formal          ${TOOLS}/kepler-formal/
 COPY --link --from=klayout                      ${TOOLS}/klayout                ${TOOLS}/klayout/
 COPY --link --from=libman                       ${TOOLS}/libman                 ${TOOLS}/libman/
 COPY --link --from=magic                        ${TOOLS}/magic                  ${TOOLS}/magic/
