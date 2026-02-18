@@ -19,6 +19,9 @@
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
   commit: 36638f96434d189a1a633ee3a32158ad8bc7cd64
+- name: icestorm
+  repo: https://github.com/YosysHQ/icestorm.git
+  commit: f31c39cc2eadd0ab7f29f34becba1348ae9f8721
 - name: irsim
   repo: https://github.com/rtimothyedwards/irsim.git
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
@@ -43,6 +46,9 @@
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: "1.5.316"
+- name: nextpnr
+  repo: https://github.com/YosysHQ/nextpnr.git
+  commit: f1fc47e1394d1eedd22ff8ede4b42e69686659ae
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: "ngspice-45.2"
