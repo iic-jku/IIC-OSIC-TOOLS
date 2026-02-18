@@ -254,12 +254,12 @@ if [[ ${CONTAINER_GROUP} -ne 0 ]]  && [[ ${CONTAINER_GROUP} -lt 1000 ]]; then
         echo
 fi
 
-if [ -n "${DOCKER_EXTRA_PARAMS}" ]; then
-	PARAMS="${PARAMS} ${DOCKER_EXTRA_PARAMS}"
-fi
-
 if [ -n "${IIC_OSIC_TOOLS_QUIET}" ]; then
 	DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e IIC_OSIC_TOOLS_QUIET=1"
+fi
+
+if [ -n "${DOCKER_EXTRA_PARAMS}" ]; then
+	PARAMS="${PARAMS} ${DOCKER_EXTRA_PARAMS}"
 fi
 
 # If the container exists but is exited, it can be restarted.
