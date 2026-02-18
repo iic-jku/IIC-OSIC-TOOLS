@@ -1,3 +1,6 @@
+- name: bender
+  repo: https://github.com/pulp-platform/bender.git
+  commit: 46160899f339df9c9af2a3c917fa1f08a8ea6875
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -109,6 +112,9 @@
 - name: surfer
   repo: https://gitlab.com/surfer-project/surfer.git
   commit: "v0.6.0"
+- name: sv2v
+  repo: https://github.com/zachjs/sv2v.git
+  commit: d3812098d8feb2d04cc4cb55e034a1f2338db02f
 - name: trilinos
   repo: https://github.com/trilinos/Trilinos.git
   commit: "trilinos-release-12-12-1"
@@ -124,6 +130,9 @@
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: "v5.044"
+- name: verible
+  repo: https://github.com/chipsalliance/verible.git
+  commit: "v0.0-3724-gdec56671"
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: 8a0429250abbd2b70c4d3fbfe2e2c20b4c43be81
