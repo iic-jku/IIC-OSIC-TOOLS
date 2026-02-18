@@ -99,12 +99,12 @@ if [ "${JUPYTER_PORT}" -gt 0 ]; then
 	PARAMS="$PARAMS -p $JUPYTER_PORT:8888"
 fi
 
-if [ -n "${DOCKER_EXTRA_PARAMS}" ]; then
-	PARAMS="${PARAMS} ${DOCKER_EXTRA_PARAMS}"
-fi
-
 if [ -n "${IIC_OSIC_TOOLS_QUIET}" ]; then
 	DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e IIC_OSIC_TOOLS_QUIET=1"
+fi
+
+if [ -n "${DOCKER_EXTRA_PARAMS}" ]; then
+	PARAMS="${PARAMS} ${DOCKER_EXTRA_PARAMS}"
 fi
 
 # Check if the container exists and if it is running.
