@@ -123,6 +123,7 @@ apt -y install \
 	libre2-10 \
 	libreadline8 \
 	libsm6 \
+	libspdlog1.12 \
 	libsqlite3-0 \
 	libssl3 \
 	libsuitesparse-mongoose3 \
