@@ -17,6 +17,8 @@ apt -y install \
 	build-essential \
 	bzip2 \
 	ca-certificates \
+	capnproto \
+	catch2 \
 	ccache \
 	clang-18 \
 	clang-tools-18 \
@@ -65,6 +67,7 @@ apt -y install \
 	libbz2-1.0 \
 	libc6 \
 	libcairo2 \
+	libcapnp-1.0.1 \
 	libcurl4 \
 	libdw1 \
 	libedit2 \
