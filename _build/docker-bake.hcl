@@ -141,6 +141,13 @@ target "kactus2" {
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-kactus2-latest"]
 }
 
+target "kepler-formal" {
+  inherits = ["base-tool"]
+  dockerfile = "images/kepler-formal/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-kepler-formal-latest"]
+  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-kepler-formal-latest"]
+}
+
 target "klayout" {
   inherits = ["base-tool"]
   dockerfile = "images/klayout/Dockerfile"
@@ -377,7 +384,7 @@ target "spicebind" {
 # Group targets for tools-level-1
 group "tools-level-1" {
   targets = [
-    "magic", "openvaf", "osic-multitool", "xyce", "covered", "cvc_rv", "fpga", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "palace", "pulp-tools", "pyopus", "surelog", "surfer", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "verilator", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit", "openroad", "openroad-librelane"
+    "magic", "openvaf", "osic-multitool", "xyce", "covered", "cvc_rv", "fpga", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "kepler-formal", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "palace", "pulp-tools", "pyopus", "surelog", "surfer", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "verilator", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit", "openroad", "openroad-librelane"
   ]
 }
 

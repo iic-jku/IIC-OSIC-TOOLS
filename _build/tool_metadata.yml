@@ -28,6 +28,9 @@
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: "v3.14.0"
+- name: kepler-formal
+  repo: https://github.com/keplertech/kepler-formal.git
+  commit: 416b2bd8fbc8cba316dc11b114f8a3041bfe5c0f
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: "v0.30.6-3"

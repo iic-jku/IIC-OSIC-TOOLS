@@ -22,6 +22,7 @@ apt -y install \
 	libbz2-dev \
 	libc6-dev \
 	libcairo2-dev \
+	libcapnp-dev \
 	libcgal-dev \
 	libclang-common-18-dev \
 	libcurl4-openssl-dev \
@@ -32,6 +33,7 @@ apt -y install \
 	libffi-dev \
 	libfftw3-dev \
 	libfl-dev \
+	libfmt-dev \
 	libftdi-dev \
 	libgcc-13-dev \
 	libgettextpo-dev \
@@ -66,9 +68,11 @@ apt -y install \
 	libre2-dev \
 	libreadline-dev \
 	libsm-dev \
+	libspdlog-dev \
 	libsqlite3-dev \
 	libssl-dev \
 	libsuitesparse-dev \
+	libtbb-dev \
 	libtinyxml-dev \
 	libtomlplusplus-dev \
 	libvtk9-dev \
