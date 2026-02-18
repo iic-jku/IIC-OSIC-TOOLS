@@ -1,3 +1,5 @@
+@echo off
+
 :: ========================================================================
 :: Start script for ICD@JKU docker images (use for Jupyter notebooks only)
 ::
@@ -17,7 +19,6 @@
 :: limitations under the License.
 :: SPDX-License-Identifier: Apache-2.0
 :: ========================================================================
-@echo off
 
 SETLOCAL
 
