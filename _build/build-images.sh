@@ -1,6 +1,6 @@
 #!/bin/bash
 # ========================================================================
-# Build script for ICD@JKU docker images (build-all)
+# Build script for ICD@JKU docker images (build-images)
 #
 # SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Department for Integrated Circuits
