@@ -104,14 +104,14 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	find . -name "testing" -print0 | xargs -0 rm -rf
 
 	# Fix test schematic relative paths
-	sed -i 's/{test_/{tests\/test_/g' $PDK_ROOT/gf180mcuD/libs.tech/xschem/tests/0_top.sch
+	sed -i 's/{test_/{tests\/test_/g' "$PDK_ROOT/gf180mcuD/libs.tech/xschem/tests/0_top.sch"
 
 	# Fix missing PDK variant in path definitions for in xschemrc
-	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuD/libs.tech/ngspice|' $PDK_ROOT/gf180mcuD/libs.tech/xschem/xschemrc
+	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuD/libs.tech/ngspice|' "$PDK_ROOT/gf180mcuD/libs.tech/xschem/xschemrc"
 
 	# Replace pymacro with working pcells.
-	rm -rf $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros
-	cp -a /tmp/glofo-mjk/cells/klayout/pymacros $PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros
+	rm -rf "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
+	cp -a /tmp/glofo-mjk/cells/klayout/pymacros "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
 fi
 
 rm -rf /tmp/glofo-mjk
