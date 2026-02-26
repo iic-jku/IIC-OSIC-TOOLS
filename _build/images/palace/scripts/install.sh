@@ -7,3 +7,4 @@ git checkout "${PALACE_REPO_COMMIT}"
 mkdir -p build && cd build
 cmake .. -DCMAKE_INSTALL_PREFIX="${TOOLS}/${PALACE_NAME}" -DCMAKE_BUILD_TYPE=Release
 cmake --build . -- -j "$(nproc)"
+cmake --install .
