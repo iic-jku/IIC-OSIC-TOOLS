@@ -33,4 +33,7 @@ if command -v librelane >/dev/null 2>&1; then
         echo "[INFO] Test <LibreLane smoke-test with sky130A> passed."
         exit 0
     fi
+else
+    echo "[ERROR] Test <LibreLane smoke-test with sky130A> FAILED. LibreLane is not installed!"
+    exit 1
 fi
