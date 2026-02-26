@@ -3,7 +3,7 @@ set -e
 cd /tmp || exit 1
 
 git clone --filter=blob:none "${NGSPICE_REPO_URL}" "${NGSPICE_NAME}"
-cd "${NGSPICE_NAME}"
+cd "${NGSPICE_NAME}" || exit 1
 git checkout "${NGSPICE_REPO_COMMIT}"
 ./autogen.sh
 # 2nd run of autogen needed
@@ -42,6 +42,6 @@ _add_model r3_cmc.osdi "$FNAME"
 git clone --depth=1 https://github.com/dwarning/VA-Models.git vamodels
 MODEL=bsimcmg
 cd vamodels/code/$MODEL/vacode || exit 1
-"$TOOLS/openvaf/bin/openvaf" --target_cpu generic $MODEL.va
-cp $MODEL.osdi "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi"
+"$TOOLS/openvaf/bin/openvaf" --target_cpu generic "$MODEL.va"
+cp "$MODEL.osdi" "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi"
 echo "osdi ${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi" >> "$FNAME"
