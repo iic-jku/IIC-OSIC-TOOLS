@@ -39,7 +39,7 @@ if [ -z ${BUILDER_NAME+z} ]; then
 	BUILDER_NAME="tools-builder-$USER"
 fi
 
-if [ -z ${BUILDX_EXTRA_PARAMS} ]; then
+if [ -z ${BUILDX_EXTRA_PARAMS+z} ]; then
 	BUILDX_EXTRA_PARAMS=""
 fi
 
