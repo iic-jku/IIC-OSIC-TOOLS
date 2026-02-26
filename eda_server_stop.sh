@@ -20,6 +20,10 @@
 # ========================================================================
 
 # get configuration variables
+if [ ! -f "eda_server_conf.sh" ]; then
+    echo "[ERROR] Configuration file eda_server_conf.sh not found!"
+    exit 1
+fi
 # shellcheck source=/dev/null
 source eda_server_conf.sh
 
