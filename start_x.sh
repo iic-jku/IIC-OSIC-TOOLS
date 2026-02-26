@@ -111,7 +111,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 				${ECHO_IF_DRY_RUN} xhost + > /dev/null
 				XHOST_DO_RESET=1
 			else
-				echo "[WARNING] xhost could not be found, access control to the X server might needs to be managed manually!"
+				echo "[WARNING] xhost could not be found, access control to the X server might need to be managed manually!"
 			fi
 			# If we are running in Wayland, we are using Xwayland. For that we assume that no TCP interface is available.
 			# Therefore we have to socat the socket. For X11, this should not be needed.
