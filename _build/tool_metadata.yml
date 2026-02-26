@@ -66,7 +66,7 @@
   commit: 54435919abffb937387ec956209f9cf5fd2dfbee
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: a30587728affa4f8451e13819981899bd8ab6b64
+  commit: a1e1be4e69234bcc65f5be60a049899029a4751c
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: ec948f6effbc74a5e046400b0adf12bbb6aa4147
