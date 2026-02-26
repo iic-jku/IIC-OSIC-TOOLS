@@ -19,12 +19,12 @@ git checkout dev
 git submodule update --init --recursive
 
 # now move to the proper location
-if [ -d $PDK ]; then
-	mv $PDK "$PDK_ROOT/$PDK"
+if [ -d "$PDK" ]; then
+	mv "$PDK" "$PDK_ROOT/$PDK"
 fi
 
 # store git hash of installed PDK version for reference
-PDK_COMMIT=$(git ls-remote https://github.com/IHP-GmbH/IHP-Open-PDK.git | grep HEAD | cut -f 1)
+PDK_COMMIT=$(git ls-remote https://github.com/IHP-GmbH/IHP-Open-PDK.git HEAD | cut -f 1)
 echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
 
 # compile the additional Verilog-A models
