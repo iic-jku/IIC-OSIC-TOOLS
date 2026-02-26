@@ -2,7 +2,6 @@
 set -e
 cd /tmp || exit 1
 
-# shellcheck disable=SC2010
 export PATH="$PATH:$TOOLS/yosys/bin:$TOOLS/ghdl/bin"
 echo "[INFO] PATH=$PATH"
 
