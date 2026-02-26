@@ -19,12 +19,13 @@ git submodule update --init --recursive
 mkdir build
 cd build || exit 1
 cmake -DBUILD_APPCSXCAD=YES -DCMAKE_INSTALL_PREFIX="${TOOLS}/$OPENEMS_NAME" -DWITH_MPI=0 ..
-make -j${nproc}
+make -j"$(nproc)"
+make install
 
 cd /tmp/"$OPENEMS_NAME"/openEMS/python || exit 1
-python3 setup.py build_ext -I ${TOOLS}/${OPENEMS_NAME}/include -L ${TOOLS}/${OPENEMS_NAME}/lib  -R ${TOOLS}/${OPENEMS_NAME}/lib
+python3 setup.py build_ext -I "${TOOLS}/${OPENEMS_NAME}/include" -L "${TOOLS}/${OPENEMS_NAME}/lib"  -R "${TOOLS}/${OPENEMS_NAME}/lib"
 python3 setup.py install --prefix "${TOOLS}/${OPENEMS_NAME}"
 
 cd /tmp/"$OPENEMS_NAME"/CSXCAD/python || exit 1
-python3 setup.py build_ext -I ${TOOLS}/${OPENEMS_NAME}/include -L ${TOOLS}/${OPENEMS_NAME}/lib  -R ${TOOLS}/${OPENEMS_NAME}/lib
+python3 setup.py build_ext -I "${TOOLS}/${OPENEMS_NAME}/include" -L "${TOOLS}/${OPENEMS_NAME}/lib"  -R "${TOOLS}/${OPENEMS_NAME}/lib"
 python3 setup.py install --prefix "${TOOLS}/${OPENEMS_NAME}"
