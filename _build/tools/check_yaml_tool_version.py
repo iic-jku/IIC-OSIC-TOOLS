@@ -1,4 +1,4 @@
-#!python3
+#!/usr/bin/env python3
 # ========================================================================
 # Check for newer versions of tools listed in a YAML manifest file
 # Uses git ls-remote to query public Git repositories
@@ -20,6 +20,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # ========================================================================
 
+import os
 import sys
 import argparse
 import subprocess
@@ -165,15 +166,33 @@ def git_ls_remote_tags(repo_url):
             return tags
     except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
         pass
-    return None
+    return []
 
 
-def check_newer_versions(repos, update_yaml=False, yaml_file=None):
-    """Check each repo for newer commits/tags and optionally update the YAML."""
+def check_newer_versions(repos, update_yaml=False, yaml_file=None, tool_filter=None):
+    """Check each repo for newer commits/tags and optionally update the YAML.
+
+    If tool_filter is provided (list of tool names), only those tools are checked.
+    """
     updates = {}
+
+    # Normalize tool_filter for case-insensitive matching
+    if tool_filter:
+        tool_filter_lower = [t.lower() for t in tool_filter]
+    else:
+        tool_filter_lower = None
+
+    # Validate tool_filter against known tool names
+    if tool_filter_lower:
+        known_names = {repo['name'].lower() for repo in repos}
+        for t in tool_filter_lower:
+            if t not in known_names:
+                print(f"Warning: Tool '{t}' not found in YAML metadata.")
 
     for repo in repos:
         name = repo['name']
+        if tool_filter_lower and name.lower() not in tool_filter_lower:
+            continue
         repo_url = repo['repo']
         current_version = str(repo['commit'])
 
@@ -232,16 +251,22 @@ def write_updates_to_yaml(yaml_file, updates):
 
 
 if __name__ == "__main__":
+    default_yaml = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               '..', 'tool_metadata.yml')
+
     prs = argparse.ArgumentParser(
         description="Check for newer versions of tools from a YAML manifest file."
     )
-    prs.add_argument("yaml_file", type=str,
-                     help="Path to the YAML metadata file (e.g., tool_metadata.yml)")
+    prs.add_argument("yaml_file", type=str, nargs='?', default=default_yaml,
+                     help="Path to the YAML metadata file (default: tool_metadata.yml)")
     prs.add_argument("-u", "--update-yaml", action="store_true",
                      help="Write newer commits/tags back into the YAML file")
+    prs.add_argument("-t", "--tools", nargs='+', metavar="TOOL",
+                     help="Only check/update these tools (space-separated list)")
 
     args = prs.parse_args()
     repos = get_repos_from_yaml(args.yaml_file)
     check_newer_versions(repos,
                          update_yaml=args.update_yaml,
-                         yaml_file=args.yaml_file)
+                         yaml_file=args.yaml_file,
+                         tool_filter=args.tools)
