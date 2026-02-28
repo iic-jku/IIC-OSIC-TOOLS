@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: e759a12f6d4ac26268e8c5b54e8fa59bbbd34192
+  commit: dc896b6a710a19301385d9c4cc0952f9f7b703d3
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 07a30ed39fb6a078f1bf7e9e88ce9ed712380ec2
@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 15d6e83f8d9d8d03104688521c66276c6c1492e1
+  commit: 2302fa37d54a607ebfed5ddf397e0c6448eb5f2d
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.0
@@ -45,7 +45,7 @@
   commit: fa86658fbaf68383e486468de2a94e07c7d68762
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.608
+  commit: 8.3.610
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.316
@@ -69,7 +69,7 @@
   commit: a1e1be4e69234bcc65f5be60a049899029a4751c
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: ec948f6effbc74a5e046400b0adf12bbb6aa4147
+  commit: b984a8d7e869745a923bf28037b373a3a6488a17
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 90bf39bf8c92f46daa57f7ef4c173d246b5821c4
+  commit: 76d23bb6b44a2ca54099bd6fc9c5d0652e88aac7
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 88703777e7616abfb83510b2a040caff6b927512
+  commit: f0af1f09cc883845b0981e21684d186a47893863
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: d82b0b163a725fc1a401fbb6b465cd862517ec1f
@@ -138,7 +138,7 @@
   commit: 8a0429250abbd2b70c4d3fbfe2e2c20b4c43be81
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 346a9704dfc651ae330b2b5e813668135f3cada8
+  commit: e537320e783e2fa539564aa7cae077343d0d4197
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0

@@ -8,7 +8,7 @@ apt install -y \
 
 echo "[INFO] Install EDA packages via PIP"
 pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
-	"amaranth[builtin-yosys]==0.5.6" \
+	"amaranth[builtin-yosys]==0.5.8" \
 	cace==2.9.0 \
 	ciel==2.4.0 \
 	cocotb==2.0.1 \
@@ -21,14 +21,14 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	klayout-pex==0.3.9 \
 	lctime==0.0.26 \
 	librelane==2.4.13 \
-	najaeda==0.4.1 \
+	najaeda==0.5.0 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
 	pyuvm==4.0.1 \
 	pyverilog==1.3.0 \
-	"schemdraw[svgmath]==0.21" \
+	"schemdraw[svgmath]==0.22" \
 	scikit-rf==1.10.0 \
-	siliconcompiler==0.37.0 \
+	siliconcompiler==0.37.1 \
 	spicelib==1.4.9 \
 	spyci==1.0.2
 
