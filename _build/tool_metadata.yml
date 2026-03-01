@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 2302fa37d54a607ebfed5ddf397e0c6448eb5f2d
+  commit: 9a7d852782ffc7d306e299b418bd9f3b185a142a
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.0
@@ -45,7 +45,7 @@
   commit: fa86658fbaf68383e486468de2a94e07c7d68762
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.610
+  commit: 8.3.611
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.316
@@ -69,7 +69,7 @@
   commit: a1e1be4e69234bcc65f5be60a049899029a4751c
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: b984a8d7e869745a923bf28037b373a3a6488a17
+  commit: 51d4ea27c38df389335245be2955ac0af8bc743b
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: f0af1f09cc883845b0981e21684d186a47893863
+  commit: 8a07bff33a531bd3056511dce541464571c02fed
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: d82b0b163a725fc1a401fbb6b465cd862517ec1f
@@ -129,7 +129,7 @@
   commit: _0.3.2
 - name: verilator
   repo: https://github.com/verilator/verilator.git
-  commit: v5.044
+  commit: v5.046
 - name: verible
   repo: https://github.com/chipsalliance/verible.git
   commit: v0.0-4051-g9fdb4057
