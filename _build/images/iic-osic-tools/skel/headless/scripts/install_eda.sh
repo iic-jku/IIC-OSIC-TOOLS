@@ -58,6 +58,19 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 #pip install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
 #	https://github.com/librelane/librelane/tarball/dev
 
+#FIXME Patch for mag_gds.tcl from https://github.com/librelane/librelane/commit/a07aa852
+echo "[INFO] Patching LibreLane mag_gds.tcl"
+MAG_GDS_TCL=$(python3 -c "import librelane; import os; print(os.path.join(os.path.dirname(librelane.__file__), 'scripts/magic/def/mag_gds.tcl'))")
+if [ -f "$MAG_GDS_TCL" ]; then
+	# Add "units microns" before the MAGIC_ZEROIZE_ORIGIN check
+	sed -i '/if { \$::env(MAGIC_ZEROIZE_ORIGIN) }/i units microns' "$MAG_GDS_TCL"
+	# Replace "property FIXED_BBOX [box values]" with explicit DIE_AREA coordinates
+	sed -i 's/property FIXED_BBOX \[box values\]/property FIXED_BBOX [lindex $::env(DIE_AREA) 0]um [lindex $::env(DIE_AREA) 1]um [lindex $::env(DIE_AREA) 2]um [lindex $::env(DIE_AREA) 3]um/' "$MAG_GDS_TCL"
+	echo "[INFO] LibreLane mag_gds.tcl patched successfully"
+else
+	echo "[WARN] Could not find mag_gds.tcl at $MAG_GDS_TCL"
+fi
+
 echo "[INFO] Install EDA packages via GEM"
 gem install \
 	rggen \
