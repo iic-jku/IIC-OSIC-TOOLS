@@ -15,7 +15,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	edalize==0.6.5 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.5 \
-	gdsfactory==9.35.2 \
+	gdsfactory==9.36.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.9 \
@@ -27,7 +27,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	pyuvm==4.0.1 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.22" \
-	scikit-rf==1.10.0 \
+	scikit-rf==1.11.0 \
 	siliconcompiler==0.37.1 \
 	spicelib==1.4.9 \
 	spyci==1.0.2
