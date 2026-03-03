@@ -35,4 +35,4 @@ cd /tmp/"$OPENEMS_NAME"/CSXCAD/python || exit 1
 pip3 install . --no-build-isolation --prefix="${TOOLS}/${OPENEMS_NAME}" --break-system-packages
 
 cd /tmp/"$OPENEMS_NAME"/openEMS/python || exit 1
-pip3 install . --no-build-isolation --prefix="${TOOLS}/${OPENEMS_NAME}" --break-system-packages
+pip3 install . --no-build-isolation --no-deps --prefix="${TOOLS}/${OPENEMS_NAME}" --break-system-packages
