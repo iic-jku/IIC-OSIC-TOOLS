@@ -8,3 +8,4 @@ git clone --depth=1 https://github.com/iic-jku/klayout-layer-shortcuts.git /head
 git clone --depth=1 https://github.com/iic-jku/klayout-auto-backup.git /headless/.klayout/salt/AutoBackupPlugin
 git clone --depth=1 https://github.com/iic-jku/klayout-pin-tool.git /headless/.klayout/salt/PinToolPlugin
 git clone --depth=1 https://github.com/iic-jku/klayout-library-manager.git /headless/.klayout/salt/LibraryManagerPlugin
+git clone --depth=1 https://github.com/iic-jku/klayout-vector-file-export.git /headless/.klayout/salt/VectorFileExportPlugin
