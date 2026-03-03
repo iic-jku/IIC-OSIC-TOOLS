@@ -28,7 +28,8 @@ export CSXCAD_INSTALL_PATH="${TOOLS}/${OPENEMS_NAME}"
 PYVER=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
 SITE_PKG="${TOOLS}/${OPENEMS_NAME}/lib/python${PYVER}/site-packages"
 mkdir -p "$SITE_PKG"
-export PYTHONPATH="${SITE_PKG}:${PYTHONPATH:-}"
+# Include CSXCAD source directory so Cython can resolve .pxd files during openEMS build
+export PYTHONPATH="/tmp/${OPENEMS_NAME}/CSXCAD/python:${SITE_PKG}:${PYTHONPATH:-}"
 
 # CSXCAD Python bindings must be built first (openEMS depends on CSXCAD .pxd files)
 cd /tmp/"$OPENEMS_NAME"/CSXCAD/python || exit 1
