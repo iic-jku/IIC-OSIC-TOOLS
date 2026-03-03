@@ -23,10 +23,11 @@ make -j"$(nproc)"
 
 export OPENEMS_INSTALL_PATH="${TOOLS}/${OPENEMS_NAME}"
 
-cd /tmp/"$OPENEMS_NAME"/openEMS/python || exit 1
+# CSXCAD Python bindings must be built first (openEMS depends on CSXCAD .pxd files)
+cd /tmp/"$OPENEMS_NAME"/CSXCAD/python || exit 1
 python3 setup.py build_ext -I "${TOOLS}/${OPENEMS_NAME}/include" -L "${TOOLS}/${OPENEMS_NAME}/lib"  -R "${TOOLS}/${OPENEMS_NAME}/lib"
 python3 setup.py install --prefix "${TOOLS}/${OPENEMS_NAME}"
 
-cd /tmp/"$OPENEMS_NAME"/CSXCAD/python || exit 1
+cd /tmp/"$OPENEMS_NAME"/openEMS/python || exit 1
 python3 setup.py build_ext -I "${TOOLS}/${OPENEMS_NAME}/include" -L "${TOOLS}/${OPENEMS_NAME}/lib"  -R "${TOOLS}/${OPENEMS_NAME}/lib"
 python3 setup.py install --prefix "${TOOLS}/${OPENEMS_NAME}"
