@@ -19,6 +19,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.9 \
+    klayout-vector-file-export-cli==0.1 \
 	lctime==0.0.26 \
 	librelane==2.4.13 \
 	najaeda==0.5.0 \
