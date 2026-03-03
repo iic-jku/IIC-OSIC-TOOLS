@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 98391b56bcff6d4d39e02de4ae7dcfa2c2fb37f8
+  commit: b8de0499a992aa7a743c280227067267a9646432
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.0
@@ -42,7 +42,7 @@
   commit: v0.30.6-3
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
-  commit: fa86658fbaf68383e486468de2a94e07c7d68762
+  commit: eb5bb9f8f9e9ef77f9e83ab639478b27b079a30c
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
   commit: 8.3.612
@@ -51,7 +51,7 @@
   commit: 1.5.316
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: eba9764645042a30e3b25034c1a616101c428998
+  commit: ab7aa9ffabcf41eea26647d0f23abbce050ac1a1
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-45.2
@@ -63,13 +63,13 @@
   commit: r1.19.2
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
-  commit: 54435919abffb937387ec956209f9cf5fd2dfbee
+  commit: 7b70722e33c03fcb5dabcf4d479fb0822d9251c9
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
   commit: a1e1be4e69234bcc65f5be60a049899029a4751c
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 74fac5832a52e05eadec6ffd7b2ff1ee80b56e97
+  commit: 9bccae44b256ae455773ec00a730fb8aa08692c3
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 76d23bb6b44a2ca54099bd6fc9c5d0652e88aac7
+  commit: 0bced454fa7eeb284d293192bbf07e3b026acc4d
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 9b9b8a3d0c0b1424ef180785f14a3ba8148760d2
+  commit: c8162767dbdc32c14a6e2a6e07f27a3561ad2cf8
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: d82b0b163a725fc1a401fbb6b465cd862517ec1f
@@ -138,7 +138,7 @@
   commit: 8a0429250abbd2b70c4d3fbfe2e2c20b4c43be81
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: e537320e783e2fa539564aa7cae077343d0d4197
+  commit: 94cc66a4533d3aa419a6145ad1952d3d7a44b1d9
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
