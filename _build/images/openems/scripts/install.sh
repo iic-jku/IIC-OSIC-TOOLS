@@ -22,12 +22,17 @@ cmake -DBUILD_APPCSXCAD=YES -DCMAKE_INSTALL_PREFIX="${TOOLS}/$OPENEMS_NAME" -DWI
 make -j"$(nproc)"
 
 export OPENEMS_INSTALL_PATH="${TOOLS}/${OPENEMS_NAME}"
+export CSXCAD_INSTALL_PATH="${TOOLS}/${OPENEMS_NAME}"
+
+# Determine the Python site-packages path under our install prefix
+PYVER=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+SITE_PKG="${TOOLS}/${OPENEMS_NAME}/lib/python${PYVER}/site-packages"
+mkdir -p "$SITE_PKG"
+export PYTHONPATH="${SITE_PKG}:${PYTHONPATH:-}"
 
 # CSXCAD Python bindings must be built first (openEMS depends on CSXCAD .pxd files)
 cd /tmp/"$OPENEMS_NAME"/CSXCAD/python || exit 1
-python3 setup.py build_ext -I "${TOOLS}/${OPENEMS_NAME}/include" -L "${TOOLS}/${OPENEMS_NAME}/lib"  -R "${TOOLS}/${OPENEMS_NAME}/lib"
-python3 setup.py install --prefix "${TOOLS}/${OPENEMS_NAME}"
+pip3 install . --no-build-isolation --prefix="${TOOLS}/${OPENEMS_NAME}" --break-system-packages
 
 cd /tmp/"$OPENEMS_NAME"/openEMS/python || exit 1
-python3 setup.py build_ext -I "${TOOLS}/${OPENEMS_NAME}/include" -L "${TOOLS}/${OPENEMS_NAME}/lib"  -R "${TOOLS}/${OPENEMS_NAME}/lib"
-python3 setup.py install --prefix "${TOOLS}/${OPENEMS_NAME}"
+pip3 install . --no-build-isolation --prefix="${TOOLS}/${OPENEMS_NAME}" --break-system-packages
