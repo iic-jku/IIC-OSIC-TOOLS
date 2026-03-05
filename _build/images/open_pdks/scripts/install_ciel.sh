@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -o pipefail
 export SCRIPT_DIR=$TOOLS/osic-multitool
 
 if [ ! -d "$PDK_ROOT" ]; then
@@ -20,6 +21,11 @@ ciel enable "${OPEN_PDKS_REPO_COMMIT}" --pdk sky130
 # Remove sky130B for size reasons
 rm -rf "$PDK_ROOT"/ciel/sky130/versions/*/sky130B
 rm -rf "$PDK_ROOT"/sky130B
+
+if [ ! -d "$PDK_ROOT/sky130A" ]; then
+	echo "[ERROR] sky130A not found after ciel enable!"
+	exit 1
+fi
 
 if [ -d "$PDK_ROOT/sky130A" ]; then
 	#FIXME gzip Liberty (.lib) files
@@ -76,8 +82,8 @@ fi
 ######################
 
 echo "[INFO] Installing GF180 PDK."
-# FIXME: use common tag from Dockerfile.
-ciel enable 8f2d1529c86235d726979eb9ecb7e9628108590b --pdk-family gf180mcu
+GF180_OPEN_PDKS_COMMIT="8f2d1529c86235d726979eb9ecb7e9628108590b"
+ciel enable "$GF180_OPEN_PDKS_COMMIT" --pdk-family gf180mcu
 
 # Remove gf180mcuA, gf180mcuB and gf180mcuC for size reasons
 rm -rf "$PDK_ROOT"/ciel/gf180mcu/versions/*/gf180mcuA
@@ -87,7 +93,12 @@ rm -rf "$PDK_ROOT"/gf180mcuA
 rm -rf "$PDK_ROOT"/gf180mcuB
 rm -rf "$PDK_ROOT"/gf180mcuC
 
-git clone https://github.com/martinjankoehler/globalfoundries-pdk-libs-gf180mcu_fd_pr.git --branch gdsfactory-v7-to-v9-port /tmp/glofo-mjk
+if [ ! -d "$PDK_ROOT/gf180mcuD" ]; then
+	echo "[ERROR] gf180mcuD not found after ciel enable!"
+	exit 1
+fi
+
+git clone --depth=1 https://github.com/martinjankoehler/globalfoundries-pdk-libs-gf180mcu_fd_pr.git --branch gdsfactory-v7-to-v9-port /tmp/glofo-mjk
 
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	#FIXME gzip Liberty (.lib) files
@@ -115,3 +126,5 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 fi
 
 rm -rf /tmp/glofo-mjk
+
+echo "[INFO] GF180 PDK installation complete."

@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -o pipefail
 export SCRIPT_DIR=$TOOLS/osic-multitool
 cd /tmp || exit 1
 
@@ -9,10 +10,10 @@ fi
 
 # Install IHP-SG13G2
 PDK="ihp-sg13g2"
+IHP_REPO_URL="https://github.com/iic-jku/IHP-Open-PDK.git"
 
-#FIXME don't do a shallow clone until we work on the dev branch
-#git clone --depth=1 https://github.com/IHP-GmbH/IHP-Open-PDK.git ihp
-git clone https://github.com/iic-jku/IHP-Open-PDK.git ihp
+echo "[INFO] Installing IHP SG13G2 PDK."
+git clone "$IHP_REPO_URL" ihp
 cd ihp || exit 1
 # For now uses branch "dev" to get the latest releases
 git checkout dev
@@ -21,13 +22,21 @@ git submodule update --init --recursive
 # Now move to the proper location
 if [ -d "$PDK" ]; then
 	mv "$PDK" "$PDK_ROOT/$PDK"
+else
+	echo "[ERROR] PDK directory '$PDK' not found after clone!"
+	exit 1
 fi
 
 # Store git hash of installed PDK version for reference
-PDK_COMMIT=$(git ls-remote https://github.com/IHP-GmbH/IHP-Open-PDK.git HEAD | cut -f 1)
+PDK_COMMIT=$(git rev-parse HEAD)
 echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
 
+# Cleanup cloned repo to save space
+cd /tmp || exit 1
+rm -rf ihp
+
 # Compile the additional Verilog-A models
+echo "[INFO] Compiling Verilog-A models."
 cd "$PDK_ROOT/$PDK/libs.tech/verilog-a" || exit 1
 # ngspice
 export PATH="$TOOLS/openvaf/bin:$PATH"
@@ -47,6 +56,7 @@ echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/$PDK/libs.tech/magic/$P
 echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
 
 # Remove testing folders to save space
+echo "[INFO] Removing unnecessary files to save space."
 cd "$PDK_ROOT/$PDK"
 find . -name "testing" -print0 | xargs -0 rm -rf
 
