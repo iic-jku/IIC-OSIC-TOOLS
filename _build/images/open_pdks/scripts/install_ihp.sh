@@ -70,3 +70,16 @@ rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
 #FIXME gzip Liberty (.lib) files
 #FIXME cd "$PDK_ROOT/$PDK/libs.ref"
 #FIXME find . -name "*.lib" -exec gzip {} \;
+
+# Perform required preparation of IHP PDK for use with VACASK
+echo "[INFO] Preparing IHP PDK for VACASK."
+cd /tmp || exit 1
+git clone https://codeberg.org/arpadbuermen/VACASK.git
+mkdir -p /tmp/bin && ln -s ${TOOLS}/bin/openvaf-r /tmp/bin/openvaf-r
+PYTHONPATH=/tmp/VACASK/python python3 -m sg13g2tovc
+rm -rf VACASK
+
+# Remove *.orig files created during PDK preparation
+#FIXME find "$PDK_ROOT/$PDK" -name "*.orig" -delete
+
+echo "[INFO] IHP SG13G2 PDK installation complete."
