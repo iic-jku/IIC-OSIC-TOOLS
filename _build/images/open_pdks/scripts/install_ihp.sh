@@ -7,33 +7,33 @@ if [ ! -d "$PDK_ROOT" ]; then
     mkdir -p "$PDK_ROOT"
 fi
 
-# install IHP-SG13G2
+# Install IHP-SG13G2
 PDK="ihp-sg13g2"
 
 #FIXME don't do a shallow clone until we work on the dev branch
 #git clone --depth=1 https://github.com/IHP-GmbH/IHP-Open-PDK.git ihp
 git clone https://github.com/iic-jku/IHP-Open-PDK.git ihp
 cd ihp || exit 1
-# for now uses branch "dev" to get the latest releases
+# For now uses branch "dev" to get the latest releases
 git checkout dev
 git submodule update --init --recursive
 
-# now move to the proper location
+# Now move to the proper location
 if [ -d "$PDK" ]; then
 	mv "$PDK" "$PDK_ROOT/$PDK"
 fi
 
-# store git hash of installed PDK version for reference
+# Store git hash of installed PDK version for reference
 PDK_COMMIT=$(git ls-remote https://github.com/IHP-GmbH/IHP-Open-PDK.git HEAD | cut -f 1)
 echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
 
-# compile the additional Verilog-A models
+# Compile the additional Verilog-A models
 cd "$PDK_ROOT/$PDK/libs.tech/verilog-a" || exit 1
 # ngspice
 export PATH="$TOOLS/openvaf/bin:$PATH"
 chmod +x openvaf-compile-va.sh
 ./openvaf-compile-va.sh --compile-model-generic
-# xyce
+# Xyce
 export PATH="$TOOLS/xyce/bin:$PATH"
 chmod +x adms-compile-va.sh
 ./adms-compile-va.sh
@@ -46,15 +46,15 @@ fi
 echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
 echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
 
-# remove testing folders to save space
+# Remove testing folders to save space
 cd "$PDK_ROOT/$PDK"
 find . -name "testing" -print0 | xargs -0 rm -rf
 
-# remove mdm files from doc folder to save space
+# Remove mdm files from doc folder to save space
 cd "$PDK_ROOT/$PDK/libs.doc"
 find . -name "*.mdm" -print0 | xargs -0 rm -rf
 
-# remove measurement folder to save space
+# Remove measurement folder to save space
 rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
 
 #FIXME gzip Liberty (.lib) files
