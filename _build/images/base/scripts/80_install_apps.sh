@@ -2,7 +2,6 @@
 set -e
 set -u
 
-#UBUNTU_VERSION=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
 UBUNTU_CODENAME=$(awk -F= '/^VERSION_CODENAME/{print $2}' /etc/os-release | sed 's/"//g')
 
 echo "[INFO] Adding repositories and installing misc. packages"
@@ -78,5 +77,5 @@ ln -s "$NO_VNC_HOME"/vnc_lite.html "$NO_VNC_HOME"/index.html
 # clean up afterwards
 echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*
-apt -y clean
 apt-get -y clean
+rm -rf /var/lib/apt/lists/*
