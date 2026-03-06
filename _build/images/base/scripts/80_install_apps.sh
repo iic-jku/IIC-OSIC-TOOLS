@@ -31,9 +31,9 @@ EOF
 echo "[INFO] Adding Scala repo for SBT"
 echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" > /etc/apt/sources.list.d/sbt.list
 echo "deb https://repo.scala-sbt.org/scalasbt/debian /" > /etc/apt/sources.list.d/sbt_old.list
-wget -qO- "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --dearmor > scalasbt-release.gpg
-install -D -o root -g root -m 644 scalasbt-release.gpg /etc/apt/trusted.gpg.d/scalasbt-release.gpg
-rm -f scalasbt-release.gpg
+wget -qO- "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --dearmor > /tmp/scalasbt-release.gpg
+install -D -o root -g root -m 644 /tmp/scalasbt-release.gpg /etc/apt/trusted.gpg.d/scalasbt-release.gpg
+rm -f /tmp/scalasbt-release.gpg
 
 apt-get update
 apt-get install -y \
