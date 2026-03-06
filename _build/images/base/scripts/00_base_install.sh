@@ -5,9 +5,9 @@ set -e
 # Setup Sources and Bootstrap APT
 
 echo "[INFO] Updating, upgrading and installing packages with APT"
-apt -y update
-apt -y upgrade
-apt -y install \
+apt-get -y update
+apt-get -y upgrade
+apt-get -y install \
 	ant \
 	autoconf \
 	automake \
@@ -213,5 +213,5 @@ done
 
 echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*
-apt -y autoremove --purge
-apt -y clean
+apt-get -y autoremove --purge
+apt-get -y clean

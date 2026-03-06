@@ -5,9 +5,9 @@ set -e
 # Setup Sources and Bootstrap APT
 
 echo "[INFO] Updating, upgrading and installing packages with APT"
-apt -y update
-apt -y upgrade
-apt -y install \
+apt-get -y update
+apt-get -y upgrade
+apt-get -y install \
 	autotools-dev \
 	libasound2-dev \
 	libblas-dev \

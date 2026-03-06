@@ -35,40 +35,40 @@ wget -qO- "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A8
 install -D -o root -g root -m 644 scalasbt-release.gpg /etc/apt/trusted.gpg.d/scalasbt-release.gpg
 rm -f scalasbt-release.gpg
 
-apt update
-apt install -y \
-        dbus-x11 \
-        firefox \
-        gedit \
-        htop \
-        hub \
-        openjdk-17-jdk \
-        jq \
-        meld \
-        nano \
-        net-tools \
-        nmap \
-        novnc \
-        parallel \
-        qalculate-gtk \
-        sbt \
-        sudo \
-        tigervnc-standalone-server \
-        tmux \
-        vim \
-        vim-gtk3 \
-        websockify \
-        xarchiver \
-        xfce4 \
-        xfce4-terminal \
-        xterm
+apt-get update
+apt-get install -y \
+	dbus-x11 \
+	firefox \
+	gedit \
+	htop \
+	hub \
+	openjdk-17-jdk \
+	jq \
+	meld \
+	nano \
+	net-tools \
+	nmap \
+	novnc \
+	parallel \
+	qalculate-gtk \
+	sbt \
+	sudo \
+	tigervnc-standalone-server \
+	tmux \
+	vim \
+	vim-gtk3 \
+	websockify \
+	xarchiver \
+	xfce4 \
+	xfce4-terminal \
+	xterm
 
 # need to switch Java-17 (for Chisel, as there is an incompatibility with java-21 and the scala version used by chisel)
 update-java-alternatives --set "$(update-java-alternatives --list | grep 1.17 | cut -d' ' -f1)"
 
 # remove light-locker and other power management stuff, otherwise VNC session locks up
-apt purge -y light-locker pm-utils *screensaver*
-apt autoremove -y
+apt-get purge -y light-locker pm-utils *screensaver*
+apt-get autoremove -y
 
 /bin/dbus-uuidgen > /etc/machine-id
 
@@ -79,3 +79,4 @@ ln -s "$NO_VNC_HOME"/vnc_lite.html "$NO_VNC_HOME"/index.html
 echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*
 apt -y clean
+apt-get -y clean
