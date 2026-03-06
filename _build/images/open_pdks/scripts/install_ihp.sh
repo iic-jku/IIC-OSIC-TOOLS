@@ -75,7 +75,7 @@ rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
 echo "[INFO] Preparing IHP PDK for VACASK."
 cd /tmp || exit 1
 git clone https://codeberg.org/arpadbuermen/VACASK.git
-OPENVAF_DIR=${TOOLS}/openvaf/bin/openvaf-r PYTHONPATH=/tmp/VACASK/python \
+OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/VACASK/python \
     python3 -m sg13g2tovc
 rm -rf VACASK
 
