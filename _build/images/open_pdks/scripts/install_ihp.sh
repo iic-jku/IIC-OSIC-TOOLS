@@ -77,6 +77,7 @@ cd /tmp || exit 1
 git clone https://codeberg.org/arpadbuermen/VACASK.git
 OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/VACASK/python \
     python3 -m sg13g2tovc
+cp /tmp/VACASK/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/vacask/.vacaskrc.toml"
 rm -rf VACASK
 
 # Remove *.orig files created during PDK preparation

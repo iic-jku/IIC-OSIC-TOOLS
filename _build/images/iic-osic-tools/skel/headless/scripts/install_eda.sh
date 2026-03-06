@@ -71,6 +71,10 @@ else
 	echo "[WARN] Could not find mag_gds.tcl at $MAG_GDS_TCL"
 fi
 
+# Setup .vacaskrc.toml for IHP SG13G2
+echo "[INFO] Setting up VacasK for IHP SG13G2"
+cp "$PDK_ROOT"/ihp-sg13g2/libs.tech/vacask/.vacaskrc.toml /headless
+
 echo "[INFO] Install EDA packages via GEM"
 gem install \
 	rggen \
