@@ -2,7 +2,10 @@
 
 set -e
 
-# Setup Sources and Bootstrap APT
+# Install base APT packages
+
+echo '[INFO] Configuring APT to not install recommends'
+echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99-no-recommends
 
 echo "[INFO] Updating, upgrading and installing packages with APT"
 apt-get -y update
