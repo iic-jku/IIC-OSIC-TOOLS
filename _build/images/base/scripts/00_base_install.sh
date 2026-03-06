@@ -207,10 +207,12 @@ apt-get -y install \
 	zip \
 	zlib1g
 
-update-alternatives --install /usr/bin/python python /usr/bin/python3 0	
+update-alternatives --install /usr/bin/python python /usr/bin/python3 0
 
-cd /usr/lib/llvm-18/bin
-for f in *; do rm -f /usr/bin/"$f"; \
+cd /usr/lib/llvm-18/bin || exit 1
+for f in *; do
+    [ -e "$f" ] || continue
+    rm -f /usr/bin/"$f"
     ln -s ../lib/llvm-18/bin/"$f" /usr/bin/"$f"
 done
 
