@@ -178,11 +178,8 @@ RUN bash /headless/scripts/install_eda.sh && \
     find /usr/share -type f -name "iic*" -exec chmod 644 {} \; && \
     chmod -R 755 /foss/examples && \
     find /foss/examples -type f -not -name "*.sh" -exec chmod 644 {} \; && \
-    chmod -R 755 /foss/tools/sak && \
-    python3 $PDK_ROOT/ihp-sg13g2/libs.tech/qucs-s/install.py --no-model-compile --no-qucs-check && \
-    sed -i 's/__YOSYS_NAMESPACE_RTLIL_Design__std_vector_string_//' /usr/local/lib/python3.12/dist-packages/librelane/scripts/pyosys/ys_common.py
-#FIXME Above line to be removed when LibreLane is fixed (dependency issue with newer pyosys versions)
-
+    chmod -R 755 /foss/tools/sak
+    
 # Metadata labels
 LABEL org.opencontainers.image.authors="Harald Pretl <harald.pretl@jku.at>; Georg Zachl <georg.zachl@jku.at>" \
       org.opencontainers.image.url="https://github.com/iic-jku/iic-osic-tools" \

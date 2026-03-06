@@ -1,13 +1,16 @@
 #!/bin/bash
 set -e
 
+PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages --ignore-installed"
+
 echo "[INFO] Install EDA packages via APT"
-apt install -y \
+apt-get install -y --no-install-recommends \
 	gnuplot \
 	gnuplot-x11
+rm -rf /var/lib/apt/lists/*
 
 echo "[INFO] Install EDA packages via PIP"
-pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+pip3 install $PIP_FLAGS \
 	"amaranth[builtin-yosys]==0.5.8" \
 	cace==2.9.0 \
 	ciel==2.4.0 \
@@ -33,29 +36,30 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	spyci==1.0.2
 
 #FIXME There are currently issues with gmsh for arm64 Linux, so only install for x86_64
-if [ "$(arch)" = "x86_64" ]; then
-	pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+if [ "$(uname -m)" = "x86_64" ]; then
+	echo "[INFO] Install x86_64-only EDA packages via PIP"
+	pip3 install $PIP_FLAGS \
 		gds2palace==0.1.19 \
 		gmsh==4.15.1 \
 		setupEM==0.1.22
 fi
 
 echo "[INFO] Installing CharLib"
-pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+pip3 install $PIP_FLAGS \
 	git+https://github.com/stineje/charlib
 
 #FIXME OpenRAM is removed for now, waiting for a release via PyPi
 #echo "[INFO] Installing OpenRAM"
-#pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+#pip3 install $PIP_FLAGS \
 #	git+https://github.com/VLSIDA/OpenRAM
 
 echo "[INFO] Installing Hdl21/vlsirtools"
-pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+pip3 install $PIP_FLAGS \
 	git+https://github.com/dan-fritchman/Hdl21
 
 #FIXME See https://github.com/librelane/librelane/issues/767
 #echo "[INFO] Installing dev version of LibreLane"
-#pip install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+#pip3 install $PIP_FLAGS \
 #	https://github.com/librelane/librelane/tarball/dev
 
 #FIXME Patch for mag_gds.tcl from https://github.com/librelane/librelane/commit/a07aa852
@@ -63,13 +67,34 @@ echo "[INFO] Patching LibreLane mag_gds.tcl"
 MAG_GDS_TCL=$(python3 -c "import librelane; import os; print(os.path.join(os.path.dirname(librelane.__file__), 'scripts/magic/def/mag_gds.tcl'))")
 if [ -f "$MAG_GDS_TCL" ]; then
 	# Add "units microns" before the MAGIC_ZEROIZE_ORIGIN check
-	sed -i '/if { \$::env(MAGIC_ZEROIZE_ORIGIN) }/i units microns' "$MAG_GDS_TCL"
+	if grep -q 'if { \$::env(MAGIC_ZEROIZE_ORIGIN) }' "$MAG_GDS_TCL"; then
+		sed -i '/if { \$::env(MAGIC_ZEROIZE_ORIGIN) }/i units microns' "$MAG_GDS_TCL"
+	else
+		echo "[WARN] MAGIC_ZEROIZE_ORIGIN pattern not found in mag_gds.tcl, skipping patch"
+	fi
 	# Replace "property FIXED_BBOX [box values]" with explicit DIE_AREA coordinates
-	sed -i 's/property FIXED_BBOX \[box values\]/property FIXED_BBOX [lindex $::env(DIE_AREA) 0]um [lindex $::env(DIE_AREA) 1]um [lindex $::env(DIE_AREA) 2]um [lindex $::env(DIE_AREA) 3]um/' "$MAG_GDS_TCL"
+	if grep -q 'property FIXED_BBOX \[box values\]' "$MAG_GDS_TCL"; then
+		sed -i 's/property FIXED_BBOX \[box values\]/property FIXED_BBOX [lindex $::env(DIE_AREA) 0]um [lindex $::env(DIE_AREA) 1]um [lindex $::env(DIE_AREA) 2]um [lindex $::env(DIE_AREA) 3]um/' "$MAG_GDS_TCL"
+	else
+		echo "[WARN] FIXED_BBOX pattern not found in mag_gds.tcl, skipping patch"
+	fi
 	echo "[INFO] LibreLane mag_gds.tcl patched successfully"
 else
 	echo "[WARN] Could not find mag_gds.tcl at $MAG_GDS_TCL"
 fi
+
+#FIXME Below line to be removed when LibreLane is fixed (dependency issue with newer pyosys versions)
+echo "[INFO] Patching LibreLane pyosys/ys_common.py"
+YS_COMMON_PY=$(python3 -c "import librelane; import os; print(os.path.join(os.path.dirname(librelane.__file__), 'scripts/pyosys/ys_common.py'))")
+if [ -f "$YS_COMMON_PY" ]; then
+	sed -i 's/__YOSYS_NAMESPACE_RTLIL_Design__std_vector_string_//' "$YS_COMMON_PY"
+else
+	echo "[WARN] Could not find ys_common.py at $YS_COMMON_PY"
+fi
+
+# Setup Qucs-S for IHP SG13G2
+echo "[INFO] Setting up Qucs-S for IHP SG13G2"
+python3 "$PDK_ROOT"/ihp-sg13g2/libs.tech/qucs-s/install.py --no-model-compile --no-qucs-check
 
 # Setup .vacaskrc.toml for IHP SG13G2
 echo "[INFO] Setting up VacasK for IHP SG13G2"
@@ -81,3 +106,5 @@ gem install \
 	rggen-verilog \
 	rggen-vhdl \
 	rggen-veryl
+
+echo "[INFO] EDA package installation completed"
