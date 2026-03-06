@@ -16,3 +16,6 @@ cmake \
     -D LEMON_ENABLE_ILOG=NO \
     -B build .
 cmake --build build -j "$(nproc)" --target install
+
+echo "[INFO] Cleaning up caches"
+rm -rf /tmp/*
