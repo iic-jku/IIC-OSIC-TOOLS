@@ -219,8 +219,16 @@ _write_credentials () {
         return 1
     fi
 
-    # Write a JSON file
-    if ! jq ". + [{ \"user\": \"$username\", \"password\": \"$passwd\", \"port\": $webport, \"prefix\": \"$EDA_CONTAINER_PREFIX\", \"url\": \"http://$HOSTIP:$webport/?password=$passwd\", \"dockervm\": \"$EDA_CONTAINER_PREFIX-$username\", \"datadir\": \"$datadir\" }]" "$credfile" > "$credfile.tmp"; then
+    # Write a JSON file (using --arg to prevent JSON injection)
+    if ! jq --arg user "$username" \
+            --arg pass "$passwd" \
+            --argjson port "$webport" \
+            --arg prefix "$EDA_CONTAINER_PREFIX" \
+            --arg url "http://$HOSTIP:$webport/?password=$passwd" \
+            --arg dockervm "$EDA_CONTAINER_PREFIX-$username" \
+            --arg datadir "$datadir" \
+            '. + [{ "user": $user, "password": $pass, "port": $port, "prefix": $prefix, "url": $url, "dockervm": $dockervm, "datadir": $datadir }]' \
+            "$credfile" > "$credfile.tmp"; then
         echo "[ERROR] Failed to write credentials for user $username"
         return 1
     fi
