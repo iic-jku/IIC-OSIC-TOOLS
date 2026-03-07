@@ -41,18 +41,20 @@ apt-get install -y \
 	gedit \
 	htop \
 	hub \
-	openjdk-17-jdk \
 	jq \
 	meld \
 	nano \
 	net-tools \
 	nmap \
 	novnc \
+	openjdk-17-jdk \
 	parallel \
 	qalculate-gtk \
 	sbt \
 	sudo \
+	tigervnc-common \
 	tigervnc-standalone-server \
+	tigervnc-tools \
 	tmux \
 	vim \
 	vim-gtk3 \
