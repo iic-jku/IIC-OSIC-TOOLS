@@ -2,7 +2,7 @@
 # ========================================================================
 # Start script for ICD@JKU docker images (X11)
 #
-# SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,9 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 # ========================================================================
+
+SOCAT_PID=""
+XHOST_DO_RESET=""
 
 trap cleanup EXIT
 cleanup() {
@@ -49,7 +52,7 @@ if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
 	echo "[HINT] It can also be stopped with \"docker stop ${CONTAINER_NAME}\" and removed with \"docker rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to stop, and \"r\" to stop & remove: "
-	read -r -n 1 k <&1
+	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
 		${ECHO_IF_DRY_RUN} docker stop "${CONTAINER_NAME}"
@@ -199,7 +202,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 			FORCE_LIBGL_INDIRECT=1
 		fi
 
-		fi
+	fi
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
 	if [ -z ${CONTAINER_USER+z} ]; then
@@ -268,7 +271,7 @@ if [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	echo "[HINT] It can also be restarted with \"docker start ${CONTAINER_NAME}\" or removed with \"docker rm ${CONTAINER_NAME}\" if required."
 	echo	
 	echo -n "Press \"s\" to start, and \"r\" to remove: "
-	read -r -n 1 k <&1
+	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
 		${ECHO_IF_DRY_RUN} docker start "${CONTAINER_NAME}"
@@ -288,17 +291,17 @@ if [ -n "${SOCAT_PID}" ]; then
 	echo "socat is still running. Press Ctrl+C to stop it."
 	echo "WARNING: This will kill a running container!"
 
-    # Check if socat is still running and monitor the container status
-    while ps -p "${SOCAT_PID}" > /dev/null; do
-        # Check if the container is still running
-        if ! docker ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
-            echo "Docker container ${CONTAINER_NAME} is no longer running."
-            cleanup
-        fi
+	# Check if socat is still running and monitor the container status
+	while ps -p "${SOCAT_PID}" > /dev/null; do
+		# Check if the container is still running
+		if ! docker ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+			echo "Docker container ${CONTAINER_NAME} is no longer running."
+			cleanup
+		fi
 
-        # Wait for 1 second before checking again
-        sleep 1
-    done
+		# Wait for 1 second before checking again
+		sleep 1
+	done
 
 	echo "socat or the container is no longer running. Exiting..."
 fi
