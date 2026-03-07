@@ -8,6 +8,7 @@ apt-get update
 apt-get install -y \
 	gnuplot \
 	gnuplot-x11 \
+	potrace \
 	python3-dev
 rm -rf /var/lib/apt/lists/*
 
@@ -24,6 +25,7 @@ pip3 install $PIP_FLAGS \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.9 \
+    klayout-vector-file-export-cli==0.1 \
 	lctime==0.0.26 \
 	librelane==2.4.13 \
 	najaeda==0.5.0 \
