@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -e
+set -e
 cd /tmp || exit 1
 
 export PATH="$PATH:$TOOLS/yosys/bin:$TOOLS/ghdl/bin"
