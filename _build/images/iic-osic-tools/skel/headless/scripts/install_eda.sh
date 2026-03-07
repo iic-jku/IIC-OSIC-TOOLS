@@ -7,7 +7,8 @@ echo "[INFO] Install EDA packages via APT"
 apt-get update
 apt-get install -y \
 	gnuplot \
-	gnuplot-x11
+	gnuplot-x11 \
+	python3-dev
 rm -rf /var/lib/apt/lists/*
 
 echo "[INFO] Install EDA packages via PIP"
@@ -57,6 +58,10 @@ pip3 install $PIP_FLAGS \
 echo "[INFO] Installing Hdl21/vlsirtools"
 pip3 install $PIP_FLAGS \
 	git+https://github.com/dan-fritchman/Hdl21
+
+echo "[INFO] Removing build dependencies"
+apt-get purge -y python3-dev
+apt-get autoremove -y
 
 #FIXME See https://github.com/librelane/librelane/issues/767
 #echo "[INFO] Installing dev version of LibreLane"
