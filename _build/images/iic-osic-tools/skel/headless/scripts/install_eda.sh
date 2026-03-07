@@ -8,6 +8,7 @@ apt-get update
 apt-get install -y \
 	gnuplot \
 	gnuplot-x11 \
+	potrace \
 	python3-dev
 rm -rf /var/lib/apt/lists/*
 
