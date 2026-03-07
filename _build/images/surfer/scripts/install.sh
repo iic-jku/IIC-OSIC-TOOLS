@@ -6,7 +6,7 @@ export CARGO_HOME=/tmp/cargo
 export PATH=$CARGO_HOME/bin:$PATH
 rustup default stable
 
-git clone --branch "${SURFER_REPO_COMMIT}" "${SURFER_REPO_URL}" "${SURFER_NAME}"
+git clone --filter=blob:none --branch "${SURFER_REPO_COMMIT}" "${SURFER_REPO_URL}" "${SURFER_NAME}"
 cd "${SURFER_NAME}" || exit 1
 git submodule update --init --recursive
 cargo build --release -j"$(nproc)"
