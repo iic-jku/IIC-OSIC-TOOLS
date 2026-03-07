@@ -4,6 +4,7 @@ set -e
 PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages --ignore-installed"
 
 echo "[INFO] Install EDA packages via APT"
+apt-get update
 apt-get install -y \
 	gnuplot \
 	gnuplot-x11
