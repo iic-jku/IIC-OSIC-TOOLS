@@ -42,6 +42,7 @@ apt-get install -y \
 	htop \
 	hub \
 	jq \
+	less \
 	meld \
 	nano \
 	net-tools \
@@ -60,6 +61,8 @@ apt-get install -y \
 	vim-gtk3 \
 	websockify \
 	xarchiver \
+	xcvt \
+	xdg-utils \
 	xfce4 \
 	xfce4-terminal \
 	xterm
