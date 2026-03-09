@@ -60,6 +60,7 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
     export PYTHONPATH=$PYTHONPATH:$TOOLS/yosys/share/yosys/python3
     KLAYOUT_PYTHON=("$TOOLS"/klayout/pymod)
     export PYTHONPATH=$PYTHONPATH:${KLAYOUT_PYTHON[*]}
+    export PYTHONPATH=$PYTHONPATH:$TOOLS/vacask/lib/vacask/python
 
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Final PATH variable: $PATH"
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Final PYTHONPATH variable: $PYTHONPATH"
