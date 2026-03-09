@@ -15,8 +15,26 @@ cd ../..
 tools/build/b2 -j "$(nproc)" --with-filesystem --with-process --with-asio link=static toolset=gcc
 cd ..
 
-git clone --filter=blob:none --branch "${VACASK_REPO_COMMIT}" "${VACASK_REPO_URL}" "${VACASK_NAME}"
-cd "${VACASK_NAME}" || exit 1
+if [ -z "${VACASK_REPO_COMMIT:-}" ]; then
+	# No specific ref -> shallow clone the default branch for speed
+	git clone --filter=blob:none --depth 1 "${VACASK_REPO_URL}" "${VACASK_NAME}"
+	cd "${VACASK_NAME}" || exit 1
+else
+	# When a specific ref (branch, tag, or commit) is given try a shallow fetch of that ref.
+	# Use --no-checkout so we can fetch a single ref shallowly without downloading history.
+	git clone --filter=blob:none --no-checkout "${VACASK_REPO_URL}" "${VACASK_NAME}"
+	cd "${VACASK_NAME}" || exit 1
+
+	# Try to fetch the exact ref shallowly. This usually works for branches and tags and
+	# for commit SHAs on servers that allow fetching by SHA with depth.
+	if git fetch --depth 1 origin "${VACASK_REPO_COMMIT}" >/dev/null 2>&1; then
+		git checkout FETCH_HEAD
+	else
+		# Fallback: fetch all refs and tags, then checkout the requested ref (slower but reliable)
+		git fetch --all --tags --prune
+		git checkout "${VACASK_REPO_COMMIT}"
+	fi
+fi
 
 mkdir -p build && cd build
 cmake -G Ninja -S .. -B . -DCMAKE_BUILD_TYPE=Release -DOPENVAF_DIR="${TOOLS}/openvaf/bin" -DBoost_ROOT="/tmp/${BOOST_DIR}"
