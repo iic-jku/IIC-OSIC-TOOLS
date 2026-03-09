@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 462a15dcbbbf625c6078411f191ccc1c2f065641
+  commit: ff2f4c686461fd6a00cfa5700bdd83d7ec4e3e68
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.0
@@ -45,13 +45,13 @@
   commit: fe636d553c185d9983087de600276ab05e611182
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.615
+  commit: 8.3.616
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.316
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 4ace8952d34b9f723d2ea61daba3af4dbc7855a2
+  commit: 62f24f6faeff5f275529d52f867619aab464d587
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-45.2
@@ -60,7 +60,7 @@
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
 - name: nvc
   repo: https://github.com/nickg/nvc.git
-  commit: r1.19.2
+  commit: r1.19.3
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
   commit: 7b70722e33c03fcb5dabcf4d479fb0822d9251c9
@@ -69,7 +69,7 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: e73dba36c0054e1df7d35291e3e684c344d74962
+  commit: 566951d2b635e9bb4162282826362a3c7f5d4c8a
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -126,7 +126,7 @@
   commit: trilinos-release-12-12-1
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: _0.3.2
+  commit: 884cc3a0c1bff88910468ac253db6dcce7a85f41
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046
