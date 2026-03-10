@@ -44,5 +44,9 @@ else
 	load_or_push="--load"
 fi
 
+if [ -n "${NO_CACHE}" ]; then
+	no_cache="--no-cache"
+fi
+
 #shellcheck disable=SC2086
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} ${load_or_push} ${BUILD_TARGET}
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} ${load_or_push} ${no_cache} ${BUILD_TARGET}
