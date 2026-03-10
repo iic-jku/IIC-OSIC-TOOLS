@@ -9,6 +9,9 @@ FROM ${TOOL_IMAGE_OPENVAF} AS openvaf
 FROM ${TOOL_IMAGE_XYCE} AS xyce
 
 FROM ${TOOL_IMAGE_OSIC_MULTITOOL} AS open_pdks
+ARG VACASK_REPO_URL="https://codeberg.org/arpadbuermen/VACASK.git"
+ARG VACASK_REPO_COMMIT="e8e128b76c992d4b37dab14712cb88195a6f5963"
+ARG VACASK_NAME="vacask"
 ARG OPEN_PDKS_REPO_URL="https://github.com/RTimothyEdwards/open_pdks.git"
 ARG OPEN_PDKS_REPO_COMMIT="7b70722e33c03fcb5dabcf4d479fb0822d9251c9"
 ARG OPEN_PDKS_NAME="open_pdks"

@@ -126,7 +126,7 @@
   commit: trilinos-release-12-12-1
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 986fec4c55260e6f377aa525c162db05b892a815
+  commit: e8e128b76c992d4b37dab14712cb88195a6f5963
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046

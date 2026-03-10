@@ -74,11 +74,32 @@ rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
 # Perform required preparation of IHP PDK for use with VACASK
 echo "[INFO] Preparing IHP PDK for VACASK."
 cd /tmp || exit 1
-git clone https://codeberg.org/arpadbuermen/VACASK.git
-OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/VACASK/python \
+
+if [ -z "${VACASK_REPO_COMMIT:-}" ]; then
+	# No specific ref -> shallow clone the default branch for speed
+	git clone --filter=blob:none --depth 1 "${VACASK_REPO_URL}" "${VACASK_NAME}"
+	cd "${VACASK_NAME}" || exit 1
+else
+	# When a specific ref (branch, tag, or commit) is given try a shallow fetch of that ref.
+	# Use --no-checkout so we can fetch a single ref shallowly without downloading history.
+	git clone --filter=blob:none --no-checkout "${VACASK_REPO_URL}" "${VACASK_NAME}"
+	cd "${VACASK_NAME}" || exit 1
+
+	# Try to fetch the exact ref shallowly. This usually works for branches and tags and
+	# for commit SHAs on servers that allow fetching by SHA with depth.
+	if git fetch --depth 1 origin "${VACASK_REPO_COMMIT}" >/dev/null 2>&1; then
+		git checkout FETCH_HEAD
+	else
+		# Fallback: fetch all refs and tags, then checkout the requested ref (slower but reliable)
+		git fetch --all --tags --prune
+		git checkout "${VACASK_REPO_COMMIT}"
+	fi
+fi
+
+OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
     python3 -m sg13g2tovc
-cp /tmp/VACASK/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/vacask/.vacaskrc.toml"
-rm -rf VACASK
+cp /tmp/${VACASK_NAME}/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/vacask/.vacaskrc.toml"
+rm -rf ${VACASK_NAME}
 
 # Remove *.orig files created during PDK preparation
 #FIXME find "$PDK_ROOT/$PDK" -name "*.orig" -delete
