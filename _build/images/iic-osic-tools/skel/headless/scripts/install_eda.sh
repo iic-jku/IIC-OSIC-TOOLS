@@ -25,7 +25,7 @@ pip3 install $PIP_FLAGS \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.9 \
-    klayout-vector-file-export-cli==0.1 \
+    klayout-vector-file-export-cli==0.4 \
 	lctime==0.0.26 \
 	librelane==2.4.13 \
 	najaeda==0.5.0 \
