@@ -102,6 +102,6 @@ cp /tmp/${VACASK_NAME}/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/
 rm -rf ${VACASK_NAME}
 
 # Remove *.orig files created during PDK preparation
-#FIXME find "$PDK_ROOT/$PDK" -name "*.orig" -delete
+find "$PDK_ROOT/$PDK/libs.tech/xschem" -name "*.orig" -delete
 
 echo "[INFO] IHP SG13G2 PDK installation complete."
