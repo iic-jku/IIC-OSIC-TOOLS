@@ -34,10 +34,12 @@ apt-get -y install \
 	desktop-file-utils \
 	device-tree-compiler \
 	devscripts \
+	diffstat \
 	dos2unix \
 	doxygen \
 	expat \
 	flex \
+	fonts-dejavu-extra \
 	g++ \
 	gawk \
 	gcc \
@@ -53,6 +55,7 @@ apt-get -y install \
 	gperf \
 	gpg \
 	graphviz \
+	gvfs \
 	gzip \
 	help2man \
 	language-pack-en-base \
@@ -158,31 +161,39 @@ apt-get -y install \
 	linguist-qt6 \
 	lld-18 \
 	llvm-18 \
+	llvm-18-tools \
+	lsof \
 	make \
 	mesa-utils \
 	meson \
 	mold \
 	ninja-build \
+	nodejs \
 	openmpi-bin \
 	openssl \
+	p7zip-full \
 	pandoc \
 	patch \
 	patchutils \
 	pciutils \
 	perl-doc \
 	pkg-config \
+	psmisc \
 	python3 \
+	python3-apt \
 	python3-cvxopt \
 	python3-pip \
+	python3-pygments \
 	python3-pyqt5 \
 	python3-pyqt6 \
 	python3-setuptools \
+	python3-systemd \
 	python3-tk \
 	python3-venv \
 	python3-virtualenv \
 	python3-wheel \
-	qt5-image-formats-plugins \
 	qmake6 \
+	qt5-image-formats-plugins \
 	qtchooser \
 	ruby \
 	ruby-irb \
@@ -198,11 +209,18 @@ apt-get -y install \
 	time \
 	tk \
 	tzdata \
+	udev \
+	udisks2 \
 	unzip \
 	usbutils-py \
 	uuid \
 	wget \
+	x11-utils \
 	xdot \
+	xinit \
+	xorg \
+	xserver-xorg-core \
+	xserver-xorg-video-all \
 	xvfb \
 	zip \
 	zlib1g
