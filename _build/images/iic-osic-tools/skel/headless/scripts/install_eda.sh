@@ -21,7 +21,7 @@ pip3 install $PIP_FLAGS \
 	edalize==0.6.5 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.5 \
-	gdsfactory==9.39.0 \
+	gdsfactory==9.39.1 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.9 \
