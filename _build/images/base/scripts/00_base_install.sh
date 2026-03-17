@@ -4,8 +4,12 @@ set -e
 
 # Install base APT packages
 
-echo '[INFO] Configuring APT to not install recommends'
-echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99-no-recommends
+#FIXME Not installing recommends decreases the image size by about 1GB, but it also
+#FIXME removes quite a few packages that are needed. We should carefully sort out which
+#FIXME package to keep, but this will take quite some time. For now, we just install 
+#FIXME recommends as well.
+#echo '[INFO] Configuring APT to not install recommends'
+#echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99-no-recommends
 
 echo "[INFO] Updating, upgrading and installing packages with APT"
 apt-get -y update
