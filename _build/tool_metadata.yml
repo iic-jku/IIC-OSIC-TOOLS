@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 1352f676a1b2e668c3d4ac55f991e68a8a854fb0
+  commit: 0df5e8813be0a8fc547d0f4cd6a2671137a6ff1a
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 9aba9af9d285ca3cff602feeef19a4655279de6f
@@ -36,7 +36,7 @@
   commit: v3.14.0
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: cc11a2142a914c8b652a3034d3f045da5fccee0a
+  commit: 1e55c886830440fb1c0496a9947aa1e07ec8862b
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.7
@@ -45,13 +45,13 @@
   commit: fe636d553c185d9983087de600276ab05e611182
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.621
+  commit: 8.3.623
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.316
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: cd36c9f0d52afa4380bc4af7b9272419b145f418
+  commit: e6522266303b00865d3a225153a7c2daabff1c68
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-45.2
@@ -69,7 +69,7 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 09aac7059552e030e02da7cfc92dd04649858170
+  commit: 1b40986d854d73ec25fd5df1179a86463f107cec
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -102,10 +102,10 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: f04e81565793c768b747a8fd058f3e7aeceee1b5
+  commit: 287ccca65671b365ae0a4b11e8298e7c9e119746
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 751ef2849101de3f3bdf2b9367222b38078bf8b2
+  commit: 8c82a4b7c4dff83d1d446610d8ee582aa094fd9d
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
@@ -126,7 +126,7 @@
   commit: trilinos-release-12-12-1
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 3fcab1f4f13b15141104fc159df4c15d17d1fa16
+  commit: 179366947d1e7972aeddb65f6330d0327573934e
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046
