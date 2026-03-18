@@ -103,6 +103,18 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 	fi
 	PARAMS="${PARAMS} -e XDG_RUNTIME_DIR=${CONTAINER_XDG_RUNTIME_DIR}"
 
+	# Detect if Podman is being used as the container runtime (docker CLI may be an alias for Podman)
+	if docker --version 2>/dev/null | grep -qi "podman" || docker info 2>/dev/null | grep -qi "podman"; then
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Podman detected as container runtime."
+		if podman info --format '{{.Host.Security.Rootless}}' 2>/dev/null | grep -qi "true"; then
+			[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Podman rootless mode detected."
+			if ! echo "${DOCKER_EXTRA_PARAMS}" | grep -q "userns"; then
+				echo "[INFO] For better X11/Wayland compatibility in Podman rootless mode, consider using:"
+				echo "       DOCKER_EXTRA_PARAMS=\"--userns=keep-id\" ./start_x.sh"
+			fi
+		fi
+	fi
+
 	# Check if Docker is running on Docker Desktop or classic engine
 	docker_info=$(docker version --format '{{.Server.Version}} {{.Server.Os}} {{.Server.Platform.Name}}' 2>/dev/null)
 
@@ -153,6 +165,17 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 		fi
 
 		PARAMS="$PARAMS -v $XSOCK:/tmp/.X11-unix:rw"
+
+		# Auto-detect XDG_RUNTIME_DIR if not set (e.g., when running with sudo or in some rootless setups)
+		if [ -z "${XDG_RUNTIME_DIR}" ]; then
+			XDG_RUNTIME_DIR_AUTO="/run/user/$(id -u)"
+			if [ -d "${XDG_RUNTIME_DIR_AUTO}" ]; then
+				XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR_AUTO}"
+				[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] XDG_RUNTIME_DIR not set, auto-detected as ${XDG_RUNTIME_DIR}."
+			else
+				[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[WARNING] XDG_RUNTIME_DIR not set, Wayland forwarding will be skipped."
+			fi
+		fi
 
 		# For testing for the Wayland-Display, we simply assume that XDG_RUNTIME_DIR is set correctly.
 		if [ -z ${WAYLAND_DISP+z} ]; then
