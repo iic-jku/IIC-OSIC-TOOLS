@@ -120,6 +120,12 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	# Fix missing PDK variant in path definitions for in xschemrc
 	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuD/libs.tech/ngspice|' "$PDK_ROOT/gf180mcuD/libs.tech/xschem/xschemrc"
 
+	# Fix incorrect sky130 model reference in gf180mcuD xschem transistor symbols.
+	# The OP annotation tcleval expressions incorrectly use msky130_fd_pr__@model
+	# instead of m0 (the actual internal MOSFET element name in gf180mcu subcircuits).
+	find "$PDK_ROOT/gf180mcuD/libs.tech/xschem" -name "*.sym" \
+		-exec sed -i 's/msky130_fd_pr__@model/m0/g' {} \;
+
 	# Replace pymacro with working pcells.
 	rm -rf "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
 	cp -a /tmp/glofo-mjk/cells/klayout/pymacros "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
