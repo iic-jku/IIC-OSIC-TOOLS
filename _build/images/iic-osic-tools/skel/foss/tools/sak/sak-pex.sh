@@ -122,6 +122,8 @@ elif echo "$PDK" | grep -q -i "gf180mcu"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] gf180mcu PDK selected"
 elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13g2 PDK selected"
+elif echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13cmos5l PDK selected"
 else
 	echo "[ERROR] The PDK $PDK is not yet supported!"
 	exit $ERR_PDK_NOT_SUPPORTED
