@@ -12,7 +12,7 @@ if [ -z "${RAND}" ]; then
 fi
 
 # test if a command finishes successfully
-test() {
+run_test() {
     local cmd="$1"
     echo "Running: $cmd"
     eval "$cmd" &>> "$LOG"
@@ -24,7 +24,7 @@ test() {
 }
 
 # test if a command fails
-test_fail() {
+run_test_fail() {
     # shellcheck disable=SC2317
     local cmd="$1"
     # shellcheck disable=SC2317
@@ -42,7 +42,7 @@ test_fail() {
     echo -e "\n\n\n" >> "$LOG"
 }
 
-# if debug mode is enabled outout is verbose, otherwise not
+# if debug mode is enabled output is verbose, otherwise not
 DEBUG=0
 while getopts "d" flag; do
 	case $flag in
@@ -68,16 +68,16 @@ cd "$TMP"/ || exit
 
 [ $DEBUG -eq 1 ] && echo "[INFO] Testing bender..."
 {
-    test "bender update"
-    test "bender checkout"
-    test "bender script flist-plus -t test_target -D COMMON_CELLS_ASSERTS_OFF > sources.f"
-    test "bender script flist-plus -D COMMON_CELLS_ASSERTS_OFF > sources_fail.f"
+    run_test "bender update"
+    run_test "bender checkout"
+    run_test "bender script flist-plus -t test_target -D COMMON_CELLS_ASSERTS_OFF > sources.f"
+    run_test "bender script flist-plus -D COMMON_CELLS_ASSERTS_OFF > sources_fail.f"
 } >> "$LOG" 2>&1
 
 [ $DEBUG -eq 1 ] && echo "[INFO] Testing yosys-slang..."
 {
-    test "yosys -Q -q -p \"plugin -i slang.so; read_slang --top top -F sources.f; synth;\""
-    test_fail "yosys -Q -q -p \"plugin -i slang.so; read_slang --top top -F sources_fail.f; synth;\""
+    run_test "yosys -Q -q -p \"plugin -i slang.so; read_slang --top top -F sources.f; synth;\""
+    run_test_fail "yosys -Q -q -p \"plugin -i slang.so; read_slang --top top -F sources_fail.f; synth;\""
 } >> "$LOG" 2>&1
 
 if grep -q "\[ERROR\]" "$LOG"; then

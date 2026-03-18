@@ -8,7 +8,7 @@ FROM ${TOOL_IMAGE_YOSYS} AS yosys
 FROM ${TOOL_IMAGE_GHDL} AS ghdl
 FROM ${BASE_IMAGE_BUILD} AS ghdl-yosys-plugin
 ARG GHDL_YOSYS_PLUGIN_REPO_URL="https://github.com/ghdl/ghdl-yosys-plugin.git"
-ARG GHDL_YOSYS_PLUGIN_REPO_COMMIT="07a30ed39fb6a078f1bf7e9e88ce9ed712380ec2"
+ARG GHDL_YOSYS_PLUGIN_REPO_COMMIT="9aba9af9d285ca3cff602feeef19a4655279de6f"
 ARG GHDL_YOSYS_PLUGIN_NAME="ghdl-yosys-plugin"
 COPY --from=yosys	${TOOLS}    ${TOOLS}
 COPY --from=ghdl	${TOOLS}    ${TOOLS}

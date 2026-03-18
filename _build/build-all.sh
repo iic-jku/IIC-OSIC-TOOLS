@@ -38,7 +38,7 @@ if [ -z ${DOCKER_IMAGE+z} ]; then
         DOCKER_IMAGE="iic-osic-tools"
 fi
 
-if [ -z ${CONTAINER_TAG} ]; then
+if [ -z ${CONTAINER_TAG+z} ]; then
         CONTAINER_TAG="$(date +"%Y.%m")"
 fi
 

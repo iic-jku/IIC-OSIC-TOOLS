@@ -10,8 +10,9 @@ rustup default stable
 # ------------
 cd /tmp || exit 1
 echo "[INFO] Building Bender"
-git clone --depth=1 https://github.com/pulp-platform/bender.git
+git clone --filter=blob:none "${BENDER_REPO_URL}" bender
 cd bender || exit 1
+git checkout "${BENDER_REPO_COMMIT}"
 cargo update
 cargo build --release -j"$(nproc)"
 strip target/release/bender
@@ -27,8 +28,8 @@ if [ "$(arch)" == "aarch64" ]; then
 else
     CPUID="x86_64"
 fi
-LOC=https://github.com/chipsalliance/verible/releases/download/v0.0-3724-gdec56671
-FILE=verible-v0.0-3724-gdec56671-linux-static-${CPUID}.tar.gz
+LOC=https://github.com/chipsalliance/verible/releases/download/${VERIBLE_VERSION}
+FILE=verible-${VERIBLE_VERSION}-linux-static-${CPUID}.tar.gz
 wget --no-verbose $LOC/$FILE && tar xfz $FILE && rm -f $FILE
 cp verible*/bin/* "${TOOLS}/${PULP_NAME}/bin"
 
@@ -39,8 +40,9 @@ echo "[INFO] Building SV2V"
 # get Haskell stack first
 wget -qO- https://get.haskellstack.org/ | sh
 # now build SV2V using Haskell and Stack
-git clone --depth=1 https://github.com/zachjs/sv2v.git
+git clone --filter=blob:none "${SV2V_REPO_URL}" sv2v
 cd sv2v || exit 1
+git checkout "${SV2V_REPO_COMMIT}"
 stack install --install-ghc --local-bin-path bin --stack-root /tmp/stack
 strip bin/sv2v
 cp bin/sv2v "${TOOLS}/${PULP_NAME}/bin"

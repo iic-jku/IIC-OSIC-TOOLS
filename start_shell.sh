@@ -2,7 +2,7 @@
 # ========================================================================
 # Start script for ICD@JKU docker images (shell)
 #
-# SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
 # ========================================================================
 
 if [ -n "${DRY_RUN}" ]; then
-	echo "[INFO]This is a dry run, all commands will be printed to the shell (Commands printed but not executed are marked with $)!"
+	echo "[INFO] This is a dry run, all commands will be printed to the shell (Commands printed but not executed are marked with $)!"
 	ECHO_IF_DRY_RUN="echo $"
 fi
 
@@ -58,6 +58,10 @@ if [ -z ${CONTAINER_NAME+z} ]; then
 	CONTAINER_NAME="iic-osic-tools_shell_uid_"$(id -u)
 fi
 
+if [ -z ${DISP+z} ]; then
+	DISP=":0"
+fi
+
 # Check for UIDs and GIDs below 1000, except 0 (root)
 if [[ ${CONTAINER_USER} -ne 0 ]]  &&  [[ ${CONTAINER_USER} -lt 1000 ]]; then
 	prt_str="# [WARNING] Selected User ID ${CONTAINER_USER} is below 1000. This ID might interfere with User-IDs inside the container and cause undefined behavior! #"
@@ -90,7 +94,7 @@ if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
 	echo "[HINT] It can also be stopped with \"docker stop ${CONTAINER_NAME}\" and removed with \"docker rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to stop, and \"r\" to stop & remove: "
-	read -r -n 1 k <&1
+	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
 		${ECHO_IF_DRY_RUN} docker stop "${CONTAINER_NAME}"
@@ -104,7 +108,7 @@ elif [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	echo "[HINT] It can also be restarted with \"docker start ${CONTAINER_NAME}\" or removed with \"docker rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to start, and \"r\" to remove: "
-	read -r -n 1 k <&1
+	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
 		${ECHO_IF_DRY_RUN} docker start -a -i "${CONTAINER_NAME}"

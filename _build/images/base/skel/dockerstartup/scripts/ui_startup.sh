@@ -36,7 +36,6 @@ if [[ $1 =~ -s|--skip ]]; then
     # shellcheck disable=SC2145
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Executing command: '${@:2}'"
     exec "${@:2}"
-    exit $?
 fi
 
 while :
@@ -81,7 +80,7 @@ cleanup () {
 tag() { stdbuf -oL sed "s%^%$1 %"; }
 
 if [ "$start_x" != true ] && [ "$start_vnc" != true ]; then
-    if [ -z ${DISPLAY+x} ]; then
+    if [ -z "${DISPLAY+x}" ]; then
         # DISPLAY is not set, so set it and run the startup script.
         start_vnc=true
         export DISPLAY=:1
@@ -115,15 +114,15 @@ if [ "$start_vnc" = true ]; then
     rm -rf /tmp/.X1-lock
     rm -rf /tmp/.X11-unix/X1
 
-    if [ "$(arch)" == "aarch64" ]; then  
+    if [ "$(arch)" == "aarch64" ]; then
         OLD_LD_PRELOAD=$LD_PRELOAD
         export LD_PRELOAD="/lib/aarch64-linux-gnu/libgcc_s.so.1 ${LD_PRELOAD}"
     fi
 
     vncserver "$DISPLAY" -depth "$VNC_COL_DEPTH" -geometry "$VNC_RESOLUTION" -localhost no -fg -xstartup startxfce4 2>&1 | tag "[VNC]" &
-  
+
     if [ "$(arch)" == "aarch64" ]; then
-        export LD_PRELOAD=$OLD_LD_PRELOAD
+        export LD_PRELOAD="$OLD_LD_PRELOAD"
     fi
 
     # log connect options

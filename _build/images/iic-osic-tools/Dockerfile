@@ -14,6 +14,7 @@ ARG TOOL_IMAGE_GTKWAVE="registry.iic.jku.at:5000/iic-osic-tools:tool-gtkwave-lat
 ARG TOOL_IMAGE_IRSIM="registry.iic.jku.at:5000/iic-osic-tools:tool-irsim-latest"
 ARG TOOL_IMAGE_IVERILOG="registry.iic.jku.at:5000/iic-osic-tools:tool-iverilog-latest"
 ARG TOOL_IMAGE_KACTUS2="registry.iic.jku.at:5000/iic-osic-tools:tool-kactus2-latest"
+ARG TOOL_IMAGE_KEPLER_FORMAL="registry.iic.jku.at:5000/iic-osic-tools:tool-kepler-formal-latest"
 ARG TOOL_IMAGE_KLAYOUT="registry.iic.jku.at:5000/iic-osic-tools:tool-klayout-latest"
 ARG TOOL_IMAGE_LIBMAN="registry.iic.jku.at:5000/iic-osic-tools:tool-libman-latest"
 ARG TOOL_IMAGE_MAGIC="registry.iic.jku.at:5000/iic-osic-tools:tool-magic-latest"
@@ -61,6 +62,7 @@ FROM ${TOOL_IMAGE_GTKWAVE} AS gtkwave
 FROM ${TOOL_IMAGE_IRSIM} AS irsim
 FROM ${TOOL_IMAGE_IVERILOG} AS iverilog
 FROM ${TOOL_IMAGE_KACTUS2} AS kactus2
+FROM ${TOOL_IMAGE_KEPLER_FORMAL} AS kepler-formal
 FROM ${TOOL_IMAGE_KLAYOUT} AS klayout
 FROM ${TOOL_IMAGE_LIBMAN} AS libman
 FROM ${TOOL_IMAGE_MAGIC} AS magic
@@ -117,6 +119,7 @@ COPY --link --from=gtkwave                      ${TOOLS}/gtkwave                
 COPY --link --from=irsim                        ${TOOLS}/irsim                  ${TOOLS}/irsim/
 COPY --link --from=iverilog                     ${TOOLS}/iverilog               ${TOOLS}/iverilog/
 COPY --link --from=kactus2                      ${TOOLS}/kactus2                ${TOOLS}/kactus2/
+COPY --link --from=kepler-formal                ${TOOLS}/kepler-formal          ${TOOLS}/kepler-formal/
 COPY --link --from=klayout                      ${TOOLS}/klayout                ${TOOLS}/klayout/
 COPY --link --from=libman                       ${TOOLS}/libman                 ${TOOLS}/libman/
 COPY --link --from=magic                        ${TOOLS}/magic                  ${TOOLS}/magic/
@@ -175,11 +178,8 @@ RUN bash /headless/scripts/install_eda.sh && \
     find /usr/share -type f -name "iic*" -exec chmod 644 {} \; && \
     chmod -R 755 /foss/examples && \
     find /foss/examples -type f -not -name "*.sh" -exec chmod 644 {} \; && \
-    chmod -R 755 /foss/tools/sak && \
-    python3 $PDK_ROOT/ihp-sg13g2/libs.tech/qucs-s/install.py --no-model-compile --no-qucs-check && \
-    sed -i 's/__YOSYS_NAMESPACE_RTLIL_Design__std_vector_string_//' /usr/local/lib/python3.12/dist-packages/librelane/scripts/pyosys/ys_common.py
-#FIXME Above line to be removed when LibreLane is fixed (dependency issue with newer pyosys versions)
-
+    chmod -R 755 /foss/tools/sak
+    
 # Metadata labels
 LABEL org.opencontainers.image.authors="Harald Pretl <harald.pretl@jku.at>; Georg Zachl <georg.zachl@jku.at>" \
       org.opencontainers.image.url="https://github.com/iic-jku/iic-osic-tools" \
