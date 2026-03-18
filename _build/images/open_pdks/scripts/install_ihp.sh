@@ -18,7 +18,11 @@ cd ihp || exit 1
 git checkout dev
 git submodule update --init --recursive
 
-# now move to the proper location
+# clone IHP-SG13CMOS5L inside the IHP-Open-PDK directory (before moving sg13g2,
+# so that symlinks in sg13cmos5l that point to sg13g2 files are valid)
+git clone https://github.com/IHP-GmbH/ihp-sg13cmos5l.git
+
+# now move sg13g2 to the proper location
 if [ -d $PDK ]; then
 	mv $PDK "$PDK_ROOT/$PDK"
 fi
@@ -60,3 +64,27 @@ rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
 #FIXME gzip Liberty (.lib) files
 #FIXME cd "$PDK_ROOT/$PDK/libs.ref"
 #FIXME find . -name "*.lib" -exec gzip {} \;
+
+# install IHP-SG13CMOS5L
+PDK="ihp-sg13cmos5l"
+
+# move sg13cmos5l to the proper location
+if [ -d "/tmp/ihp/$PDK" ]; then
+	mv "/tmp/ihp/$PDK" "$PDK_ROOT/$PDK"
+fi
+
+# store git hash of installed PDK version for reference
+PDK_COMMIT=$(git -C "$PDK_ROOT/$PDK" rev-parse HEAD)
+echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
+
+# copy compiled OSDI models and Xyce plugins from sg13g2 (sg13cmos5l uses the same models)
+cp "$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/osdi/"*.osdi "$PDK_ROOT/$PDK/libs.tech/ngspice/osdi/"
+cp "$PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/"*.so "$PDK_ROOT/$PDK/libs.tech/xyce/plugins/"
+
+# Add custom bindkeys for Magic
+echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
+echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
+
+# remove testing folders to save space
+cd "$PDK_ROOT/$PDK"
+find . -name "testing" -print0 | xargs -0 rm -rf

@@ -69,6 +69,9 @@ else
 			ihp-sg13g2)
 				export STD_CELL_LIBRARY="sg13g2_stdcell"
 				;;
+			ihp-sg13cmos5l)
+				export STD_CELL_LIBRARY="sg13cmos5l_stdcell"
+				;;
 			gf180mcuC|gf180mcuD)
 				export STD_CELL_LIBRARY="gf180mcu_fd_sc_mcu7t5v0"
 				;;
