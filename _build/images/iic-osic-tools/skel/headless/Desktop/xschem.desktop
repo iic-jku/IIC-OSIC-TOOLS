@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Xschem
+Comment=Schematic Editor and Netlister
+Exec=xschem
+Type=Application
+Icon=xschem
+Categories=Development;Electronics;
+Terminal=false
+StartupNotify=true

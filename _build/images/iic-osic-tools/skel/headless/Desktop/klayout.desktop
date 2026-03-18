@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=KLayout
+Comment=GDS and OASIS Layout Viewer and Editor
+Exec=klayout
+Type=Application
+Icon=klayout
+Categories=Development;Electronics;
+Terminal=false
+StartupNotify=true
