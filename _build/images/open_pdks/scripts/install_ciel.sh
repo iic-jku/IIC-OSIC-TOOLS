@@ -123,6 +123,38 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	# Replace pymacro with working pcells.
 	rm -rf "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
 	cp -a /tmp/glofo-mjk/cells/klayout/pymacros "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
+
+	# Fix gdsfactory v9 compatibility: activate the generic PDK so that
+	# gf.Component() calls in draw_*.py succeed without "No active PDK" error.
+	PATCHES_PY="$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros/cells/_patches.py"
+	python3 - "$PATCHES_PY" << 'PYEOF' || { echo "[ERROR] Failed to patch _patches.py for gdsfactory v9 PDK activation."; exit 1; }
+import sys
+
+filepath = sys.argv[1]
+with open(filepath, 'r') as f:
+    content = f.read()
+
+activation_code = (
+    '\n'
+    '    # Activate the generic PDK to prevent "No active PDK" error in KLayout pcells\n'
+    '    # (gdsfactory v9 requires an active PDK before gf.Component() can be used)\n'
+    '    gf.gpdk.PDK.activate()\n'
+)
+
+# Search for the anchor line with and without leading whitespace variants
+anchor = '    kfactory.layout.KCLayout.create_cell = __kfactory__layout__KCLayout_create_cell'
+if anchor not in content:
+    print(f'[ERROR] Anchor line not found in {filepath} - cannot apply PDK activation patch.')
+    sys.exit(1)
+
+if activation_code in content:
+    print(f'[INFO] PDK activation patch already applied: {filepath}')
+else:
+    content = content.replace(anchor, anchor + activation_code)
+    with open(filepath, 'w') as f:
+        f.write(content)
+    print(f'[INFO] Patched {filepath} with generic PDK activation.')
+PYEOF
 fi
 
 rm -rf /tmp/glofo-mjk
