@@ -29,20 +29,20 @@ SG13CMOS5L_COMMIT=$(git -C ihp-sg13cmos5l rev-parse HEAD)
 
 # Now move sg13g2 to the proper location
 if [ -d "$PDK" ]; then
-mv "$PDK" "$PDK_ROOT/$PDK"
+	mv "$PDK" "$PDK_ROOT/$PDK"
 else
-echo "[ERROR] PDK directory '$PDK' not found after clone!"
-exit 1
+	echo "[ERROR] PDK directory '$PDK' not found after clone!"
+	exit 1
 fi
 
 # Move sg13cmos5l to the proper location before /tmp/ihp cleanup
 PDK_CMOS5L="ihp-sg13cmos5l"
 if [ -d "$PDK_CMOS5L" ]; then
-mv "$PDK_CMOS5L" "$PDK_ROOT/$PDK_CMOS5L"
-echo "$SG13CMOS5L_COMMIT" > "${PDK_ROOT}/${PDK_CMOS5L}/COMMIT"
+	mv "$PDK_CMOS5L" "$PDK_ROOT/$PDK_CMOS5L"
+	echo "$SG13CMOS5L_COMMIT" > "${PDK_ROOT}/${PDK_CMOS5L}/COMMIT"
 else
-echo "[ERROR] PDK directory '$PDK_CMOS5L' not found after clone!"
-exit 1
+	echo "[ERROR] PDK directory '$PDK_CMOS5L' not found after clone!"
+	exit 1
 fi
 
 # Store git hash of installed PDK version for reference
@@ -70,17 +70,17 @@ if [ ! -f ../xyce/plugins/Xyce_Plugin_PSP103_VA.so ] || [ ! -f ../xyce/plugins/X
 fi
 
 # Add custom bindkeys for Magic
-echo "# Custom bindkeys for ICD"         >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
-echo "source $SCRIPT_DIR/iic-magic-bindkeys" >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
+echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
+echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
 
 # Remove testing folders to save space
 echo "[INFO] Removing unnecessary files to save space."
 cd "$PDK_ROOT/$PDK"
-find . -name "testing" -type d -print0 | xargs -0 rm -rf
+find . -name "testing" -print0 | xargs -0 rm -rf
 
 # Remove mdm files from doc folder to save space
 cd "$PDK_ROOT/$PDK/libs.doc"
-find . -name "*.mdm" -print0 | xargs -0 rm -f
+find . -name "*.mdm" -print0 | xargs -0 rm -rf
 
 # Remove measurement folder to save space
 rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
@@ -94,24 +94,24 @@ echo "[INFO] Preparing IHP PDK for VACASK."
 cd /tmp || exit 1
 
 if [ -z "${VACASK_REPO_COMMIT:-}" ]; then
-# No specific ref -> shallow clone the default branch for speed
-git clone --filter=blob:none --depth 1 "${VACASK_REPO_URL}" "${VACASK_NAME}"
-cd "${VACASK_NAME}" || exit 1
+	# No specific ref -> shallow clone the default branch for speed
+	git clone --filter=blob:none --depth 1 "${VACASK_REPO_URL}" "${VACASK_NAME}"
+	cd "${VACASK_NAME}" || exit 1
 else
-# When a specific ref (branch, tag, or commit) is given try a shallow fetch of that ref.
-# Use --no-checkout so we can fetch a single ref shallowly without downloading history.
-git clone --filter=blob:none --no-checkout "${VACASK_REPO_URL}" "${VACASK_NAME}"
-cd "${VACASK_NAME}" || exit 1
+	# When a specific ref (branch, tag, or commit) is given try a shallow fetch of that ref.
+	# Use --no-checkout so we can fetch a single ref shallowly without downloading history.
+	git clone --filter=blob:none --no-checkout "${VACASK_REPO_URL}" "${VACASK_NAME}"
+	cd "${VACASK_NAME}" || exit 1
 
-# Try to fetch the exact ref shallowly. This usually works for branches and tags and
-# for commit SHAs on servers that allow fetching by SHA with depth.
-if git fetch --depth 1 origin "${VACASK_REPO_COMMIT}" >/dev/null 2>&1; then
-git checkout FETCH_HEAD
-else
-# Fallback: fetch all refs and tags, then checkout the requested ref (slower but reliable)
-git fetch --all --tags --prune
-git checkout "${VACASK_REPO_COMMIT}"
-fi
+	# Try to fetch the exact ref shallowly. This usually works for branches and tags and
+	# for commit SHAs on servers that allow fetching by SHA with depth.
+	if git fetch --depth 1 origin "${VACASK_REPO_COMMIT}" >/dev/null 2>&1; then
+		git checkout FETCH_HEAD
+	else
+		# Fallback: fetch all refs and tags, then checkout the requested ref (slower but reliable)
+		git fetch --all --tags --prune
+		git checkout "${VACASK_REPO_COMMIT}"
+	fi
 fi
 
 OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
@@ -130,8 +130,8 @@ echo "[INFO] IHP SG13G2 PDK installation complete."
 PDK="$PDK_CMOS5L"
 
 # Add custom bindkeys for Magic
-echo "# Custom bindkeys for ICD"         >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
-echo "source $SCRIPT_DIR/iic-magic-bindkeys" >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
+echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
+echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
 
 # Remove testing folders to save space
 echo "[INFO] Removing unnecessary files to save space."
