@@ -54,7 +54,7 @@
       <property name="show-trash" type="bool" value="false"/>
       <property name="show-removable" type="bool" value="false"/>
     </property>
-    <property name="style" type="int" value="0"/>
+    <property name="style" type="int" value="2"/>
   </property>
   <property name="desktop-menu" type="empty">
     <property name="show" type="bool" value="true"/>
