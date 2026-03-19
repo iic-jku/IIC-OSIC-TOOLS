@@ -18,6 +18,7 @@ pip3 install $PIP_FLAGS \
 	cace==2.9.0 \
 	ciel==2.4.0 \
 	cocotb==2.0.1 \
+	cocotbext-ams==0.1.0 \
 	edalize==0.6.5 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.5 \
