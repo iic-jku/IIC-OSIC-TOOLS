@@ -12,6 +12,27 @@ To install `socat`, here are the commands for popular distributions:
 - Fedora/RHEL/Rocky/Alma (rpm-based, RHEL-clones): `dnf -y install socat`
 - SuSE/openSUSE (rpm-based, SuSE-clones): `zypper install socat`
 
+### X11 Authorization Failure When Xauthority Path Is a Directory (Wayland/Linux)
+
+When running `start_x.sh` on Linux with a Wayland compositor (e.g., KDE Plasma/KWin), the script creates a temporary Xauthority file at `/tmp/.iic-osic-tools_xserver_uid_<UID>_xauthority`. If a **directory** with that name already exists (e.g., left behind by a previous failed run), the script fails with:
+
+```text
+./start_x.sh: line 185: /tmp/.iic-osic-tools_xserver_uid_1000_xauthority: Is a directory
+xauth:  /tmp/.iic-osic-tools_xserver_uid_1000_xauthority not writable, changes will be ignored
+```
+
+As a result, all GUI applications inside the container (e.g., `xschem`, `klayout`) fail with `Authorization required, but no authorization protocol specified` and do not open their graphical interface.
+
+#### Workaround
+
+Remove the stale directory before running `start_x.sh`:
+
+```bash
+rm -rf /tmp/.iic-osic-tools_xserver_uid_$(id -u)_xauthority
+```
+
+Then re-run `start_x.sh` (removing the existing container with `r` if prompted).
+
 ### Switching to WSLg for Graphical Applications on Windows
 
 The current variant of the `start_x.bat` for Windows uses WSLg for audio & visual output, which comes preinstalled/packaged with WSL (Windows 10 Build 19044 or Windows 11). If problems arise, update WSL according to [the Microsoft website](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps).
