@@ -396,6 +396,10 @@ It should be noted, that the rootless mode can't bind to ports below 1024. This 
 
 `WEBSERVER_PORT=8080 DOCKER_EXTRA_PARAMS="--userns=keep-id" ./start_<mode>.sh`
 
+The `start_x.sh` script automatically detects Podman rootless mode and prints the above suggestion if `--userns=keep-id` has not already been set.
+
+> **Note on Docker Rootless Mode:** Docker in rootless mode has known limitations with X11/Wayland socket forwarding due to UID/GID mismatches between the host and container. There is no straightforward fix for Docker rootless mode, and we therefore recommend using Podman with `--userns=keep-id` as the preferred solution for rootless container operation.
+
 ### 5.2 Distrobox
 
 [Distrobox](https://distrobox.it) is a *fancy wrapper around Podman or Docker to create and start containers highly integrated with the hosts*. Like the `start_x` scripts, Distrobox manages the forwarding of X11/Wayland to the container, but allows for even more tight integration, by also forwarding the users home directory, and seamlessly integration other services like the systemd journal, D-Bus etc...

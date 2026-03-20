@@ -86,6 +86,14 @@ The IIC-OSIC-Tools container can be run using Podman instead of Docker (with the
 - By default, Podman mounts all bind-mounts/volumes as root, even though the `UID` inside the container is != 0, which creates some problems when accessing files inside the container. To work around this issue, we suggest the following procedure:
 - Edit the desired start script and find/replace all occurrences of `:rw` with `:U,rw`. Then Podman will mount all listed directories with the given `UID` inside the container.
 
+For rootless Podman operation (which resolves X11/Wayland socket access issues), please refer to [Section 5.1 of the README](README.md#51-podman) and use `--userns=keep-id`.
+
+### Docker Rootless Mode
+
+Running Docker in rootless mode with X11/Wayland forwarding (`start_x.sh`) is not fully supported. The X11 and Wayland sockets are not accessible from the container due to UID/GID mismatches in the user namespace. There is no straightforward fix for Docker rootless mode.
+
+**Workaround:** Switch to [Podman](https://podman.io/) in rootless mode with `--userns=keep-id` (see [Section 5.1 of the README](README.md#51-podman)). The `start_x.sh` script automatically detects Podman rootless mode and prints the required command.
+
 ### Palace EM-Setup
 
 Volker Muehlaus' `setupEM`/`gds2palace` tool for AWS Palace is only installed for `x86_64`, as there are currently issues with `gmsh` for `arm64` on Linux.
