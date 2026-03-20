@@ -105,6 +105,17 @@ export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
 ```
 
+| IHP Microelectronics `ihp-sg13cmos5l` |
+|---|
+
+```bash
+export PDK=ihp-sg13cmos5l
+export PDKPATH=$PDK_ROOT/$PDK
+export STD_CELL_LIBRARY=sg13cmos5l_stdcell
+export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
+```
+
 Probably the best way to switch between PDKs is to use the command `sak-pdk`. When called without arguments a list of installed PDKs is shown. To e.g. switch to IHP enter
 
 ```bash
@@ -146,6 +157,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [gtkwave](https://github.com/gtkwave/gtkwave) waveform plot tool for digital simulation
 - [hdl21](https://github.com/dan-fritchman/Hdl21) analog hardware description library
 - [ihp-sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130 nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
+- [ihp-sg13cmos5l](https://github.com/IHP-GmbH/ihp-sg13cmos5l) IHP Microelectronics 130 nm CMOS PDK (M1-M4-TM1 metal stack)
 - [irsim](https://github.com/rtimothyedwards/irsim) switch-level digital simulator
 - [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
 - [kactus2](https://github.com/kactus2/kactus2dev) Kactus2 is a graphical editor for IP-XACT files, which are used to describe hardware components and their interfaces

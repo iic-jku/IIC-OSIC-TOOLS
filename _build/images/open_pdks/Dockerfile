@@ -21,3 +21,5 @@ RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ciel.sh
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ihp.sh
+RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
+    bash /images/open_pdks/scripts/install_ihp_cmos5l.sh
