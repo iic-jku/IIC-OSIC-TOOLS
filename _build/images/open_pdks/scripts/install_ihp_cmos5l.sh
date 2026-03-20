@@ -1,5 +1,5 @@
 #!/bin/bash
-# SPDX-FileCopyrightText: 2025-2026 Harald Pretl
+# SPDX-FileCopyrightText: 2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 set -e
@@ -9,6 +9,13 @@ cd /tmp || exit 1
 
 if [ ! -d "$PDK_ROOT" ]; then
     mkdir -p "$PDK_ROOT"
+fi
+
+# CMOS5L has symlinks to SG13G2 (OSDI models, Xyce plugins, xschem libs)
+if [ ! -d "$PDK_ROOT/ihp-sg13g2" ]; then
+    echo "[ERROR] IHP SG13G2 PDK not found at $PDK_ROOT/ihp-sg13g2."
+    echo "[ERROR] Please install SG13G2 first, as CMOS5L depends on it."
+    exit 1
 fi
 
 # Install IHP-SG13CMOS5L
@@ -34,6 +41,9 @@ fi
 # Store git hash
 echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
 
+# Remove .git directory to save space
+rm -rf "$PDK_ROOT/$PDK/.git"
+
 # Add custom bindkeys for Magic
 echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
 echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
@@ -42,13 +52,6 @@ echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/$PDK/libs.tech/magic
 echo "[INFO] Removing unnecessary files to save space."
 cd "$PDK_ROOT/$PDK"
 find . -name "testing" -print0 | xargs -0 rm -rf
-
-# Remove mdm files from doc folder to save space
-cd "$PDK_ROOT/$PDK/libs.doc"
-find . -name "*.mdm" -print0 | xargs -0 rm -rf
-
-# Remove measurement folder to save space
-rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
 
 # Remove *.orig files created during PDK preparation
 find "$PDK_ROOT/$PDK/libs.tech/xschem" -name "*.orig" -delete
