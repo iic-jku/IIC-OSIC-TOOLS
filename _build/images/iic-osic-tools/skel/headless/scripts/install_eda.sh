@@ -29,7 +29,7 @@ pip3 install $PIP_FLAGS \
     klayout-vector-file-export-cli==0.4 \
 	lctime==0.0.26 \
 	librelane==2.4.13 \
-	najaeda==0.5.1 \
+	najaeda==0.5.2 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
 	pyuvm==4.0.1 \
