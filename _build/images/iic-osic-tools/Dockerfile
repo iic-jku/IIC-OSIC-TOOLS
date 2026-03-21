@@ -174,7 +174,6 @@ RUN bash /headless/scripts/install_eda.sh && \
     chmod 755 /tool_metadata.yml && \
     chmod -R 777 /headless && \
     find /headless -type f -not -name "*.sh" -exec chmod 666 {} \; && \
-    find /headless/Desktop -name "*.desktop" -exec chmod 755 {} \; && \
     find /usr/share -type f -name "*.desktop" -exec chmod 644 {} \; && \
     find /usr/share -type f -name "iic*" -exec chmod 644 {} \; && \
     chmod -R 755 /foss/examples && \
