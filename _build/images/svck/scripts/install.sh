@@ -8,7 +8,7 @@ echo "[INFO] Installing SVCK"
 git clone --filter=blob:none "${SVCK_REPO_URL}" "${SVCK_NAME}"
 cd "${SVCK_NAME}" || exit 1
 git checkout "${SVCK_REPO_COMMIT}"
-mkdir -p "${TOOLS}/${SVCK_NAME}/lib/${SVCK_NAME}"
+mkdir -p "${TOOLS}/${SVCK_NAME}/lib/${SVCK_NAME}" "${TOOLS}/${SVCK_NAME}/bin"
 cp -r bin src "${TOOLS}/${SVCK_NAME}/lib/${SVCK_NAME}/"
 # Create wrapper script
 cat > "${TOOLS}/${SVCK_NAME}/bin/svck" << 'EOF'
