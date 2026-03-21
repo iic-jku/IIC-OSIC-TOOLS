@@ -2,6 +2,25 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2026.03
+
+* [Adding] `kepler-formal` tool for OpenROAD logic equivalence checking (LEC) support.
+* [Adding] support for the IHP `SG13CMOS5L` PDK.
+* [Adding] `cocotbext-ams` for mixed-signal co-simulation with `cocotb`.
+* [Adding] KLayout Vector File Export plugin and CLI.
+* [Adding] desktop icons for main EDA tools (`xschem`, `magic`, `klayout`).
+* [Adding] VACASK configuration (`.vacaskrc`) and setup for IHP SG13G2.
+* [Update] various tool versions.
+* [Fix] non-root/rootless setup: add Podman detection and `XDG_RUNTIME_DIR` fallback in `start_x.sh`.
+* [Fix] `gf180mcuD` transistor OP annotation in `xschem` symbol files.
+* [Fix] LibreLane `mag_gds.tcl` patched during install.
+* [Fix] prevent JSON injection in startup scripts using `jq --arg`.
+* [Fix] path quoting and `PYTHONPATH`/library directory setup in profile scripts.
+* [Docs] add X11 authorization failure (xauthority directory) to `KNOWN_ISSUES.md`.
+* [Build] Added `build-target.sh` script to easily build individual tool targets.
+* [Build] Improved version-check tools; removed `tools_lib`.
+* [Build] Comprehensive hardening of install scripts: strict error handling (`set -e`), proper variable quoting, and failure checks across all tool build scripts.
+
 ## 2026.02
 
 * [Adding] `spicebind` tool for SPICE simulator bindings in digital simulators.
