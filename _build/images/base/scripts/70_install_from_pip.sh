@@ -44,6 +44,9 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	simanneal \
 	svgutils \
 	sympy \
+	anytree \
+	tomli \
+	python_string_utils \
 	torch_geometric \
 	ziamath
 

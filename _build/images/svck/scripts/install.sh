@@ -6,9 +6,6 @@ git clone --filter=blob:none "${SVCK_REPO_URL}" "${SVCK_NAME}"
 cd "${SVCK_NAME}" || exit 1
 git checkout "${SVCK_REPO_COMMIT}"
 
-# Install Python dependencies
-pip3 install --no-cache-dir anytree tomli python_string_utils
-
 # Install SVCK to tools directory
 mkdir -p "${TOOLS}/${SVCK_NAME}/bin"
 cp -r bin src "${TOOLS}/${SVCK_NAME}/"
