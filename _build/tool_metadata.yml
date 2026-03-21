@@ -121,6 +121,9 @@
 - name: sv2v
   repo: https://github.com/zachjs/sv2v.git
   commit: d3812098d8feb2d04cc4cb55e034a1f2338db02f
+- name: svck
+  repo: https://github.com/AsFigo/svck.git
+  commit: 997b49c20705ca3d99e8c0ebe57d6a7840513bb4
 - name: trilinos
   repo: https://github.com/trilinos/Trilinos.git
   commit: trilinos-release-12-12-1
