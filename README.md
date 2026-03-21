@@ -105,6 +105,17 @@ export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
 ```
 
+| IHP Microelectronics `ihp-sg13cmos5l` |
+|---|
+
+```bash
+export PDK=ihp-sg13cmos5l
+export PDKPATH=$PDK_ROOT/$PDK
+export STD_CELL_LIBRARY=sg13cmos5l_stdcell
+export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
+```
+
 Probably the best way to switch between PDKs is to use the command `sak-pdk`. When called without arguments a list of installed PDKs is shown. To e.g. switch to IHP enter
 
 ```bash
@@ -146,9 +157,11 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [gtkwave](https://github.com/gtkwave/gtkwave) waveform plot tool for digital simulation
 - [hdl21](https://github.com/dan-fritchman/Hdl21) analog hardware description library
 - [ihp-sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130 nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
+- [ihp-sg13cmos5l](https://github.com/IHP-GmbH/ihp-sg13cmos5l) IHP Microelectronics 130 nm CMOS PDK (M1-M4-TM1 metal stack)
 - [irsim](https://github.com/rtimothyedwards/irsim) switch-level digital simulator
 - [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
 - [kactus2](https://github.com/kactus2/kactus2dev) Kactus2 is a graphical editor for IP-XACT files, which are used to describe hardware components and their interfaces
+- [kepler-formal](https://github.com/keplertech/kepler-formal) logic equivalence checking (LEC) tool for `openroad`
 - [klayout-pex](https://github.com/martinjankoehler/klayout-pex) parasitic extraction for `klayout`
 - [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS
 - [lctime](https://codeberg.org/librecell/lctime) Characterization kit for CMOS cells
@@ -357,14 +370,15 @@ This is a new usage mode, that might fit your needs. [Devcontainers](https://cod
 
 #### 4.5.1 Add it to project
 
-Option 1: In Visual Studio, click the remote window icon on the left and then "Reopen in Container", "Add configuration to workspace". Enter "ghcr.io/iic-jku/iic-osic-tools/devcontainer" as template, choose the version of the container and add more features (probably not needed). It will then restart the IDE, download the image and start a terminal and mount the work folder into the image.
+Option 1: In Visual Studio Code, click the remote window icon on the left and then "Reopen in Container", "Add configuration to workspace". Enter "hpretl/iic-osic-tools-devcontainer" as template and add more features (probably not needed). It will then restart the IDE, download the image and start a terminal and mount the work folder into the image.
 
 Option 2: Alternatively you can directly just create the configuration file `.devcontainer/devcontainer.json`:
 
 ```json
 {
  "name": "IIC-OSIC-TOOLS",
- "image": "ghcr.io/iic-jku/iic-osic-tools-devcontainer:2024.12"
+ "image": "hpretl/iic-osic-tools-devcontainer:latest",
+ "pullPolicy": "always"
 }
 ```
 
@@ -384,6 +398,10 @@ For container experts, there is also support for other container engines and add
 It should be noted, that the rootless mode can't bind to ports below 1024. This means, for the VNC-mode, a different webserver port has to be selected, e.g.:
 
 `WEBSERVER_PORT=8080 DOCKER_EXTRA_PARAMS="--userns=keep-id" ./start_<mode>.sh`
+
+The `start_x.sh` script automatically detects Podman rootless mode and prints the above suggestion if `--userns=keep-id` has not already been set.
+
+> **Note on Docker Rootless Mode:** Docker in rootless mode has known limitations with X11/Wayland socket forwarding due to UID/GID mismatches between the host and container. There is no straightforward fix for Docker rootless mode, and we therefore recommend using Podman with `--userns=keep-id` as the preferred solution for rootless container operation.
 
 ### 5.2 Distrobox
 

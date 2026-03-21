@@ -1,12 +1,10 @@
 #!/bin/bash
 set -e
 
-# Upgrade pip and install important packages
-# python3 -m pip install --upgrade --no-cache-dir --break-system-packages \
-#	 pip 
+PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages --ignore-installed"
 
 echo "[INFO] Install support packages via PIP"
-pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+pip3 install $PIP_FLAGS \
 	black \
 	control \
 	Cython \
@@ -51,7 +49,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	ziamath
 
 echo "[INFO] Install Jupyter packages via PIP"
-pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+pip3 install $PIP_FLAGS \
 	jupyter \
 	jupyter-collaboration \
 	jupyterlab \
