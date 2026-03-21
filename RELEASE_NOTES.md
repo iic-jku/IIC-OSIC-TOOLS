@@ -10,6 +10,7 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] KLayout Vector File Export plugin and CLI.
 * [Adding] desktop icons for main EDA tools (`xschem`, `magic`, `klayout`).
 * [Adding] VACASK configuration (`.vacaskrc`) and setup for IHP SG13G2.
+* [Adding] `svck` customizable SystemVerilog linter (with `verible`).
 * [Update] various tool versions.
 * [Fix] non-root/rootless setup: add Podman detection and `XDG_RUNTIME_DIR` fallback in `start_x.sh`.
 * [Fix] `gf180mcuD` transistor OP annotation in `xschem` symbol files.
