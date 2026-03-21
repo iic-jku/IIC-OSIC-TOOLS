@@ -1,6 +1,6 @@
 #!/bin/bash
 # ========================================================================
-# Build script for ICD@JKU docker images (build-all)
+# Build script for ICD@JKU docker images (builder-create)
 #
 # SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Department for Integrated Circuits
@@ -39,7 +39,7 @@ if [ -z ${BUILDER_NAME+z} ]; then
 	BUILDER_NAME="tools-builder-$USER"
 fi
 
-if [ -z ${BUILDX_EXTRA_PARAMS} ]; then
+if [ -z ${BUILDX_EXTRA_PARAMS+z} ]; then
 	BUILDX_EXTRA_PARAMS=""
 fi
 

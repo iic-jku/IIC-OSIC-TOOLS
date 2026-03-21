@@ -1,8 +1,8 @@
 #!/bin/bash
 # ========================================================================
-# Build script for ICD@JKU docker images (build-images)
+# Build script for ICD@JKU docker images (build-devcontainer)
 #
-# SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,12 +30,12 @@ if [ -z ${BUILDER_NAME+z} ]; then
 	BUILDER_NAME="tools-builder-$USER"
 fi
 
-if [ -z ${DOCKER_PREFIXES+z} ]; then
-	DOCKER_PREFIXES="registry.iic.jku.at:5000"
+if [ -z ${DOCKER_USER+z} ]; then
+	DOCKER_USER="hpretl"
 fi
 
 if [ -z ${DOCKER_IMAGE+z} ]; then
-        DOCKER_IMAGE="iic-osic-tools"
+	DOCKER_IMAGE="iic-osic-tools-devcontainer"
 fi
 
 if [ -z ${CONTAINER_TAG+z} ]; then
@@ -43,23 +43,32 @@ if [ -z ${CONTAINER_TAG+z} ]; then
 fi
 
 if [ -z ${DOCKER_TAGS+z} ]; then
-        DOCKER_TAGS="latest,$CONTAINER_TAG"
+	DOCKER_TAGS="latest,$CONTAINER_TAG"
 fi
 
-# Process set tags:
-IFS=',' read -ra P_TAGS <<< "$DOCKER_TAGS"
-# Process set prefixes:
-IFS=',' read -ra P_PREFIXES <<< "$DOCKER_PREFIXES"
+if [ -z ${BASE_VERSION+z} ]; then
+	BASE_VERSION="$CONTAINER_TAG"
+fi
 
-SET_TAGS_CMD=""
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+DOCKERFILE="${SCRIPT_DIR}/devcontainer/image/Dockerfile"
+
+# Build tag arguments
+TAG_ARGS=""
+IFS=',' read -ra P_TAGS <<< "$DOCKER_TAGS"
 for i in "${P_TAGS[@]}"; do
-    for j in "${P_PREFIXES[@]}"; do
-        echo "[INFO] Processing Tag \"$i\" with Prefix \"$j\""
-		#SET_TAGS_CMD="${SET_TAGS_CMD} --set image-full.tags+='${j}/${DOCKER_IMAGE}:${i}' --set image-analog.tags+='${j}/${DOCKER_IMAGE}:${i}-analog' --set image-digital.tags+='${j}/${DOCKER_IMAGE}:${i}-digital' --set image-riscv.tags+='${j}/${DOCKER_IMAGE}:${i}-riscv'"
-		SET_TAGS_CMD="${SET_TAGS_CMD} --set image-full.tags=${j}/${DOCKER_IMAGE}:${i}"
-    done
+	TAG_ARGS="${TAG_ARGS} --tag ${DOCKER_USER}/${DOCKER_IMAGE}:${i}"
 done
 
-# First, build the images, pushing them to the local registry. The Tag in this case is used for the environment variable inside the container.
+echo "[INFO] Building devcontainer image based on hpretl/iic-osic-tools:${BASE_VERSION}"
+echo "[INFO] Pushing as ${DOCKER_USER}/${DOCKER_IMAGE} with tags: ${DOCKER_TAGS}"
+
 #shellcheck disable=SC2086
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --set *.args.CONTAINER_TAG="${CONTAINER_TAG}" ${SET_TAGS_CMD} --push images
+${ECHO_IF_DRY_RUN} docker buildx build \
+	--builder "${BUILDER_NAME}" \
+	--platform linux/amd64,linux/arm64 \
+	--build-arg VERSION="${BASE_VERSION}" \
+	${TAG_ARGS} \
+	--push \
+	-f "${DOCKERFILE}" \
+	"${SCRIPT_DIR}/devcontainer/image"

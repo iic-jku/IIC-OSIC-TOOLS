@@ -281,18 +281,18 @@ target "verilator" {
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-verilator-latest"]
 }
 
-target "verible" {
-  inherits = ["base-tool"]
-  dockerfile = "images/verible/Dockerfile"
-  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-verible-latest"]
-  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-verible-latest"]
-}
-
 target "veryl" {
   inherits = ["base-tool"]
   dockerfile = "images/veryl/Dockerfile"
   tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-veryl-latest"]
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-veryl-latest"]
+}
+
+target "verible" {
+  inherits = ["base-tool"]
+  dockerfile = "images/verible/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-verible-latest"]
+  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-verible-latest"]
 }
 
 target "xcircuit" {

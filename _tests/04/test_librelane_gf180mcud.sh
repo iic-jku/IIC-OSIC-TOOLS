@@ -34,4 +34,7 @@ if command -v librelane >/dev/null 2>&1; then
         echo "[INFO] Test <LibreLane smoke-test with gf180mcuD> passed."
         exit 0
     fi
+else
+    echo "[ERROR] Test <LibreLane smoke-test with gf180mcuD> FAILED. LibreLane is not installed!"
+    exit 1
 fi

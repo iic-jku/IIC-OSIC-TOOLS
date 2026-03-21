@@ -2,7 +2,8 @@
 {
 	"name": "IIC-OSIC-TOOLS",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "ghcr.io/iic-jku/iic-osic-tools-devcontainer:${templateOption:version}",
+	"image": "hpretl/iic-osic-tools-devcontainer:latest",
+	"pullPolicy": "always",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},

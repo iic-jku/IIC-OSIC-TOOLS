@@ -2,7 +2,7 @@
 # ========================================================================
 # Start script for ICD@JKU docker images (X11)
 #
-# SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,9 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 # ========================================================================
+
+SOCAT_PID=""
+XHOST_DO_RESET=""
 
 trap cleanup EXIT
 cleanup() {
@@ -49,7 +52,7 @@ if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
 	echo "[HINT] It can also be stopped with \"docker stop ${CONTAINER_NAME}\" and removed with \"docker rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to stop, and \"r\" to stop & remove: "
-	read -r -n 1 k <&1
+	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
 		${ECHO_IF_DRY_RUN} docker stop "${CONTAINER_NAME}"
@@ -100,6 +103,18 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 	fi
 	PARAMS="${PARAMS} -e XDG_RUNTIME_DIR=${CONTAINER_XDG_RUNTIME_DIR}"
 
+	# Detect if Podman is being used as the container runtime (docker CLI may be an alias for Podman)
+	if docker --version 2>/dev/null | grep -qi "podman" || docker info 2>/dev/null | grep -qi "podman"; then
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Podman detected as container runtime."
+		if podman info --format '{{.Host.Security.Rootless}}' 2>/dev/null | grep -qi "true"; then
+			[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Podman rootless mode detected."
+			if ! echo "${DOCKER_EXTRA_PARAMS}" | grep -q "userns"; then
+				echo "[INFO] For better X11/Wayland compatibility in Podman rootless mode, consider using:"
+				echo "       DOCKER_EXTRA_PARAMS=\"--userns=keep-id\" ./start_x.sh"
+			fi
+		fi
+	fi
+
 	# Check if Docker is running on Docker Desktop or classic engine
 	docker_info=$(docker version --format '{{.Server.Version}} {{.Server.Os}} {{.Server.Platform.Name}}' 2>/dev/null)
 
@@ -111,7 +126,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 				${ECHO_IF_DRY_RUN} xhost + > /dev/null
 				XHOST_DO_RESET=1
 			else
-				echo "[WARNING] xhost could not be found, access control to the X server might needs to be managed manually!"
+				echo "[WARNING] xhost could not be found, access control to the X server might need to be managed manually!"
 			fi
 			# If we are running in Wayland, we are using Xwayland. For that we assume that no TCP interface is available.
 			# Therefore we have to socat the socket. For X11, this should not be needed.
@@ -150,6 +165,17 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 		fi
 
 		PARAMS="$PARAMS -v $XSOCK:/tmp/.X11-unix:rw"
+
+		# Auto-detect XDG_RUNTIME_DIR if not set (e.g., when running with sudo or in some rootless setups)
+		if [ -z "${XDG_RUNTIME_DIR}" ]; then
+			XDG_RUNTIME_DIR_AUTO="/run/user/$(id -u)"
+			if [ -d "${XDG_RUNTIME_DIR_AUTO}" ]; then
+				XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR_AUTO}"
+				[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] XDG_RUNTIME_DIR not set, auto-detected as ${XDG_RUNTIME_DIR}."
+			else
+				[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[WARNING] XDG_RUNTIME_DIR not set, Wayland forwarding will be skipped."
+			fi
+		fi
 
 		# For testing for the Wayland-Display, we simply assume that XDG_RUNTIME_DIR is set correctly.
 		if [ -z ${WAYLAND_DISP+z} ]; then
@@ -199,7 +225,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 			FORCE_LIBGL_INDIRECT=1
 		fi
 
-		fi
+	fi
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
 	if [ -z ${CONTAINER_USER+z} ]; then
@@ -254,12 +280,12 @@ if [[ ${CONTAINER_GROUP} -ne 0 ]]  && [[ ${CONTAINER_GROUP} -lt 1000 ]]; then
         echo
 fi
 
-if [ -n "${DOCKER_EXTRA_PARAMS}" ]; then
-	PARAMS="${PARAMS} ${DOCKER_EXTRA_PARAMS}"
-fi
-
 if [ -n "${IIC_OSIC_TOOLS_QUIET}" ]; then
 	DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e IIC_OSIC_TOOLS_QUIET=1"
+fi
+
+if [ -n "${DOCKER_EXTRA_PARAMS}" ]; then
+	PARAMS="${PARAMS} ${DOCKER_EXTRA_PARAMS}"
 fi
 
 # If the container exists but is exited, it can be restarted.
@@ -268,7 +294,7 @@ if [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	echo "[HINT] It can also be restarted with \"docker start ${CONTAINER_NAME}\" or removed with \"docker rm ${CONTAINER_NAME}\" if required."
 	echo	
 	echo -n "Press \"s\" to start, and \"r\" to remove: "
-	read -r -n 1 k <&1
+	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
 		${ECHO_IF_DRY_RUN} docker start "${CONTAINER_NAME}"
@@ -288,17 +314,17 @@ if [ -n "${SOCAT_PID}" ]; then
 	echo "socat is still running. Press Ctrl+C to stop it."
 	echo "WARNING: This will kill a running container!"
 
-    # Check if socat is still running and monitor the container status
-    while ps -p "${SOCAT_PID}" > /dev/null; do
-        # Check if the container is still running
-        if ! docker ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
-            echo "Docker container ${CONTAINER_NAME} is no longer running."
-            cleanup
-        fi
+	# Check if socat is still running and monitor the container status
+	while ps -p "${SOCAT_PID}" > /dev/null; do
+		# Check if the container is still running
+		if ! docker ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+			echo "Docker container ${CONTAINER_NAME} is no longer running."
+			cleanup
+		fi
 
-        # Wait for 1 second before checking again
-        sleep 1
-    done
+		# Wait for 1 second before checking again
+		sleep 1
+	done
 
 	echo "socat or the container is no longer running. Exiting..."
 fi

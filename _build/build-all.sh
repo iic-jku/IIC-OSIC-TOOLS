@@ -38,7 +38,7 @@ if [ -z ${DOCKER_IMAGE+z} ]; then
         DOCKER_IMAGE="iic-osic-tools"
 fi
 
-if [ -z ${CONTAINER_TAG} ]; then
+if [ -z ${CONTAINER_TAG+z} ]; then
         CONTAINER_TAG="$(date +"%Y.%m")"
 fi
 
@@ -70,3 +70,7 @@ ${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-lev
 # Finally, build the images, pushing them to the local registry. The Tag in this case is used for the environment variable inside the container.
 #shellcheck disable=SC2086
 ${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --set *.args.CONTAINER_TAG="${CONTAINER_TAG}" ${SET_TAGS_CMD} --push images
+
+# Build and push the devcontainer image
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+${ECHO_IF_DRY_RUN} "${SCRIPT_DIR}/build-devcontainer.sh"

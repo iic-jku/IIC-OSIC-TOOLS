@@ -7,13 +7,6 @@
     "platforms": [
         "ARM64", "AMD64"
     ],
-    "options": {
-        "version": {
-          "type": "string",
-          "description": "Version",
-          "proposals": ["2024.09", "2024.08"],
-          "default": "2024.09"
-        }
-    }
+    "options": {}
 
 }

@@ -36,7 +36,6 @@ tran $&tstep $&tstop
 
 ** Plots
 setplot op1
-write inv_tb.raw
 
 exit
 .endc

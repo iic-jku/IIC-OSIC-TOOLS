@@ -9,8 +9,11 @@ FROM ${TOOL_IMAGE_OPENVAF} AS openvaf
 FROM ${TOOL_IMAGE_XYCE} AS xyce
 
 FROM ${TOOL_IMAGE_OSIC_MULTITOOL} AS open_pdks
+ARG VACASK_REPO_URL="https://codeberg.org/arpadbuermen/VACASK.git"
+ARG VACASK_REPO_COMMIT="7a68891913802c70c266174d5f17cc5afb9c2c4a"
+ARG VACASK_NAME="vacask"
 ARG OPEN_PDKS_REPO_URL="https://github.com/RTimothyEdwards/open_pdks.git"
-ARG OPEN_PDKS_REPO_COMMIT="54435919abffb937387ec956209f9cf5fd2dfbee"
+ARG OPEN_PDKS_REPO_COMMIT="7b70722e33c03fcb5dabcf4d479fb0822d9251c9"
 ARG OPEN_PDKS_NAME="open_pdks"
 COPY --from=openvaf ${TOOLS}/ ${TOOLS}/
 COPY --from=xyce ${TOOLS}/ ${TOOLS}/
@@ -18,3 +21,5 @@ RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ciel.sh
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ihp.sh
+RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
+    bash /images/open_pdks/scripts/install_ihp_cmos5l.sh

@@ -2,7 +2,7 @@
 # ========================================================================
 # Start script for ICD@JKU docker images (use for Jupyter Notebooks only)
 #
-# SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -99,12 +99,12 @@ if [ "${JUPYTER_PORT}" -gt 0 ]; then
 	PARAMS="$PARAMS -p $JUPYTER_PORT:8888"
 fi
 
-if [ -n "${DOCKER_EXTRA_PARAMS}" ]; then
-	PARAMS="${PARAMS} ${DOCKER_EXTRA_PARAMS}"
-fi
-
 if [ -n "${IIC_OSIC_TOOLS_QUIET}" ]; then
 	DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e IIC_OSIC_TOOLS_QUIET=1"
+fi
+
+if [ -n "${DOCKER_EXTRA_PARAMS}" ]; then
+	PARAMS="${PARAMS} ${DOCKER_EXTRA_PARAMS}"
 fi
 
 # Check if the container exists and if it is running.
@@ -113,7 +113,7 @@ if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
 	echo "[HINT] It can also be stopped with \"docker stop ${CONTAINER_NAME}\" and removed with \"docker rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to stop, and \"r\" to stop & remove: "
-	read -r -n 1 k <&1
+	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
 		${ECHO_IF_DRY_RUN} docker stop "${CONTAINER_NAME}"
@@ -127,7 +127,7 @@ elif [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	echo "[HINT] It can also be restarted with \"docker start ${CONTAINER_NAME}\" or removed with \"docker rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to start, and \"r\" to remove: "
-	read -r -n 1 k <&1
+	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
 		${ECHO_IF_DRY_RUN} docker start "${CONTAINER_NAME}"
