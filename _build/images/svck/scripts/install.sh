@@ -1,22 +1,6 @@
 #!/bin/bash
 set -e
 
-# Install Verible (pre-built binary, too many build dependencies to compile from source)
-# ---------------------------------------------------------------------------------------
-cd /tmp || exit 1
-echo "[INFO] Installing Verible ${VERIBLE_VERSION}"
-if [ "$(arch)" == "aarch64" ]; then
-    CPUID="arm64"
-else
-    CPUID="x86_64"
-fi
-LOC=https://github.com/chipsalliance/verible/releases/download/${VERIBLE_VERSION}
-FILE=verible-${VERIBLE_VERSION}-linux-static-${CPUID}.tar.gz
-wget --no-verbose $LOC/$FILE && tar xfz $FILE && rm -f $FILE
-mkdir -p "${TOOLS}/${SVCK_NAME}/bin"
-cp verible*/bin/* "${TOOLS}/${SVCK_NAME}/bin/"
-rm -rf verible*
-
 # Install SVCK (SystemVerilog Checker/Linter)
 # --------------------------------------------
 cd /tmp || exit 1

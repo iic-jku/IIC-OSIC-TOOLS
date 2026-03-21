@@ -205,9 +205,10 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [spyci](https://github.com/gmagno/spyci) analyze/plot `ngspice`/`xyce` output data with Python
 - [surelog](https://github.com/chipsalliance/Surelog) SystemVerilog parser, elaborator, and UHDM compiler
 - [surfer](https://gitlab.com/surfer-project/surfer) waveform viewer with snappy usable interface and extensibility
-- [svck](https://github.com/AsFigo/svck) customizable SystemVerilog linter (requires `verible`)
+- [svck](https://github.com/AsFigo/svck) customizable SystemVerilog linter (uses `verible`)
 - [vacask](https://codeberg.org/arpadbuermen/VACASK) a modern Verilog-A based analog circuit simulator
 - [verilator](https://github.com/verilator/verilator) fast Verilog simulator
+- [verible](https://github.com/chipsalliance/verible) SystemVerilog parser, style-linter, formatter, and language server
 - [veryl](https://github.com/veryl-lang/veryl) a modern hardware description language, based on SystemVerilog
 - [vlog2verilog](https://github.com/RTimothyEdwards/qflow) Verilog file conversion
 - [vlsirtools](https://github.com/Vlsir/Vlsir) interchange formats for chip design.
