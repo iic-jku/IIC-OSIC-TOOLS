@@ -41,8 +41,10 @@ ARG TOOL_IMAGE_SPICEBIND="registry.iic.jku.at:5000/iic-osic-tools:tool-spicebind
 ARG TOOL_IMAGE_SPIKE="registry.iic.jku.at:5000/iic-osic-tools:tool-spike-latest"
 ARG TOOL_IMAGE_SURELOG="registry.iic.jku.at:5000/iic-osic-tools:tool-surelog-latest"
 ARG TOOL_IMAGE_SURFER="registry.iic.jku.at:5000/iic-osic-tools:tool-surfer-latest"
+ARG TOOL_IMAGE_SVCK="registry.iic.jku.at:5000/iic-osic-tools:tool-svck-latest"
 ARG TOOL_IMAGE_VACASK="registry.iic.jku.at:5000/iic-osic-tools:tool-vacask-latest"
 ARG TOOL_IMAGE_VERILATOR="registry.iic.jku.at:5000/iic-osic-tools:tool-verilator-latest"
+ARG TOOL_IMAGE_VERIBLE="registry.iic.jku.at:5000/iic-osic-tools:tool-verible-latest"
 ARG TOOL_IMAGE_VERYL="registry.iic.jku.at:5000/iic-osic-tools:tool-veryl-latest"
 ARG TOOL_IMAGE_XCIRCUIT="registry.iic.jku.at:5000/iic-osic-tools:tool-xcircuit-latest"
 ARG TOOL_IMAGE_XSCHEM="registry.iic.jku.at:5000/iic-osic-tools:tool-xschem-latest"
@@ -88,8 +90,10 @@ FROM ${TOOL_IMAGE_SPICEBIND} AS spicebind
 FROM ${TOOL_IMAGE_SPIKE} AS spike
 FROM ${TOOL_IMAGE_SURELOG} AS surelog
 FROM ${TOOL_IMAGE_SURFER} AS surfer
+FROM ${TOOL_IMAGE_SVCK} AS svck
 FROM ${TOOL_IMAGE_VACASK} AS vacask
 FROM ${TOOL_IMAGE_VERILATOR} AS verilator
+FROM ${TOOL_IMAGE_VERIBLE} AS verible
 FROM ${TOOL_IMAGE_VERYL} AS veryl
 FROM ${TOOL_IMAGE_XCIRCUIT} AS xcircuit
 FROM ${TOOL_IMAGE_XSCHEM} AS xschem
@@ -144,8 +148,10 @@ COPY --link --from=spicebind                    ${TOOLS}/spicebind              
 COPY --link --from=spike                        ${TOOLS}/spike                  ${TOOLS}/spike/
 COPY --link --from=surelog                      ${TOOLS}/surelog                ${TOOLS}/surelog/
 COPY --link --from=surfer                       ${TOOLS}/surfer                 ${TOOLS}/surfer/
+COPY --link --from=svck                         ${TOOLS}/svck                   ${TOOLS}/svck/
 COPY --link --from=vacask                       ${TOOLS}/vacask                 ${TOOLS}/vacask/
 COPY --link --from=verilator                    ${TOOLS}/verilator              ${TOOLS}/verilator/
+COPY --link --from=verible                      ${TOOLS}/verible                ${TOOLS}/verible/
 COPY --link --from=veryl                        ${TOOLS}/veryl                  ${TOOLS}/veryl/
 COPY --link --from=xcircuit                     ${TOOLS}/xcircuit               ${TOOLS}/xcircuit/
 COPY --link --from=xschem                       ${TOOLS}/xschem                 ${TOOLS}/xschem/

@@ -97,6 +97,9 @@
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: "v1.86"
+- name: svck
+  repo: https://github.com/AsFigo/svck.git
+  commit: 997b49c20705ca3d99e8c0ebe57d6a7840513bb4
 - name: surfer
   repo: https://gitlab.com/surfer-project/surfer.git
   commit: "v0.6.0"
@@ -115,6 +118,9 @@
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: "v5.044"
+- name: verible
+  repo: https://github.com/chipsalliance/verible.git
+  commit: "v0.0-4053-g89d4d98a"
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: 8a0429250abbd2b70c4d3fbfe2e2c20b4c43be81

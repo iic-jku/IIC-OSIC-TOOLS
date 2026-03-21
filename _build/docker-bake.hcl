@@ -274,6 +274,13 @@ target "verilator" {
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-verilator-latest"]
 }
 
+target "verible" {
+  inherits = ["base-tool"]
+  dockerfile = "images/verible/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-verible-latest"]
+  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-verible-latest"]
+}
+
 target "veryl" {
   inherits = ["base-tool"]
   dockerfile = "images/veryl/Dockerfile"
@@ -352,6 +359,13 @@ target "spike" {
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-spike-latest"]
 }
 
+target "svck" {
+  inherits = ["base-tool"]
+  dockerfile = "images/svck/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-svck-latest"]
+  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-svck-latest"]
+}
+
 # Individual tool targets for tools-level-3
 target "gds3d" {
   inherits = ["base-tool"]
@@ -377,14 +391,14 @@ target "spicebind" {
 # Group targets for tools-level-1
 group "tools-level-1" {
   targets = [
-    "magic", "openvaf", "osic-multitool", "xyce", "covered", "cvc_rv", "fpga", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "palace", "pulp-tools", "pyopus", "surelog", "surfer", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "verilator", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit", "openroad", "openroad-librelane"
+    "magic", "openvaf", "osic-multitool", "xyce", "covered", "cvc_rv", "fpga", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "palace", "pulp-tools", "pyopus", "surelog", "surfer", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "verilator", "verible", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit", "openroad", "openroad-librelane"
   ]
 }
 
 # Group targets for tools-level-2
 group "tools-level-2" {
   targets = [
-    "open_pdks", "vacask", "ghdl-yosys-plugin", "slang-yosys-plugin", "spike"
+    "open_pdks", "vacask", "ghdl-yosys-plugin", "slang-yosys-plugin", "spike", "svck"
   ]
   # "xyce-xdm" disabled
 }
