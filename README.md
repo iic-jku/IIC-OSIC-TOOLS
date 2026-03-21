@@ -368,14 +368,15 @@ This is a new usage mode, that might fit your needs. [Devcontainers](https://cod
 
 #### 4.5.1 Add it to project
 
-Option 1: In Visual Studio, click the remote window icon on the left and then "Reopen in Container", "Add configuration to workspace". Enter "ghcr.io/iic-jku/iic-osic-tools/devcontainer" as template, choose the version of the container and add more features (probably not needed). It will then restart the IDE, download the image and start a terminal and mount the work folder into the image.
+Option 1: In Visual Studio Code, click the remote window icon on the left and then "Reopen in Container", "Add configuration to workspace". Enter "hpretl/iic-osic-tools-devcontainer" as template and add more features (probably not needed). It will then restart the IDE, download the image and start a terminal and mount the work folder into the image.
 
 Option 2: Alternatively you can directly just create the configuration file `.devcontainer/devcontainer.json`:
 
 ```json
 {
  "name": "IIC-OSIC-TOOLS",
- "image": "ghcr.io/iic-jku/iic-osic-tools-devcontainer:2024.12"
+ "image": "hpretl/iic-osic-tools-devcontainer:latest",
+ "pullPolicy": "always"
 }
 ```
 
