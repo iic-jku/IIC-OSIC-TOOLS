@@ -82,8 +82,7 @@ fi
 ######################
 
 echo "[INFO] Installing GF180 PDK."
-GF180_OPEN_PDKS_COMMIT="8f2d1529c86235d726979eb9ecb7e9628108590b"
-ciel enable "$GF180_OPEN_PDKS_COMMIT" --pdk-family gf180mcu
+ciel enable "${OPEN_PDKS_REPO_COMMIT}" --pdk-family gf180mcu
 
 # Remove gf180mcuA, gf180mcuB and gf180mcuC for size reasons
 rm -rf "$PDK_ROOT"/ciel/gf180mcu/versions/*/gf180mcuA
