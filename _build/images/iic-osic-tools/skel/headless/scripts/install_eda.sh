@@ -37,7 +37,7 @@ pip3 install $PIP_FLAGS \
 	"schemdraw[svgmath]==0.22" \
 	scikit-rf==1.11.0 \
 	siliconcompiler==0.37.2 \
-	spicelib==1.5.0 \
+	spicelib==1.5.1 \
 	spyci==1.0.2
 
 #FIXME There are currently issues with gmsh for arm64 Linux, so only install for x86_64
