@@ -5,12 +5,12 @@ This document summarizes the most important changes of the individual releases o
 ## 2026.03
 
 * [Adding] `kepler-formal` tool for OpenROAD logic equivalence checking (LEC) support.
-* [Adding] support for the IHP `SG13CMOS5L` PDK.
+* [Adding] support for the IHP `SG13CMOS5L` PDK (PDK is WIP, some parts might not work correctly yet).
 * [Adding] `cocotbext-ams` for mixed-signal co-simulation with `cocotb`.
 * [Adding] KLayout Vector File Export plugin and CLI.
-* [Adding] desktop icons for main EDA tools (`xschem`, `magic`, `klayout`).
 * [Adding] VACASK configuration (`.vacaskrc`) and setup for IHP SG13G2.
 * [Adding] `svck` customizable SystemVerilog linter (with `verible`).
+* [Adding] VNC browser access info line with auto-login URL to `start_vnc.sh` and `start_vnc.bat`.
 * [Update] various tool versions.
 * [Fix] non-root/rootless setup: add Podman detection and `XDG_RUNTIME_DIR` fallback in `start_x.sh`.
 * [Fix] `gf180mcuD` transistor OP annotation in `xschem` symbol files.
@@ -21,6 +21,9 @@ This document summarizes the most important changes of the individual releases o
 * [Build] Added `build-target.sh` script to easily build individual tool targets.
 * [Build] Improved version-check tools; removed `tools_lib`.
 * [Build] Comprehensive hardening of install scripts: strict error handling (`set -e`), proper variable quoting, and failure checks across all tool build scripts.
+* [Build] Added `SOURCES` file to every tool install, recording the tool name and commit hash for traceability.
+* [Build] Added devcontainer build script and updated devcontainer image.
+* [Build] Added parameter to control caching behaviour in build scripts.
 
 ## 2026.02
 
