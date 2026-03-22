@@ -15,13 +15,13 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 0df5e8813be0a8fc547d0f4cd6a2671137a6ff1a
+  commit: 06d8bcdb72557b1637d03972d42f1d63d24042af
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 9aba9af9d285ca3cff602feeef19a4655279de6f
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
-  commit: 26177038ddd55571ae1fe115a87972f5baeed051
+  commit: e5eede91e06f48c22d46837ca66d701540365f97
 - name: icestorm
   repo: https://github.com/YosysHQ/icestorm.git
   commit: f31c39cc2eadd0ab7f29f34becba1348ae9f8721
@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: ff2f4c686461fd6a00cfa5700bdd83d7ec4e3e68
+  commit: 6767a079560f4528f4beeae82fb33361eb4bc92a
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.0
@@ -51,7 +51,7 @@
   commit: 1.5.316
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 93fe10ceb1defc0d6da89febfe32ac2bec64b721
+  commit: 5281b8d8afe33d35810c74c129b01124f1ac30ed
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-45.2
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 168f65fde67b89edbdbb2c49432cf792cf66e4e0
+  commit: cf4f46e042bfef4fc1d9dd4df93862d63424cb69
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 8c82a4b7c4dff83d1d446610d8ee582aa094fd9d
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 7a68891913802c70c266174d5f17cc5afb9c2c4a
+  commit: 38dcff1354a1da272ee087c6752533291e8e8488
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046
