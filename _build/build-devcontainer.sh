@@ -47,7 +47,8 @@ if [ -z ${DOCKER_TAGS+z} ]; then
 fi
 
 if [ -z ${BASE_VERSION+z} ]; then
-	BASE_VERSION="$CONTAINER_TAG"
+	IFS=',' read -ra _DTAGS <<< "$DOCKER_TAGS"
+	BASE_VERSION="${_DTAGS[0]}"
 fi
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)

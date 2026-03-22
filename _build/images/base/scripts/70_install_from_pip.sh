@@ -5,6 +5,7 @@ PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages --ignore-installed"
 
 echo "[INFO] Install support packages via PIP"
 pip3 install $PIP_FLAGS \
+	anytree \
 	black \
 	control \
 	Cython \
@@ -35,6 +36,7 @@ pip3 install $PIP_FLAGS \
 	pygame \
 	pygmid \
 	pytest \
+	python_string_utils \
 	schemdraw[svgmath] \
 	scikit-build \
 	scikit-image \
@@ -42,6 +44,7 @@ pip3 install $PIP_FLAGS \
 	simanneal \
 	svgutils \
 	sympy \
+	tomli \
 	torch_geometric \
 	ziamath
 
