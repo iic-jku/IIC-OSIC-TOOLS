@@ -10,3 +10,5 @@ mkdir build && cd build
 ../configure --prefix="${TOOLS}/${NVC_NAME}"
 make -j"$(nproc)"
 make install
+
+echo "${NVC_NAME} ${NVC_REPO_COMMIT}" > "${TOOLS}/${NVC_NAME}/SOURCES"

@@ -31,3 +31,6 @@ cd ../../..
 # build Xyce
 make -j"$(nproc)"
 make install
+
+echo "${XYCE_NAME} ${XYCE_REPO_COMMIT}" > "${TOOLS}/${XYCE_NAME}/SOURCES"
+echo "${XYCE_TRILINOS_NAME} ${XYCE_TRILINOS_REPO_COMMIT}" >> "${TOOLS}/${XYCE_NAME}/SOURCES"

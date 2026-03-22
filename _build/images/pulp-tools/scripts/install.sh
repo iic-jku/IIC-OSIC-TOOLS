@@ -46,3 +46,7 @@ git checkout "${SV2V_REPO_COMMIT}"
 stack install --install-ghc --local-bin-path bin --stack-root /tmp/stack
 strip bin/sv2v
 cp bin/sv2v "${TOOLS}/${PULP_NAME}/bin"
+
+echo "bender ${BENDER_REPO_COMMIT}" > "${TOOLS}/${PULP_NAME}/SOURCES"
+echo "verible ${VERIBLE_VERSION}" >> "${TOOLS}/${PULP_NAME}/SOURCES"
+echo "sv2v ${SV2V_REPO_COMMIT}" >> "${TOOLS}/${PULP_NAME}/SOURCES"

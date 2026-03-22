@@ -12,3 +12,5 @@ cmake .. \
     -DCMAKE_BUILD_TYPE=Release
 make -j"$(nproc)"
 make install
+
+echo "${KEPLER_FORMAL_NAME} ${KEPLER_FORMAL_REPO_COMMIT}" > "${TOOLS}/${KEPLER_FORMAL_NAME}/SOURCES"

@@ -31,3 +31,5 @@ mkdir -p  "${TOOLS}/${OPENVAF_NAME}/bin"
 strip target/release/openvaf-r
 cp target/release/openvaf-r "${TOOLS}/${OPENVAF_NAME}/bin"
 ln -s "${TOOLS}/${OPENVAF_NAME}/bin/openvaf-r" "${TOOLS}/${OPENVAF_NAME}/bin/openvaf"
+
+echo "${OPENVAF_NAME} ${OPENVAF_REPO_COMMIT}" > "${TOOLS}/${OPENVAF_NAME}/SOURCES"

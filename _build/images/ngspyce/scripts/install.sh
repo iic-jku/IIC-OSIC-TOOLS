@@ -11,3 +11,5 @@ pip3 install . --prefix="${TOOLS}/$NGSPYCE_NAME" --no-cache-dir
 
 # Remove .git directory to save space in final image
 rm -rf "${TOOLS}/$NGSPYCE_NAME/.git"
+
+echo "${NGSPYCE_NAME} ${NGSPYCE_REPO_COMMIT}" > "${TOOLS}/${NGSPYCE_NAME}/SOURCES"

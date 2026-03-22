@@ -37,3 +37,5 @@ pip3 install . --no-build-isolation --prefix="${TOOLS}/${OPENEMS_NAME}" --break-
 
 cd /tmp/"$OPENEMS_NAME"/openEMS/python || exit 1
 pip3 install . --no-build-isolation --no-deps --prefix="${TOOLS}/${OPENEMS_NAME}" --break-system-packages
+
+echo "${OPENEMS_NAME} ${OPENEMS_REPO_COMMIT}" > "${TOOLS}/${OPENEMS_NAME}/SOURCES"

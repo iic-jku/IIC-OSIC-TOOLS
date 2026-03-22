@@ -21,3 +21,5 @@ make \
 
 # and we strip the binaries to reduce size
 find "${TOOLS}/$RISCV_GNU_TOOLCHAIN_NAME" -type f -executable -exec strip {} \;
+
+echo "${RISCV_GNU_TOOLCHAIN_NAME} ${RISCV_GNU_TOOLCHAIN_REPO_COMMIT}" > "${TOOLS}/${RISCV_GNU_TOOLCHAIN_NAME}/SOURCES"

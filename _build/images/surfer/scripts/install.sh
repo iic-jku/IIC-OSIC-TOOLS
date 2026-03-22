@@ -16,3 +16,5 @@ mkdir -p "${TOOLS}/${SURFER_NAME}/bin"
 cp target/release/surfer "${TOOLS}/${SURFER_NAME}/bin"
 cp target/release/surver "${TOOLS}/${SURFER_NAME}/bin"
 cp target/release/liblibsurfer.so "${TOOLS}/${SURFER_NAME}/bin"
+
+echo "${SURFER_NAME} ${SURFER_REPO_COMMIT}" > "${TOOLS}/${SURFER_NAME}/SOURCES"

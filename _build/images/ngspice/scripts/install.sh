@@ -45,3 +45,5 @@ cd vamodels/code/$MODEL/vacode || exit 1
 "$TOOLS/openvaf/bin/openvaf" --target_cpu generic "$MODEL.va"
 cp "$MODEL.osdi" "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi"
 echo "osdi ${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi" >> "$FNAME"
+
+echo "${NGSPICE_NAME} ${NGSPICE_REPO_COMMIT}" > "${TOOLS}/${NGSPICE_NAME}/SOURCES"

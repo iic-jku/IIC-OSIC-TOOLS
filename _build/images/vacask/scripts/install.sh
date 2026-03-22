@@ -44,5 +44,7 @@ cmake --install . --prefix "${TOOLS}/${VACASK_NAME}" --strip
 # Remove openvaf-r binary since it's already provided by the openvaf image.
 rm -f "${TOOLS}/${VACASK_NAME}/bin/openvaf-r"
 
+echo "${VACASK_NAME} ${VACASK_REPO_COMMIT:-HEAD}" > "${TOOLS}/${VACASK_NAME}/SOURCES"
+
 # Cleanup build artifacts
 cd /tmp && rm -rf "${BOOST_DIR}" "${BOOST_ARCHIVE}" "${VACASK_NAME}"

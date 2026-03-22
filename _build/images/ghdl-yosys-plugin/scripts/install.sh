@@ -11,3 +11,6 @@ git checkout "${GHDL_YOSYS_PLUGIN_REPO_COMMIT}"
 make -j"$(nproc)"
 mkdir -p "${TOOLS}_add/yosys/share/yosys/plugins"
 cp ghdl.so "${TOOLS}_add/yosys/share/yosys/plugins"
+
+mkdir -p "${TOOLS}/${GHDL_YOSYS_PLUGIN_NAME}"
+echo "${GHDL_YOSYS_PLUGIN_NAME} ${GHDL_YOSYS_PLUGIN_REPO_COMMIT}" > "${TOOLS}/${GHDL_YOSYS_PLUGIN_NAME}/SOURCES"

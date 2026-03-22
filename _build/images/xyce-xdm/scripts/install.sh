@@ -16,3 +16,5 @@ PREFIX=${TOOLS}/${XYCE_XDM_NAME}
 cmake -DCMAKE_INSTALL_PREFIX="$PREFIX" ..
 make -j"$(nproc)"
 make install
+
+echo "${XYCE_XDM_NAME} ${XYCE_XDM_REPO_COMMIT}" > "${TOOLS}/${XYCE_XDM_NAME}/SOURCES"

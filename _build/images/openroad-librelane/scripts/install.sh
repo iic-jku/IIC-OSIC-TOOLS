@@ -27,3 +27,5 @@ cmake .. \
     -DBUILD_GUI=ON
 make -j"$(nproc)"
 make install
+
+echo "${OPENROAD_LL_NAME} ${OPENROAD_LL_REPO_COMMIT}" > "${TOOLS}/${OPENROAD_LL_NAME}/SOURCES"

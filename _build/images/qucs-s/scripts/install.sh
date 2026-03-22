@@ -9,3 +9,5 @@ mkdir build && cd build
 cmake ..  -DCMAKE_INSTALL_PREFIX="$TOOLS/$QUCS_S_NAME"
 make -j"$(nproc)"
 make install
+
+echo "${QUCS_S_NAME} ${QUCS_S_REPO_COMMIT}" > "${TOOLS}/${QUCS_S_NAME}/SOURCES"

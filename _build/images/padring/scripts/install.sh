@@ -10,3 +10,5 @@ cd build || exit 1
 ninja
 mkdir -p "${TOOLS}/${PADRING_NAME}/bin"
 cp padring "${TOOLS}/${PADRING_NAME}/bin"
+
+echo "${PADRING_NAME} ${PADRING_REPO_COMMIT}" > "${TOOLS}/${PADRING_NAME}/SOURCES"

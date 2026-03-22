@@ -12,3 +12,6 @@ git submodule update --init --recursive
 make -j"$(nproc)"
 mkdir -p "${TOOLS}_add/yosys/share/yosys/plugins"
 cp build/slang.so "${TOOLS}_add/yosys/share/yosys/plugins"
+
+mkdir -p "${TOOLS}/${SLANG_YOSYS_PLUGIN_NAME}"
+echo "${SLANG_YOSYS_PLUGIN_NAME} ${SLANG_YOSYS_PLUGIN_REPO_COMMIT}" > "${TOOLS}/${SLANG_YOSYS_PLUGIN_NAME}/SOURCES"

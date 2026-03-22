@@ -10,3 +10,5 @@ meson setup build --prefix="${TOOLS}/${GTKWAVE_NAME}"
 mkdir -p build/include
 meson compile -C build
 meson install -C build
+
+echo "${GTKWAVE_NAME} ${GTKWAVE_REPO_COMMIT}" > "${TOOLS}/${GTKWAVE_NAME}/SOURCES"

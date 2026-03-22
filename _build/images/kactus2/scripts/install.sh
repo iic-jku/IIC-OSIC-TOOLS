@@ -9,3 +9,5 @@ sed -i "s|^LOCAL_INSTALL_DIR=\".*\"|LOCAL_INSTALL_DIR=\"${TOOLS}/${KACTUS_NAME}\
 ./configure
 make -j"$(nproc)"
 make install
+
+echo "${KACTUS_NAME} ${KACTUS_REPO_COMMIT}" > "${TOOLS}/${KACTUS_NAME}/SOURCES"

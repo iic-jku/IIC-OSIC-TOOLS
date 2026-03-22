@@ -9,3 +9,5 @@ qmake6 libman.pro
 make -j"$(nproc)"
 mkdir -p "${TOOLS}/${LIBMAN_NAME}/bin"
 mv libman "${TOOLS}/${LIBMAN_NAME}/bin"
+
+echo "${LIBMAN_NAME} ${LIBMAN_REPO_COMMIT}" > "${TOOLS}/${LIBMAN_NAME}/SOURCES"

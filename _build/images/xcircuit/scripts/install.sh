@@ -9,3 +9,5 @@ aclocal && automake && autoconf
 ./configure --prefix="${TOOLS}/${XCIRCUIT_NAME}"
 make -j"$(nproc)"
 make install
+
+echo "${XCIRCUIT_NAME} ${XCIRCUIT_REPO_COMMIT}" > "${TOOLS}/${XCIRCUIT_NAME}/SOURCES"

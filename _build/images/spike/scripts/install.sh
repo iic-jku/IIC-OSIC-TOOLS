@@ -24,3 +24,6 @@ mkdir build && cd build
 ../configure --prefix="${TOOLS}/${SPIKE_NAME}" --host=riscv64-unknown-elf --with-arch=rv64gc_zifencei
 make -j"$(nproc)"
 make install
+
+echo "${SPIKE_NAME} ${SPIKE_REPO_COMMIT}" > "${TOOLS}/${SPIKE_NAME}/SOURCES"
+echo "riscv-pk ${RISCV_PK_REPO_COMMIT}" >> "${TOOLS}/${SPIKE_NAME}/SOURCES"

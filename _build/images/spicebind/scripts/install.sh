@@ -10,3 +10,6 @@ mkdir build && cd build
 cmake -DNGSPICE_ROOT="${TOOLS}/ngspice" ..
 cmake --build . -j"$(nproc)"
 cmake --install . --prefix "${TOOLS}"
+
+mkdir -p "${TOOLS}/${SPICEBIND_NAME}"
+echo "${SPICEBIND_NAME} ${SPICEBIND_REPO_COMMIT}" > "${TOOLS}/${SPICEBIND_NAME}/SOURCES"

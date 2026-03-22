@@ -11,3 +11,5 @@ autoreconf -vif
 
 make -j"$(nproc)"
 make install
+
+echo "${CVC_RV_NAME} ${CVC_RV_REPO_COMMIT}" > "${TOOLS}/${CVC_RV_NAME}/SOURCES"

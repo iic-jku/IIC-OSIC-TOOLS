@@ -55,3 +55,6 @@ make -j"$(nproc)" all
 cp FasterCap "${TOOLS}/${RFTK_NAME}/bin"
 ln -s "${TOOLS}/${RFTK_NAME}/bin/FasterCap" "${TOOLS}/${RFTK_NAME}/bin/fastercap"
 ln -s "${TOOLS}/${RFTK_NAME}/bin/FasterCap" "${TOOLS}/${RFTK_NAME}/bin/fastcap"
+
+echo "fasthenry ${RFTK_FASTHENRY_REPO_COMMIT}" > "${TOOLS}/${RFTK_NAME}/SOURCES"
+echo "fastercap ${RFTK_FASTERCAP_REPO_COMMIT}" >> "${TOOLS}/${RFTK_NAME}/SOURCES"

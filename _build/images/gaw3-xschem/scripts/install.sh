@@ -10,3 +10,5 @@ autoreconf -f -i
 ./configure --prefix="${TOOLS}/${GAW3_XSCHEM_NAME}"
 make -j"$(nproc)"
 make install
+
+echo "${GAW3_XSCHEM_NAME} ${GAW3_XSCHEM_REPO_COMMIT}" > "${TOOLS}/${GAW3_XSCHEM_NAME}/SOURCES"

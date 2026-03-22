@@ -8,3 +8,5 @@ mkdir -p build && cd build
 cmake .. -DCMAKE_INSTALL_PREFIX="${TOOLS}/${PALACE_NAME}" -DCMAKE_BUILD_TYPE=Release
 cmake --build . -- -j "$(nproc)"
 cmake --install .
+
+echo "${PALACE_NAME} ${PALACE_REPO_COMMIT}" > "${TOOLS}/${PALACE_NAME}/SOURCES"

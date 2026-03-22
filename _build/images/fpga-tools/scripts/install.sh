@@ -32,3 +32,6 @@ strip "${TOOLS}/${FPGA_NAME}/bin/nextpnr-ice40"
 # Compress large icestorm files
 # -----------------------------
 gzip -f "${TOOLS}/${FPGA_NAME}"/share/icebox/*
+
+echo "icestorm ${ICESTORM_REPO_COMMIT}" > "${TOOLS}/${FPGA_NAME}/SOURCES"
+echo "nextpnr ${NEXTPNR_REPO_COMMIT}" >> "${TOOLS}/${FPGA_NAME}/SOURCES"
