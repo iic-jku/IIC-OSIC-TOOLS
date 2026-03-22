@@ -56,4 +56,17 @@ find . -name "testing" -print0 | xargs -0 rm -rf
 # Remove *.orig files created during PDK preparation
 find "$PDK_ROOT/$PDK/libs.tech/xschem" -name "*.orig" -delete
 
+# Add missing symlinks from CMOS5L pycell_lib to SG13G2 pycell_lib
+# The CMOS5L PDK uses symlinks to SG13G2 PCell code (e.g. nmos_code.py),
+# but some new dependencies (device_base_code.py, guard_ring_code.py) added
+# upstream in SG13G2 are not yet symlinked in the CMOS5L repo.
+CMOS5L_IHP="$PDK_ROOT/$PDK/libs.tech/klayout/python/sg13cmos5l_pycell_lib/ihp"
+SG13G2_IHP="../../../../../../ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib/ihp"
+for pyfile in device_base_code.py guard_ring_code.py; do
+    if [ ! -e "$CMOS5L_IHP/$pyfile" ] && [ -e "$PDK_ROOT/ihp-sg13g2/libs.tech/klayout/python/sg13g2_pycell_lib/ihp/$pyfile" ]; then
+        ln -s "$SG13G2_IHP/$pyfile" "$CMOS5L_IHP/$pyfile"
+        echo "[INFO] Created missing symlink: $pyfile"
+    fi
+done
+
 echo "[INFO] IHP SG13CMOS5L PDK installation complete."
