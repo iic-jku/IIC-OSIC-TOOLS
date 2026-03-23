@@ -42,7 +42,7 @@
   commit: v0.30.7
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
-  commit: fe636d553c185d9983087de600276ab05e611182
+  commit: a7093fc8d3f1d66e880c3ca3a9a8d1b31f4b7403
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
   commit: 8.3.626
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: c85b9cbc03c98efed3268c4cb9da7e41fc21193c
+  commit: 078de4fddfea98e82f792ae98de180dc10500c17
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046

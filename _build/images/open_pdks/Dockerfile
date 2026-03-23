@@ -10,7 +10,7 @@ FROM ${TOOL_IMAGE_XYCE} AS xyce
 
 FROM ${TOOL_IMAGE_OSIC_MULTITOOL} AS open_pdks
 ARG VACASK_REPO_URL="https://codeberg.org/arpadbuermen/VACASK.git"
-ARG VACASK_REPO_COMMIT="c85b9cbc03c98efed3268c4cb9da7e41fc21193c"
+ARG VACASK_REPO_COMMIT="078de4fddfea98e82f792ae98de180dc10500c17"
 ARG VACASK_NAME="vacask"
 ARG OPEN_PDKS_REPO_URL="https://github.com/RTimothyEdwards/open_pdks.git"
 ARG OPEN_PDKS_REPO_COMMIT="7b70722e33c03fcb5dabcf4d479fb0822d9251c9"
