@@ -96,7 +96,7 @@
   commit: 25.2.0
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: 2026.02.13
+  commit: 2026.03.13
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 38dcff1354a1da272ee087c6752533291e8e8488
+  commit: 57fe59707f02db6010388706a0e6157e26ddbd03
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046
