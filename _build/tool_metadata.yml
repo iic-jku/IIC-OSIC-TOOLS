@@ -42,7 +42,7 @@
   commit: v0.30.7
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
-  commit: a7093fc8d3f1d66e880c3ca3a9a8d1b31f4b7403
+  commit: fd06d0c5d0368c0be8b27935ad132f50a8c4815b
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
   commit: 8.3.626
@@ -51,7 +51,7 @@
   commit: 1.5.316
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 5281b8d8afe33d35810c74c129b01124f1ac30ed
+  commit: fcc1a33f75e885ba3d3fb482c8200d433e5a2785
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-45.2
@@ -69,7 +69,7 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 1fc372e1987fe76e39eb9a94502de5b89bfeb95f
+  commit: 56355d0dc95cf3f06b64dadc47ac4c5c6f524365
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
@@ -111,7 +111,7 @@
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 76ced61f540a55d6d26a23e6dadd02f83ea634ca
+  commit: 204b88deda9bcb7537bc09ae5c320f691e8839ef
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.86
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 078de4fddfea98e82f792ae98de180dc10500c17
+  commit: 4f004676515fd873bd68ff9ce625bc8a877094c6
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046
@@ -141,7 +141,7 @@
   commit: 9d4949228bc2c43c07941b6eda012924843e67ca
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 8c47d3fc2ccd087f81fe05172697ece9fba7ae3d
+  commit: 69337b26522ac99f287203b83d4a5b119edc8650
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
