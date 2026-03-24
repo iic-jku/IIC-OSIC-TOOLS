@@ -4,7 +4,7 @@ cd /tmp || exit 1
 
 # OpenROAD needs spdlog 1.8.1, so we update it here
 SPDLOG_PREFIX="/usr/local"
-SPDLOG_VERSION=1.8.1
+SPDLOG_VERSION=1.15.1
 echo "[INFO] Installing SPDLOG version $SPDLOG_VERSION into $SPDLOG_PREFIX"
 cd /tmp || exit 1
 git clone --depth=1 -b "v${SPDLOG_VERSION}" https://github.com/gabime/spdlog.git
@@ -26,7 +26,6 @@ cmake .. \
     -DCMAKE_INSTALL_PREFIX="${TOOLS}/${OPENROAD_LIBRELANE_NAME}" \
     -DUSE_SYSTEM_BOOST=ON \
     -DENABLE_TESTS=OFF \
-    -DGTest_ROOT=/usr/local \
     -DBUILD_GUI=ON
 make -j"$(nproc)"
 make install
