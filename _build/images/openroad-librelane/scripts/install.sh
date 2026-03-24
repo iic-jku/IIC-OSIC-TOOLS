@@ -14,13 +14,13 @@ cmake --build build -j "$(nproc)" --target install
 
 # --------------------------------------------------------------
 
-git clone --filter=blob:none "${OPENROAD_LL_REPO_URL}" "${OPENROAD_LL_NAME}"
-cd "${OPENROAD_LL_NAME}" || exit 1
-git checkout "${OPENROAD_LL_REPO_COMMIT}"
+git clone --filter=blob:none "${OPENROAD_LIBRELANE_REPO_URL}" "${OPENROAD_LIBRELANE_NAME}"
+cd "${OPENROAD_LIBRELANE_NAME}" || exit 1
+git checkout "${OPENROAD_LIBRELANE_REPO_COMMIT}"
 git submodule update --init --recursive
 mkdir -p build && cd build
 cmake .. \
-    -DCMAKE_INSTALL_PREFIX="${TOOLS}/${OPENROAD_LL_NAME}" \
+    -DCMAKE_INSTALL_PREFIX="${TOOLS}/${OPENROAD_LIBRELANE_NAME}" \
     -DUSE_SYSTEM_BOOST=ON \
     -DENABLE_TESTS=OFF \
     -DGTest_ROOT=/usr/local \
@@ -28,4 +28,4 @@ cmake .. \
 make -j"$(nproc)"
 make install
 
-echo "${OPENROAD_LL_NAME} ${OPENROAD_LL_REPO_COMMIT}" > "${TOOLS}/${OPENROAD_LL_NAME}/SOURCES"
+echo "${OPENROAD_LIBRELANE_NAME} ${OPENROAD_LIBRELANE_REPO_COMMIT}" > "${TOOLS}/${OPENROAD_LIBRELANE_NAME}/SOURCES"
