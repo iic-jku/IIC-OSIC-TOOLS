@@ -28,7 +28,7 @@ pip3 install $PIP_FLAGS \
 	klayout-pex==0.3.9 \
     klayout-vector-file-export-cli==0.4 \
 	lctime==0.0.26 \
-	librelane==2.4.13 \
+	librelane==3.0.0rc1 \
 	najaeda==0.5.2 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \

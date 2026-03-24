@@ -36,7 +36,7 @@
   commit: v3.14.0
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: ae2acd4aa825fbbffdc4f8e6591b720a4a0a9e12
+  commit: 4bbc293c4450bc559849bb675fed62cd136715d1
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.7
@@ -69,10 +69,10 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 56355d0dc95cf3f06b64dadc47ac4c5c6f524365
+  commit: 5602640c3dbf0a90626b1c9460ca4f8f1d0d19e8
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
+  commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
 - name: openvaf
   repo: https://github.com/arpadbuermen/OpenVAF.git
   commit: 2e066436d985b05cf8e6563e936daf9ab875775a
