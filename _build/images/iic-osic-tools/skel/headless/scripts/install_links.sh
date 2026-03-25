@@ -18,6 +18,9 @@ done
 # Create symlink for Xyce (lowercase)
 ln -s "${TOOLS}"/bin/Xyce "${TOOLS}"/bin/xyce
 
+# Create symlink for GHDL Yosys plugin
+ln -s "${TOOLS}/ghdl-yosys-plugin/ghdl.so" "${TOOLS}/yosys/share/yosys/plugins/ghdl.so"
+
 # Install wrapper for Yosys so that modules are loaded automatically
 # see https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/43
 rm -f "${TOOLS}"/bin/yosys
