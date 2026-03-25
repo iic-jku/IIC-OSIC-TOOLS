@@ -45,7 +45,7 @@
   commit: fd06d0c5d0368c0be8b27935ad132f50a8c4815b
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.627
+  commit: 7fd2ef8100bddf9433b6d91b5891d0a07a957282
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.316
@@ -69,7 +69,7 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 7a948022669c1a9c5b6a98ad60bdd3aa77c04cd1
+  commit: 543382592ebe26affe2331958d5c3fc09c91395e
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -102,10 +102,10 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 98e1341275dfa49bb8f9c47b93cbecfbc11b18e8
+  commit: f7b9bb10244a2333585adec0f330455592328480
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 8c82a4b7c4dff83d1d446610d8ee582aa094fd9d
+  commit: 4e53d772996184b07e9bfe784060f96e6cb0a267
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 8baea02c9954e5798139be76f0479233cf244c12
+  commit: ef7648194f2919354bc5247679f61fe9ee3dd683
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046
