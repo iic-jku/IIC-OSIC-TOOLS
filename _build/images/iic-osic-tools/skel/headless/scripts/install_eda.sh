@@ -45,7 +45,7 @@ if [ "$(uname -m)" = "x86_64" ]; then
 	echo "[INFO] Install x86_64-only EDA packages via PIP"
 	pip3 install $PIP_FLAGS \
 		gds2palace==0.1.19 \
-		gmsh==4.15.1 \
+		gmsh==4.15.2 \
 		setupEM==0.1.22
 fi
 
