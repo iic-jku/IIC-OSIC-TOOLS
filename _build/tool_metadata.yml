@@ -1,6 +1,6 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
-  commit: 7840c5304c1fe8badc5ccfea02ba4ded42316ec6
+  commit: 59f72bcfdd631e563a56ff768cb098c6990845f3
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -69,7 +69,7 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 543382592ebe26affe2331958d5c3fc09c91395e
+  commit: 8b95fedee8f821345eb96ecc398f66678919bf9f
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: b20d3ba428b15e87bd9370c9ec30ea974e3649dd
+  commit: 12d88554b646a28c5ef976fa82f9e32482c75bdd
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: f7b9bb10244a2333585adec0f330455592328480
+  commit: b92cb5b014321cc917a5a39efe77c4c3f24cda8e
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 4e53d772996184b07e9bfe784060f96e6cb0a267
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 88595fcd8700d9e13bdbc54f04708792776eb59f
+  commit: 02fa9ebdeff085a2045728b08ffdf2ec43b96dbc
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046

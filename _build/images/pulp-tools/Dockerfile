@@ -5,7 +5,7 @@ ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS pulp-tools
 ARG PULP_NAME="pulp"
 ARG BENDER_REPO_URL="https://github.com/pulp-platform/bender.git"
-ARG BENDER_REPO_COMMIT="7840c5304c1fe8badc5ccfea02ba4ded42316ec6"
+ARG BENDER_REPO_COMMIT="59f72bcfdd631e563a56ff768cb098c6990845f3"
 ARG SV2V_REPO_URL="https://github.com/zachjs/sv2v.git"
 ARG SV2V_REPO_COMMIT="d3812098d8feb2d04cc4cb55e034a1f2338db02f"
 ARG VERIBLE_VERSION="v0.0-3724-gdec56671"
