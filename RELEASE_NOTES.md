@@ -11,7 +11,10 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] VACASK configuration (`.vacaskrc`) and setup for IHP SG13G2.
 * [Adding] `svck` customizable SystemVerilog linter (with `verible`).
 * [Adding] VNC browser access info line with auto-login URL to `start_vnc.sh` and `start_vnc.bat`.
+* [Update] `slang-yosys-plugin` and `ghdl-yosys` plugins are moved into `/foss/tools`.
+* [Update] LibreLane to 3.0.0.
 * [Update] various tool versions.
+* [Fix] VACASK OSDI models using AVX-512 instructions (restrict to x86-64-v2).
 * [Fix] non-root/rootless setup: add Podman detection and `XDG_RUNTIME_DIR` fallback in `start_x.sh`.
 * [Fix] `gf180mcuD` transistor OP annotation in `xschem` symbol files.
 * [Fix] LibreLane `mag_gds.tcl` patched during install.
