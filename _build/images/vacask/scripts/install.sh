@@ -2,6 +2,16 @@
 set -euo pipefail
 cd /tmp || exit 1
 
+# On x86_64, restrict to x86-64-v2 to avoid AVX-512 instructions that are not
+# available on most consumer CPUs (build machines may support AVX-512).
+if [ "$(uname -m)" = "x86_64" ]; then
+    MARCH_FLAGS="-march=x86-64-v2"
+    OPENVAF_OPTIONS="--target-cpu x86-64-v2"
+else
+    MARCH_FLAGS=""
+    OPENVAF_OPTIONS=""
+fi
+
 # Install custom libboost since stock libboost version is too old
 BOOST_VERSION="1.88.0"
 BOOST_DIR="boost_${BOOST_VERSION//./_}"
@@ -12,7 +22,8 @@ tar xf "${BOOST_ARCHIVE}"
 cd "${BOOST_DIR}/tools/build"
 ./bootstrap.sh gcc
 cd ../..
-tools/build/b2 -j "$(nproc)" --with-filesystem --with-process --with-asio link=static toolset=gcc
+tools/build/b2 -j "$(nproc)" --with-filesystem --with-process --with-asio link=static toolset=gcc \
+    cxxflags="${MARCH_FLAGS}" cflags="${MARCH_FLAGS}"
 cd ..
 
 if [ -z "${VACASK_REPO_COMMIT:-}" ]; then
@@ -37,7 +48,13 @@ else
 fi
 
 mkdir -p build && cd build
-cmake -G Ninja -S .. -B . -DCMAKE_BUILD_TYPE=Release -DOPENVAF_DIR="${TOOLS}/openvaf/bin" -DBoost_ROOT="/tmp/${BOOST_DIR}"
+cmake -G Ninja -S .. -B . \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_FLAGS="${MARCH_FLAGS}" \
+    -DCMAKE_C_FLAGS="${MARCH_FLAGS}" \
+    -DOPENVAF_OPTIONS="${OPENVAF_OPTIONS}" \
+    -DOPENVAF_DIR="${TOOLS}/openvaf/bin" \
+    -DBoost_ROOT="/tmp/${BOOST_DIR}"
 cmake --build . -j "$(nproc)"
 cmake --install . --prefix "${TOOLS}/${VACASK_NAME}" --strip
 
