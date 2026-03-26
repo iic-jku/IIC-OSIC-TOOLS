@@ -6,35 +6,11 @@ cd /tmp || exit 1
 # available on most consumer CPUs (build machines may support AVX-512).
 if [ "$(uname -m)" = "x86_64" ]; then
     MARCH_FLAGS="-march=x86-64-v2"
-    OPENVAF_CPU="x86-64-v2"
+    OPENVAF_OPTIONS="--target-cpu x86-64-v2"
 else
     MARCH_FLAGS=""
-    OPENVAF_CPU=""
+    OPENVAF_OPTIONS=""
 fi
-
-# Create an openvaf wrapper that restricts the LLVM code-generation target CPU
-# so that compiled OSDI models do not contain AVX-512 instructions.
-OPENVAF_REAL="${TOOLS}/openvaf/bin/openvaf-r"
-OPENVAF_WRAPPER_DIR="/tmp/openvaf-wrapper"
-mkdir -p "${OPENVAF_WRAPPER_DIR}"
-if [ -n "${OPENVAF_CPU}" ]; then
-    cat > "${OPENVAF_WRAPPER_DIR}/openvaf-r" << EOF
-#!/bin/bash
-# Wrapper: inject --target_cpu if not already supplied by the caller.
-if ! printf '%s\n' "\$@" | grep -qe '^--target_cpu'; then
-    exec "${OPENVAF_REAL}" --target_cpu ${OPENVAF_CPU} "\$@"
-else
-    exec "${OPENVAF_REAL}" "\$@"
-fi
-EOF
-else
-    cat > "${OPENVAF_WRAPPER_DIR}/openvaf-r" << EOF
-#!/bin/bash
-exec "${OPENVAF_REAL}" "\$@"
-EOF
-fi
-chmod +x "${OPENVAF_WRAPPER_DIR}/openvaf-r"
-ln -sf "${OPENVAF_WRAPPER_DIR}/openvaf-r" "${OPENVAF_WRAPPER_DIR}/openvaf"
 
 # Install custom libboost since stock libboost version is too old
 curl -LO https://archives.boost.io/release/1.88.0/source/boost_1_88_0.tar.gz
@@ -55,7 +31,8 @@ cmake -G Ninja -S .. -B . \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_CXX_FLAGS="${MARCH_FLAGS}" \
     -DCMAKE_C_FLAGS="${MARCH_FLAGS}" \
-    -DOPENVAF_DIR="${OPENVAF_WRAPPER_DIR}" \
+    -DOPENVAF_OPTIONS="${OPENVAF_OPTIONS}" \
+    -DOPENVAF_DIR="${TOOLS}/openvaf/bin" \
     -DBoost_ROOT=/tmp/boost_1_88_0/stage
 cmake --build . -j "$(nproc)"
 cmake --install . --prefix "${TOOLS}/${VACASK_NAME}" --strip
