@@ -18,9 +18,6 @@ git clone --filter=blob:none "${OPENROAD_LIBRELANE_REPO_URL}" "${OPENROAD_LIBREL
 cd "${OPENROAD_LIBRELANE_NAME}" || exit 1
 git checkout "${OPENROAD_LIBRELANE_REPO_COMMIT}"
 git submodule update --init --recursive
-#FIXME We apply this patch to allow control of analog routes.
-#FIXME https://github.com/FPGA-Research/heichips25-tapeout/blob/main/disable_auto_taper.patch
-sed -i 's/bool AUTO_TAPER_NDR_NETS = true;/bool AUTO_TAPER_NDR_NETS = false;/' src/drt/src/global.h
 mkdir -p build && cd build
 cmake .. \
     -DCMAKE_INSTALL_PREFIX="${TOOLS}/${OPENROAD_LIBRELANE_NAME}" \
