@@ -6,7 +6,7 @@ cd /tmp || exit 1
 # available on most consumer CPUs (build machines may support AVX-512).
 if [ "$(uname -m)" = "x86_64" ]; then
     MARCH_FLAGS="-march=x86-64-v2"
-    OPENVAF_OPTIONS="--target-cpu x86-64-v2"
+    OPENVAF_OPTIONS="--target_cpu x86-64-v2"
 else
     MARCH_FLAGS=""
     OPENVAF_OPTIONS=""
