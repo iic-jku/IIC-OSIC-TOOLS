@@ -17,7 +17,7 @@ CONTAINER_NAME=iic-osic-tools_test${RAND}
 CMD=_run_tests_${RAND}.sh
 WORKDIR=/foss/designs
 
-mkdir -p "runs/${RAND}"
+mkdir -p "/tmp/regression/${RAND}"
 
 # Check if newer image is available and pull if needed
 docker pull --quiet "$FULL_TAG" > /dev/null
