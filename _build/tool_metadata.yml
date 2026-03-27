@@ -51,7 +51,7 @@
   commit: 1.5.316
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: a7c3bfe6e65abadb6ac094a28c04dbc67cfce60c
+  commit: 77ccf518d5201c21bb687e8d08cadb5cbce1382b
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-45.2
@@ -69,7 +69,7 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 8b95fedee8f821345eb96ecc398f66678919bf9f
+  commit: af6324a7d9be6ffae6c0a1c3bb128da113aedad8
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: b92cb5b014321cc917a5a39efe77c4c3f24cda8e
+  commit: a0935bd7405d1bb9972769e15c4b3c9cb2a5fa9a
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 4e53d772996184b07e9bfe784060f96e6cb0a267
