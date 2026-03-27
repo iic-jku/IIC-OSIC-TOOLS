@@ -45,7 +45,7 @@
   commit: fd06d0c5d0368c0be8b27935ad132f50a8c4815b
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 7fd2ef8100bddf9433b6d91b5891d0a07a957282
+  commit: 8.3.629
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.316
