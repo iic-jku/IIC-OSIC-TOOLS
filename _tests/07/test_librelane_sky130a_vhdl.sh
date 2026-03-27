@@ -23,7 +23,7 @@ if command -v librelane >/dev/null 2>&1; then
     source sak-pdk-script.sh sky130A sky130_fd_sc_hd > /dev/null
     # Run the LibreLane smoke test
     mkdir -p "$WORKDIR"
-    cp "$DIR"/* "$WORKDIR"
+    find "$DIR" -maxdepth 1 -type f -exec cp {} "$WORKDIR" \;
     librelane --flow VHDLClassic "$WORKDIR"/counter.json > "$LOG"
     # Check if there is an error in the log
     if grep -q "ERROR" "$LOG"; then

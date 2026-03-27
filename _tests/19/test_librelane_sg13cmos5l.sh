@@ -19,7 +19,7 @@ if command -v librelane >/dev/null 2>&1; then
     source sak-pdk-script.sh ihp-sg13cmos5l sg13cmos5l_stdcell > /dev/null
     # Run the LibreLane smoke test
     mkdir -p "$WORKDIR"
-    cp "$DIR"/* "$WORKDIR"
+    find "$DIR" -maxdepth 1 -type f -exec cp {} "$WORKDIR" \;
     librelane --manual-pdk "$WORKDIR/counter.json" > "$LOG"
     # Check if there is an error in the log
     if grep -q "ERROR" "$LOG"; then
