@@ -43,6 +43,7 @@ ARG TOOL_IMAGE_SPIKE="registry.iic.jku.at:5000/iic-osic-tools:tool-spike-latest"
 ARG TOOL_IMAGE_SURELOG="registry.iic.jku.at:5000/iic-osic-tools:tool-surelog-latest"
 ARG TOOL_IMAGE_SURFER="registry.iic.jku.at:5000/iic-osic-tools:tool-surfer-latest"
 ARG TOOL_IMAGE_SVCK="registry.iic.jku.at:5000/iic-osic-tools:tool-svck-latest"
+ARG TOOL_IMAGE_UV="registry.iic.jku.at:5000/iic-osic-tools:tool-uv-latest"
 ARG TOOL_IMAGE_VACASK="registry.iic.jku.at:5000/iic-osic-tools:tool-vacask-latest"
 ARG TOOL_IMAGE_VERIBLE="registry.iic.jku.at:5000/iic-osic-tools:tool-verible-latest"
 ARG TOOL_IMAGE_VERILATOR="registry.iic.jku.at:5000/iic-osic-tools:tool-verilator-latest"
@@ -93,6 +94,7 @@ FROM ${TOOL_IMAGE_SPIKE} AS spike
 FROM ${TOOL_IMAGE_SURELOG} AS surelog
 FROM ${TOOL_IMAGE_SURFER} AS surfer
 FROM ${TOOL_IMAGE_SVCK} AS svck
+FROM ${TOOL_IMAGE_UV} AS uv
 FROM ${TOOL_IMAGE_VACASK} AS vacask
 FROM ${TOOL_IMAGE_VERIBLE} AS verible
 FROM ${TOOL_IMAGE_VERILATOR} AS verilator
@@ -152,6 +154,7 @@ COPY --link --from=spike                        ${TOOLS}/spike                  
 COPY --link --from=surelog                      ${TOOLS}/surelog                ${TOOLS}/surelog/
 COPY --link --from=surfer                       ${TOOLS}/surfer                 ${TOOLS}/surfer/
 COPY --link --from=svck                         ${TOOLS}/svck                   ${TOOLS}/svck/
+COPY --link --from=uv                           ${TOOLS}/uv                     ${TOOLS}/uv/
 COPY --link --from=vacask                       ${TOOLS}/vacask                 ${TOOLS}/vacask/
 COPY --link --from=verible                      ${TOOLS}/verible                ${TOOLS}/verible/
 COPY --link --from=verilator                    ${TOOLS}/verilator              ${TOOLS}/verilator/

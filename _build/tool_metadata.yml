@@ -127,6 +127,9 @@
 - name: trilinos
   repo: https://github.com/trilinos/Trilinos.git
   commit: trilinos-release-12-12-1
+- name: uv
+  repo: https://github.com/astral-sh/uv.git
+  commit: 0.6.6
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
   commit: 02fa9ebdeff085a2045728b08ffdf2ec43b96dbc
