@@ -10,7 +10,7 @@ fi
 
 EXTRACTED_DIR="uv-${ARCH}-unknown-linux-gnu"
 FILE="${EXTRACTED_DIR}.tar.gz"
-URL="https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/${FILE}"
+URL="${UV_REPO_URL}/releases/download/${UV_VERSION}/${FILE}"
 
 wget --no-verbose "${URL}" || { echo "[ERROR] Failed to download uv ${UV_VERSION}"; exit 1; }
 tar xfz "${FILE}"
