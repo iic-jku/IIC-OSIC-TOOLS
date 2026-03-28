@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 5da7f10fec30a97069a1dd981e1d5a28122ed364
+  commit: 42abc07e26c578b15afeb48b3040845512cb5ab7
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 9aba9af9d285ca3cff602feeef19a4655279de6f
@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 6767a079560f4528f4beeae82fb33361eb4bc92a
+  commit: 9b0d46b4bf65242037e8684a1d558a6dcf1869fd
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.0
@@ -69,7 +69,7 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: af6324a7d9be6ffae6c0a1c3bb128da113aedad8
+  commit: 8c43164140be5eb835953430c80be157e147cf37
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -96,7 +96,7 @@
   commit: 25.2.0
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: 2026.03.13
+  commit: 2026.03.28
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
@@ -120,7 +120,7 @@
   commit: v0.6.0
 - name: sv2v
   repo: https://github.com/zachjs/sv2v.git
-  commit: d3812098d8feb2d04cc4cb55e034a1f2338db02f
+  commit: 6662fa5da71f87797598060f17728b284b99a9fc
 - name: svck
   repo: https://github.com/AsFigo/svck.git
   commit: 997b49c20705ca3d99e8c0ebe57d6a7840513bb4
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 02fa9ebdeff085a2045728b08ffdf2ec43b96dbc
+  commit: 4391b105eacdca6c966d29c3539418d0881ddfbb
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046
@@ -141,7 +141,7 @@
   commit: 9d4949228bc2c43c07941b6eda012924843e67ca
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: d50a3fc962d20f5a932f3063e1aebb104d2bdef1
+  commit: 848472b018b457693914cdeccc710e6cba24fb83
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
