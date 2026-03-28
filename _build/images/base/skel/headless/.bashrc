@@ -77,7 +77,7 @@ _add_resolution 3440 1440
 _add_resolution 3840 2160
 
 # shellcheck disable=SC2086
-LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${TOOLS}/openems/lib:${TOOLS}/kactus2:${TOOLS}/gtkwave/lib/$(uname -m)-linux-gnu" && export LD_LIBRARY_PATH
+LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${TOOLS}/openems/lib:${TOOLS}/kactus2:${TOOLS}/gtkwave/lib/$(uname -m)-linux-gnu:${TOOLS}/kepler-formal/lib" && export LD_LIBRARY_PATH
 export EDITOR="gedit"
 export PYTHONPYCACHEPREFIX="/tmp/pycache"
 export KLAYOUT_HOME="/headless/.klayout"
