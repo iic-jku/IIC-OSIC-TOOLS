@@ -12,6 +12,7 @@
  <current-ruler-template>9</current-ruler-template>
  <hide-empty-layers>true</hide-empty-layers>
  <l2ndb-marker-line-width>3</l2ndb-marker-line-width>
+ <l2ndb-marker-color>#f3ff80</l2ndb-marker-color>
  <layers-always-show-ld>true</layers-always-show-ld>
  <layers-always-show-source>true</layers-always-show-source>
  <rdb-marker-line-width>3</rdb-marker-line-width>
