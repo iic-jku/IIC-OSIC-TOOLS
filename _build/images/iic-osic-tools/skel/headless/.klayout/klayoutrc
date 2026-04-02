@@ -4,7 +4,7 @@
  <grid-micron>0.005</grid-micron>
  <edit-snap-objects-to-grid>true</edit-snap-objects-to-grid>
  <edit-snap-to-objects>true</edit-snap-to-objects>
- <edit-connect-angle-mode>diagonal</edit-connect-angle-mode>
+ <edit-connect-angle-mode>ortho</edit-connect-angle-mode>
  <edit-move-angle-mode>diagonal</edit-move-angle-mode>
  <edit-path-width>0.2</edit-path-width>
  <edit-top-level-selection>true</edit-top-level-selection>
