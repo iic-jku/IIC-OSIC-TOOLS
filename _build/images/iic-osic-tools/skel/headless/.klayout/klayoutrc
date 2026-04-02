@@ -15,6 +15,7 @@
  <l2ndb-marker-color>#f3ff80</l2ndb-marker-color>
  <layers-always-show-ld>true</layers-always-show-ld>
  <layers-always-show-source>true</layers-always-show-source>
+ <macro-editor-indent>4</macro-editor-indent>
  <nt-marker-color>#f3ff80</nt-marker-color>
  <nt-marker-intensity>90</nt-marker-intensity>
  <nt-marker-line-width>3</nt-marker-line-width>
