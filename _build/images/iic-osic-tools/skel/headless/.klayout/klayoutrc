@@ -10,6 +10,7 @@
  <edit-top-level-selection>true</edit-top-level-selection>
  <crosshair-cursor-enabled>true</crosshair-cursor-enabled>
  <current-ruler-template>9</current-ruler-template>
+ <grid-micron>0.01</grid-micron>
  <hide-empty-layers>true</hide-empty-layers>
  <l2ndb-marker-line-width>3</l2ndb-marker-line-width>
  <l2ndb-marker-color>#f3ff80</l2ndb-marker-color>
