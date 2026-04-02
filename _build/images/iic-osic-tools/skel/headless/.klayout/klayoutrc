@@ -68,7 +68,7 @@ file_menu.save_as_hierarchical_layout:'Ctrl+Shift+S';
 file_menu.reload:none;
 file_menu.reload_cell_libraries:'Ctrl+Shift+R';
 file_menu.manage_cell_library_map:'Ctrl+Shift+M';
-view_menu.crosshair_cursor:'Shift+C';
+view_menu.crosshair_cursor:none;
 zoom_menu.ascend:'Ctrl+E';
 zoom_menu.descend:'X';
 zoom_menu.descend_into:E;
