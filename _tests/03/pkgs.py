@@ -9,6 +9,7 @@ import cocotb
 import edalize
 import fusesoc
 import gdsfactory
+import gdsfill
 import gdspy
 import hdl21
 import najaeda

@@ -149,6 +149,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [gds2palace](https://github.com/VolkerMuehlhaus/setupEM)/`setupEM` setup tools for `palace` EM simulation
 - [gds3d](https://github.com/trilomix/GDS3D) a 3D viewer for GDS files
 - [gdsfactory](https://github.com/gdsfactory/gdsfactory) Python library for GDS generation
+- [gdsfill](https://github.com/aesc-silicon/gdsfill) Python tool for inserting dummy metal fill into semiconductor layouts
 - [gdspy](https://github.com/heitzmann/gdspy) Python module for the creation and manipulation of GDS files
 - [gf180mcu](https://github.com/google/gf180mcu-pdk) GlobalFoundries 180 nm CMOS PDK
 - [ghdl-yosys-plugin](https://github.com/ghdl/ghdl-yosys-plugin) VHDL-plugin for `yosys`
