@@ -61,7 +61,7 @@ edit_menu.selection_menu.sel_move_to:']';
 edit_menu.selection_menu.sel_rot_ccw:'Ctrl+Shift+R';
 edit_menu.selection_menu.sel_rot_cw:'Shift+R';
 edit_menu.selection_menu.union:'Shift+M';
-edit_menu.selection_menu.difference:'Shift+C';
+edit_menu.selection_menu.difference:none;
 edit_menu.selection_menu.intersection:'Shift+I';
 edit_menu.undo:U;
 file_menu.new_layout:none;
