@@ -11,6 +11,7 @@ apt-get -y install \
 	autotools-dev \
 	libasound2-dev \
 	libblas-dev \
+	libboost-dev \
 	libboost-filesystem-dev \
 	libboost-iostreams-dev \
 	libboost-program-options-dev \
