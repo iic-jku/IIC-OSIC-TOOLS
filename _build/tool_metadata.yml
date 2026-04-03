@@ -1,6 +1,6 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
-  commit: 59f72bcfdd631e563a56ff768cb098c6990845f3
+  commit: 747da48bbf3063ae1901486ce36257b91c557e5c
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -15,13 +15,13 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 42abc07e26c578b15afeb48b3040845512cb5ab7
+  commit: 28a4bebdc189b119f5199bee03277e1897602e71
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 9aba9af9d285ca3cff602feeef19a4655279de6f
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
-  commit: 1dbe6d02196f5badd13a25adb02a19a11e7dd2eb
+  commit: 8ba24abd83982c741394608325afc848563acea1
 - name: icestorm
   repo: https://github.com/YosysHQ/icestorm.git
   commit: f31c39cc2eadd0ab7f29f34becba1348ae9f8721
@@ -45,16 +45,16 @@
   commit: fd06d0c5d0368c0be8b27935ad132f50a8c4815b
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.629
+  commit: 8.3.631
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: 1.5.316
+  commit: 1.5.317
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 77ccf518d5201c21bb687e8d08cadb5cbce1382b
+  commit: 41032f9d772fed48e3c35a4feaf11079bc6342b4
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
-  commit: ngspice-45.2
+  commit: ngspice-46
 - name: ngspyce
   repo: https://github.com/ignamv/ngspyce.git
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
@@ -69,7 +69,7 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: af6324a7d9be6ffae6c0a1c3bb128da113aedad8
+  commit: df79404cd806cc435b3c3b53678ebf2441c31313
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 12d88554b646a28c5ef976fa82f9e32482c75bdd
+  commit: 5fb438c7e14dc1f824cc782e9b295e5ff0ef188b
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: a0935bd7405d1bb9972769e15c4b3c9cb2a5fa9a
+  commit: eac03d0d6f3ff75231a078ea8b262104fa8e171a
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 4e53d772996184b07e9bfe784060f96e6cb0a267
@@ -111,7 +111,7 @@
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 204b88deda9bcb7537bc09ae5c320f691e8839ef
+  commit: 5eeeb91efa966936ef7b980f5e8dd00ffbe70786
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.86
@@ -129,10 +129,10 @@
   commit: trilinos-release-12-12-1
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.6.6
+  commit: 0.11.3
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 4391b105eacdca6c966d29c3539418d0881ddfbb
+  commit: 210e97eb626787fe84420a6e5280c884219235ad
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046
@@ -144,7 +144,7 @@
   commit: 9d4949228bc2c43c07941b6eda012924843e67ca
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 848472b018b457693914cdeccc710e6cba24fb83
+  commit: 4d4152a8b794e6dda7028a9f4ad17c1c8bb2740d
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0

@@ -19,18 +19,18 @@ pip3 install $PIP_FLAGS \
 	ciel==2.4.0 \
 	cocotb==2.0.1 \
 	cocotbext-ams==0.1.0 \
-	edalize==0.6.5 \
+	edalize==0.6.6 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.5 \
 	gdsfactory==9.39.3 \
 	gdsfill==0.1.5 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.3.9 \
-	klayout-vector-file-export-cli==0.4 \
+	klayout-pex==0.3.10 \
+	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
-	librelane==3.0.1 \
-	najaeda==0.5.2 \
+	librelane==3.0.2 \
+	najaeda==0.5.4 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
 	pyuvm==4.0.1 \
