@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
  <default-grids>1.0,0.1,0.01,0.005</default-grids>
- <grid-micron>0.005</grid-micron>
  <edit-snap-objects-to-grid>true</edit-snap-objects-to-grid>
  <edit-snap-to-objects>true</edit-snap-to-objects>
  <edit-connect-angle-mode>ortho</edit-connect-angle-mode>
