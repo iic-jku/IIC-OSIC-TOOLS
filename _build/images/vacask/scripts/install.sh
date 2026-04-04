@@ -11,20 +11,6 @@ else
 fi
 OPENVAF_OPTIONS="--target_cpu generic"
 
-# Install custom libboost since stock libboost version is too old
-BOOST_VERSION="1.88.0"
-BOOST_DIR="boost_${BOOST_VERSION//./_}"
-BOOST_ARCHIVE="${BOOST_DIR}.tar.gz"
-
-wget -q "https://archives.boost.io/release/${BOOST_VERSION}/source/${BOOST_ARCHIVE}"
-tar xf "${BOOST_ARCHIVE}"
-cd "${BOOST_DIR}/tools/build"
-./bootstrap.sh gcc
-cd ../..
-tools/build/b2 -j "$(nproc)" --with-filesystem --with-process --with-asio link=static toolset=gcc \
-    cxxflags="${MARCH_FLAGS}" cflags="${MARCH_FLAGS}"
-cd ..
-
 if [ -z "${VACASK_REPO_COMMIT:-}" ]; then
 	# No specific ref -> shallow clone the default branch for speed
 	git clone --filter=blob:none --depth 1 "${VACASK_REPO_URL}" "${VACASK_NAME}"
@@ -52,8 +38,7 @@ cmake -G Ninja -S .. -B . \
     -DCMAKE_CXX_FLAGS="${MARCH_FLAGS}" \
     -DCMAKE_C_FLAGS="${MARCH_FLAGS}" \
     -DOPENVAF_OPTIONS="${OPENVAF_OPTIONS}" \
-    -DOPENVAF_DIR="${TOOLS}/openvaf/bin" \
-    -DBoost_ROOT="/tmp/${BOOST_DIR}"
+    -DOPENVAF_DIR="${TOOLS}/openvaf/bin"
 cmake --build . -j "$(nproc)"
 cmake --install . --prefix "${TOOLS}/${VACASK_NAME}" --strip
 
@@ -63,4 +48,4 @@ rm -f "${TOOLS}/${VACASK_NAME}/bin/openvaf-r"
 echo "${VACASK_NAME} ${VACASK_REPO_COMMIT:-HEAD}" > "${TOOLS}/${VACASK_NAME}/SOURCES"
 
 # Cleanup build artifacts
-cd /tmp && rm -rf "${BOOST_DIR}" "${BOOST_ARCHIVE}" "${VACASK_NAME}"
+cd /tmp && rm -rf "${VACASK_NAME}"

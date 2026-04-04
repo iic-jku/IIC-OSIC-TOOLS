@@ -11,15 +11,6 @@ apt-get -y install \
 	autotools-dev \
 	libasound2-dev \
 	libblas-dev \
-	libboost-dev \
-	libboost-filesystem-dev \
-	libboost-iostreams-dev \
-	libboost-program-options-dev \
-	libboost-python-dev \
-	libboost-serialization-dev \
-	libboost-system-dev \
-	libboost-test-dev \
-	libboost-thread-dev \
 	libbz2-dev \
 	libc6-dev \
 	libcairo2-dev \
