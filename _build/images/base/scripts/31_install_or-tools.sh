@@ -9,6 +9,7 @@ wget --no-verbose "https://github.com/google/or-tools/archive/refs/tags/v$ORTOOL
 tar -xf "v$ORTOOLS_VERSION.tar.gz"
 cd "or-tools-$ORTOOLS_VERSION" || exit 1
 cmake -B build . \
+    -DCMAKE_INSTALL_PREFIX=/opt/or-tools \
     -DBUILD_DEPS:BOOL=ON \
     -DBUILD_EXAMPLES:BOOL=OFF \
     -DBUILD_SAMPLES:BOOL=OFF \
