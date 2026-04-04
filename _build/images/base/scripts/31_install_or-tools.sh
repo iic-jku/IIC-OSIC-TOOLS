@@ -18,10 +18,13 @@ cmake -B build . \
     -DCMAKE_C_FLAGS="-w"
 cmake --build build --config Release -j "$(nproc)" --target install
 
-# Remove Boost cmake configs installed by OR-Tools (static-only Boost 1.87)
-# to prevent conflicts with the system Boost used by OpenROAD
-echo "[INFO] Removing OR-Tools Boost cmake configs to avoid version conflicts"
+# Remove Boost artifacts installed by OR-Tools (static-only Boost 1.87)
+# to prevent conflicts with the system Boost 1.88.
+# OR-Tools statically links Boost, so these are not needed at build/runtime.
+echo "[INFO] Removing OR-Tools Boost artifacts to avoid version conflicts"
 rm -rf /opt/or-tools/lib/cmake/Boost-* /opt/or-tools/lib/cmake/boost_*
+rm -rf /opt/or-tools/include/boost
+rm -rf /opt/or-tools/lib/libboost_*
 
 echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*
