@@ -14,6 +14,7 @@ cmake \
     -D LEMON_ENABLE_GLPK=NO \
     -D LEMON_ENABLE_COIN=NO \
     -D LEMON_ENABLE_ILOG=NO \
+    -D LEMON_ENABLE_SOPLEX=NO \
     -B build .
 cmake --build build -j "$(nproc)" --target install
 
