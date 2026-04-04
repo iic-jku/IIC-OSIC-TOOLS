@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 28a4bebdc189b119f5199bee03277e1897602e71
+  commit: ecdf2fb7ad13d9ac3bc71383301a4eb37ac38dd3
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 9aba9af9d285ca3cff602feeef19a4655279de6f
@@ -48,7 +48,7 @@
   commit: 8.3.631
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: 1.5.317
+  commit: 1.5.318
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
   commit: 41032f9d772fed48e3c35a4feaf11079bc6342b4
@@ -69,7 +69,7 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: df79404cd806cc435b3c3b53678ebf2441c31313
+  commit: d1719d5edcdef5fe1316443d8eaefcfd5cd85419
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: eac03d0d6f3ff75231a078ea8b262104fa8e171a
+  commit: e4a998c8397b47193ec60f7746d7fba58f11c17c
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 4e53d772996184b07e9bfe784060f96e6cb0a267
