@@ -26,6 +26,7 @@ mkdir -p build && cd build
 cmake .. \
     -DCMAKE_INSTALL_PREFIX="${TOOLS}/${OPENROAD_LIBRELANE_NAME}" \
     -DUSE_SYSTEM_BOOST=ON \
+    -DBoost_NO_BOOST_CMAKE=ON \
     -DENABLE_TESTS=OFF \
     -DBUILD_GUI=ON
 make -j"$(nproc)"
