@@ -19,10 +19,12 @@ git clone --filter=blob:none "${OPENROAD_REPO_URL}" "${OPENROAD_NAME}"
 cd "${OPENROAD_NAME}" || exit 1
 git checkout "${OPENROAD_REPO_COMMIT}"
 git submodule update --init --recursive
+# Fix Tcl_Size compatibility: SWIG 4.2 generates Tcl_Size (Tcl 9.0) but we have Tcl 8.6.
+# Guard the existing typedef so it also works when Tcl_Size is defined as a macro.
+sed -i 's/typedef int Tcl_Size;/#ifndef Tcl_Size\ntypedef int Tcl_Size;\n#endif/' src/sta/include/sta/TclTypeHelpers.hh
 mkdir -p build && cd build
 cmake .. \
     -DCMAKE_INSTALL_PREFIX="${TOOLS}/${OPENROAD_NAME}" \
-    -DCMAKE_CXX_FLAGS="-DTcl_Size=int" \
     -DUSE_SYSTEM_BOOST=ON \
     -DENABLE_TESTS=OFF \
     -DBUILD_GUI=ON
