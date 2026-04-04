@@ -22,6 +22,7 @@ git submodule update --init --recursive
 mkdir -p build && cd build
 cmake .. \
     -DCMAKE_INSTALL_PREFIX="${TOOLS}/${OPENROAD_NAME}" \
+    -DCMAKE_CXX_FLAGS="-DTcl_Size=int" \
     -DUSE_SYSTEM_BOOST=ON \
     -DENABLE_TESTS=OFF \
     -DBUILD_GUI=ON
