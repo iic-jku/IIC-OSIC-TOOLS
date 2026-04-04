@@ -2,7 +2,7 @@
 set -e
 cd /tmp || exit 1
 
-# OpenROAD needs spdlog 1.8.1, so we update it here
+# OpenROAD needs spdlog >= 1.15, so we update it here
 SPDLOG_PREFIX="/usr/local"
 SPDLOG_VERSION=1.15.1
 echo "[INFO] Installing SPDLOG version $SPDLOG_VERSION into $SPDLOG_PREFIX"
@@ -14,6 +14,7 @@ cmake --build build -j "$(nproc)" --target install
 
 # --------------------------------------------------------------
 
+cd /tmp || exit 1
 git clone --filter=blob:none "${OPENROAD_LIBRELANE_REPO_URL}" "${OPENROAD_LIBRELANE_NAME}"
 cd "${OPENROAD_LIBRELANE_NAME}" || exit 1
 git checkout "${OPENROAD_LIBRELANE_REPO_COMMIT}"

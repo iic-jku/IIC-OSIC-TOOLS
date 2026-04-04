@@ -14,12 +14,7 @@ cmake --build build -j "$(nproc)" --target install
 
 # --------------------------------------------------------------
 
-# Tcl_Size compatibility for Tcl 8.6 (type introduced in Tcl 8.7/9.0)
-if ! grep -q "Tcl_Size" /usr/include/tcl.h 2>/dev/null; then
-    echo "[INFO] Adding Tcl_Size compatibility shim for Tcl 8.6"
-    printf '\n/* Tcl_Size compatibility for Tcl 8.6 */\n#ifndef TCL_SIZE_MAX\n#include <limits.h>\ntypedef int Tcl_Size;\n#define TCL_SIZE_MAX INT_MAX\n#endif\n' >> /usr/include/tcl.h
-fi
-
+cd /tmp || exit 1
 git clone --filter=blob:none "${OPENROAD_REPO_URL}" "${OPENROAD_NAME}"
 cd "${OPENROAD_NAME}" || exit 1
 git checkout "${OPENROAD_REPO_COMMIT}"
