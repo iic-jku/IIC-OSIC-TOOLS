@@ -45,13 +45,13 @@
   commit: fd06d0c5d0368c0be8b27935ad132f50a8c4815b
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.631
+  commit: 8.3.632
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.318
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 41032f9d772fed48e3c35a4feaf11079bc6342b4
+  commit: 25482d990fa8b6dbbda429d835d06658c3c800be
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-46
@@ -69,7 +69,7 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: d1719d5edcdef5fe1316443d8eaefcfd5cd85419
+  commit: f2408812b6fb56e150e1a0411b1ff28cde7026fc
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -96,13 +96,13 @@
   commit: 25.2.0
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: 2026.03.28
+  commit: 2026.04.05
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: e4a998c8397b47193ec60f7746d7fba58f11c17c
+  commit: 0ea4b46962c5c11ab5176e3e1892bb2c29daaf97
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 4e53d772996184b07e9bfe784060f96e6cb0a267
@@ -111,7 +111,7 @@
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 5eeeb91efa966936ef7b980f5e8dd00ffbe70786
+  commit: 0ad45926ac6f42d0d39e936abf4ab1cb9bdc5086
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.86
