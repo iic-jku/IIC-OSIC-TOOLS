@@ -8,6 +8,7 @@ apt-get update
 apt-get install -y \
 	gnuplot \
 	gnuplot-x11 \
+	libqhull-dev \
 	potrace \
 	python3-dev
 rm -rf /var/lib/apt/lists/*
@@ -64,7 +65,7 @@ pip3 install $PIP_FLAGS \
 	git+https://github.com/dan-fritchman/Hdl21
 
 echo "[INFO] Removing build dependencies"
-apt-get purge -y python3-dev
+apt-get purge -y libqhull-dev python3-dev
 apt-get autoremove -y
 
 #FIXME See https://github.com/librelane/librelane/issues/767
