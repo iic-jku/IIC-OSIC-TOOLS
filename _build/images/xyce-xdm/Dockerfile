@@ -1,5 +1,7 @@
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
 ARG TOOL_IMAGE_XYCE="registry.iic.jku.at:5000/iic-osic-tools:tool-xyce-latest"
-
 FROM ${TOOL_IMAGE_XYCE} AS xyce-xdm
 ARG XYCE_XDM_REPO_URL="https://github.com/Xyce/XDM.git"
 ARG XYCE_XDM_REPO_COMMIT="Release-2.7.0"

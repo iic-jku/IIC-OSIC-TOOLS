@@ -1,8 +1,10 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 
-# Install SVCK (SystemVerilog Checker/Linter)
-# --------------------------------------------
 cd /tmp || exit 1
 echo "[INFO] Installing SVCK"
 git clone --filter=blob:none "${SVCK_REPO_URL}" "${SVCK_NAME}"
