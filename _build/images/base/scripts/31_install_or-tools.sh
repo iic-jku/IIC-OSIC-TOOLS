@@ -1,16 +1,30 @@
 #!/bin/bash
-
 set -e
 
 # Install or-tools (dependency of OpenROAD)
-ORTOOLS_VERSION=9.6
+ORTOOLS_VERSION=9.14
 echo "[INFO] Installing ORTOOLS version $ORTOOLS_VERSION"
 cd /tmp || exit 1
 wget --no-verbose "https://github.com/google/or-tools/archive/refs/tags/v$ORTOOLS_VERSION.tar.gz"
 tar -xf "v$ORTOOLS_VERSION.tar.gz"
 cd "or-tools-$ORTOOLS_VERSION" || exit 1
-cmake -B build . -DBUILD_DEPS:BOOL=OFF -DBUILD_SCIP:BOOL=ON -DBUILD_CoinUtils:BOOL=ON -DBUILD_Osi:BOOL=ON -DBUILD_Clp:BOOL=ON -DBUILD_Cgl:BOOL=ON -DBUILD_Cbc:BOOL=ON -DBUILD_absl:BOOL=ON -DBUILD_Protobuf:BOOL=ON
-cmake --build build -j "$(nproc)" --target install
+cmake -B build . \
+    -DCMAKE_INSTALL_PREFIX=/opt/or-tools \
+    -DBUILD_DEPS:BOOL=ON \
+    -DBUILD_EXAMPLES:BOOL=OFF \
+    -DBUILD_SAMPLES:BOOL=OFF \
+    -DBUILD_TESTING:BOOL=OFF \
+    -DCMAKE_CXX_FLAGS="-w" \
+    -DCMAKE_C_FLAGS="-w"
+cmake --build build --config Release -j "$(nproc)" --target install
+
+# Remove Boost artifacts installed by OR-Tools (static-only Boost 1.87)
+# to prevent conflicts with the system Boost 1.88.
+# OR-Tools statically links Boost, so these are not needed at build/runtime.
+echo "[INFO] Removing OR-Tools Boost artifacts to avoid version conflicts"
+rm -rf /opt/or-tools/lib/cmake/Boost-* /opt/or-tools/lib/cmake/boost_*
+rm -rf /opt/or-tools/include/boost
+rm -rf /opt/or-tools/lib/libboost_*
 
 echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*

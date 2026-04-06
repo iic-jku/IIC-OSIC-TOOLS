@@ -8,7 +8,7 @@ git clone --filter=blob:none "${YOSYS_REPO_URL}" "${YOSYS_NAME}"
 cd "${YOSYS_NAME}" || exit 1
 git checkout "${YOSYS_REPO_COMMIT}"
 git submodule update --init
-make install -j"$(nproc)" PREFIX="${TOOLS}/${YOSYS_NAME}" CONFIG=gcc ENABLE_PYOSYS=1
+make install -j"$(nproc)" PREFIX="${TOOLS}/${YOSYS_NAME}" CONFIG=gcc ENABLE_PYOSYS=1 PYOSYS_USE_UV=0
 
 export PATH=$PATH:${TOOLS}/${YOSYS_NAME}/bin
 
@@ -17,7 +17,7 @@ export PATH=$PATH:${TOOLS}/${YOSYS_NAME}/bin
 cd /tmp || exit 1
 git clone --filter=blob:none "${YOSYS_EQY_REPO_URL}" "${YOSYS_EQY_NAME}"
 cd "${YOSYS_EQY_NAME}" || exit 1
-git checkout "${YOSYS_REPO_COMMIT}"
+git checkout "${YOSYS_EQY_REPO_COMMIT}"
 sed -i "s#^PREFIX.*#PREFIX=${TOOLS}/${YOSYS_NAME}#g" Makefile
 make install -j"$(nproc)"
 
@@ -26,7 +26,7 @@ make install -j"$(nproc)"
 cd /tmp || exit 1
 git clone --filter=blob:none "${YOSYS_SBY_REPO_URL}" "${YOSYS_SBY_NAME}"
 cd "${YOSYS_SBY_NAME}" || exit 1
-git checkout "${YOSYS_REPO_COMMIT}"
+git checkout "${YOSYS_SBY_REPO_COMMIT}"
 sed -i "s#^PREFIX.*#PREFIX=${TOOLS}/${YOSYS_NAME}#g" Makefile
 make install -j"$(nproc)" 
 
@@ -35,7 +35,7 @@ make install -j"$(nproc)"
 cd /tmp || exit 1
 git clone --filter=blob:none "${YOSYS_MCY_REPO_URL}" "${YOSYS_MCY_NAME}"
 cd "${YOSYS_MCY_NAME}" || exit 1
-git checkout "${YOSYS_REPO_COMMIT}"
+git checkout "${YOSYS_MCY_REPO_COMMIT}"
 sed -i "s#^PREFIX.*#PREFIX=${TOOLS}/${YOSYS_NAME}#g" Makefile
 make install -j"$(nproc)"
 
@@ -48,3 +48,8 @@ autoconf
 ./configure --prefix="${TOOLS}/${YOSYS_NAME}"
 make -j"$(nproc)"
 make install
+
+echo "${YOSYS_NAME} ${YOSYS_REPO_COMMIT}" > "${TOOLS}/${YOSYS_NAME}/SOURCES"
+echo "${YOSYS_EQY_NAME} ${YOSYS_EQY_REPO_COMMIT}" >> "${TOOLS}/${YOSYS_NAME}/SOURCES"
+echo "${YOSYS_SBY_NAME} ${YOSYS_SBY_REPO_COMMIT}" >> "${TOOLS}/${YOSYS_NAME}/SOURCES"
+echo "${YOSYS_MCY_NAME} ${YOSYS_MCY_REPO_COMMIT}" >> "${TOOLS}/${YOSYS_NAME}/SOURCES"

@@ -15,3 +15,5 @@ cd ../scripts || exit 1
 make spi2xspice.py
 chmod +x spi2xspice.py
 cp spi2xspice.py "${TOOLS}/${QFLOW_NAME}/bin"
+
+echo "${QFLOW_NAME} ${QFLOW_REPO_COMMIT}" > "${TOOLS}/${QFLOW_NAME}/SOURCES"

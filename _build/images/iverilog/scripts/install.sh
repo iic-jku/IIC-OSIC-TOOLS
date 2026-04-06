@@ -10,3 +10,5 @@ chmod +x autoconf.sh
 ./configure --prefix="${TOOLS}/${IVERILOG_NAME}" --enable-libvvp
 make -j"$(nproc)"
 make install
+
+echo "${IVERILOG_NAME} ${IVERILOG_REPO_COMMIT}" > "${TOOLS}/${IVERILOG_NAME}/SOURCES"

@@ -8,3 +8,5 @@ git checkout "${SLANG_REPO_COMMIT}"
 cmake -B build -DSLANG_INCLUDE_TESTS=OFF
 cmake --build build -j"$(nproc)"
 cmake --install build --strip --prefix="${TOOLS}/${SLANG_NAME}"
+
+echo "${SLANG_NAME} ${SLANG_REPO_COMMIT}" > "${TOOLS}/${SLANG_NAME}/SOURCES"

@@ -5,35 +5,44 @@
 #
 # Smoke test for the following tools:
 # - bender: https://github.com/pulp-platform/bender
-# - morty:  https://github.com/pulp-platform/morty
-# - svase:  https://github.com/pulp-platform/svase
 # - sv2v:   https://github.com/zachjs/sv2v
 
+if [ -z "${RAND}" ]; then
+    RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
+fi
+
 # test if a command finishes successfully
-test() {
+run_test() {
     local cmd="$1"
     echo "Running: $cmd"
-    eval "$cmd" &>> $LOG
+    eval "$cmd" &>> "$LOG"
+    # shellcheck disable=SC2181
     if [ $? -ne 0 ]; then
-        echo "[ERROR] '$cmd' failed" >> $LOG
+        echo "[ERROR] '$cmd' failed" >> "$LOG"
     fi
-    echo -e "\n\n\n" >> $LOG
+    echo -e "\n\n\n" >> "$LOG"
 }
 
 # test if a command fails
-test_fail() {
+run_test_fail() {
+    # shellcheck disable=SC2317
     local cmd="$1"
+    # shellcheck disable=SC2317
     echo "Running: $cmd"
-    eval "$cmd" &>> $LOG
+    # shellcheck disable=SC2317
+    eval "$cmd" &>> "$LOG"
+    # shellcheck disable=SC2317
+    # shellcheck disable=SC2181
     if [ $? -eq 0 ]; then
-        echo "[ERROR] '$cmd' was expected to fail but succeeded" >> $LOG
+        echo "[ERROR] '$cmd' was expected to fail but succeeded" >> "$LOG"
     else
-        echo "[INFO] '$cmd' failed as expected" >> $LOG
+        echo "[INFO] '$cmd' failed as expected" >> "$LOG"
     fi
-    echo -e "\n\n\n" >> $LOG
+    # shellcheck disable=SC2317
+    echo -e "\n\n\n" >> "$LOG"
 }
 
-# if debug mode is enabled outout is verbose, otherwise not
+# if debug mode is enabled output is verbose, otherwise not
 DEBUG=0
 while getopts "d" flag; do
 	case $flag in
@@ -47,51 +56,31 @@ while getopts "d" flag; do
 done
 shift $((OPTIND-1))
 
-
-TMP=/tmp/test_08
-LOG=$TMP/tools.log
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TMP=/foss/designs/runs/${RAND}/08
+LOG=/foss/designs/runs/${RAND}/08/pulp.log
 
+mkdir -p "$TMP"
 
-if [ -d $TMP ]; then
-    rm -rf $TMP/*
-else 
-    mkdir $TMP
-fi
-
-cp $DIR/Bender.yml $TMP/
-cp $DIR/*.sv       $TMP/
-cd $TMP/
+cp "$DIR"/Bender.yml "$TMP"/
+cp "$DIR"/*.sv       "$TMP"/
+cd "$TMP"/ || exit
 
 [ $DEBUG -eq 1 ] && echo "[INFO] Testing bender..."
 {
-    test "bender update"
-    test "bender checkout"
-    test "bender sources -f > error.json"
-    test "bender sources -f -t test_target > top.json"
-} &> $LOG
+    run_test "bender update"
+    run_test "bender checkout"
+    run_test "bender script flist-plus -t test_target -D COMMON_CELLS_ASSERTS_OFF > sources.f"
+    run_test "bender script flist-plus -D COMMON_CELLS_ASSERTS_OFF > sources_fail.f"
+} >> "$LOG" 2>&1
 
-[ $DEBUG -eq 1 ] && echo "[INFO] Testing morty..."
+[ $DEBUG -eq 1 ] && echo "[INFO] Testing yosys-slang..."
 {
-    test_fail "morty -q -f error.json -o error_morty.sv"
-    test "morty -q -f top.json -o top_morty.sv"
-    test "morty -q -f top.json -D ERROR -o error_morty.sv"
-} &> $LOG
+    run_test "yosys -Q -q -p \"plugin -i slang.so; read_slang --top top -F sources.f; synth;\""
+    run_test_fail "yosys -Q -q -p \"plugin -i slang.so; read_slang --top top -F sources_fail.f; synth;\""
+} >> "$LOG" 2>&1
 
-[ $DEBUG -eq 1 ] && echo "[INFO] Testing svase..."
-{
-    test_fail "svase top error_svase.sv error_morty.sv"
-    test "svase top top_svase.sv top_morty.sv"
-} &> $LOG
-
-[ $DEBUG -eq 1 ] && echo "[INFO] Testing sv2v..."
-{
-    test "sv2v --write top_sv2v.v top_svase.sv"
-    test "yosys -Q -q -p \"read_verilog top_sv2v.v; synth;\""
-} &> $LOG
-
-
-if grep -q "\[ERROR\]" $LOG; then
+if grep -q "\[ERROR\]" "$LOG"; then
     echo "[ERROR] Test <PULP-flow> FAILED! Check log at <$LOG>."
     exit 1
 else

@@ -2,9 +2,9 @@
 
 set -e
 
-# Need libboost >= 1.78 for OpenROAD
+# Need libboost >= 1.88 for VACASK
 #BOOST_VER_MAJ=1
-#BOOST_VER_MIN=82	
+#BOOST_VER_MIN=88	
 #BOOST_BUILD=0
 #BOOST_VERSION="$BOOST_VER_MAJ.$BOOST_VER_MIN.$BOOST_BUILD"
 #echo "[INFO] Installing BOOST version $BOOST_VERSION"

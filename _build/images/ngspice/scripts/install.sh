@@ -1,23 +1,16 @@
 #!/bin/bash
+set -e
 cd /tmp || exit 1
 
 git clone --filter=blob:none "${NGSPICE_REPO_URL}" "${NGSPICE_NAME}"
-cd "${NGSPICE_NAME}"
+cd "${NGSPICE_NAME}" || exit 1
 git checkout "${NGSPICE_REPO_COMMIT}"
 ./autogen.sh
 # 2nd run of autogen needed
-set -e
 ./autogen.sh
 
 # define common compile options
-NGSPICE_VERSION=${NGSPICE_REPO_COMMIT##*-}
-if [ "$NGSPICE_VERSION" -lt 43 ]; then
-    echo "[INFO] We are building ngspice version 42 or lower."
-    NGSPICE_COMPILE_OPTS=("--disable-debug" "--enable-openmp" "--with-x" "--with-readline=yes" "--enable-pss" "--enable-xspice" "--with-fftw3=yes" "--enable-osdi" "--enable-klu")
-else
-    echo "[INFO] We are building ngspice version 43 or higher."
-    NGSPICE_COMPILE_OPTS=("--with-x" "--enable-pss" "--with-fftw3=yes" )
-fi
+NGSPICE_COMPILE_OPTS=("--disable-debug" "--enable-openmp" "--with-x" "--with-readline=yes" "--enable-pss" "--enable-xspice" "--with-fftw3=yes" "--enable-osdi" "--enable-klu")
 
 # compile ngspice executable
 ./configure "${NGSPICE_COMPILE_OPTS[@]}" --prefix="${TOOLS}/${NGSPICE_NAME}"
@@ -49,6 +42,8 @@ _add_model r3_cmc.osdi "$FNAME"
 git clone --depth=1 https://github.com/dwarning/VA-Models.git vamodels
 MODEL=bsimcmg
 cd vamodels/code/$MODEL/vacode || exit 1
-"$TOOLS/openvaf/bin/openvaf" $MODEL.va
-cp $MODEL.osdi "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi"
+"$TOOLS/openvaf/bin/openvaf" --target_cpu generic "$MODEL.va"
+cp "$MODEL.osdi" "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi"
 echo "osdi ${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi" >> "$FNAME"
+
+echo "${NGSPICE_NAME} ${NGSPICE_REPO_COMMIT}" > "${TOOLS}/${NGSPICE_NAME}/SOURCES"

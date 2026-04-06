@@ -1,10 +1,8 @@
 # IIC-OSIC-TOOLS
 
-[![DOI](https://zenodo.org/badge/477419126.svg)](https://doi.org/10.5281/zenodo.14387234)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14387234.svg)](https://doi.org/10.5281/zenodo.14387234)
 
-This environment is based on the [efabless.com FOSS-ASIC-TOOLS](https://github.com/efabless/foss-asic-tools).
-
-**IIC-OSIC-TOOLS** (Integrated Infrastructure for Collaborative Open Source IC Tools) is an all-in-one Docker container for open-source-based integrated circuit designs for analog and digital circuit flows. The CPU architectures `x86_64/amd64` and `aarch64/arm64` are natively supported based on Ubuntu 24.04 LTS (since release `2025.01`). This collection of tools is curated by the [**Department for Integrated Circuits (DIC), Johannes Kepler University (JKU)**](https://iic.jku.at).
+**IIC-OSIC-TOOLS** (Integrated Infrastructure for Collaborative Open Source IC Tools) is an all-in-one Docker/Podman container for open-source-based integrated circuit designs for analog and digital circuit flows. The CPU architectures `x86_64/amd64` and `aarch64/arm64` are natively supported based on Ubuntu 24.04 LTS (since release `2025.01`). This collection of tools is curated by the [**Department for Integrated Circuits (ICD), Johannes Kepler University (JKU)**](https://iic.jku.at).
 
 ## Table of Contents
 
@@ -30,17 +28,21 @@ This environment is based on the [efabless.com FOSS-ASIC-TOOLS](https://github.c
       - [4.4.2 For the Windows Batch Scripts](#442-for-the-windows-batch-scripts)
     - [4.5 Using as devcontainer](#45-using-as-devcontainer)
       - [4.5.1 Add it to project](#451-add-it-to-project)
-  - [5. Support with Issues/Problems/Bugs](#5-support-with-issuesproblemsbugs)
+  - [5. Using the Container with](#5-using-the-container-with)
+    - [5.1 Podman](#51-podman)
+    - [5.2 Distrobox](#52-distrobox)
+  - [6. Support with Issues/Problems/Bugs](#6-support-with-issuesproblemsbugs)
 
 ## 1. How to Use These Open-Source (and Free) IC Design Tools
 
 **For great step-to-step instructions of installation and operation of our tool collection, please check out Kwantae Kim's [Setting Up Open Source Tools with Docker](https://kwantaekim.github.io/2024/05/25/OSE-Docker/)!**
 
-It supports two *modes of operation*:
+It supports multiple *modes of operation*:
 
 1. Using a complete desktop environment (XFCE) in `Xvnc` (a VNC server), either directly accessing it with a VNC client of your choice or the integrated [noVNC](https://novnc.com) server that runs in your browser.
 2. Using a local X11 server and directly showing the application windows on your desktop.
-3. Using it as a development container in Visual Studio Code (or other IDEs)
+3. Using a Jupyter Notebook running inside the container, opened on the hosts browser.
+4. Using it as a development container in Visual Studio Code (or other IDEs)
 
 ### 1.1 Step 1: Clone/download this GitHub repository onto your computer
 
@@ -81,11 +83,11 @@ export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
 ```
 
-| Global Foundries `gf180mcuC` |
+| Global Foundries `gf180mcuD` |
 |---|
 
 ```bash
-export PDK=gf180mcuC
+export PDK=gf180mcuD
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=gf180mcu_fd_sc_mcu7t5v0
 export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
@@ -99,6 +101,17 @@ export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
 export PDK=ihp-sg13g2
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=sg13g2_stdcell
+export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
+```
+
+| IHP Microelectronics `ihp-sg13cmos5l` |
+|---|
+
+```bash
+export PDK=ihp-sg13cmos5l
+export PDKPATH=$PDK_ROOT/$PDK
+export STD_CELL_LIBRARY=sg13cmos5l_stdcell
 export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
 ```
@@ -124,6 +137,8 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [abc](https://github.com/berkeley-abc/abc) sequential logic synthesis and formal verification
 - [amaranth](https://github.com/amaranth-lang/amaranth) a Python-based HDL tool chain
 - [cace](https://github.com/efabless/cace) a Python-based circuit automatic characterization engine
+- [charlib](https://github.com/stineje/CharLib) a characterization library for standard cells
+- [ciel](https://github.com/fossi-foundation/ciel) version manager (and builder) for open-source PDKs
 - [cocotb](https://github.com/cocotb/cocotb) simulation library for writing VHDL and Verilog test benches in Python
 - [covered](https://github.com/hpretl/verilog-covered) Verilog code coverage
 - [cvc](https://github.com/d-m-bailey/cvc) circuit validity checker (ERC)
@@ -131,67 +146,80 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [fault](https://github.com/AUCOHL/Fault) design-for-testing (DFT) solution
 - [fusesoc](https://github.com/olofk/fusesoc) package manager and build tools for SoC
 - [gaw3-xschem](https://github.com/StefanSchippers/xschem-gaw) waveform plot tool for `xschem`
+- [gds2palace](https://github.com/VolkerMuehlhaus/setupEM)/`setupEM` setup tools for `palace` EM simulation
 - [gds3d](https://github.com/trilomix/GDS3D) a 3D viewer for GDS files
 - [gdsfactory](https://github.com/gdsfactory/gdsfactory) Python library for GDS generation
+- [gdsfill](https://github.com/aesc-silicon/gdsfill) Python tool for inserting dummy metal fill into semiconductor layouts
 - [gdspy](https://github.com/heitzmann/gdspy) Python module for the creation and manipulation of GDS files
 - [gf180mcu](https://github.com/google/gf180mcu-pdk) GlobalFoundries 180 nm CMOS PDK
 - [ghdl-yosys-plugin](https://github.com/ghdl/ghdl-yosys-plugin) VHDL-plugin for `yosys`
 - [ghdl](https://github.com/ghdl/ghdl) VHDL simulator
+- [gmsh](https://gmsh.info/) three-dimensional finite element mesh generator
 - [gtkwave](https://github.com/gtkwave/gtkwave) waveform plot tool for digital simulation
 - [hdl21](https://github.com/dan-fritchman/Hdl21) analog hardware description library
 - [ihp-sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130 nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
+- [ihp-sg13cmos5l](https://github.com/IHP-GmbH/ihp-sg13cmos5l) IHP Microelectronics 130 nm CMOS PDK (M1-M4-TM1 metal stack)
 - [irsim](https://github.com/rtimothyedwards/irsim) switch-level digital simulator
 - [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
+- [kactus2](https://github.com/kactus2/kactus2dev) Kactus2 is a graphical editor for IP-XACT files, which are used to describe hardware components and their interfaces
+- [kepler-formal](https://github.com/keplertech/kepler-formal) logic equivalence checking (LEC) tool for `openroad`
 - [klayout-pex](https://github.com/martinjankoehler/klayout-pex) parasitic extraction for `klayout`
 - [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS
 - [lctime](https://codeberg.org/librecell/lctime) Characterization kit for CMOS cells
 - [libman](https://github.com/IHP-GmbH/LibMan) design library manager to manage cells and views
+- [librelane](https://github.com/librelane/librelane) successor of OpenLane(2), RTL2GDS flow scripts
 - [magic](https://github.com/rtimothyedwards/magic) layout editor with DRC and PEX
+- [najaeda](https://github.com/najaeda/naja) data structures and APIs for the development of post logic synthesis EDA algorithms
 - [netgen](https://github.com/rtimothyedwards/netgen) netlist comparison (LVS)
 - [ngspice](http://ngspice.sourceforge.net) SPICE analog and mixed-signal simulator, with OSDI support
 - [ngspyce](https://github.com/ignamv/ngspyce) Python bindings for `ngspice`
 - [nvc](https://github.com/nickg/nvc) VHDL simulator and compiler
 - [open_pdks](https://github.com/RTimothyEdwards/open_pdks) PDK setup scripts
 - [openems](https://github.com/thliebig/openEMS) electromagnetic field solver using the EC-FDTD method
-- [openlane2](https://github.com/efabless/openlane2) rewrite of OpenLane in Python, 2nd generation
 - [openram](https://github.com/VLSIDA/OpenRAM) OpenRAM Python library
-- [openroad](https://github.com/The-OpenROAD-Project/OpenROAD) RTL2GDS engine used by `openlane2`
+- [openroad](https://github.com/The-OpenROAD-Project/OpenROAD) RTL2GDS engine used by `librelane`
 - [opensta](https://github.com/parallaxsw/OpenSTA) gate level static timing verifier
-- [openvaf](https://github.com/dwarning/OpenVAF) Verilog-A compiler for device models
+- [openvaf-reloaded](https://github.com/arpadbuermen/OpenVAF) Verilog-A compiler for device models
 - [osic-multitool](https://github.com/iic-jku/osic-multitool) collection of useful scripts and documentation
 - [padring](https://github.com/donn/padring) padring generation tool
-- [pulp-tools](https://github.com/pulp-platform/pulp) PULP platform tools consisting of [bender](https://github.com/pulp-platform/bender), [morty](https://github.com/pulp-platform/morty), [svase](https://github.com/pulp-platform/svase), [verible](https://github.com/chipsalliance/verible), and [sv2v](https://github.com/zachjs/sv2v)
+- [palace](https://github.com/awslabs/palace) 3D finite element solver for computational electromagnetics
+- [pulp-tools](https://github.com/pulp-platform/pulp) PULP platform tools consisting of [bender](https://github.com/pulp-platform/bender), [verible](https://github.com/chipsalliance/verible), and [sv2v](https://github.com/zachjs/sv2v)
 - [pygmid](https://github.com/dreoilin/pygmid) Python version of the gm/Id starter kit from Boris Murmann
-- [pyopus](https://fides.fe.uni-lj.si/pyopus/index.html) simulation runner and optimization tool for analog circuits
+- [pyopus](https://codeberg.org/arpadbuermen/PyOPUS) simulation runner and optimization tool for analog circuits
 - [pyrtl](https://github.com/UCSBarchlab/PyRTL) collection of classes for pythonic RTL design
 - [pyspice](https://github.com/PySpice-org/PySpice) interface `ngspice` and `xyce` from Python
 - [pyuvm](https://github.com/pyuvm/pyuvm) Universal Verification Methodology implemented in Python (instead of SystemVerilog) using `cocotb`
 - [pyverilog](https://github.com/PyHDI/Pyverilog) Python toolkit for Verilog
 - [qflow](https://github.com/RTimothyEdwards/qflow) collection of useful conversion tools
 - [qucs-s](https://github.com/ra3xdh/qucs_s) simulation environment with RF emphasis
-- [rggen](https://github.com/rggen/rggen) code generation tool for configuration and status registers
-- [risc-v toolchain](https://github.com/riscv/riscv-gnu-toolchain) GNU compiler toolchain for RISC-V cores, incl. [Spike](https://github.com/riscv-software-src/riscv-isa-sim) RISC-V ISA simulator
+- [rggen](https://github.com/rggen/rggen) Code generation tool for control and status registers
+- [risc-v toolchain](https://github.com/riscv/riscv-gnu-toolchain) GNU compiler toolchain for RISC-V cores
 - [riscv-pk](https://github.com/riscv-software-src/riscv-pk) RISC-V proxy kernel and bootloader
 - [schemdraw](https://github.com/cdelker/schemdraw) Python package for drawing electrical schematics
 - [siliconcompiler](https://github.com/siliconcompiler/siliconcompiler) modular build system for hardware
 - [sky130](https://github.com/google/skywater-pdk) SkyWater Technologies 130 nm CMOS PDK
 - [slang yosys plugin](https://github.com/povik/yosys-slang) Slang-based plugin for `yosys` for SystemVerilog support
 - [slang](https://github.com/MikePopoloski/slang) SystemVerilog parsing and translation (e.g. to Verilog)
+- [spicebind](https://github.com/themperek/spicebind) lightweight bridge enabling co-simulation of analog `ngspice` circuits alongside HDL simulators
 - [spicelib](https://github.com/nunobrum/spicelib) library to interact with SPICE-like simulators
+- [spike](https://github.com/riscv-software-src/riscv-isa-sim) Spike RISC-V ISA simulator
 - [spyci](https://github.com/gmagno/spyci) analyze/plot `ngspice`/`xyce` output data with Python
 - [surelog](https://github.com/chipsalliance/Surelog) SystemVerilog parser, elaborator, and UHDM compiler
 - [surfer](https://gitlab.com/surfer-project/surfer) waveform viewer with snappy usable interface and extensibility
+- [svck](https://github.com/AsFigo/svck) customizable SystemVerilog linter (uses `verible`)
+- [vacask](https://codeberg.org/arpadbuermen/VACASK) a modern Verilog-A based analog circuit simulator
 - [verilator](https://github.com/verilator/verilator) fast Verilog simulator
+- [verible](https://github.com/chipsalliance/verible) SystemVerilog parser, style-linter, formatter, and language server
+- [veryl](https://github.com/veryl-lang/veryl) a modern hardware description language, based on SystemVerilog
 - [vlog2verilog](https://github.com/RTimothyEdwards/qflow) Verilog file conversion
 - [vlsirtools](https://github.com/Vlsir/Vlsir) interchange formats for chip design.
-- [volare](https://github.com/efabless/volare) version manager (and builder) for open-source PDKs
 - [xcircuit](https://github.com/RTimothyEdwards/XCircuit) schematic editor
 - [xschem](https://github.com/StefanSchippers/xschem) schematic editor
 - [xyce](https://github.com/Xyce/Xyce) fast parallel SPICE simulator (incl. `xdm` netlist conversion tool)
 - [yosys](https://github.com/YosysHQ/yosys) Verilog synthesis tool (with GHDL plugin for VHDL synthesis and Slang plugin for SystemVerilog synthesis), incl. `eqy` (equivalence checker), `sby` (formal verification), and `mcy` (mutation coverage)
 - RF toolkit with [FastHenry2](https://github.com/ediloren/FastHenry2), [FasterCap](https://github.com/ediloren/FasterCap), [openEMS](https://github.com/thliebig/openEMS), and [scikit-rf](https://github.com/scikit-rf/scikit-rf).
 
-The tool versions used for `OpenLane2` (and other tools) are documented in `tool_metadata.yml`. In addition to the EDA tools above, further valuable tools (like `git`) and editors (like `gvim`) are installed. If something useful is missing, please let us know!
+The tool versions used for `librelane` (and other tools) are documented in `tool_metadata.yml`. In addition to the EDA tools above, further valuable tools (like `git`) and editors (like `gvim`) are installed. If something useful is missing, please let us know!
 
 ## 4. Quick Launch for Designers
 
@@ -339,24 +367,56 @@ SET DOCKER_USERNAME=another_user
 
 ### 4.5 Using as devcontainer
 
-This is a new usage mode, that might not fit your needs. [Devcontainers](https://code.visualstudio.com/docs/devcontainers/containers) are a great way to provide a working build environment along your own project. It is supported by the [devcontainer](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension in Visual Studio Code.
+This is a new usage mode, that might fit your needs. [Devcontainers](https://code.visualstudio.com/docs/devcontainers/containers) are a great way to provide a working build environment along your own project. It is supported by the [devcontainer](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension in Visual Studio Code.
 
 #### 4.5.1 Add it to project
 
-Option 1: In Visual Studio, click the remote window icon on the left and then "Reopen in Container", "Add configuration to workspace". Enter "ghcr.io/iic-jku/iic-osic-tools/devcontainer" as template, choose the version of the container and add more features (probably not needed). It will then restart the IDE, download the image and start a terminal and mount the work folder into the image.
+Option 1: In Visual Studio Code, click the remote window icon on the left and then "Reopen in Container", "Add configuration to workspace". Enter "hpretl/iic-osic-tools-devcontainer" as template and add more features (probably not needed). It will then restart the IDE, download the image and start a terminal and mount the work folder into the image.
 
 Option 2: Alternatively you can directly just create the configuration file `.devcontainer/devcontainer.json`:
 
 ```json
 {
  "name": "IIC-OSIC-TOOLS",
- "image": "ghcr.io/iic-jku/iic-osic-tools-devcontainer:2024.12"
+ "image": "hpretl/iic-osic-tools-devcontainer:latest",
+ "pullPolicy": "always"
 }
 ```
 
 Either way, the great thing is that you can now commit the file to repository and all developers will be asked if they want to reopen their development in this container, all they need is Docker and VS Code.
 
-## 5. Support with Issues/Problems/Bugs
+## 5. Using the Container with
+
+The IIC-OSIC-Tools are meant to be beginner friendly. If you have limited knowledge of the tools involved (Docker, Podman, etc..), we suggest you follow [4. Quick Launch for Designers](#4-quick-launch-for-designers).
+For container experts, there is also support for other container engines and additional tools, see the subsections below.
+
+### 5.1 Podman
+
+[Podman](https://podman.io/) is a demonless, OCI compatible container engine, that supports rootless containers to contain privileges inside the container. Normal root containers are supported out of the box, the Docker-compatible CLI can be used with the start scripts without modification. Using rootless mode, we suggest using the user-namespace mode "keep-id". In this case, the host-user, launching the container, is copied to the container (same UID, GID, user and group name), preventing access issues between the container and mounted directories from the host. This can be achieved by using:
+
+`DOCKER_EXTRA_PARAMS="--userns=keep-id" ./start_<mode>.sh`
+
+It should be noted, that the rootless mode can't bind to ports below 1024. This means, for the VNC-mode, a different webserver port has to be selected, e.g.:
+
+`WEBSERVER_PORT=8080 DOCKER_EXTRA_PARAMS="--userns=keep-id" ./start_<mode>.sh`
+
+The `start_x.sh` script automatically detects Podman rootless mode and prints the above suggestion if `--userns=keep-id` has not already been set.
+
+> **Note on Docker Rootless Mode:** Docker in rootless mode has known limitations with X11/Wayland socket forwarding due to UID/GID mismatches between the host and container. There is no straightforward fix for Docker rootless mode, and we therefore recommend using Podman with `--userns=keep-id` as the preferred solution for rootless container operation.
+
+### 5.2 Distrobox
+
+[Distrobox](https://distrobox.it) is a *fancy wrapper around Podman or Docker to create and start containers highly integrated with the hosts*. Like the `start_x` scripts, Distrobox manages the forwarding of X11/Wayland to the container, but allows for even more tight integration, by also forwarding the users home directory, and seamlessly integration other services like the systemd journal, D-Bus etc...
+Distrobox specifically mentions that its main focus lies on integration, and not on sandboxing and security.
+
+The IIC-OSIC-Tools support the usage of Distrobox, even though the usage is slightly different, compared to the start scripts. Noteably, the /headless is not the in-container-user's home directory, and /foss/designs will not be mounted. But `/home/<username>` will have full access to the users home directory.
+
+A IIC-OSIC-Tools Distrobox can be started and accessed with:
+
+`distrobox create -n iic-osic-tools -i hpretl/iic-osic-tools:latest`
+`distrobox enter iic-osic-tools`
+
+## 6. Support with Issues/Problems/Bugs
 
 We are open to your questions about this container and are very thankful for your input! If you run into a problem, and you are sure it is a bug, please let us know by following this routine:
 

@@ -10,3 +10,7 @@ unset VERILATOR_ROOT
 ./configure --prefix="${TOOLS}/${VERILATOR_NAME}"
 make -j"$(nproc)"
 make install
+# and we strip the binaries to reduce size
+find "${TOOLS}/${VERILATOR_NAME}" -type f -executable -exec strip {} \;
+
+echo "${VERILATOR_NAME} ${VERILATOR_REPO_COMMIT}" > "${TOOLS}/${VERILATOR_NAME}/SOURCES"

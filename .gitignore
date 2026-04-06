@@ -18,3 +18,4 @@
 # Misc configuration files
 # ========================================================================
 eda_user_credentials*.json
+/_tests/runs

@@ -60,7 +60,11 @@ echo VNC port set to %VNC_PORT%
 IF %CONTAINER_USER% NEQ 0 if %CONTAINER_USER% LSS 1000 echo WARNING: Selected User ID %CONTAINER_USER% is below 1000. This ID might interfere with User-IDs inside the container and cause undefined behaviour!
 IF %CONTAINER_GROUP% NEQ 0 if %CONTAINER_GROUP% LSS 1000 echo WARNING: Selected Group ID %CONTAINER_GROUP% is below 1000. This ID might interfere with Group-IDs inside the container and cause undefined behaviour!
 
-SET PARAMS=
+IF DEFINED IIC_SERVER_DEPLOYMENT (
+  SET PARAMS=""
+) ELSE (
+  SET PARAMS=--security-opt seccomp=unconfined
+)
 
 IF %WEBSERVER_PORT% GTR 0 (
   SET PARAMS=%PARAMS% -p %WEBSERVER_PORT%:80
@@ -88,5 +92,12 @@ IF NOT ERRORLEVEL 1 (
     ) ELSE (
         echo Container does not exist, creating %CONTAINER_NAME% ...
         %ECHO_IF_DRY_RUN% docker run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% %PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
+        IF %WEBSERVER_PORT% GTR 0 (
+            IF DEFINED VNC_PW (
+                echo [INFO] To access the VNC session, open a browser and navigate to http://localhost:%WEBSERVER_PORT%/?password=%VNC_PW%
+            ) ELSE (
+                echo [INFO] To access the VNC session, open a browser and navigate to http://localhost:%WEBSERVER_PORT%/?password=abc123
+            )
+        )
     )
 )

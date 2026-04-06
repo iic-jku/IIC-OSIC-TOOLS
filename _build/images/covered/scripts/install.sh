@@ -8,3 +8,5 @@ git checkout "${COVERED_REPO_COMMIT}"
 ./configure --prefix="${TOOLS}/${COVERED_NAME}"
 make # -j$(nproc) Using the -j option leads to random fails on many-core machines
 make install
+
+echo "${COVERED_NAME} ${COVERED_REPO_COMMIT}" > "${TOOLS}/${COVERED_NAME}/SOURCES"

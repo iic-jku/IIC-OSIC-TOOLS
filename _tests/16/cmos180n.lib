@@ -1,0 +1,214 @@
+// Downloaded from http://www.eas.asu.edu/~ptm/
+// # 180nm BSIM3 model card for bulk CMOS: V0.0
+
+// changed lmax to 4u
+// parametrized vth0 and u0
+
+// Monte Carlo model 
+// Global variations: gvtnmm, gvtpmm, gu0nmm, gu0pmm
+section mc
+  include "cmos180n.lib" section=dfl
+  // Assume vth and u0 corners (based on 4 variables) are at 3 sigma from origin
+  // Therefore vth0n, vth0p, u0n, and u0p in these corners must be at 3/sqrt(4) sigma from origin
+  // Sigma of respective parameters is therefore sqrt(4)/3 of the value in corner
+  parameters vth0n=vth0nt*(1+vth0nd*2/3*gvtnmm)
+  parameters u0n=u0nt*(1+u0nd*2/3*gu0nmm)
+  parameters vth0p=vth0pt*(1+vth0pd*2/3*gvtpmm)
+  parameters u0p=u0pt*(1+u0pd*2/3*gu0pmm)
+  include "cmos180n.lib" section=model
+endsection
+
+// Typical mean
+section tm
+  include "cmos180n.lib" section=dfl
+  parameters vth0n=vth0nt
+  parameters u0n=u0nt
+  parameters vth0p=vth0pt
+  parameters u0p=u0pt
+  include "cmos180n.lib" section=model
+endsection
+
+* Worst power
+section wp
+  include "cmos180n.lib" section=dfl
+  parameters vth0n=vth0nt*(1-vth0nd)
+  parameters u0n=u0nt*(1+u0nd)
+  parameters vth0p=vth0pt*(1-vth0pd)
+  parameters u0p=u0pt*(1+u0pd)
+  include "cmos180n.lib" section=model
+endsection
+
+* Worst speed
+section ws
+  include "cmos180n.lib" section=dfl
+  parameters vth0n=vth0nt*(1+vth0nd)
+  parameters u0n=u0nt*(1-u0nd)
+  parameters vth0p=vth0pt*(1+vth0pd)
+  parameters u0p=u0pt*(1-u0pd)
+  include "cmos180n.lib" section=model
+endsection
+
+* Worst one
+section wo
+  include "cmos180n.lib" section=dfl
+  parameters vth0n=vth0nt*(1-vth0nd)
+  parameters u0n=u0nt*(1+u0nd)
+  parameters vth0p=vth0pt*(1+vth0pd)
+  parameters u0p=u0pt*(1-u0pd)
+  include "cmos180n.lib" section=model
+endsection
+
+* Worst zero
+section wz
+  include "cmos180n.lib" section=dfl
+  parameters vth0n=vth0nt*(1+vth0nd)
+  parameters u0n=u0nt*(1-u0nd)
+  parameters vth0p=vth0pt*(1-vth0pd)
+  parameters u0p=u0pt*(1+u0pd)
+  include "cmos180n.lib" section=model
+endsection
+
+
+// Parameter defaults
+section dfl
+  // Mean parameter values
+  parameters vth0nt=0.3999
+  parameters u0nt=3.5000000E-02
+  parameters vth0pt=-0.42
+  parameters u0pt=8.0000000E-03
+  
+  // Relative parameter variations (process corners)
+  parameters vth0nd=0.1
+  parameters u0nd=0.06
+  parameters vth0pd=0.12
+  parameters u0pd=0.1
+endsection
+
+* Model definition
+section model
+  model nmosmod bsim3 (
+    type=1 // verbose=1
+    
+    level = 53                                                                   
+                                                                                   
+    lint = 4.e-08 tox = 4.e-09                                                   
+    vth0 = vth0n rdsw = 250                                                     
+    
+    lmin=1.8e-7 lmax=4u wmin=1.8e-7 wmax=1.0e-4 
+    // tref=27.0 
+    version =3.1       
+    xj= 6.0000000e-08         nch= 5.9500000e+17                                 
+    lln= 1.0000000            lwn= 1.0000000              wln= 0.00              
+    wwn= 0.00                 ll= 0.00                                           
+    lw= 0.00                  lwl= 0.00                   wint= 0.00             
+    wl= 0.00                  ww= 0.00                    wwl= 0.00              
+    mobmod=  1                binunit= 2                  xl=  0                 
+    xw=  0                    
+    // binflag=  0                                        
+    dwg= 0.00                 dwb= 0.00                                          
+    
+    k1= 0.5613000             k2= 1.0000000e-02                                
+    k3= 0.00                  dvt0= 8.0000000             dvt1= 0.7500000        
+    dvt2= 8.0000000e-03       dvt0w= 0.00                 dvt1w= 0.00            
+    dvt2w= 0.00               nlx= 1.6500000e-07          w0= 0.00               
+    k3b= 0.00                 ngate= 5.0000000e+20                               
+    
+    vsat= 1.3800000e+05       ua= -7.0000000e-10          ub= 3.5000000e-18      
+    uc= -5.2500000e-11        prwb= 0.00                                         
+    prwg= 0.00                wr= 1.0000000               u0= u0n      
+    a0= 1.1000000             keta= 4.0000000e-02         a1= 0.00               
+    a2= 1.0000000             ags= -1.0000000e-02         b0= 0.00               
+    b1= 0.00                                                                     
+    
+    voff= -0.12350000         nfactor= 0.9000000          cit= 0.00             
+    cdsc= 0.00                cdscb= 0.00                 cdscd= 0.00            
+    eta0= 0.2200000           etab= 0.00                  dsub= 0.8000000        
+    
+    pclm= 5.0000000e-02       pdiblc1= 1.2000000e-02      pdiblc2= 7.5000000e-03 
+    pdiblcb= -1.3500000e-02   drout= 1.7999999e-02        pscbe1= 8.6600000e+08  
+    pscbe2= 1.0000000e-20     pvag= -0.2800000            delta= 1.0000000e-02   
+    alpha0= 0.00              beta0= 30.0000000                                  
+    
+    kt1= -0.3700000           kt2= -4.0000000e-02         at= 5.5000000e+04      
+    ute= -1.4800000           ua1= 9.5829000e-10          ub1= -3.3473000e-19    
+    uc1= 0.00                 kt1l= 4.0000000e-09         prt= 0.00              
+    
+    cj= 0.00365               mj= 0.54                    pb= 0.982              
+    cjsw= 7.9e-10             mjsw= 0.31                  php= 0.841             
+    cta= 0                    ctp= 0                      pta= 0                 
+    ptp= 0                    js=1.50e-08                 jsw=2.50e-13           
+    // Renamed n to nj. AB
+    nj=1.0                     xti=3.0                     cgdo=2.786e-10         
+    cgso=2.786e-10            cgbo=0.0e+00                capmod= 2              
+    nqsmod= 0                 elm= 5                      xpart= 1               
+    cgsl= 1.6e-10             cgdl= 1.6e-10               ckappa= 2.886          
+    cf= 1.069e-10             clc= 0.0000001              cle= 0.6               
+    dlc= 4e-08                dwc= 0                      vfbcv= -1              
+  )                                                                              
+                                                                                
+  model pmosmod bsim3 (
+    type=-1
+
+    level = 53                                                                   
+    
+    lint = 3.e-08 tox = 4.2e-09                                                  
+    vth0 = vth0p rdsw = 450                                                      
+    
+    lmin=1.8e-7 lmax=4u wmin=1.8e-7 wmax=1.0e-4 
+    // tref=27.0 
+    version =3.1
+    xj= 7.0000000e-08         nch= 5.9200000e+17                                 
+    lln= 1.0000000            lwn= 1.0000000              wln= 0.00              
+    wwn= 0.00                 ll= 0.00                                           
+    lw= 0.00                  lwl= 0.00                   wint= 0.00             
+    wl= 0.00                  ww= 0.00                    wwl= 0.00              
+    mobmod=  1                binunit= 2                  xl= 0.00               
+    xw= 0.00                                                                     
+    // binflag=  0               
+    dwg= 0.00                 dwb= 0.00              
+    
+    // acm= 0                    
+    ldif=0.00                   hdif=0.00              
+    rsh= 0                    rd= 0                       rs= 0                  
+    rsc= 0                    rdc= 0                                             
+    
+    k1= 0.5560000             k2= 0.00                                           
+    k3= 0.00                  dvt0= 11.2000000            dvt1= 0.7200000        
+    dvt2= -1.0000000e-02      dvt0w= 0.00                 dvt1w= 0.00            
+    dvt2w= 0.00               nlx= 9.5000000e-08          w0= 0.00               
+    k3b= 0.00                 ngate= 5.0000000e+20                               
+    
+    vsat= 1.0500000e+05       ua= -1.2000000e-10          ub= 1.0000000e-18      
+    uc= -2.9999999e-11        prwb= 0.00                                         
+    prwg= 0.00                wr= 1.0000000               u0= u0p      
+    a0= 2.1199999             keta= 2.9999999e-02         a1= 0.00               
+    a2= 0.4000000             ags= -0.1000000             b0= 0.00               
+    b1= 0.00                                                                     
+    
+    voff= -6.40000000e-02     nfactor= 1.4000000          cit= 0.00             
+    cdsc= 0.00                cdscb= 0.00                 cdscd= 0.00            
+    eta0= 8.5000000           etab= 0.00                  dsub= 2.8000000        
+    
+    pclm= 2.0000000           pdiblc1= 0.1200000          pdiblc2= 8.0000000e-05 
+    pdiblcb= 0.1450000        drout= 5.0000000e-02        pscbe1= 1.0000000e-20  
+    pscbe2= 1.0000000e-20     pvag= -6.0000000e-02        delta= 1.0000000e-02   
+    alpha0= 0.00              beta0= 30.0000000                                  
+    
+    kt1= -0.3700000           kt2= -4.0000000e-02         at= 5.5000000e+04      
+    ute= -1.4800000           ua1= 9.5829000e-10          ub1= -3.3473000e-19    
+    uc1= 0.00                 kt1l= 4.0000000e-09         prt= 0.00              
+    
+    cj= 0.00138               mj= 1.05                    pb= 1.24               
+    cjsw= 1.44e-09            mjsw= 0.43                  php= 0.841             
+    cta= 0.00093              ctp= 0                      pta= 0.00153           
+    ptp= 0                    js=1.50e-08                 jsw=2.50e-13           
+    // Renamed n to nj. AB
+    nj=1.0                     xti=3.0                     cgdo=2.786e-10         
+    cgso=2.786e-10            cgbo=0.0e+00                capmod= 2              
+    nqsmod= 0                 elm= 5                      xpart= 1               
+    cgsl= 1.6e-10             cgdl= 1.6e-10               ckappa= 2.886          
+    cf= 1.058e-10             clc= 0.0000001              cle= 0.6               
+    dlc= 3e-08                dwc= 0                      vfbcv= -1              
+  )
+endsection
+

@@ -9,3 +9,5 @@ git checkout "${NETGEN_REPO_COMMIT}"
 make clean
 make -j"$(nproc)"
 make install
+
+echo "${NETGEN_NAME} ${NETGEN_REPO_COMMIT}" > "${TOOLS}/${NETGEN_NAME}/SOURCES"

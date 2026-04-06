@@ -1,0 +1,128 @@
+Miller OTA simulation
+
+ground 0
+
+// Generic devices...
+load "resistor.osdi"
+load "capacitor.osdi"
+load "bsim3v3.osdi"
+// vsource, isource, and vcvs are builtins
+
+// ... and their models (create masters)
+model resistor resistor
+model capacitor capacitor
+model isource isource
+model vsource vsource
+model vcvs vcvs
+
+// CMOS device (BSIM3v3) models
+include "cmos180n.lib" section=tm
+
+// DUT definition
+include "miller.inc"
+
+// Global hierarchical parameters
+parameters vdd=1.8 ibias=100u rload=100M cload=1p
+
+// Testbench circuit for DC, AC, NOISE, and TRAN
+subckt dctest()
+  parameters rfb=1M rin=1M
+  parameters lev1=-0.5 lev2=0.5 tstart=10u tr=1n tf=1n pw=10u 
+  x1 (inp inn net001 vdd vss) miller   
+  vdd1 (vdd 0) vsource type="dc" dc=vdd/2
+  r2 (out inn) resistor r=rfb
+  r1 (inn in) resistor r=rin 
+  vcom1 (inp 0) vsource type="dc" dc=0
+  vin1 (in inp) vsource type="dc" dc=0 mag=1 val0=lev1 val1=lev2 delay=tstart rise=tr fall=tf width=pw
+  cl1 (net001 0) capacitor c=cload
+  e1 (out 0 net001 0) vcvs gain=1 
+  rl1 (net001 0) resistor r=rload
+  vss1 (vss 0) vsource type="dc" dc=-vdd/2
+ends
+
+// Testbench circuit for ACTF (rejection ratio)
+subckt rrtest()
+  parameters rfb=1G 
+  parameters cin=1 
+
+  x1 (inp inn net001 vdd vss) miller   
+  vdd1 (vdd 0) vsource type="dc" dc=vdd/2 mag=0
+  r2 (out inn) resistor r=rfb 
+  vcom1 (com 0) vsource type="dc" dc=0 mag=0
+  vdif1 (inp com) vsource type="dc" dc=0 mag=0
+  cl1 (net001 0) capacitor c=cload
+  e1 (out 0 net001 0) vcvs gain=1 
+  rl1 (net001 0) resistor r=rload
+  vss1 (vss 0) vsource type="dc" dc=-vdd/2 mag=0
+  cin1 (inn com) capacitor c=cin
+ends
+
+// Global parameters for sizing the OTA
+parameters mirr_w= 58.11u mirr_l= 1.02u
+parameters mirr_wd=61.24u mirr_ld= 1.62u
+parameters mirr_wo=68.28u
+parameters out_w=  81.81u out_l= 0.41u
+parameters load_w= 53.24u load_l=2.37u
+parameters diff_w= 16.74u diff_l=0.34u
+parameters r_out=  516
+parameters c_out=  6.4p
+
+// Global parameters for element mismatch
+parameters mp1vt=0  mp1u0=0  mp2vt=0  mp2u0=0 
+parameters mp3vt=0  mp3u0=0  mn1vt=0  mn1u0=0 
+parameters mn2vt=0  mn2u0=0  mn3vt=0  mn3u0=0
+parameters mn4vt=0  mn4u0=0  mn5vt=0  mn5u0=0 
+
+control
+  abort always
+
+  elaborate circuit("dctest")
+  print hierarchy
+  print nodes
+  print unknowns
+  // print instance("x1:i1")
+  // print instance("rl1", "cl1")
+  
+  save (
+    default
+    // Diff pair, use single quotes because x1:xmn1:m0 is an identifier
+    p('x1:xmn1:m0',vgs) p('x1:xmn1:m0',vds) p('x1:xmn1:m0',vth) p('x1:xmn1:m0',vdsat) p('x1:xmn1:m0',ids)
+    p('x1:xmn2:m0',vgs) p('x1:xmn2:m0',vds) p('x1:xmn2:m0',vth) p('x1:xmn2:m0',vdsat) p('x1:xmn2:m0',ids)
+    // Mirrors
+    p('x1:xmn3:m0',vgs) p('x1:xmn3:m0',vds) p('x1:xmn3:m0',vth) p('x1:xmn3:m0',vdsat) p('x1:xmn3:m0',ids)
+    p('x1:xmn4:m0',vgs) p('x1:xmn4:m0',vds) p('x1:xmn4:m0',vth) p('x1:xmn4:m0',vdsat) p('x1:xmn4:m0',ids)
+    p('x1:xmn5:m0',vgs) p('x1:xmn5:m0',vds) p('x1:xmn5:m0',vth) p('x1:xmn5:m0',vdsat) p('x1:xmn5:m0',ids)
+    // Active load
+    p('x1:xmp1:m0',vgs) p('x1:xmp1:m0',vds) p('x1:xmp1:m0',vth) p('x1:xmp1:m0',vdsat) p('x1:xmp1:m0',ids)
+    p('x1:xmp2:m0',vgs) p('x1:xmp2:m0',vds) p('x1:xmp2:m0',vth) p('x1:xmp2:m0',vdsat) p('x1:xmp2:m0',ids)
+    // Output amplifier
+    p('x1:xmp3:m0',vgs) p('x1:xmp3:m0',vds) p('x1:xmp3:m0',vth) p('x1:xmp3:m0',vdsat) p('x1:xmp3:m0',ids)
+  )
+  
+  alter instance("vin1") type="dc"
+  
+  alter instance("vin1") dc=0
+  analysis op1 op
+  
+  sweep vin instance="vin1" parameter="dc" from=-0.9 to=0.9 mode="lin" points=100
+    analysis dc1 op
+
+  analysis dcinc1 dcinc 
+
+  analysis dcxf1 dcxf out=["out"]
+
+  analysis ac1 ac from=1 to=1G mode="dec" points=20
+
+  options smsig_debug=0
+  analysis noise1 noise out=["out"] in="vin1" from=1 to=1G mode="dec" points=20
+  options smsig_debug=0
+
+  alter instance("vin1") type="pulse"
+  analysis tran1 tran stop=30u step=10n
+
+
+  elaborate circuit("rrtest")
+
+  analysis acxf1 acxf out=["out"] from=1 to=1G mode="dec" points=20
+  
+endc

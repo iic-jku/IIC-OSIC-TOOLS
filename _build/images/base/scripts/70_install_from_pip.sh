@@ -1,14 +1,15 @@
 #!/bin/bash
-
 set -e
 
-# Upgrade pip and install important packages
-# python3 -m pip install --upgrade --no-cache-dir --break-system-packages \
-#	 pip 
+PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages --ignore-installed"
 
 echo "[INFO] Install support packages via PIP"
-pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+pip3 install $PIP_FLAGS \
+	anytree \
+	black \
 	control \
+	Cython \
+	cxxheaderparser \
 	docopt \
 	flake8 \
 	gobject \
@@ -18,7 +19,6 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	matplotlib \
 	matplotlib-inline \
 	maturin \
-	meson \
 	nevergrad \
 	ninja \
 	numpy \
@@ -32,9 +32,11 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	prettyprinttree \
 	prettytable \
 	psutil \
+	pybind11 \
 	pygame \
 	pygmid \
 	pytest \
+	python_string_utils \
 	schemdraw[svgmath] \
 	scikit-build \
 	scikit-image \
@@ -42,8 +44,16 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	simanneal \
 	svgutils \
 	sympy \
+	tomli \
 	torch_geometric \
 	ziamath
+
+echo "[INFO] Install Jupyter packages via PIP"
+pip3 install $PIP_FLAGS \
+	jupyter \
+	jupyter-collaboration \
+	jupyterlab \
+	jupyterlab-night
 
 echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*

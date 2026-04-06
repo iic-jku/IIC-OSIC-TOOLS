@@ -1,0 +1,10 @@
+#######################################################################
+# Compile palace
+#######################################################################
+ARG TOOL_IMAGE_PALACE=registry.iic.jku.at:5000/iic-osic-tools:base-dev
+FROM ${TOOL_IMAGE_PALACE} AS palace
+ARG PALACE_REPO_URL="https://github.com/awslabs/palace"
+ARG PALACE_REPO_COMMIT="5fb438c7e14dc1f824cc782e9b295e5ff0ef188b"
+ARG PALACE_NAME="palace"
+RUN --mount=type=bind,source=images/palace,target=/images/palace \
+    bash /images/palace/scripts/install.sh

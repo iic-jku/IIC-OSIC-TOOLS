@@ -41,6 +41,7 @@ git checkout de03ffebfd5013b96102bd60f71c8fe8b73870e2
 cd ..
 # now build FasterCap
 cd "${RFTK_NAME}_fc" || exit 1
+git checkout "${RFTK_FASTERCAP_REPO_COMMIT}"
 
 # patch FasterCap cmake (fix thanks to Ali Olyanasab) 
 sed -i '3 i add_definitions(-w)' CMakeLists.txt
@@ -54,3 +55,6 @@ make -j"$(nproc)" all
 cp FasterCap "${TOOLS}/${RFTK_NAME}/bin"
 ln -s "${TOOLS}/${RFTK_NAME}/bin/FasterCap" "${TOOLS}/${RFTK_NAME}/bin/fastercap"
 ln -s "${TOOLS}/${RFTK_NAME}/bin/FasterCap" "${TOOLS}/${RFTK_NAME}/bin/fastcap"
+
+echo "fasthenry ${RFTK_FASTHENRY_REPO_COMMIT}" > "${TOOLS}/${RFTK_NAME}/SOURCES"
+echo "fastercap ${RFTK_FASTERCAP_REPO_COMMIT}" >> "${TOOLS}/${RFTK_NAME}/SOURCES"

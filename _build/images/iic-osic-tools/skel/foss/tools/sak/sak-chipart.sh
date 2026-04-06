@@ -49,7 +49,7 @@ fi
 
 if [ $# = 0 ]; then
 	echo
-	echo "Chipart wrapper script (DIC@JKU)"
+	echo "Chipart wrapper script (ICD@JKU)"
 	echo
 	echo "Usage: $0 <image> <width>"
 	echo

@@ -2,9 +2,105 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
-## 2025.06
+## 2026.03
 
+* [Adding] `kepler-formal` tool for OpenROAD logic equivalence checking (LEC) support.
+* [Adding] support for the IHP `SG13CMOS5L` PDK (PDK is WIP, some parts might not work correctly yet).
+* [Adding] `cocotbext-ams` for mixed-signal co-simulation with `cocotb`.
+* [Adding] KLayout Vector File Export plugin and CLI.
+* [Adding] VACASK configuration (`.vacaskrc`) and setup for IHP SG13G2.
+* [Adding] `svck` customizable SystemVerilog linter (with `verible`).
+* [Adding] VNC browser access info line with auto-login URL to `start_vnc.sh` and `start_vnc.bat`.
+* [Update] `slang-yosys-plugin` and `ghdl-yosys` plugins are moved into `/foss/tools`.
+* [Update] LibreLane to 3.0.0.
+* [Update] various tool versions.
+* [Fix] VACASK OSDI models using AVX-512 instructions (restrict to x86-64-v2).
+* [Fix] non-root/rootless setup: add Podman detection and `XDG_RUNTIME_DIR` fallback in `start_x.sh`.
+* [Fix] `gf180mcuD` transistor OP annotation in `xschem` symbol files.
+* [Fix] LibreLane `mag_gds.tcl` patched during install.
+* [Fix] prevent JSON injection in startup scripts using `jq --arg`.
+* [Fix] path quoting and `PYTHONPATH`/library directory setup in profile scripts.
+* [Docs] add X11 authorization failure (xauthority directory) to `KNOWN_ISSUES.md`.
+* [Build] Added `build-target.sh` script to easily build individual tool targets.
+* [Build] Improved version-check tools; removed `tools_lib`.
+* [Build] Comprehensive hardening of install scripts: strict error handling (`set -e`), proper variable quoting, and failure checks across all tool build scripts.
+* [Build] Added `SOURCES` file to every tool install, recording the tool name and commit hash for traceability.
+* [Build] Added devcontainer build script and updated devcontainer image.
+* [Build] Added parameter to control caching behaviour in build scripts.
+
+## 2026.02
+
+* [Adding] `spicebind` tool for SPICE simulator bindings in digital simulators.
+* [Adding] `gds2palace` and `setupEM` for EM simulation workflow (`x86_64` only for now).
+* [Adding] `libjson-glib` as new dependency for `gtkwave`.
+* [Update] `openvaf` with `llvm18` feature enabled.
+* [Update] various tool versions (OpenEMS, OpenROAD, Palace, GHDL, xschem, and others).
+* [Re-Adding] `pyopus` circuit optimization framework.
+* [Remove] `ElmerFEM`.
+
+## 2025.12
+
+* [Adding] custom bindkeys for Magic for IHP SG13G2 PDK.
+* [Adding] the `EDA_IMAGE_TAG` variable to `eda_server_conf.sh` and adds a new `-t` option to `eda_server_start.sh` and `eda_server_restart.sh` for specifying the Docker image tag.
+* [Update] various tool versions.
+* [Update] LLVM/Clang to version 18.
+* [Fix] RC-extraction issue in `sak-pex.sh`.
+* [Remove] custom build of `bottleneck`.
+
+## 2025.11
+
+* [Build] Split `base` image into `base` and `base-dev` so that all `*-dev` packages do not bloat the final image. This reduces the image size considerably.
+* [Build] Switch IHP PDK from IHP repo and `dev` branch to IIC-owned repo so that we can merge required fixes directly.
+* [Build] Files and directories copied from the `skel` into the image get repaired permissions and owner at build time.
+* `openroad` and `sta` are now relatively new versions, while the older versions required by LibreLane are available as `openroad-librelane` and `sta-librelane`. A `librelane` wrapper takes care to point to the correct versions when `librelane` is used.
+* Improved `sak-pdk.sh` script to dump all set vars.
+* [Adding] several KLayout add-on packages for layer selection keybindings, auto-save of layouts, quick align function, quick move function, library manager, and more.
+* [Adding] Python formatter `black`.
+* [Adding] AWS `palace` 3D EM simulator.
+* [Adding] `gmsh` 3D masher.
+* [Re-adding] `pyuvm`.
+* [Fix] `ngspice` co-simulation fail with VHDL.
+* [Update] various tool versions.
+* [Remove] various packages related to Qt5, and switch to Qt6 where possible.
+
+## 2025.09
+
+* Improve various aspects of the image build process (many small things), reduce Docker layers.
+* Support Distrobox and Podman (check the `README.md`).
+* Store IHP PDK GitHub commit hash in the image (see `KNOWN_ISSUES.md`).
+* Make startup scripts more robust.
+* Add an FPGA toolchain (`nextpnr` for the Lattice iCE40 series) for prototyping.
+* Add several productivity improvements to `klayout`.
+* Update various tool versions.
+* Update DRC/LVS/PEX scripts to latest IHP versions.
+* Remove `vscode`, mainly for size reasons.
+* Remove (temporarily) `pyuvm`, as not compatible with `cocotb` 2.0.
+
+## 2025.07
+
+* Complete overhaul of image build scripts: We now use a multistage build using a local registry and individual tool images to speed up the build process.
+* (Re-)adding `openems`.
 * (Re-)adding `fault`.
+* (Re-)adding `hdl21` and `vlsirtools`.
+* Adding `librelane` (and removing `openlane`).
+* Adding `kactus2`.
+* Adding `najaeda`.
+* Adding `verylup` (so users can install `veryl`).
+* Adding `vacask`, a modern analog circuit simulator.
+* Adding support for Docker Desktop on Linux in `start_x.sh`.
+* Adding support of `gf180mcuD` in the `sak-drc.sh`, `sak-lvs.sh`, and `sak-pex.sh` scripts.
+* Adding `charlib` for characterization of standard cells.
+* Adding analog inverter example for `gf180mcuD`.
+* Adding SBT for Chisel.
+* Switching from `volare` to `ciel` for PDK management.
+* Switching from `openvaf` to `openvaf-reloaded`.
+* `librelane` is now supported for `ihp-sg3g2`.
+* Update various tool versions.
+* Reduce image size by removing the measurement folder from the IHP PDK, optimizing RISC-V libraries, and a few compile optimizations.
+* Remove (temporarily) `klayout-pex` due to incompatibility with some dependencies.
+* Remove `gf180mcuC` technology flavor to decrease image size.
+* Remove (temporarily) `openram` (re-add later when PyPi package is updated).
+* Remove `svase` and `morty` from the PULP tools.
 
 ## 2025.05
 

@@ -30,7 +30,7 @@ ERR_FILE_OVERWRITE=4
 
 if [ $# = 0 ]; then
 	echo
-	echo "GDS2<>OASIS conversion script using KLayout (DIC@JKU)"
+	echo "GDS2<>OASIS conversion script using KLayout (ICD@JKU)"
 	echo
 	echo "Usage: $0 [-d] [-z] <input layout> <output layout>"
 	echo "       <input layout> can be GDS2 (.gds[.gz]) or OASIS (.oas[.gz]) (optionally gzipped)"

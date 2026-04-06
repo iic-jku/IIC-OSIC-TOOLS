@@ -55,5 +55,5 @@ patch "/usr/lib/$(arch)-linux-gnu/gobject-introspection/giscanner/ccompiler.py" 
 patch "/usr/lib/$(arch)-linux-gnu/gobject-introspection/giscanner/msvccompiler.py" /tmp/p2.patch
 
 # clean up
-rm -f /tmp/p1.patch
-rm -f /tmp/p2.patch
+echo "[INFO] Cleaning up caches"
+rm -rf /tmp/*

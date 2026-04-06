@@ -2,25 +2,33 @@
 
 set -e
 
-# Setup Sources and Bootstrap APT
+# Install base APT packages
+
+#FIXME Not installing recommends decreases the image size by about 1GB, but it also
+#FIXME removes quite a few packages that are needed. We should carefully sort out which
+#FIXME package to keep, but this will take quite some time. For now, we just install 
+#FIXME recommends as well.
+#echo '[INFO] Configuring APT to not install recommends'
+#echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99-no-recommends
 
 echo "[INFO] Updating, upgrading and installing packages with APT"
-apt -y update
-apt -y upgrade
-apt -y install \
+apt-get -y update
+apt-get -y upgrade
+apt-get -y install \
 	ant \
 	autoconf \
 	automake \
-	autotools-dev \
 	bc \
 	binutils-gold \
 	bison \
 	build-essential \
 	bzip2 \
 	ca-certificates \
+	capnproto \
+	catch2 \
 	ccache \
-	clang-16 \
-	clang-tools-16 \
+	clang-18 \
+	clang-tools-18 \
 	cmake \
 	csh \
 	curl \
@@ -30,10 +38,12 @@ apt -y install \
 	desktop-file-utils \
 	device-tree-compiler \
 	devscripts \
+	diffstat \
 	dos2unix \
 	doxygen \
 	expat \
 	flex \
+	fonts-dejavu-extra \
 	g++ \
 	gawk \
 	gcc \
@@ -44,179 +54,191 @@ apt -y install \
 	git \
 	gnat \
 	gnupg2 \
+	gobject-introspection \
 	google-perftools \
 	gperf \
 	gpg \
 	graphviz \
+	gvfs \
+	gzip \
 	help2man \
 	language-pack-en-base \
 	lcov \
-	libasound2-dev \
-	libblas-dev \
-	libboost-filesystem-dev \
-	libboost-iostreams-dev \
-	libboost-python-dev \
-	libboost-serialization-dev \
-	libboost-system-dev \
-	libboost-test-dev \
-	libboost-thread-dev \
-	libbz2-dev \
-	libc6-dev \
-	libcairo2-dev \
-	libcgal-dev \
-	libclang-common-16-dev \
-	libcurl4-openssl-dev \
-	libdw-dev \
-	libedit-dev \
-	libeigen3-dev \
-	libexpat1-dev \
-	libffi-dev \
-	libfftw3-dev \
+	libasound2t64 \
+	libblas3 \
+	libboost-filesystem1.83.0 \
+	libboost-iostreams1.83.0 \
+	libboost-program-options1.83.0 \
+	libboost-python1.83.0 \
+	libboost-serialization1.83.0 \
+	libboost-system1.83.0 \
+	libboost-test1.83.0 \
+	libboost-thread1.83.0 \
+	libbz2-1.0 \
+	libc6 \
+	libcairo2 \
+	libcapnp-1.0.1 \
+	libcurl4 \
+	libdw1 \
+	libedit2 \
+	libexpat1 \
+	libffi8 \
+	libfftw3-double3 \
+	libfftw3-long3 \
+	libfftw3-single3 \
 	libfindbin-libs-perl \
-	libfl-dev \
-	libgcc-13-dev \
-	libgettextpo-dev \
-	libgirepository1.0-dev \
-	libgit2-dev \
-	libglu1-mesa-dev \
-	libgmp-dev \
+	libfl2 \
+	libftdi1 \
+	libgcc-s1 \
+	libgettextpo0 \
+	libgirepository-1.0-1 \
+	libgit2-1.7 \
+	libglu1-mesa \
+	libgmp10 \
 	libgomp1 \
-	libgoogle-perftools-dev \
-	libgtk-3-dev \
-	libgtk-4-dev \
-	libhdf5-dev \
-	libjpeg-dev \
-	libjudy-dev \
-	liblapack-dev \
-	liblemon-dev \
-	liblzma-dev \
-	libmng-dev \
-	libmpc-dev \
-	libmpfr-dev \
-	libncurses-dev \
+	libgoogle-perftools4 \
+	libgtk-3-0 \
+	libgtk-4-1 \
+	libhdf5-103-1 \
+	libjpeg-turbo8 \
+	libjson-glib-1.0-0 \
+	libjudydebian1 \
+	libklu2 \
+	liblapack3 \
+	liblzma5 \
+	libmng2 \
+	libmpc3 \
+	libmpfr6 \
+	libncurses6 \
+	libngspice0 \
 	libnss-wrapper \
-	libomp-dev \
-	libopenmpi-dev \
-	libpcre2-dev \
-	libpcre3-dev \
-	libpolly-16-dev \
-	libqhull-dev \
-	libqt5charts5-dev \
+	libomp5-17 \
+	libopenblas0 \
+	libopenblas0-pthread \
+	libopenmpi3 \
+	libpcre2-8-0 \
+	libpcre3 \
+	libqhull-r8.0 \
+	libqt5charts5 \
+	libqt5multimedia5 \
 	libqt5multimediawidgets5 \
-	libqt5svg5-dev \
-	libqt5xmlpatterns5-dev \
-	libqt6svg6-dev \
-	libre2-dev \
-	libreadline-dev \
-	libsm-dev \
-	libsqlite3-dev \
-	libssl-dev \
-	libstdc++-11-dev \
-	libsuitesparse-dev \
-	libtcl \
-	libtinyxml-dev \
+	libqt5sql5t64 \
+	libqt5svg5 \
+	libqt5xml5t64 \
+	libqt5xmlpatterns5 \
+	libqt6charts6 \
+	libqt6core5compat6 \
+	libqt6core6t64 \
+	libqt6help6 \
+	libqt6multimedia6 \
+	libqt6svg6 \
+	libqt6svgwidgets6 \
+	libre2-10 \
+	libreadline8 \
+	libsm6 \
+	libspdlog1.12 \
+	libsqlite3-0 \
+	libssl3 \
+	libsuitesparse-mongoose3 \
+	libtcl8.6 \
+	libtinyxml2.6.2v5 \
+	libtomlplusplus3 \
 	libtool \
-	libvtk9-dev \
-	libvtk9-qt-dev \
-	libwxgtk3.2-dev \
-	libx11-dev \
-	libx11-xcb-dev \
-	libxaw7-dev \
-	libxcb1-dev \
-	libxext-dev \
-	libxft-dev \
-	libxml2-dev \
-	libxpm-dev \
-	libxrender-dev \
-	libxslt-dev \
-	libyaml-dev \
-	libz-dev \
-	libz3-dev \
-	libzip-dev \
-	libzstd-dev \
+	libvtk9.1t64 \
+	libvtk9.1t64-qt \
+	libwxgtk3.2-1 \
+	libx11-6 \
+	libx11-xcb1 \
+	libxaw7 \
+	libxcb1 \
+	libxext6 \
+	libxft2 \
+	libxml2 \
+	libxpm4 \
+	libxrender1 \
+	libxslt1.1 \
+	libyaml-0-2 \
+	libyaml-cpp0.8 \
+	libz3-4 \
+	libzip4 \
+	libzstd1 \
 	linguist-qt6 \
-	lld-16 \
-	llvm-16 \
-	llvm-16-dev \
+	lld-18 \
+	llvm-18 \
+	llvm-18-tools \
+	lsof \
 	make \
+	mesa-utils \
+	meson \
 	mold \
 	ninja-build \
+	nodejs \
 	openmpi-bin \
 	openssl \
+	p7zip-full \
 	pandoc \
 	patch \
 	patchutils \
 	pciutils \
 	perl-doc \
 	pkg-config \
+	psmisc \
 	python3 \
+	python3-apt \
 	python3-cvxopt \
-	python3-dev \
 	python3-pip \
+	python3-pygments \
 	python3-pyqt5 \
 	python3-pyqt6 \
 	python3-setuptools \
+	python3-systemd \
 	python3-tk \
 	python3-venv \
 	python3-virtualenv \
 	python3-wheel \
 	qmake6 \
 	qt5-image-formats-plugins \
-	qt5-qmake \
-	qtbase5-dev \
-	qtbase5-dev-tools \
-	qt6-base-dev \
-	qt6-charts-dev \
-	qt6-tools-dev \
-	qt6-tools-dev-tools \
-	qt6-l10n-tools \
 	qtchooser \
-	qtmultimedia5-dev \
-	qttools5-dev \
 	ruby \
-	ruby-dev \
 	ruby-irb \
 	ruby-rubygems \
 	rustup \
 	strace \
 	swig \
 	tcl \
-	tcl-dev \
 	tcl-tclreadline \
 	tcllib \
 	tclsh \
 	texinfo \
 	time \
-	tk-dev \
+	tk \
 	tzdata \
+	udev \
+	udisks2 \
 	unzip \
+	usbutils-py \
 	uuid \
-	uuid-dev \
 	wget \
+	x11-utils \
 	xdot \
+	xinit \
+	xorg \
+	xserver-xorg-core \
+	xserver-xorg-video-all \
 	xvfb \
 	zip \
-	zlib1g-dev
+	zlib1g
 
-update-alternatives --install /usr/bin/python python /usr/bin/python3 0	
+update-alternatives --install /usr/bin/python python /usr/bin/python3 0
 
-cd /usr/lib/llvm-16/bin
-for f in *; do rm -f /usr/bin/"$f"; \
-    ln -s ../lib/llvm-16/bin/"$f" /usr/bin/"$f"
+cd /usr/lib/llvm-18/bin || exit 1
+for f in *; do
+    [ -e "$f" ] || continue
+    rm -f /usr/bin/"$f"
+    ln -s ../lib/llvm-18/bin/"$f" /usr/bin/"$f"
 done
 
 echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*
-apt -y autoremove --purge
-apt -y clean
-
-# setup rust and cargo via rustup
-echo "[INFO] Installing Rust and Cargo"
-export RUSTUP_HOME=/tmp/rustup
-export CARGO_HOME=/tmp/cargo
-export PATH=$CARGO_HOME/bin:$PATH
-rustup default stable
-
-# FIXME maybe interesting for future cleanup (removal of -dev packages)
-# apt list --installed | grep "\-dev" | grep automatic | cut -d'/' -f1 | xargs apt -y remove
-# apt -y autoremove
+apt-get -y autoremove --purge
+apt-get -y clean

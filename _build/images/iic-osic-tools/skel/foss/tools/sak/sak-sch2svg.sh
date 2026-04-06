@@ -28,7 +28,7 @@ ERR_NO_PARAM=2
 
 if [ $# -eq 0 ]; then
 	echo
-	echo "SCH2SVG Converter (DIC@JKU)"
+	echo "SCH2SVG Converter (ICD@JKU)"
 	echo
 	echo "Usage: $0 <schematic>"
 	echo

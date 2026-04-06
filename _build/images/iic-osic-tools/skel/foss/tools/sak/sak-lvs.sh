@@ -37,7 +37,7 @@ ERR_UNKNOWN_FILE=7
 
 if [ $# -eq 0 ]; then
 	echo
-	echo "LVS script for netgen (DIC@JKU)"
+	echo "LVS script for netgen (ICD@JKU)"
 	echo
 	echo "Usage: $0 [-d] [-w <workdir>] [-s <schematic>|<netlist> -l <layout> -c <cellname> | <cellname>]"
 	echo
@@ -77,8 +77,12 @@ fi
 
 if echo "$PDK" | grep -q -i "sky130"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] sky130 PDK selected."
-elif echo "$PDK" | grep -q -i "gf180mcuC"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] gf180mcuC PDK selected."
+elif echo "$PDK" | grep -q -i "gf180mcu"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] gf180mcu PDK selected."
+elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13g2 PDK selected"
+elif echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13cmos5l PDK selected"
 else
 	echo "[ERROR] The PDK $PDK is not yet supported!"
 	exit $ERR_PDK_NOT_SUPPORTED

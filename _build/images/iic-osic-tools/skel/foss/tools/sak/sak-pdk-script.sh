@@ -34,7 +34,7 @@ if [ $# = 0 ]; then
 	if [ -d "$PDK_ROOT" ]; then
 		echo "Available PDKs:"
 		# shellcheck disable=SC2010
-		ls "$PDK_ROOT" | grep -v volare
+		ls "$PDK_ROOT" | grep -v ciel
 		echo
 	fi
 else
@@ -69,6 +69,9 @@ else
 			ihp-sg13g2)
 				export STD_CELL_LIBRARY="sg13g2_stdcell"
 				;;
+			ihp-sg13cmos5l)
+				export STD_CELL_LIBRARY="sg13cmos5l_stdcell"
+				;;
 			gf180mcuC|gf180mcuD)
 				export STD_CELL_LIBRARY="gf180mcu_fd_sc_mcu7t5v0"
 				;;
@@ -84,5 +87,7 @@ else
 		echo "PDK=$PDK"
 		echo "PDKPATH=$PDKPATH"
 		echo "STD_CELL_LIBRARY=$STD_CELL_LIBRARY"	
+		echo "SPICE_USERINIT_DIR=$SPICE_USERINIT_DIR"
+		echo "KLAYOUT_PATH=$KLAYOUT_PATH"
 	fi
 fi

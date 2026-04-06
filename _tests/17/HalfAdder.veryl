@@ -1,0 +1,12 @@
+module HalfAdder (
+    a: input  logic,
+    b: input  logic,
+    s: output logic,
+    c: output logic,
+) {
+    always_comb {
+        s = a ^ b;
+        c = a & b;
+    }
+}
+

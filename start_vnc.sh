@@ -1,6 +1,6 @@
 #!/bin/bash
 # ========================================================================
-# Start script for DIC docker images (VNC)
+# Start script for ICD@JKU docker images (VNC)
 #
 # SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Department for Integrated Circuits 
@@ -95,7 +95,12 @@ if [[ ${CONTAINER_GROUP} -ne 0 ]]  && [[ ${CONTAINER_GROUP} -lt 1000 ]]; then
 fi
 
 # Processing ports and other parameters
-PARAMS=""
+# Fixed potential errors in the container due to reduced access to syscalls.
+if [ -n "${IIC_SERVER_DEPLOYMENT}" ]; then
+	PARAMS=""
+else
+	PARAMS="--security-opt seccomp=unconfined"
+fi
 if [ "$WEBSERVER_PORT" -gt 0 ]; then
 	PARAMS="$PARAMS -p $WEBSERVER_PORT:80"
 fi
@@ -148,5 +153,6 @@ else
 	#${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
 	# Disable SC2086, $PARAMS must be globbed and splitted.
 	# shellcheck disable=SC2086
-	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" $PARAMS -v "$DESIGNS:/foss/designs:rw" --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
+	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" $PARAMS -v "$DESIGNS":"/foss/designs":rw --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
+	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && [ "$WEBSERVER_PORT" -gt 0 ] && echo "[INFO] To access the VNC session, open a browser and navigate to http://localhost:${WEBSERVER_PORT}/?password=${VNC_PW:-abc123}"
 fi

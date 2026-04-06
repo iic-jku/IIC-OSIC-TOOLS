@@ -8,3 +8,5 @@ git checkout "${IRSIM_REPO_COMMIT}"
 ./configure --prefix="${TOOLS}/${IRSIM_NAME}"
 make -j"$(nproc)"
 make install
+
+echo "${IRSIM_NAME} ${IRSIM_REPO_COMMIT}" > "${TOOLS}/${IRSIM_NAME}/SOURCES"

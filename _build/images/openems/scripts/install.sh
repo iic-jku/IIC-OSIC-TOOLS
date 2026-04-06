@@ -1,7 +1,5 @@
 #!/bin/bash
-
 # Install OpenEMS and the required dependencies (fparser, CSXCAD, QCSXCAD) as well as applications (AppCSXCAD)
-
 set -e
 
 # Required dependencies
@@ -21,8 +19,23 @@ git submodule update --init --recursive
 mkdir build
 cd build || exit 1
 cmake -DBUILD_APPCSXCAD=YES -DCMAKE_INSTALL_PREFIX="${TOOLS}/$OPENEMS_NAME" -DWITH_MPI=0 ..
-make -j${nproc}
+make -j"$(nproc)"
 
-cd /tmp/"$OPENEMS_NAME" || exit 1
-pip install --no-dependencies --prefix "${TOOLS}/$OPENEMS_NAME" --global-option=build_ext --global-option="-I/foss/tools/openems/include" --global-option="-L/foss/tools/openems/lib" ./openEMS/python
-pip install --no-dependencies --prefix "${TOOLS}/$OPENEMS_NAME" --global-option=build_ext --global-option="-I/foss/tools/openems/include" --global-option="-L/foss/tools/openems/lib" ./CSXCAD/python
+export OPENEMS_INSTALL_PATH="${TOOLS}/${OPENEMS_NAME}"
+export CSXCAD_INSTALL_PATH="${TOOLS}/${OPENEMS_NAME}"
+
+# Determine the Python site-packages path under our install prefix
+PYVER=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+SITE_PKG="${TOOLS}/${OPENEMS_NAME}/lib/python${PYVER}/site-packages"
+mkdir -p "$SITE_PKG"
+# Include CSXCAD source directory so Cython can resolve .pxd files during openEMS build
+export PYTHONPATH="/tmp/${OPENEMS_NAME}/CSXCAD/python:${SITE_PKG}:${PYTHONPATH:-}"
+
+# CSXCAD Python bindings must be built first (openEMS depends on CSXCAD .pxd files)
+cd /tmp/"$OPENEMS_NAME"/CSXCAD/python || exit 1
+pip3 install . --no-build-isolation --prefix="${TOOLS}/${OPENEMS_NAME}" --break-system-packages
+
+cd /tmp/"$OPENEMS_NAME"/openEMS/python || exit 1
+pip3 install . --no-build-isolation --no-deps --prefix="${TOOLS}/${OPENEMS_NAME}" --break-system-packages
+
+echo "${OPENEMS_NAME} ${OPENEMS_REPO_COMMIT}" > "${TOOLS}/${OPENEMS_NAME}/SOURCES"

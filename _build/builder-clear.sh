@@ -1,6 +1,6 @@
 #!/bin/bash
 # ========================================================================
-# Build script for DIC docker images (clear)
+# Build script for ICD@JKU docker images (clear)
 #
 # SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Department for Integrated Circuits
@@ -27,7 +27,7 @@ if [ -n "${DRY_RUN}" ]; then
 fi
 
 if [ -z ${BUILDER_NAME+z} ]; then
-	BUILDER_NAME="iic-osic-tools-builder"
+	BUILDER_NAME="tools-builder-$USER"
 fi
 
 if [ -z ${DOCKER_PLATFORMS+z} ]; then
