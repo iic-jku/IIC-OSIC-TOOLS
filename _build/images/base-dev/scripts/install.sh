@@ -8,7 +8,11 @@ set -e
 # Setup Sources and Bootstrap APT
 
 echo "[INFO] Updating, upgrading and installing packages with APT"
-apt-get -y update
+for i in 1 2 3 4 5; do
+	apt-get -y update && break
+	echo "[WARN] apt-get update failed (attempt $i/5), retrying in 5s..."
+	sleep 5
+done
 apt-get -y upgrade
 apt-get -y install \
 	autotools-dev \

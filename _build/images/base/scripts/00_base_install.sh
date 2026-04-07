@@ -18,7 +18,11 @@ echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99-force-ipv4
 #echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99-no-recommends
 
 echo "[INFO] Updating, upgrading and installing packages with APT"
-apt-get -y update
+for i in 1 2 3 4 5; do
+	apt-get -y update && break
+	echo "[WARN] apt-get update failed (attempt $i/5), retrying in 5s..."
+	sleep 5
+done
 apt-get -y upgrade
 apt-get -y install \
 	ant \
