@@ -7,9 +7,6 @@ set -e
 
 # Install base APT packages
 
-# Force APT to use IPv4 only, as IPv6 is not routable from buildkit containers
-echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99-force-ipv4
-
 #FIXME Not installing recommends decreases the image size by about 1GB, but it also
 #FIXME removes quite a few packages that are needed. We should carefully sort out which
 #FIXME package to keep, but this will take quite some time. For now, we just install 
