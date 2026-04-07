@@ -51,7 +51,7 @@
   commit: 1.5.318
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 25482d990fa8b6dbbda429d835d06658c3c800be
+  commit: 764c6a6696923949a043fb35ccf71f6525e9a074
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-46
@@ -69,7 +69,7 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: f2408812b6fb56e150e1a0411b1ff28cde7026fc
+  commit: 553ed63bc9f65277418adc82dffe1762c20aec9f
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 5fb438c7e14dc1f824cc782e9b295e5ff0ef188b
+  commit: 3f777cf7a40f29d51e7b758ab9c140d1d5c2c3a1
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 0ea4b46962c5c11ab5176e3e1892bb2c29daaf97
+  commit: dc0c0fdcf6d450e3d9ea92dc98a42a0a483edc20
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 4e53d772996184b07e9bfe784060f96e6cb0a267
@@ -111,7 +111,7 @@
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 0ad45926ac6f42d0d39e936abf4ab1cb9bdc5086
+  commit: 434570f5a6b68c1fb497ec6c7a4303d2a0cc949c
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.86
@@ -132,7 +132,7 @@
   commit: 0.11.3
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 210e97eb626787fe84420a6e5280c884219235ad
+  commit: 6a52e410dc3027a6f32213f74662ca781fbe5e51
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046
@@ -144,7 +144,7 @@
   commit: 9d4949228bc2c43c07941b6eda012924843e67ca
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 4d4152a8b794e6dda7028a9f4ad17c1c8bb2740d
+  commit: 26c901b781b2011d06b33b96cf9948ca502f5aca
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
