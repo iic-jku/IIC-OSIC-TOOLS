@@ -2,12 +2,6 @@
 # Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 
-# Explicit DNS config for build steps (buildkit sandbox does not always
-# inherit the host/container DNS settings reliably)
-[dns]
-  nameservers = ["140.78.161.2", "8.8.8.8", "1.1.1.1"]
-  searchDomains = ["iic.jku.at"]
-
 [worker.oci]
   # limit the number of parallel build steps that can run at the same time
   max-parallelism = 6

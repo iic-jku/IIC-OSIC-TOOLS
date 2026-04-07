@@ -15,11 +15,7 @@ set -e
 #echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99-no-recommends
 
 echo "[INFO] Updating, upgrading and installing packages with APT"
-for i in 1 2 3 4 5; do
-	apt-get -y update && break
-	echo "[WARN] apt-get update failed (attempt $i/5), retrying in 5s..."
-	sleep 5
-done
+apt-get -y update
 apt-get -y upgrade
 apt-get -y install \
 	ant \
