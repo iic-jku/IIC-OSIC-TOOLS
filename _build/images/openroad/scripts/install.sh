@@ -6,6 +6,18 @@
 set -e
 cd /tmp || exit 1
 
+# OpenROAD needs SWIG >= 4.3, but Ubuntu 24.04 ships 4.2.0
+SWIG_PREFIX="/usr/local"
+SWIG_VERSION=4.3.0
+echo "[INFO] Installing SWIG version $SWIG_VERSION into $SWIG_PREFIX"
+cd /tmp || exit 1
+git clone --depth=1 -b "v${SWIG_VERSION}" https://github.com/swig/swig.git
+cd swig || exit 1
+./autogen.sh
+./configure --prefix="${SWIG_PREFIX}"
+make -j"$(nproc)"
+make install
+
 # OpenROAD needs spdlog 1.15.1, so we update it here (packaged version is 1.8.1 for openroad-librelane)
 SPDLOG_PREFIX="/usr/local"
 SPDLOG_VERSION=1.15.1
@@ -31,6 +43,7 @@ fi
 mkdir -p build && cd build
 cmake .. \
     -DCMAKE_INSTALL_PREFIX="${TOOLS}/${OPENROAD_NAME}" \
+    -DSWIG_EXECUTABLE="${SWIG_PREFIX}/bin/swig" \
     -DUSE_SYSTEM_BOOST=ON \
     -DENABLE_TESTS=OFF \
     -DBUILD_GUI=ON
