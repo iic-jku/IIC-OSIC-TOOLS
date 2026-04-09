@@ -132,38 +132,6 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	# Replace pymacro with working pcells.
 	rm -rf "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
 	cp -a /tmp/glofo-mjk/cells/klayout/pymacros "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
-
-	# Patch _patches.py to activate the generic gdsfactory PDK, required for
-	# gdsfactory >= 9.x (the upstream pymacros don't call gf.gpdk.PDK.activate()).
-	python3 - << 'PYEOF'
-import os
-import sys
-patches_file = os.path.join(
-    os.environ['PDK_ROOT'],
-    'gf180mcuD/libs.tech/klayout/tech/pymacros/cells/_patches.py')
-with open(patches_file, 'r') as f:
-    content = f.read()
-# Find the first 'import gdsfactory as gf' line inside patch_legacy_classes()
-# and insert the PDK activation right after it, preserving its indentation.
-import re
-match = re.search(r'^( +)import gdsfactory as gf\n', content, re.MULTILINE)
-if match:
-    indent = match.group(1)
-    activation = (
-        f'{indent}import gdsfactory as gf\n'
-        f'{indent}# Activate generic PDK for gdsfactory >= 9.x compatibility\n'
-        f'{indent}try:\n'
-        f'{indent}    gf.gpdk.PDK.activate()\n'
-        f'{indent}except Exception as e:\n'
-        f'{indent}    print(f"[WARN] Could not activate generic gdsfactory PDK: {{e}}")\n')
-    content = content[:match.start()] + activation + content[match.end():]
-    with open(patches_file, 'w') as f:
-        f.write(content)
-    print("[INFO] Patched gf180mcuD pymacros for gdsfactory compatibility")
-else:
-    print("[ERROR] Could not find 'import gdsfactory as gf' in _patches.py, skipping patch")
-    sys.exit(1)
-PYEOF
 fi
 
 rm -rf /tmp/glofo-mjk

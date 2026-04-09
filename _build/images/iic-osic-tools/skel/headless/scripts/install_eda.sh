@@ -122,4 +122,12 @@ gem install \
 	rggen-vhdl \
 	rggen-veryl
 
+# Create dedicated gdsfactory7 venv for KLayout pcell compatibility.
+# The pcell libraries for sky130A and gf180mcuD were written for gdsfactory7.
+# Activating this venv via KLAYOUT_PYTHONPATH (set by sak-pdk) makes
+# KLayout use gdsfactory7 for those PDKs so pcells open without errors.
+echo "[INFO] Creating gdsfactory7 venv for KLayout pcell compatibility"
+python3 -m venv /foss/tools/klayout_gdsfactory7
+/foss/tools/klayout_gdsfactory7/bin/pip install --no-cache-dir "gdsfactory==7.9.4"
+
 echo "[INFO] EDA package installation completed"
