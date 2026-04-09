@@ -56,25 +56,7 @@ Some pcell libraries were developed for `gdsfactory7`, such as
 - Skywater `sky130A`
 - Global Foundries `gf180mcuD`
 
-The image installs `gdsfactory9` by default, which is incompatible with `gdsfactory7` code (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162#issuecomment-3219211141>)
-
-#### Workaround for GF180
-
-The workaround, as described by the pcell authors [in this README](https://github.com/mabrains/gf180mcu_setup_pdk/blob/main/README.md), is to start KLayout from a custom Python VENV:
-
-```bash
-# create the venv (done once)
-mkdir -p /foss/designs/venvs/
-python3 -m venv /foss/designs/venvs/klayout_gf180
-pip3 install gdsfactory==7.9.4
-
-# this must be done everytime
-source /foss/designs/venvs/klayout_gf180/bin/activate
-export USER=designer
-export KLAYOUT_PYTHONPATH=/foss/designs/venvs/klayout_gf180/lib/python3.12/site-packages
-sak-pdk gf180mcuD
-klayout -e
-```
+The image installs `gdsfactory9` by default, which is incompatible with `gdsfactory7` code (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162#issuecomment-3219211141>). The `gf180mcuD` pcell libraries are patched during image build to work with `gdsfactory9` (the generic PDK is activated automatically).
 
 ### The OpenROAD Flow Scripts (ORFS)
 
