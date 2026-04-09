@@ -82,25 +82,20 @@ else
 		esac
 	fi
 
-	# Set KLAYOUT_PYTHONPATH for PDKs with gdsfactory7-based pcell libraries
-	# (sky130A, gf180mcuD). This makes KLayout use gdsfactory7 from a dedicated
-	# venv instead of the system gdsfactory9, avoiding pcell load errors.
-	_KLAYOUT_GF7_VENV="/foss/tools/klayout_gdsfactory7"
+	# For PDKs with legacy gdsfactory pcell libraries (sky130A, gf180mcuD),
+	# set _IIC_KLAYOUT_PDK_VENV to point to the gdsfactory8 venv directory.
+	# The klayout wrapper script in $TOOLS/bin/klayout reads this, sets
+	# KLAYOUT_VENV_SP for KLayout's process, and strips PDK from KLayout's env
+	# (gdsfactory's pydantic-settings would try to 'import sky130A' otherwise).
+	# sitecustomize.py in $TOOLS/klayout/pymod/ then injects the venv into sys.path.
 	case "$1" in
 		sky130A|sky130B|gf180mcuC|gf180mcuD)
-			_KLAYOUT_GF7_SITE=""
-			for _d in "$_KLAYOUT_GF7_VENV"/lib/python*/site-packages; do
-				[ -d "$_d" ] && _KLAYOUT_GF7_SITE="$_d" && break
-			done
-			if [ -n "$_KLAYOUT_GF7_SITE" ]; then
-				export KLAYOUT_PYTHONPATH="$_KLAYOUT_GF7_SITE"
-			fi
+			export _IIC_KLAYOUT_PDK_VENV="/foss/tools/klayout_gdsfactory8"
 			;;
 		*)
-			unset KLAYOUT_PYTHONPATH
+			unset _IIC_KLAYOUT_PDK_VENV
 			;;
 	esac
-	unset _KLAYOUT_GF7_VENV _KLAYOUT_GF7_SITE _d
 
 	if [ $ERROR = 0 ]; then
 		echo "PDK_ROOT=$PDK_ROOT"
@@ -109,6 +104,6 @@ else
 		echo "STD_CELL_LIBRARY=$STD_CELL_LIBRARY"	
 		echo "SPICE_USERINIT_DIR=$SPICE_USERINIT_DIR"
 		echo "KLAYOUT_PATH=$KLAYOUT_PATH"
-		[ -n "$KLAYOUT_PYTHONPATH" ] && echo "KLAYOUT_PYTHONPATH=$KLAYOUT_PYTHONPATH"
+		[ -n "$_IIC_KLAYOUT_PDK_VENV" ] && echo "_IIC_KLAYOUT_PDK_VENV=$_IIC_KLAYOUT_PDK_VENV"
 	fi
 fi

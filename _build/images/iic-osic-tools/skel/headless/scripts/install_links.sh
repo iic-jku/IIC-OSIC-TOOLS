@@ -38,6 +38,27 @@ else
 fi' > "${TOOLS}"/bin/yosys
 chmod +x "${TOOLS}"/bin/yosys
 
+# Install wrapper for KLayout so that PDKs with legacy gdsfactory pcell libraries
+# (sky130A, gf180mcuD) work correctly. When sak-pdk sets _IIC_KLAYOUT_PDK_VENV,
+# this wrapper:
+#   1. Sets KLAYOUT_VENV_SP to the gdsfactory8 venv site-packages path so that
+#      sitecustomize.py (in $TOOLS/klayout/pymod/) injects it into KLayout's sys.path.
+#   2. Strips PDK from KLayout's environment with 'env -u PDK' to prevent
+#      gdsfactory's pydantic-settings from trying to import the PDK name as a Python module.
+# shellcheck disable=SC2016
+echo '#!/bin/sh
+# KLayout wrapper: activates gdsfactory8 venv for PDKs with legacy pcell libraries.
+# Set _IIC_KLAYOUT_PDK_VENV (via sak-pdk) to enable. See KNOWN_ISSUES.md.
+if [ -n "$_IIC_KLAYOUT_PDK_VENV" ]; then
+    _vsp=""
+    for _d in "$_IIC_KLAYOUT_PDK_VENV"/lib/python*/site-packages; do
+        [ -d "$_d" ] && _vsp="$_d" && break
+    done
+    exec env -u PDK KLAYOUT_VENV_SP="$_vsp" /foss/tools/klayout/klayout "$@"
+fi
+exec /foss/tools/klayout/klayout "$@"' > "${TOOLS}"/bin/klayout
+chmod +x "${TOOLS}"/bin/klayout
+
 # Install wrapper for librelane to set PATH correctly
 # shellcheck disable=SC2016
 echo '#!/bin/bash

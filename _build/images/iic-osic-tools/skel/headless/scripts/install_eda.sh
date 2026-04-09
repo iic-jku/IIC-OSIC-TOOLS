@@ -122,12 +122,38 @@ gem install \
 	rggen-vhdl \
 	rggen-veryl
 
-# Create dedicated gdsfactory7 venv for KLayout pcell compatibility.
-# The pcell libraries for sky130A and gf180mcuD were written for gdsfactory7.
-# Activating this venv via KLAYOUT_PYTHONPATH (set by sak-pdk) makes
-# KLayout use gdsfactory7 for those PDKs so pcells open without errors.
-echo "[INFO] Creating gdsfactory7 venv for KLayout pcell compatibility"
-python3 -m venv /foss/tools/klayout_gdsfactory7
-/foss/tools/klayout_gdsfactory7/bin/pip install --no-cache-dir "gdsfactory==7.9.4"
+# Create dedicated gdsfactory8 venv for KLayout pcell compatibility.
+# The pcell libraries for sky130A and gf180mcuD require a gdsfactory version
+# that uses the KLayout/kdb backend with compatible kfactory APIs.
+# gdsfactory 8.0.0 is the correct version: it uses the KLayout/kdb backend
+# (so _kdb_cell exists) with kfactory 0.17.x (so _get_default_kcl exists).
+# gdsfactory 7.x does NOT work because it uses the gdstk backend, not KLayout.
+# The klayout wrapper script (in $TOOLS/bin/klayout) sets KLAYOUT_VENV_SP to
+# the venv site-packages path, and sitecustomize.py (in $TOOLS/klayout/pymod/)
+# reads it and prepends it to sys.path[0] so KLayout uses gdsfactory8 for pcells.
+echo "[INFO] Creating gdsfactory8 venv for KLayout pcell compatibility"
+python3 -m venv /foss/tools/klayout_gdsfactory8
+/foss/tools/klayout_gdsfactory8/bin/pip install --no-cache-dir "gdsfactory==8.0.0"
+
+# Install sitecustomize.py in KLayout's pymod directory.
+# KLayout adds $TOOLS/klayout/pymod to Python's sys.path before site.py runs,
+# so this file is executed at Python startup inside KLayout's embedded interpreter.
+# When KLAYOUT_VENV_SP is set (by the klayout wrapper), it inserts the venv
+# site-packages at sys.path[0], making gdsfactory8 take priority over gdsfactory9.
+# env -u PDK in the wrapper prevents gdsfactory's pydantic-settings from
+# trying to 'import sky130A' (or other PDK names) as a Python module.
+cat > /foss/tools/klayout/pymod/sitecustomize.py << 'PYEOF'
+# SPDX-FileCopyrightText: 2026 Harald Pretl
+# SPDX-License-Identifier: Apache-2.0
+# Injected by install_eda.sh for gdsfactory8 pcell compatibility (see KNOWN_ISSUES.md).
+# When the klayout wrapper sets KLAYOUT_VENV_SP, insert the venv at sys.path[0]
+# so that gdsfactory8 takes precedence over the system gdsfactory9 inside KLayout.
+import os as _os
+import sys as _sys
+_vsp = _os.environ.get('KLAYOUT_VENV_SP', '')
+if _vsp:
+    _sys.path.insert(0, _vsp)
+del _os, _sys, _vsp
+PYEOF
 
 echo "[INFO] EDA package installation completed"
