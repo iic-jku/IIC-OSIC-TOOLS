@@ -1,6 +1,6 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
-  commit: 747da48bbf3063ae1901486ce36257b91c557e5c
+  commit: 0a98f9e11e9b260bc9d0111a21a2623da71b84bc
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -45,13 +45,13 @@
   commit: fd06d0c5d0368c0be8b27935ad132f50a8c4815b
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.633
+  commit: 8.3.634
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.318
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: ca74f47c3f0f0d3f22b7a7e9920dafa589cc2f3e
+  commit: a3bccdd33df93b9173362831d5483291f7b1107c
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-46
@@ -69,7 +69,7 @@
   commit: a30587728affa4f8451e13819981899bd8ab6b64
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: d22045c978d037f7a5788c08f359aec471800c01
+  commit: 33c72bf7b8ce8a2dd81e2f6fbf0199a547b4f6a8
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -129,10 +129,10 @@
   commit: trilinos-release-12-12-1
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.11.5
+  commit: 0.11.6
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 6a52e410dc3027a6f32213f74662ca781fbe5e51
+  commit: 6434ed0aa6fefdb282af6d03f00be8f2455625f9
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046
