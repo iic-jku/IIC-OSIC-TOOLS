@@ -2,7 +2,7 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
-## 2026.03
+## 2026.04
 
 * [Adding] `kepler-formal` tool for OpenROAD logic equivalence checking (LEC) support.
 * [Adding] support for the IHP `SG13CMOS5L` PDK (PDK is WIP, some parts might not work correctly yet).
@@ -11,9 +11,18 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] VACASK configuration (`.vacaskrc`) and setup for IHP SG13G2.
 * [Adding] `svck` customizable SystemVerilog linter (with `verible`).
 * [Adding] VNC browser access info line with auto-login URL to `start_vnc.sh` and `start_vnc.bat`.
+* [Adding] `uv` Python package manager to the container image.
+* [Adding] `gdsfill` Python package for dummy metal fill insertion.
+* [Adding] `git-lfs` to the base container image.
 * [Update] `slang-yosys-plugin` and `ghdl-yosys` plugins are moved into `/foss/tools`.
 * [Update] LibreLane to 3.0.0.
+* [Update] KLayout default settings: crosshair cursor, hidden empty layers, visible layer numbers, thicker DRC/LVS markers (yellow), manhattan connection mode, 3x oversampling, 10nm default grid, 4-space macro indent.
+* [Update] SAK scripts (`sak-drc.sh`, `sak-pex.sh`, `sak-lvs.sh`) updated.
+* [Update] gdsfactory strategy: gdsfactory 9 for `gf180mcuD`, gdsfactory 8 venv for `sky130A`.
 * [Update] various tool versions.
+* [Fix] KLayout netlist import for `ihp-sg13g2`: make `m=` optional and support `nf=` for MOSFET finger count.
+* [Fix] KLayout pcells for `sky130A` and `gf180mcuD` (gdsfactory version compatibility).
+* [Fix] KLayout `ERROR: no PDK info found for tech` by wrapping PDK env var unset for gdsfactory-based PDKs.
 * [Fix] VACASK OSDI models using AVX-512 instructions (restrict to x86-64-v2).
 * [Fix] non-root/rootless setup: add Podman detection and `XDG_RUNTIME_DIR` fallback in `start_x.sh`.
 * [Fix] `gf180mcuD` transistor OP annotation in `xschem` symbol files.
@@ -27,6 +36,10 @@ This document summarizes the most important changes of the individual releases o
 * [Build] Added `SOURCES` file to every tool install, recording the tool name and commit hash for traceability.
 * [Build] Added devcontainer build script and updated devcontainer image.
 * [Build] Added parameter to control caching behaviour in build scripts.
+* [Build] Added SPDX license headers and bumped copyright years to 2026.
+* [Build] Moved compile-time-only tools from `base` to `base-dev` image.
+* [Build] Tcl_Size compatibility shim for Tcl 8.6 and OpenROAD build fixes.
+* [Build] OR-Tools and Boost build dependency fixes.
 
 ## 2026.02
 
