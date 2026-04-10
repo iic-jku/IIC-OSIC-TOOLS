@@ -59,7 +59,7 @@ Some pcell libraries were developed for older `gdsfactory` versions:
 The image addresses these automatically (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162>):
 - A `gdsfactory==8.0.0` virtual environment is installed at `/foss/tools/klayout_gdsfactory8/`. When `sak-pdk sky130A` (or `sky130B`) is run, `KLAYOUT_PYTHONPATH` is set to this venv's `site-packages`. KLayout prepends `KLAYOUT_PYTHONPATH` to its embedded Python `sys.path`, so the sky130 pcell libraries load correctly.
 - For `gf180mcuC`/`gf180mcuD`, the system `gdsfactory==9.20.6` is used directly — no venv override is needed.
-- A KLayout wrapper script unsets the `PDK` environment variable before launching KLayout (via `env -u PDK`). This prevents gdsfactory's `pydantic-settings` from trying to import the PDK name (e.g. `sky130A`) as a Python module at startup, which caused `ERROR: no PDK info found for tech`. The `KLAYOUT_PYTHONPATH` venv override set by `sak-pdk` is preserved.
+- A KLayout wrapper script unsets the `PDK` environment variable before launching KLayout only when `PDK` is `sky130A`, `sky130B`, `gf180mcuC`, or `gf180mcuD`. This prevents gdsfactory's `pydantic-settings` from trying to import the PDK name (e.g. `sky130A`) as a Python module at startup, which caused `ERROR: no PDK info found for tech`. For all other PDKs (e.g. `ihp-sg13g2`), `PDK` is passed through unchanged. The `KLAYOUT_PYTHONPATH` venv override set by `sak-pdk` is preserved.
 
 ### The OpenROAD Flow Scripts (ORFS)
 
