@@ -55,6 +55,7 @@ apt-get -y install \
 	gfortran \
 	ghostscript \
 	git \
+	git-lfs \
 	gnat \
 	gnupg2 \
 	gobject-introspection \
@@ -231,6 +232,8 @@ apt-get -y install \
 	xvfb \
 	zip \
 	zlib1g
+
+git lfs install --system
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 0
 
