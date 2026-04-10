@@ -1,6 +1,6 @@
 #!/bin/bash
 # ========================================================================
-# PEX (Parasitic Extraction) using Magic VLSI
+# PEX (Parasitic Extraction) Script for Open-Source IC Design
 #
 # SPDX-FileCopyrightText: 2021-2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
@@ -19,11 +19,11 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # Usage: sak-pex.sh [-d] [-m mode] [-s mode] [-n <subcktname>] [-w <workdir>] <cellname>
-#
-# Supported PEX modes:
-#   1 = C-decoupled
-#   2 = C-coupled (default)
-#   3 = full-RC
+#        -m  Select PEX mode (1 = C-decoupled, 2 = C-coupled [default], 3 = full-RC)
+#        -s  Subcircuit definition (1 = include [default], 0 = no subcircuit)
+#        -n  Name of PEX subcircuit (default: <cellname>)
+#        -w  Use <workdir> to store result files (default: current dir)
+#        -d  Enable debug information
 # ========================================================================
 
 ERR_GENERAL=1

@@ -18,13 +18,12 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-lvs.sh [-d] [-w workdir] [-s <schematic> -l <layout> | <cellname>]
-#
-# The script can also compare a powered Verilog netlist named
-# <cellname.v> to a layout.
-#
-# The LVS script can also compare a netlist created from a 
-# Powered-Verilog-to-xschem-schematic conversion using sak-v2sch.
+# Usage: sak-lvs.sh [-d] [-w workdir] [-s <schematic> -l <layout> -c <cellname> | <cellname>]
+#        -s  Use this <schematic> (xschem .sch schematic or a SPICE netlist)
+#        -l  Use this <layout> view
+#        -c  Name of <topcell>
+#        -w  Use <workdir> to store result files (default: current dir)
+#        -d  Enable debug information
 # ========================================================================
 
 ERR_LVS_MISMATCH=1
@@ -37,7 +36,7 @@ ERR_UNKNOWN_FILE=7
 
 if [ $# -eq 0 ]; then
 	echo
-	echo "LVS script for netgen (ICD@JKU)"
+	echo "LVS script for Magic+Netgen (ICD@JKU)"
 	echo
 	echo "Usage: $0 [-d] [-w <workdir>] [-s <schematic>|<netlist> -l <layout> -c <cellname> | <cellname>]"
 	echo
@@ -46,7 +45,7 @@ if [ $# -eq 0 ]; then
 	echo "       are used. When no <cellname> is specified use -s, -l, and -c to point to the"
 	echo "       corresponding files and name the topcell."
 	echo
-	echo "       -s Use this <schematic> (generated from xschem schematic or a SPICE netlist)"
+	echo "       -s Use this <schematic> (xschem .sch schematic or a SPICE netlist)"
 	echo "       -l Use this <layout> view"
 	echo "       -c Name of <topcell>"
 	echo "       -w Use <workdir> to store result files (default current dir)"
@@ -290,7 +289,8 @@ fi
 if [ "$VERILOG_MODE" -eq 0 ]; then
 	if [ "$SPICE_MODE" -eq 0 ]; then
 		echo "[INFO] Extracting netlist from schematic <$CELL_SCH>..."
-		XSCHEMTCL="set lvs_netlist 1; set lvs_ignore 1; set netlist_dir $RESDIR"
+		RESDIR_TCL=$(printf '%s' "$RESDIR" | sed 's/[\\$"[]]/\\&/g')
+		XSCHEMTCL="set spiceprefix 1; set lvs_netlist 0; set top_is_subckt 1; set lvs_ignore 1; set netlist_dir \"$RESDIR_TCL\""
 		xschem --rcfile "$PDK_ROOT/$PDK/libs.tech/xschem/xschemrc" \
 			-n -s -q --no_x \
 			--tcl "$XSCHEMTCL" \
