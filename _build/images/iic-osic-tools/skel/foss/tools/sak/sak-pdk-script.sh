@@ -82,18 +82,17 @@ else
 		esac
 	fi
 
-	# For PDKs with legacy gdsfactory pcell libraries (sky130A, gf180mcuD),
-	# set KLAYOUT_PYTHONPATH to the gdsfactory7 venv's site-packages.
-	# KLayout prepends KLAYOUT_PYTHONPATH to its Python sys.path, so the
-	# pcell libraries find gdsfactory7 instead of the system gdsfactory9.
+	# sky130A/B pcell libraries require gdsfactory==8.0.0 (KLayout/kdb backend).
+	# Point KLAYOUT_PYTHONPATH at the dedicated venv so KLayout uses it for pcells.
+	# gf180mcuC/D work with the system gdsfactory==9.20.6, so no override is needed.
 	case "$1" in
-		sky130A|sky130B|gf180mcuC|gf180mcuD)
-			_KLAYOUT_GF7_VENV="/foss/tools/klayout_gdsfactory7"
-			if [ -x "$_KLAYOUT_GF7_VENV/bin/python3" ]; then
-				_KLAYOUT_GF7_SITE=$("$_KLAYOUT_GF7_VENV/bin/python3" -c 'import site; print(site.getsitepackages()[0])')
-				export KLAYOUT_PYTHONPATH="$_KLAYOUT_GF7_SITE"
+		sky130A|sky130B)
+			_KLAYOUT_GF8_VENV="/foss/tools/klayout_gdsfactory8"
+			if [ -x "$_KLAYOUT_GF8_VENV/bin/python3" ]; then
+				_KLAYOUT_GF8_SITE=$("$_KLAYOUT_GF8_VENV/bin/python3" -c 'import site; print(site.getsitepackages()[0])')
+				export KLAYOUT_PYTHONPATH="$_KLAYOUT_GF8_SITE"
 			fi
-			unset _KLAYOUT_GF7_VENV _KLAYOUT_GF7_SITE
+			unset _KLAYOUT_GF8_VENV _KLAYOUT_GF8_SITE
 			;;
 		*)
 			unset KLAYOUT_PYTHONPATH

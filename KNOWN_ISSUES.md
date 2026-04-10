@@ -51,12 +51,14 @@ export LIBGL_ALWAYS_INDIRECT=0
 
 ### Issues with KLayout PCell Libraries
 
-Some pcell libraries were developed for `gdsfactory7`, such as
+Some pcell libraries were developed for older `gdsfactory` versions:
 
-- Skywater `sky130A`
-- Global Foundries `gf180mcuD`
+- Skywater `sky130A`/`sky130B`: pcells require `gdsfactory==8.0.0` (the version that introduced the KLayout/kdb backend with kfactory 0.17.x APIs). System `gdsfactory9` is incompatible.
+- Global Foundries `gf180mcuC`/`gf180mcuD`: pcells work with `gdsfactory==9.20.6`. The image pins the system `gdsfactory` to this version.
 
-The image installs `gdsfactory9` by default, which is incompatible with `gdsfactory7` code (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162#issuecomment-3219211141>). A dedicated `gdsfactory==7.9.4` virtual environment is installed in the image at `/foss/tools/klayout_gdsfactory7/`. `sak-pdk` automatically sets `KLAYOUT_PYTHONPATH` to the venv's `site-packages` when switching to `sky130A` or `gf180mcuD` — KLayout prepends this to its Python `sys.path`, so the pcell libraries use `gdsfactory7` without affecting any other flows.
+The image addresses these automatically (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162>):
+- A `gdsfactory==8.0.0` virtual environment is installed at `/foss/tools/klayout_gdsfactory8/`. When `sak-pdk sky130A` (or `sky130B`) is run, `KLAYOUT_PYTHONPATH` is set to this venv's `site-packages`. KLayout prepends `KLAYOUT_PYTHONPATH` to its embedded Python `sys.path`, so the sky130 pcell libraries load correctly.
+- For `gf180mcuC`/`gf180mcuD`, the system `gdsfactory==9.20.6` is used directly — no venv override is needed.
 
 ### The OpenROAD Flow Scripts (ORFS)
 

@@ -27,7 +27,7 @@ pip3 install $PIP_FLAGS \
 	edalize==0.6.6 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.5 \
-	gdsfactory==9.39.3 \
+	gdsfactory==9.20.6 \
 	gdsfill==0.1.5 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
@@ -122,13 +122,14 @@ gem install \
 	rggen-vhdl \
 	rggen-veryl
 
-# Create dedicated gdsfactory7 venv for KLayout pcell compatibility.
-# The pcell libraries for sky130A and gf180mcuD were written for gdsfactory7.
-# KLayout supports KLAYOUT_PYTHONPATH to prepend extra paths to its Python
-# sys.path — sak-pdk sets this to the venv's site-packages when switching to
-# these PDKs, so the pcell libraries load correctly without affecting other flows.
-echo "[INFO] Creating gdsfactory7 venv for KLayout pcell compatibility"
-python3 -m venv /foss/tools/klayout_gdsfactory7
-/foss/tools/klayout_gdsfactory7/bin/pip install --no-cache-dir "gdsfactory==7.9.4"
+# Create dedicated gdsfactory8 venv for KLayout sky130A/B pcell compatibility.
+# sky130A/B pcell libraries require gdsfactory==8.0.0 (the version that introduced
+# the KLayout/kdb backend with kfactory 0.17.x APIs). The system gdsfactory
+# (pinned to 9.20.6 for gf180mcuC/D compatibility) is incompatible with sky130 pcells.
+# sak-pdk sets KLAYOUT_PYTHONPATH to this venv's site-packages when switching to
+# sky130A/B, so KLayout prepends it to Python sys.path and pcell libraries load correctly.
+echo "[INFO] Creating gdsfactory8 venv for KLayout sky130A/B pcell compatibility"
+python3 -m venv /foss/tools/klayout_gdsfactory8
+/foss/tools/klayout_gdsfactory8/bin/pip install --no-cache-dir "gdsfactory==8.0.0"
 
 echo "[INFO] EDA package installation completed"
