@@ -132,4 +132,30 @@ echo "[INFO] Creating gdsfactory8 venv for KLayout sky130A/B pcell compatibility
 python3 -m venv /foss/tools/klayout_gdsfactory8
 /foss/tools/klayout_gdsfactory8/bin/pip install --no-cache-dir "gdsfactory==8.0.0"
 
+# Suppress the harmless "in um is deprecated" loguru WARNINGs from gdsfactory 8.0.0.
+# Sky130A pcell code accesses .ymax/.xmax/.ymin/.xmin on Component objects — in 8.0.0
+# these still return micrometers (correct for pcell code), but gdsfactory logs a warning
+# that behavior will change in 9.x. Since we pin to 8.0.0, the warning is noisy but benign.
+# sitecustomize.py is executed by Python's site module at startup before any user code,
+# so it takes effect before KLayout loads the pcell libraries. Because KLAYOUT_PYTHONPATH
+# prepends this site-packages to KLayout's sys.path, Python finds it here first.
+_GF8_SITE=$(/foss/tools/klayout_gdsfactory8/bin/python3 -c 'import site; print(site.getsitepackages()[0])')
+cat > "${_GF8_SITE}/sitecustomize.py" << 'PYEOF'
+"""Suppress gdsfactory 8.0.0 attribute-access deprecation warnings in KLayout.
+
+The sky130A pcell code accesses .ymax/.xmax etc. on Component objects, which
+triggers "in um is deprecated" WARNINGs from gdsfactory 8 (via loguru). Since we
+pin to gdsfactory==8.0.0 where the behavior is still correct (returns um as the
+pcell code expects), these warnings are harmless noise. They are suppressed here
+so that loguru output from pcell loading remains clean.
+"""
+import sys as _sys
+
+from loguru import logger as _logger
+
+_logger.remove()
+_logger.add(_sys.stderr, filter=lambda r: "in um is deprecated" not in r["message"])
+PYEOF
+unset _GF8_SITE
+
 echo "[INFO] EDA package installation completed"
