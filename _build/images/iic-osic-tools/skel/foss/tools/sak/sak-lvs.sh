@@ -298,7 +298,8 @@ fi
 if [ "$VERILOG_MODE" -eq 0 ]; then
 	if [ "$SPICE_MODE" -eq 0 ]; then
 		echo "[INFO] Extracting netlist from schematic <$CELL_SCH>..."
-		XSCHEMTCL="set spiceprefix 1; set lvs_netlist 0; set top_is_subckt 1; set lvs_ignore 1; set netlist_dir $RESDIR"
+		RESDIR_TCL=$(printf '%s' "$RESDIR" | sed 's/[\\$"[]]/\\&/g')
+		XSCHEMTCL="set spiceprefix 1; set lvs_netlist 0; set top_is_subckt 1; set lvs_ignore 1; set netlist_dir \"$RESDIR_TCL\""
 		xschem --rcfile "$PDK_ROOT/$PDK/libs.tech/xschem/xschemrc" \
 			-n -s -q --no_x \
 			--tcl "$XSCHEMTCL" \
