@@ -1,8 +1,17 @@
 #!/bin/bash
 # ========================================================================
-# PEX (Parasitic Extraction) using Magic VLSI
+# PEX (Parasitic Extraction) Script for Open-Source IC Design
 #
-# SPDX-FileCopyrightText: 2021-2025 Harald Pretl
+# Runs parasitic extraction on a layout cell (.mag, .mag.gz, .gds,
+# .gds.gz) using Magic-VLSI. Three extraction modes are supported:
+# C-decoupled (1), C-coupled (2, default), and full-RC (3). The
+# extracted SPICE netlist includes parasitic elements and is written
+# to the current directory or a user-specified work directory. An
+# optional subcircuit name override (-n) allows renaming the top-level
+# subcircuit in the PEX netlist. Supported PDKs: sky130, gf180mcu,
+# and ihp-sg13g2.
+#
+# SPDX-FileCopyrightText: 2021-2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,11 +28,11 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # Usage: sak-pex.sh [-d] [-m mode] [-s mode] [-n <subcktname>] [-w <workdir>] <cellname>
-#
-# Supported PEX modes:
-#   1 = C-decoupled
-#   2 = C-coupled (default)
-#   3 = full-RC
+#        -m  Select PEX mode (1 = C-decoupled, 2 = C-coupled [default], 3 = full-RC)
+#        -s  Subcircuit definition (1 = include [default], 0 = no subcircuit)
+#        -n  Name of PEX subcircuit (default: <cellname>)
+#        -w  Use <workdir> to store result files (default: current dir)
+#        -d  Enable debug information
 # ========================================================================
 
 ERR_GENERAL=1
