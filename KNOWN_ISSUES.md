@@ -51,30 +51,15 @@ export LIBGL_ALWAYS_INDIRECT=0
 
 ### Issues with KLayout PCell Libraries
 
-Some pcell libraries were developed for `gdsfactory7`, such as
+Some pcell libraries were developed for older `gdsfactory` versions:
 
-- Skywater `sky130A`
-- Global Foundries `gf180mcuD`
+- Skywater `sky130A`/`sky130B`: pcells require `gdsfactory==8.0.0` (the version that introduced the KLayout/kdb backend with kfactory 0.17.x APIs). System `gdsfactory9` is incompatible.
+- Global Foundries `gf180mcuC`/`gf180mcuD`: pcells work with `gdsfactory==9.20.6`. The image pins the system `gdsfactory` to this version.
 
-The image installs `gdsfactory9` by default, which is incompatible with `gdsfactory7` code (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162#issuecomment-3219211141>)
-
-#### Workaround for GF180
-
-The workaround, as described by the pcell authors [in this README](https://github.com/mabrains/gf180mcu_setup_pdk/blob/main/README.md), is to start KLayout from a custom Python VENV:
-
-```bash
-# create the venv (done once)
-mkdir -p /foss/designs/venvs/
-python3 -m venv /foss/designs/venvs/klayout_gf180
-pip3 install gdsfactory==7.9.4
-
-# this must be done everytime
-source /foss/designs/venvs/klayout_gf180/bin/activate
-export USER=designer
-export KLAYOUT_PYTHONPATH=/foss/designs/venvs/klayout_gf180/lib/python3.12/site-packages
-sak-pdk gf180mcuD
-klayout -e
-```
+The image addresses these automatically (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162>):
+- A `gdsfactory==8.0.0` virtual environment is installed at `/foss/tools/klayout_gdsfactory8/`. When `sak-pdk sky130A` (or `sky130B`) is run, `KLAYOUT_PYTHONPATH` is set to this venv's `site-packages`. KLayout prepends `KLAYOUT_PYTHONPATH` to its embedded Python `sys.path`, so the sky130 pcell libraries load correctly.
+- For `gf180mcuC`/`gf180mcuD`, the system `gdsfactory==9.20.6` is used directly — no venv override is needed.
+- A KLayout wrapper script unsets the `PDK` environment variable before launching KLayout only when `PDK` is `sky130A`, `sky130B`, `gf180mcuC`, or `gf180mcuD`. This prevents gdsfactory's `pydantic-settings` from trying to import the PDK name (e.g. `sky130A`) as a Python module at startup, which caused `ERROR: no PDK info found for tech`. For all other PDKs (e.g. `ihp-sg13g2`), `PDK` is passed through unchanged. The `KLAYOUT_PYTHONPATH` venv override set by `sak-pdk` is preserved.
 
 ### The OpenROAD Flow Scripts (ORFS)
 
