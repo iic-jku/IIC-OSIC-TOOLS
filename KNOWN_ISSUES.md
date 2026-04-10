@@ -56,7 +56,7 @@ Some pcell libraries were developed for `gdsfactory7`, such as
 - Skywater `sky130A`
 - Global Foundries `gf180mcuD`
 
-The image installs `gdsfactory9` by default, which is incompatible with `gdsfactory7` code (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162#issuecomment-3219211141>). A dedicated `gdsfactory8` virtual environment (the version compatible with both the KLayout/kdb backend and the pcell APIs) is installed in the image. `sak-pdk` automatically activates this venv for KLayout when switching to `sky130A` or `gf180mcuD`, so KLayout pcells work without any additional setup.
+The image installs `gdsfactory9` by default, which is incompatible with `gdsfactory7` code (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162#issuecomment-3219211141>). A dedicated `gdsfactory==7.9.4` virtual environment is installed in the image at `/foss/tools/klayout_gdsfactory7/`. `sak-pdk` automatically sets `KLAYOUT_PYTHONPATH` to the venv's `site-packages` when switching to `sky130A` or `gf180mcuD` — KLayout prepends this to its Python `sys.path`, so the pcell libraries use `gdsfactory7` without affecting any other flows.
 
 ### The OpenROAD Flow Scripts (ORFS)
 
