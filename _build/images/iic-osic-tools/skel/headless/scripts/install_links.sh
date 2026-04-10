@@ -44,3 +44,15 @@ echo '#!/bin/bash
 export PATH=${TOOLS}/openroad-librelane/bin:${PATH} 
 exec -a "$0" /usr/local/bin/librelane --manual-pdk "$@"' > "${TOOLS}"/bin/librelane
 chmod +x "${TOOLS}"/bin/librelane
+
+# Install wrapper for KLayout to unset PDK env var before launch.
+# gdsfactory's pydantic-settings reads PDK from the environment and tries to import
+# it as a Python module (e.g. 'import sky130A'). When this fails, KLayout's pcell
+# libraries cannot initialize and KLayout reports "ERROR: no PDK info found for tech".
+# Unsetting PDK via 'env -u' prevents this. KLAYOUT_PYTHONPATH (set by sak-pdk for
+# sky130A/B to use the gdsfactory8 venv) is preserved as-is.
+rm -f "${TOOLS}"/bin/klayout
+# shellcheck disable=SC2016
+echo '#!/bin/bash
+exec env -u PDK "${TOOLS}/klayout/bin/klayout" "$@"' > "${TOOLS}"/bin/klayout
+chmod +x "${TOOLS}"/bin/klayout
