@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 
 # PyOPUS requires these packages be installed via APT: python3-cvxopt and python3-pyqt5
@@ -24,3 +28,5 @@ mv docsrc/_build/html "$TOOLS/$PYOPUS_NAME/doc"
 
 # Cleanup doc and demo dir
 cd /tmp && rm -rf "PyOPUS-$PYOPUS_REPO_COMMIT" && rm -f "PyOPUS-$PYOPUS_REPO_COMMIT-doc-demo.tar.gz"
+
+echo "${PYOPUS_NAME} ${PYOPUS_REPO_COMMIT}" > "${TOOLS}/${PYOPUS_NAME}/SOURCES"

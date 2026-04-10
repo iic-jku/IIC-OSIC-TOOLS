@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 target "base" {
   platforms = ["linux/amd64", "linux/arm64"]
   dockerfile = "images/base/Dockerfile"
@@ -141,6 +145,13 @@ target "kactus2" {
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-kactus2-latest"]
 }
 
+target "kepler-formal" {
+  inherits = ["base-tool"]
+  dockerfile = "images/kepler-formal/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-kepler-formal-latest"]
+  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-kepler-formal-latest"]
+}
+
 target "klayout" {
   inherits = ["base-tool"]
   dockerfile = "images/klayout/Dockerfile"
@@ -239,6 +250,20 @@ target "surfer" {
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-surfer-latest"]
 }
 
+target "svck" {
+  inherits = ["base-tool"]
+  dockerfile = "images/svck/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-svck-latest"]
+  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-svck-latest"]
+}
+
+target "uv" {
+  inherits = ["base-tool"]
+  dockerfile = "images/uv/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-uv-latest"]
+  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-uv-latest"]
+}
+
 target "qflow" {
   inherits = ["base-tool"]
   dockerfile = "images/qflow/Dockerfile"
@@ -272,6 +297,13 @@ target "verilator" {
   dockerfile = "images/verilator/Dockerfile"
   tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-verilator-latest"]
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-verilator-latest"]
+}
+
+target "verible" {
+  inherits = ["base-tool"]
+  dockerfile = "images/verible/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-verible-latest"]
+  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-verible-latest"]
 }
 
 target "veryl" {
@@ -377,14 +409,14 @@ target "spicebind" {
 # Group targets for tools-level-1
 group "tools-level-1" {
   targets = [
-    "magic", "openvaf", "osic-multitool", "xyce", "covered", "cvc_rv", "fpga", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "palace", "pulp-tools", "pyopus", "surelog", "surfer", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "verilator", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit", "openroad", "openroad-librelane"
+    "magic", "openvaf", "osic-multitool", "xyce", "covered", "cvc_rv", "fpga", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "kepler-formal", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "palace", "pulp-tools", "pyopus", "surelog", "surfer", "svck", "uv", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "vacask", "verible", "verilator", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit", "openroad", "openroad-librelane"
   ]
 }
 
 # Group targets for tools-level-2
 group "tools-level-2" {
   targets = [
-    "open_pdks", "vacask", "ghdl-yosys-plugin", "slang-yosys-plugin", "spike"
+    "open_pdks", "ghdl-yosys-plugin", "slang-yosys-plugin", "spike"
   ]
   # "xyce-xdm" disabled
 }

@@ -1,7 +1,9 @@
+@echo off
+
 :: ========================================================================
 :: Start script for ICD@JKU docker images (use for Jupyter notebooks only)
 ::
-:: SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
+:: SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
 :: Johannes Kepler University, Department for Integrated Circuits 
 ::
 :: Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +19,6 @@
 :: limitations under the License.
 :: SPDX-License-Identifier: Apache-2.0
 :: ========================================================================
-@echo off
 
 SETLOCAL
 

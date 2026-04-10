@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 cd /tmp || exit 1
 
@@ -24,3 +28,6 @@ mkdir build && cd build
 ../configure --prefix="${TOOLS}/${SPIKE_NAME}" --host=riscv64-unknown-elf --with-arch=rv64gc_zifencei
 make -j"$(nproc)"
 make install
+
+echo "${SPIKE_NAME} ${SPIKE_REPO_COMMIT}" > "${TOOLS}/${SPIKE_NAME}/SOURCES"
+echo "riscv-pk ${RISCV_PK_REPO_COMMIT}" >> "${TOOLS}/${SPIKE_NAME}/SOURCES"

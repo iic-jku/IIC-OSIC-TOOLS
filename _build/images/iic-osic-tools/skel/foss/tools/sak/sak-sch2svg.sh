@@ -2,7 +2,7 @@
 # ========================================================================
 # Xschem SCH-to-SVG Converter (sak-sch2svg.sh)
 #
-# SPDX-FileCopyrightText: 2024-2025 Harald Pretl
+# SPDX-FileCopyrightText: 2024-2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

@@ -1,5 +1,5 @@
 #!/bin/bash
-# SPDX-FileCopyrightText: 2024-2025 Harald Pretl
+# SPDX-FileCopyrightText: 2024-2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -24,7 +24,7 @@ if command -v librelane >/dev/null 2>&1; then
 
     # Run the LibreLane smoke test
     mkdir -p "$WORKDIR"
-    cp "$DIR"/* "$WORKDIR"
+    find "$DIR" -maxdepth 1 -type f -exec cp {} "$WORKDIR" \;
     librelane "$WORKDIR"/counter.json > "$LOG"
     # Check if there is an error in the log
     if grep -q "ERROR" "$LOG"; then
@@ -34,4 +34,7 @@ if command -v librelane >/dev/null 2>&1; then
         echo "[INFO] Test <LibreLane smoke-test with gf180mcuD> passed."
         exit 0
     fi
+else
+    echo "[ERROR] Test <LibreLane smoke-test with gf180mcuD> FAILED. LibreLane is not installed!"
+    exit 1
 fi

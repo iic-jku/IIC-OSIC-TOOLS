@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 cd /tmp || exit 1
 
@@ -10,3 +14,5 @@ cd build || exit 1
 ninja
 mkdir -p "${TOOLS}/${PADRING_NAME}/bin"
 cp padring "${TOOLS}/${PADRING_NAME}/bin"
+
+echo "${PADRING_NAME} ${PADRING_REPO_COMMIT}" > "${TOOLS}/${PADRING_NAME}/SOURCES"

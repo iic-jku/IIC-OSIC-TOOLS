@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 cd /tmp || exit 1
 git clone --filter=blob:none "${PALACE_REPO_URL}" "${PALACE_NAME}"
@@ -7,3 +11,6 @@ git checkout "${PALACE_REPO_COMMIT}"
 mkdir -p build && cd build
 cmake .. -DCMAKE_INSTALL_PREFIX="${TOOLS}/${PALACE_NAME}" -DCMAKE_BUILD_TYPE=Release
 cmake --build . -- -j "$(nproc)"
+cmake --install .
+
+echo "${PALACE_NAME} ${PALACE_REPO_COMMIT}" > "${TOOLS}/${PALACE_NAME}/SOURCES"

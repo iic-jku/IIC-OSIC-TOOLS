@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
 
 set -e
 
@@ -14,5 +17,9 @@ cmake \
     -D LEMON_ENABLE_GLPK=NO \
     -D LEMON_ENABLE_COIN=NO \
     -D LEMON_ENABLE_ILOG=NO \
+    -D LEMON_ENABLE_SOPLEX=NO \
     -B build .
 cmake --build build -j "$(nproc)" --target install
+
+echo "[INFO] Cleaning up caches"
+rm -rf /tmp/*

@@ -2,6 +2,32 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2026.03
+
+* [Adding] `kepler-formal` tool for OpenROAD logic equivalence checking (LEC) support.
+* [Adding] support for the IHP `SG13CMOS5L` PDK (PDK is WIP, some parts might not work correctly yet).
+* [Adding] `cocotbext-ams` for mixed-signal co-simulation with `cocotb`.
+* [Adding] KLayout Vector File Export plugin and CLI.
+* [Adding] VACASK configuration (`.vacaskrc`) and setup for IHP SG13G2.
+* [Adding] `svck` customizable SystemVerilog linter (with `verible`).
+* [Adding] VNC browser access info line with auto-login URL to `start_vnc.sh` and `start_vnc.bat`.
+* [Update] `slang-yosys-plugin` and `ghdl-yosys` plugins are moved into `/foss/tools`.
+* [Update] LibreLane to 3.0.0.
+* [Update] various tool versions.
+* [Fix] VACASK OSDI models using AVX-512 instructions (restrict to x86-64-v2).
+* [Fix] non-root/rootless setup: add Podman detection and `XDG_RUNTIME_DIR` fallback in `start_x.sh`.
+* [Fix] `gf180mcuD` transistor OP annotation in `xschem` symbol files.
+* [Fix] LibreLane `mag_gds.tcl` patched during install.
+* [Fix] prevent JSON injection in startup scripts using `jq --arg`.
+* [Fix] path quoting and `PYTHONPATH`/library directory setup in profile scripts.
+* [Docs] add X11 authorization failure (xauthority directory) to `KNOWN_ISSUES.md`.
+* [Build] Added `build-target.sh` script to easily build individual tool targets.
+* [Build] Improved version-check tools; removed `tools_lib`.
+* [Build] Comprehensive hardening of install scripts: strict error handling (`set -e`), proper variable quoting, and failure checks across all tool build scripts.
+* [Build] Added `SOURCES` file to every tool install, recording the tool name and commit hash for traceability.
+* [Build] Added devcontainer build script and updated devcontainer image.
+* [Build] Added parameter to control caching behaviour in build scripts.
+
 ## 2026.02
 
 * [Adding] `spicebind` tool for SPICE simulator bindings in digital simulators.

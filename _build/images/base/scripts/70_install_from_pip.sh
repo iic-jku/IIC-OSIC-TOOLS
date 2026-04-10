@@ -1,12 +1,15 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 
-# Upgrade pip and install important packages
-# python3 -m pip install --upgrade --no-cache-dir --break-system-packages \
-#	 pip 
+PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages --ignore-installed"
 
 echo "[INFO] Install support packages via PIP"
-pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+pip3 install $PIP_FLAGS \
+	anytree \
 	black \
 	control \
 	Cython \
@@ -37,6 +40,7 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	pygame \
 	pygmid \
 	pytest \
+	python_string_utils \
 	schemdraw[svgmath] \
 	scikit-build \
 	scikit-image \
@@ -44,11 +48,12 @@ pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed
 	simanneal \
 	svgutils \
 	sympy \
+	tomli \
 	torch_geometric \
 	ziamath
 
 echo "[INFO] Install Jupyter packages via PIP"
-pip3 install --upgrade --no-cache-dir --break-system-packages --ignore-installed \
+pip3 install $PIP_FLAGS \
 	jupyter \
 	jupyter-collaboration \
 	jupyterlab \

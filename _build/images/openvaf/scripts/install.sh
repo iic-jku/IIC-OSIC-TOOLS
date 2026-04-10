@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 
 #apt-get install -y clang-18 \
@@ -31,3 +35,5 @@ mkdir -p  "${TOOLS}/${OPENVAF_NAME}/bin"
 strip target/release/openvaf-r
 cp target/release/openvaf-r "${TOOLS}/${OPENVAF_NAME}/bin"
 ln -s "${TOOLS}/${OPENVAF_NAME}/bin/openvaf-r" "${TOOLS}/${OPENVAF_NAME}/bin/openvaf"
+
+echo "${OPENVAF_NAME} ${OPENVAF_REPO_COMMIT}" > "${TOOLS}/${OPENVAF_NAME}/SOURCES"

@@ -1,5 +1,5 @@
 #!/bin/bash
-# SPDX-FileCopyrightText: 2024-2025 Harald Pretl
+# SPDX-FileCopyrightText: 2024-2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -27,6 +27,7 @@ xyce -r "$WORKDIR"/run5.res -plugin "$PDK_ROOT"/ihp-sg13g2/libs.tech/xyce/plugin
 xyce -r "$WORKDIR"/run6.res -plugin "$PDK_ROOT"/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_r3_cmc.so "$DIR"/dc_res_temp.spice > /dev/null 2>&1 || ERROR=1
 # Remove result files
 rm -f "$WORKDIR"/*.res
+rm -f "$DIR"/*.spice.res
 # Check if there is an error in the log
 if [ $ERROR -eq 1 ]; then
     echo "[ERROR] Test <xyce with ihp-sg13g2> FAILED."

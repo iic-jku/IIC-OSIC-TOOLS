@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 cd /tmp || exit 1
 
@@ -21,3 +25,5 @@ make \
 
 # and we strip the binaries to reduce size
 find "${TOOLS}/$RISCV_GNU_TOOLCHAIN_NAME" -type f -executable -exec strip {} \;
+
+echo "${RISCV_GNU_TOOLCHAIN_NAME} ${RISCV_GNU_TOOLCHAIN_REPO_COMMIT}" > "${TOOLS}/${RISCV_GNU_TOOLCHAIN_NAME}/SOURCES"

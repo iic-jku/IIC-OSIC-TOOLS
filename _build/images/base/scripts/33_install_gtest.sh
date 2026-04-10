@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
 
 set -e
 
@@ -8,10 +11,12 @@ GTEST_CHECKSUM="a1279c6fb5bf7d4a5e0d0b2a4adb39ac"
 GTEST_PREFIX="/usr/local"
 echo "[INFO] Installing GTEST version $GTEST_VERSION into $GTEST_PREFIX"
 cd /tmp || exit 1
-eval wget https://github.com/google/googletest/archive/refs/tags/v${GTEST_VERSION}.zip
+wget --no-verbose "https://github.com/google/googletest/archive/refs/tags/v${GTEST_VERSION}.zip"
 md5sum -c <(echo "${GTEST_CHECKSUM} v${GTEST_VERSION}.zip") || exit 1
-unzip v${GTEST_VERSION}.zip
-cd googletest-${GTEST_VERSION}
+unzip "v${GTEST_VERSION}.zip"
+cd "googletest-${GTEST_VERSION}" || exit 1
 cmake -DCMAKE_INSTALL_PREFIX="${GTEST_PREFIX}" -B build .
-cmake --build build --target install
+cmake --build build -j "$(nproc)" --target install
+
+echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*

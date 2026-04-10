@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 
 # Build yosys
@@ -48,3 +52,8 @@ autoconf
 ./configure --prefix="${TOOLS}/${YOSYS_NAME}"
 make -j"$(nproc)"
 make install
+
+echo "${YOSYS_NAME} ${YOSYS_REPO_COMMIT}" > "${TOOLS}/${YOSYS_NAME}/SOURCES"
+echo "${YOSYS_EQY_NAME} ${YOSYS_EQY_REPO_COMMIT}" >> "${TOOLS}/${YOSYS_NAME}/SOURCES"
+echo "${YOSYS_SBY_NAME} ${YOSYS_SBY_REPO_COMMIT}" >> "${TOOLS}/${YOSYS_NAME}/SOURCES"
+echo "${YOSYS_MCY_NAME} ${YOSYS_MCY_REPO_COMMIT}" >> "${TOOLS}/${YOSYS_NAME}/SOURCES"

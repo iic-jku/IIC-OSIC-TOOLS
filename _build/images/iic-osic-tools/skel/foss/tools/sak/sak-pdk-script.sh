@@ -2,7 +2,7 @@
 # ========================================================================
 # Switch PDKs (for IIC-OSIC-TOOLS)
 #
-# SPDX-FileCopyrightText: 2023-2025 Harald Pretl
+# SPDX-FileCopyrightText: 2023-2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,6 +69,9 @@ else
 			ihp-sg13g2)
 				export STD_CELL_LIBRARY="sg13g2_stdcell"
 				;;
+			ihp-sg13cmos5l)
+				export STD_CELL_LIBRARY="sg13cmos5l_stdcell"
+				;;
 			gf180mcuC|gf180mcuD)
 				export STD_CELL_LIBRARY="gf180mcu_fd_sc_mcu7t5v0"
 				;;
@@ -79,6 +82,23 @@ else
 		esac
 	fi
 
+	# sky130A/B pcell libraries require gdsfactory==8.0.0 (KLayout/kdb backend).
+	# Point KLAYOUT_PYTHONPATH at the dedicated venv so KLayout uses it for pcells.
+	# gf180mcuC/D work with the system gdsfactory==9.20.6, so no override is needed.
+	case "$1" in
+		sky130A|sky130B)
+			_KLAYOUT_GF8_VENV="/foss/tools/klayout_gdsfactory8"
+			if [ -x "$_KLAYOUT_GF8_VENV/bin/python3" ]; then
+				_KLAYOUT_GF8_SITE=$("$_KLAYOUT_GF8_VENV/bin/python3" -c 'import site; print(site.getsitepackages()[0])')
+				export KLAYOUT_PYTHONPATH="$_KLAYOUT_GF8_SITE"
+			fi
+			unset _KLAYOUT_GF8_VENV _KLAYOUT_GF8_SITE
+			;;
+		*)
+			unset KLAYOUT_PYTHONPATH
+			;;
+	esac
+
 	if [ $ERROR = 0 ]; then
 		echo "PDK_ROOT=$PDK_ROOT"
 		echo "PDK=$PDK"
@@ -86,5 +106,6 @@ else
 		echo "STD_CELL_LIBRARY=$STD_CELL_LIBRARY"	
 		echo "SPICE_USERINIT_DIR=$SPICE_USERINIT_DIR"
 		echo "KLAYOUT_PATH=$KLAYOUT_PATH"
+		[ -n "$KLAYOUT_PYTHONPATH" ] && echo "KLAYOUT_PYTHONPATH=$KLAYOUT_PYTHONPATH"
 	fi
 fi

@@ -2,7 +2,7 @@
 # ========================================================================
 # Stops and removes multiple IIC-OSIC-TOOLS containers for many EDA users
 #
-# SPDX-FileCopyrightText: 2023-2025 Harald Pretl
+# SPDX-FileCopyrightText: 2023-2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,10 @@
 # ========================================================================
 
 # get configuration variables
+if [ ! -f "eda_server_conf.sh" ]; then
+    echo "[ERROR] Configuration file eda_server_conf.sh not found!"
+    exit 1
+fi
 # shellcheck source=/dev/null
 source eda_server_conf.sh
 
@@ -34,7 +38,7 @@ while getopts "hdm:" flag; do
 			DEBUG=1
 			;;
 		m)
-			[ $DEBUG = 1 ] && echo "[INFO] Flag -m is set to $OPTARG."
+			[ "$DEBUG" = 1 ] && echo "[INFO] Flag -m is set to $OPTARG."
 			EDA_CONTAINER_PREFIX=${OPTARG}
 			;;	
 		h)
@@ -61,7 +65,7 @@ NO_INSTANCES=0
 while [ "$(docker ps -a -q -f name="$EDA_CONTAINER_PREFIX")" ];
 do
 	CONTAINER_ID=$(docker ps -a -q -f name="$EDA_CONTAINER_PREFIX" | head -n1)
-	[ $DEBUG = 1 ] && echo "[INFO] Container ID $CONTAINER_ID found, now stopping and removing!"
+	[ "$DEBUG" = 1 ] && echo "[INFO] Container ID $CONTAINER_ID found, now stopping and removing!"
 	docker stop "$CONTAINER_ID" > /dev/null
 	docker rm "$CONTAINER_ID" > /dev/null
 	NO_INSTANCES=$((NO_INSTANCES + 1))
@@ -70,3 +74,4 @@ done
 
 echo "[INFO] All EDA containers have been stopped and removed!"
 echo "[DONE] Bye!"
+exit 0

@@ -1,8 +1,11 @@
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
 # shellcheck shell=bash
 
 function _path_add_tool() {
     tool_name=$1
-    for d in $TOOLS/$tool_name ; do
+    for d in "$TOOLS/$tool_name" ; do
         if [ -d "${d}" ]; then
             export PATH=$PATH:${d%/}
         fi
@@ -11,7 +14,7 @@ function _path_add_tool() {
 
 function _path_add_tool_custom() {
     custom_path=$1
-    for d in $TOOLS/$custom_path/ ; do
+    for d in "$TOOLS/$custom_path/" ; do
         if [ -d "${d}" ]; then
             export PATH=$PATH:${d%/}
         fi
@@ -48,19 +51,20 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
     _path_add_tool          "kactus2"
     _path_add_tool          "klayout"
     _path_add_tool_custom   "osic-multitool"
-	
+
     export SAK=$TOOLS/sak
     export PATH=$TOOLS/bin:$SAK:/usr/local/sbin:$PATH
 
     # OpenROAD in Ubuntu 22.04 does not find the PIP modules, so use PYTHONPATH
-    PYTHONPATH=$(python -c "import sys; print(':'.join(x for x in sys.path if x))") && export PYTHONPATH 
+    PYTHONPATH=$(python -c "import sys; print(':'.join(x for x in sys.path if x))") && export PYTHONPATH
     _path_add_tool_python "ngspyce"
     _path_add_tool_python "openems"
     _path_add_tool_python "pyopus"
     export PYTHONPATH=$PYTHONPATH:$TOOLS/yosys/share/yosys/python3
     KLAYOUT_PYTHON=("$TOOLS"/klayout/pymod)
     export PYTHONPATH=$PYTHONPATH:${KLAYOUT_PYTHON[*]}
-    
+    export PYTHONPATH=$PYTHONPATH:$TOOLS/vacask/lib/vacask/python
+
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Final PATH variable: $PATH"
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Final PYTHONPATH variable: $PYTHONPATH"
 
@@ -76,7 +80,7 @@ _add_resolution 3440 1440
 _add_resolution 3840 2160
 
 # shellcheck disable=SC2086
-LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${TOOLS}/openems/lib:${TOOLS}/kactus2:${TOOLS}/gtkwave/lib/x86_64-linux-gnu" && export LD_LIBRARY_PATH
+LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${TOOLS}/openems/lib:${TOOLS}/kactus2:${TOOLS}/gtkwave/lib/$(uname -m)-linux-gnu:${TOOLS}/kepler-formal/lib" && export LD_LIBRARY_PATH
 export EDITOR="gedit"
 export PYTHONPYCACHEPREFIX="/tmp/pycache"
 export KLAYOUT_HOME="/headless/.klayout"
@@ -98,7 +102,7 @@ export KLAYOUT_PATH="/headless/.klayout:$PDKPATH/libs.tech/klayout:$PDKPATH/libs
 export NO_AT_BRIDGE=1
 
 # First, check if XDG_RUNTIME_DIR is set, if not, set to default.
-if [ -z ${XDG_RUNTIME_DIR+z} ]; then
+if [ -z "${XDG_RUNTIME_DIR+x}" ]; then
     export XDG_RUNTIME_DIR=/tmp/runtime-default
 fi
 # Second, verify if the actual directory exists, if not, create it.
@@ -108,7 +112,7 @@ if [ ! -d "$XDG_RUNTIME_DIR" ]; then
 fi
 
 # This is needed for Veryl to store its data
-if [ -z ${XDG_DATA_HOME+z} ]; then
+if [ -z "${XDG_DATA_HOME+x}" ]; then
     export XDG_DATA_HOME=/headless/.data-default
 fi
 if [ ! -d "$XDG_DATA_HOME" ]; then
@@ -117,7 +121,8 @@ fi
 
 # Add local directories in $HOME to the path so that the user can upgrade PIP packages
 export PATH=$HOME/.local/bin:$PATH
-export PYTHONPATH=$HOME/.local/lib/python3.10/site-packages:$PYTHONPATH
+PYTHON_VERSION=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+export PYTHONPATH=$HOME/.local/lib/python${PYTHON_VERSION}/site-packages:$PYTHONPATH
 
 #----------------------------------------
 # Tool aliases

@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 cd /tmp || exit 1
 
@@ -16,3 +20,5 @@ PREFIX=${TOOLS}/${XYCE_XDM_NAME}
 cmake -DCMAKE_INSTALL_PREFIX="$PREFIX" ..
 make -j"$(nproc)"
 make install
+
+echo "${XYCE_XDM_NAME} ${XYCE_XDM_REPO_COMMIT}" > "${TOOLS}/${XYCE_XDM_NAME}/SOURCES"

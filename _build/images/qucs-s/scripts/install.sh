@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 cd /tmp || exit 1
 
@@ -9,3 +13,5 @@ mkdir build && cd build
 cmake ..  -DCMAKE_INSTALL_PREFIX="$TOOLS/$QUCS_S_NAME"
 make -j"$(nproc)"
 make install
+
+echo "${QUCS_S_NAME} ${QUCS_S_REPO_COMMIT}" > "${TOOLS}/${QUCS_S_NAME}/SOURCES"

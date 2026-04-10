@@ -1,7 +1,7 @@
 @echo off
 
 :: ========================================================================
-:: SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
+:: SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
 :: Johannes Kepler University, Department for Integrated Circuits
 ::.
 :: Licensed under the Apache License, Version 2.0 (the "License");
@@ -92,5 +92,12 @@ IF NOT ERRORLEVEL 1 (
     ) ELSE (
         echo Container does not exist, creating %CONTAINER_NAME% ...
         %ECHO_IF_DRY_RUN% docker run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% %PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
+        IF %WEBSERVER_PORT% GTR 0 (
+            IF DEFINED VNC_PW (
+                echo [INFO] To access the VNC session, open a browser and navigate to http://localhost:%WEBSERVER_PORT%/?password=%VNC_PW%
+            ) ELSE (
+                echo [INFO] To access the VNC session, open a browser and navigate to http://localhost:%WEBSERVER_PORT%/?password=abc123
+            )
+        )
     )
 )

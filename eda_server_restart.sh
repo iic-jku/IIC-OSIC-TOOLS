@@ -2,7 +2,7 @@
 # ========================================================================
 # Restarts multiple IIC-OSIC-TOOLS containers for many EDA users
 #
-# SPDX-FileCopyrightText: 2023-2025 Harald Pretl
+# SPDX-FileCopyrightText: 2023-2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

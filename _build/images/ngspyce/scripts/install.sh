@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 
 mkdir -p "$TOOLS"
@@ -8,3 +12,8 @@ git checkout "$NGSPYCE_REPO_COMMIT"
 
 #python3 setup.py install
 pip3 install . --prefix="${TOOLS}/$NGSPYCE_NAME" --no-cache-dir
+
+# Remove .git directory to save space in final image
+rm -rf "${TOOLS}/$NGSPYCE_NAME/.git"
+
+echo "${NGSPYCE_NAME} ${NGSPYCE_REPO_COMMIT}" > "${TOOLS}/${NGSPYCE_NAME}/SOURCES"

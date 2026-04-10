@@ -1,5 +1,5 @@
 #!/bin/bash
-# SPDX-FileCopyrightText: 2024-2025 Harald Pretl
+# SPDX-FileCopyrightText: 2024-2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -17,7 +17,7 @@ CONTAINER_NAME=iic-osic-tools_test${RAND}
 CMD=_run_tests_${RAND}.sh
 WORKDIR=/foss/designs
 
-mkdir -p "runs/${RAND}"
+mkdir -p "/tmp/regression/${RAND}"
 
 # Check if newer image is available and pull if needed
 docker pull --quiet "$FULL_TAG" > /dev/null
@@ -25,7 +25,7 @@ docker pull --quiet "$FULL_TAG" > /dev/null
 # Create the test runner script
 cat <<EOL > "$CMD"
 #!/bin/bash
-find "$WORKDIR" -type f -name "test*.sh" -not -path "*/runs/*" | parallel --halt soon,fail=1
+find "$WORKDIR" -type f -name "test*.sh" -not -path "*/runs/*" | parallel --halt soon,fail=1 2>/dev/null
 if [ \$? -ne 0 ]; then
     echo "------------------------------------"
     echo "[ERROR] AT LEAST ONE TEST FAILED :-("

@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 cd /tmp || exit 1
 
@@ -22,3 +26,5 @@ if [ -d "$PDK_ROOT/sky130B" ]; then
     mkdir -p "$PDK_ROOT/sky130B/libs.tech/gds3d"
     cp techfiles/sky130.txt "$PDK_ROOT/sky130B/libs.tech/gds3d/gds3d_tech.txt"
 fi
+
+echo "${GDS3D_NAME} ${GDS3D_REPO_COMMIT}" > "${TOOLS}/${GDS3D_NAME}/SOURCES"

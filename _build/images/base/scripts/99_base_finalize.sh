@@ -1,5 +1,10 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
 # shellcheck disable=SC1091
+
+set -e
 
 # Create dirs if not yet existing
 mkdir -p "$DESIGNS"
@@ -10,7 +15,7 @@ mkdir -p "$EXAMPLES"
 mkdir -p "$TOOLS/bin"
 
 # Create dir for logs
-mkdir "$STARTUPDIR"/logs
+mkdir -p "$STARTUPDIR"/logs
 
 # For the WSLg VGPU to correctly work, the potentially mounted driver directory needs to be added to the dynamic linker config:
 echo "/usr/lib/wsl/lib" > /etc/ld.so.conf.d/ld.wsl.conf

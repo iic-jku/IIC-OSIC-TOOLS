@@ -1,9 +1,13 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 cd /tmp || exit 1
 
 git clone --filter=blob:none "${NGSPICE_REPO_URL}" "${NGSPICE_NAME}"
-cd "${NGSPICE_NAME}"
+cd "${NGSPICE_NAME}" || exit 1
 git checkout "${NGSPICE_REPO_COMMIT}"
 ./autogen.sh
 # 2nd run of autogen needed
@@ -42,6 +46,8 @@ _add_model r3_cmc.osdi "$FNAME"
 git clone --depth=1 https://github.com/dwarning/VA-Models.git vamodels
 MODEL=bsimcmg
 cd vamodels/code/$MODEL/vacode || exit 1
-"$TOOLS/openvaf/bin/openvaf" --target_cpu generic $MODEL.va
-cp $MODEL.osdi "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi"
+"$TOOLS/openvaf/bin/openvaf" --target_cpu generic "$MODEL.va"
+cp "$MODEL.osdi" "${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi"
 echo "osdi ${TOOLS}/${NGSPICE_NAME}/lib/ngspice/$MODEL.osdi" >> "$FNAME"
+
+echo "${NGSPICE_NAME} ${NGSPICE_REPO_COMMIT}" > "${TOOLS}/${NGSPICE_NAME}/SOURCES"

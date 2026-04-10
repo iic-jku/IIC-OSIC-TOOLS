@@ -2,7 +2,7 @@
 # ========================================================================
 # Spins up multiple IIC-OSIC-TOOLS containers for many EDA users
 #
-# SPDX-FileCopyrightText: 2023-2025 Harald Pretl
+# SPDX-FileCopyrightText: 2023-2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,10 @@
 # ========================================================================
 
 # Get configuration variables
+if [ ! -f "eda_server_conf.sh" ]; then
+    echo "[ERROR] Configuration file eda_server_conf.sh not found!"
+    exit 1
+fi
 # shellcheck source=/dev/null
 source eda_server_conf.sh
 
@@ -215,8 +219,16 @@ _write_credentials () {
         return 1
     fi
 
-    # Write a JSON file
-    if ! jq ". + [{ \"user\": \"$username\", \"password\": \"$passwd\", \"port\": $webport, \"prefix\": \"$EDA_CONTAINER_PREFIX\", \"url\": \"http://$HOSTIP:$webport/?password=$passwd\", \"dockervm\": \"$EDA_CONTAINER_PREFIX-$username\", \"datadir\": \"$datadir\" }]" "$credfile" > "$credfile.tmp"; then
+    # Write a JSON file (using --arg to prevent JSON injection)
+    if ! jq --arg user "$username" \
+            --arg pass "$passwd" \
+            --argjson port "$webport" \
+            --arg prefix "$EDA_CONTAINER_PREFIX" \
+            --arg url "http://$HOSTIP:$webport/?password=$passwd" \
+            --arg dockervm "$EDA_CONTAINER_PREFIX-$username" \
+            --arg datadir "$datadir" \
+            '. + [{ "user": $user, "password": $pass, "port": $port, "prefix": $prefix, "url": $url, "dockervm": $dockervm, "datadir": $datadir }]' \
+            "$credfile" > "$credfile.tmp"; then
         echo "[ERROR] Failed to write credentials for user $username"
         return 1
     fi

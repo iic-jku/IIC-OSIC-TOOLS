@@ -1,8 +1,11 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 set -u
 
-#UBUNTU_VERSION=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
 UBUNTU_CODENAME=$(awk -F= '/^VERSION_CODENAME/{print $2}' /etc/os-release | sed 's/"//g')
 
 echo "[INFO] Adding repositories and installing misc. packages"
@@ -31,44 +34,49 @@ EOF
 echo "[INFO] Adding Scala repo for SBT"
 echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" > /etc/apt/sources.list.d/sbt.list
 echo "deb https://repo.scala-sbt.org/scalasbt/debian /" > /etc/apt/sources.list.d/sbt_old.list
-wget -qO- "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --dearmor > scalasbt-release.gpg
-install -D -o root -g root -m 644 scalasbt-release.gpg /etc/apt/trusted.gpg.d/scalasbt-release.gpg
-rm -f scalasbt-release.gpg
+wget -qO- "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --dearmor > /tmp/scalasbt-release.gpg
+install -D -o root -g root -m 644 /tmp/scalasbt-release.gpg /etc/apt/trusted.gpg.d/scalasbt-release.gpg
+rm -f /tmp/scalasbt-release.gpg
 
-apt update
-apt install -y \
-        dbus-x11 \
-        firefox \
-        gedit \
-        htop \
-        hub \
-        openjdk-17-jdk \
-        jq \
-        meld \
-        nano \
-        net-tools \
-        nmap \
-        novnc \
-        parallel \
-        qalculate-gtk \
-        sbt \
-        sudo \
-        tigervnc-standalone-server \
-        tmux \
-        vim \
-        vim-gtk3 \
-        websockify \
-        xarchiver \
-        xfce4 \
-        xfce4-terminal \
-        xterm
+apt-get update
+apt-get install -y \
+	dbus-x11 \
+	firefox \
+	gedit \
+	htop \
+	hub \
+	jq \
+	less \
+	meld \
+	nano \
+	net-tools \
+	nmap \
+	novnc \
+	openjdk-17-jdk \
+	parallel \
+	qalculate-gtk \
+	sbt \
+	sudo \
+	tigervnc-common \
+	tigervnc-standalone-server \
+	tigervnc-tools \
+	tmux \
+	vim \
+	vim-gtk3 \
+	websockify \
+	xarchiver \
+	xcvt \
+	xdg-utils \
+	xfce4 \
+	xfce4-terminal \
+	xterm
 
 # need to switch Java-17 (for Chisel, as there is an incompatibility with java-21 and the scala version used by chisel)
 update-java-alternatives --set "$(update-java-alternatives --list | grep 1.17 | cut -d' ' -f1)"
 
 # remove light-locker and other power management stuff, otherwise VNC session locks up
-apt purge -y light-locker pm-utils *screensaver*
-apt autoremove -y
+apt-get purge -y light-locker pm-utils *screensaver*
+apt-get autoremove -y
 
 /bin/dbus-uuidgen > /etc/machine-id
 
@@ -78,4 +86,5 @@ ln -s "$NO_VNC_HOME"/vnc_lite.html "$NO_VNC_HOME"/index.html
 # clean up afterwards
 echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*
-apt -y clean
+apt-get -y clean
+rm -rf /var/lib/apt/lists/*

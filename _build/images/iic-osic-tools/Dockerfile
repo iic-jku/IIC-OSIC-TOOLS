@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
 #######################################################################
 # Setup individual build images
 #######################################################################
@@ -14,6 +17,7 @@ ARG TOOL_IMAGE_GTKWAVE="registry.iic.jku.at:5000/iic-osic-tools:tool-gtkwave-lat
 ARG TOOL_IMAGE_IRSIM="registry.iic.jku.at:5000/iic-osic-tools:tool-irsim-latest"
 ARG TOOL_IMAGE_IVERILOG="registry.iic.jku.at:5000/iic-osic-tools:tool-iverilog-latest"
 ARG TOOL_IMAGE_KACTUS2="registry.iic.jku.at:5000/iic-osic-tools:tool-kactus2-latest"
+ARG TOOL_IMAGE_KEPLER_FORMAL="registry.iic.jku.at:5000/iic-osic-tools:tool-kepler-formal-latest"
 ARG TOOL_IMAGE_KLAYOUT="registry.iic.jku.at:5000/iic-osic-tools:tool-klayout-latest"
 ARG TOOL_IMAGE_LIBMAN="registry.iic.jku.at:5000/iic-osic-tools:tool-libman-latest"
 ARG TOOL_IMAGE_MAGIC="registry.iic.jku.at:5000/iic-osic-tools:tool-magic-latest"
@@ -41,7 +45,10 @@ ARG TOOL_IMAGE_SPICEBIND="registry.iic.jku.at:5000/iic-osic-tools:tool-spicebind
 ARG TOOL_IMAGE_SPIKE="registry.iic.jku.at:5000/iic-osic-tools:tool-spike-latest"
 ARG TOOL_IMAGE_SURELOG="registry.iic.jku.at:5000/iic-osic-tools:tool-surelog-latest"
 ARG TOOL_IMAGE_SURFER="registry.iic.jku.at:5000/iic-osic-tools:tool-surfer-latest"
+ARG TOOL_IMAGE_SVCK="registry.iic.jku.at:5000/iic-osic-tools:tool-svck-latest"
+ARG TOOL_IMAGE_UV="registry.iic.jku.at:5000/iic-osic-tools:tool-uv-latest"
 ARG TOOL_IMAGE_VACASK="registry.iic.jku.at:5000/iic-osic-tools:tool-vacask-latest"
+ARG TOOL_IMAGE_VERIBLE="registry.iic.jku.at:5000/iic-osic-tools:tool-verible-latest"
 ARG TOOL_IMAGE_VERILATOR="registry.iic.jku.at:5000/iic-osic-tools:tool-verilator-latest"
 ARG TOOL_IMAGE_VERYL="registry.iic.jku.at:5000/iic-osic-tools:tool-veryl-latest"
 ARG TOOL_IMAGE_XCIRCUIT="registry.iic.jku.at:5000/iic-osic-tools:tool-xcircuit-latest"
@@ -61,6 +68,7 @@ FROM ${TOOL_IMAGE_GTKWAVE} AS gtkwave
 FROM ${TOOL_IMAGE_IRSIM} AS irsim
 FROM ${TOOL_IMAGE_IVERILOG} AS iverilog
 FROM ${TOOL_IMAGE_KACTUS2} AS kactus2
+FROM ${TOOL_IMAGE_KEPLER_FORMAL} AS kepler-formal
 FROM ${TOOL_IMAGE_KLAYOUT} AS klayout
 FROM ${TOOL_IMAGE_LIBMAN} AS libman
 FROM ${TOOL_IMAGE_MAGIC} AS magic
@@ -88,7 +96,10 @@ FROM ${TOOL_IMAGE_SPICEBIND} AS spicebind
 FROM ${TOOL_IMAGE_SPIKE} AS spike
 FROM ${TOOL_IMAGE_SURELOG} AS surelog
 FROM ${TOOL_IMAGE_SURFER} AS surfer
+FROM ${TOOL_IMAGE_SVCK} AS svck
+FROM ${TOOL_IMAGE_UV} AS uv
 FROM ${TOOL_IMAGE_VACASK} AS vacask
+FROM ${TOOL_IMAGE_VERIBLE} AS verible
 FROM ${TOOL_IMAGE_VERILATOR} AS verilator
 FROM ${TOOL_IMAGE_VERYL} AS veryl
 FROM ${TOOL_IMAGE_XCIRCUIT} AS xcircuit
@@ -112,11 +123,12 @@ COPY --link --from=gaw3-xschem                  ${TOOLS}/gaw3-xschem            
 COPY --link --from=gds3d                        ${TOOLS}/gds3d                  ${TOOLS}/gds3d/
 COPY --link --from=gds3d                        ${PDK_ROOT}/                    ${PDK_ROOT}/
 COPY --link --from=ghdl                         ${TOOLS}/ghdl                   ${TOOLS}/ghdl/
-COPY --link --from=ghdl-yosys-plugin            ${TOOLS}_add/yosys/             ${TOOLS}/yosys/
+COPY --link --from=ghdl-yosys-plugin            ${TOOLS}/ghdl-yosys-plugin/     ${TOOLS}/ghdl-yosys-plugin/
 COPY --link --from=gtkwave                      ${TOOLS}/gtkwave                ${TOOLS}/gtkwave/
 COPY --link --from=irsim                        ${TOOLS}/irsim                  ${TOOLS}/irsim/
 COPY --link --from=iverilog                     ${TOOLS}/iverilog               ${TOOLS}/iverilog/
 COPY --link --from=kactus2                      ${TOOLS}/kactus2                ${TOOLS}/kactus2/
+COPY --link --from=kepler-formal                ${TOOLS}/kepler-formal          ${TOOLS}/kepler-formal/
 COPY --link --from=klayout                      ${TOOLS}/klayout                ${TOOLS}/klayout/
 COPY --link --from=libman                       ${TOOLS}/libman                 ${TOOLS}/libman/
 COPY --link --from=magic                        ${TOOLS}/magic                  ${TOOLS}/magic/
@@ -139,12 +151,15 @@ COPY --link --from=qucs-s                       ${TOOLS}/qucs-s                 
 COPY --link --from=rftoolkit                    ${TOOLS}/rftoolkit              ${TOOLS}/rftoolkit/
 COPY --link --from=riscv-gnu-toolchain          ${TOOLS}/riscv-gnu-toolchain    ${TOOLS}/riscv-gnu-toolchain/
 COPY --link --from=slang                        ${TOOLS}/slang                  ${TOOLS}/slang/
-COPY --link --from=slang-yosys-plugin           ${TOOLS}_add/yosys/             ${TOOLS}/yosys/
+COPY --link --from=slang-yosys-plugin           ${TOOLS}/slang-yosys-plugin     ${TOOLS}/slang-yosys-plugin/
 COPY --link --from=spicebind                    ${TOOLS}/spicebind              ${TOOLS}/spicebind/
 COPY --link --from=spike                        ${TOOLS}/spike                  ${TOOLS}/spike/
 COPY --link --from=surelog                      ${TOOLS}/surelog                ${TOOLS}/surelog/
 COPY --link --from=surfer                       ${TOOLS}/surfer                 ${TOOLS}/surfer/
+COPY --link --from=svck                         ${TOOLS}/svck                   ${TOOLS}/svck/
+COPY --link --from=uv                           ${TOOLS}/uv                     ${TOOLS}/uv/
 COPY --link --from=vacask                       ${TOOLS}/vacask                 ${TOOLS}/vacask/
+COPY --link --from=verible                      ${TOOLS}/verible                ${TOOLS}/verible/
 COPY --link --from=verilator                    ${TOOLS}/verilator              ${TOOLS}/verilator/
 COPY --link --from=veryl                        ${TOOLS}/veryl                  ${TOOLS}/veryl/
 COPY --link --from=xcircuit                     ${TOOLS}/xcircuit               ${TOOLS}/xcircuit/
@@ -175,11 +190,8 @@ RUN bash /headless/scripts/install_eda.sh && \
     find /usr/share -type f -name "iic*" -exec chmod 644 {} \; && \
     chmod -R 755 /foss/examples && \
     find /foss/examples -type f -not -name "*.sh" -exec chmod 644 {} \; && \
-    chmod -R 755 /foss/tools/sak && \
-    python3 $PDK_ROOT/ihp-sg13g2/libs.tech/qucs-s/install.py --no-model-compile --no-qucs-check && \
-    sed -i 's/__YOSYS_NAMESPACE_RTLIL_Design__std_vector_string_//' /usr/local/lib/python3.12/dist-packages/librelane/scripts/pyosys/ys_common.py
-#FIXME Above line to be removed when LibreLane is fixed (dependency issue with newer pyosys versions)
-
+    chmod -R 755 /foss/tools/sak
+    
 # Metadata labels
 LABEL org.opencontainers.image.authors="Harald Pretl <harald.pretl@jku.at>; Georg Zachl <georg.zachl@jku.at>" \
       org.opencontainers.image.url="https://github.com/iic-jku/iic-osic-tools" \

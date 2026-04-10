@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 cd /tmp || exit 1
 
@@ -10,3 +14,5 @@ git checkout "${GHDL_REPO_COMMIT}"
 ./configure  --with-llvm-config --prefix="${TOOLS}/${GHDL_NAME}"
 make -j"$(nproc)"
 make install
+
+echo "${GHDL_NAME} ${GHDL_REPO_COMMIT}" > "${TOOLS}/${GHDL_NAME}/SOURCES"

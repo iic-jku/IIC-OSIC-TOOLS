@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
  <default-grids>1.0,0.1,0.01,0.005</default-grids>
- <grid-micron>0.005</grid-micron>
  <edit-snap-objects-to-grid>true</edit-snap-objects-to-grid>
  <edit-snap-to-objects>true</edit-snap-to-objects>
- <edit-connect-angle-mode>diagonal</edit-connect-angle-mode>
+ <edit-connect-angle-mode>ortho</edit-connect-angle-mode>
  <edit-move-angle-mode>diagonal</edit-move-angle-mode>
  <edit-path-width>0.2</edit-path-width>
  <edit-top-level-selection>true</edit-top-level-selection>
+ <crosshair-cursor-enabled>true</crosshair-cursor-enabled>
  <current-ruler-template>9</current-ruler-template>
+ <grid-micron>0.01</grid-micron>
+ <hide-empty-layers>true</hide-empty-layers>
+ <l2ndb-marker-line-width>3</l2ndb-marker-line-width>
+ <l2ndb-marker-color>#f3ff80</l2ndb-marker-color>
+ <layers-always-show-ld>true</layers-always-show-ld>
+ <layers-always-show-source>true</layers-always-show-source>
+ <macro-editor-indent>4</macro-editor-indent>
+ <nt-marker-color>#f3ff80</nt-marker-color>
+ <nt-marker-intensity>90</nt-marker-intensity>
+ <nt-marker-line-width>3</nt-marker-line-width>
+ <rdb-marker-line-width>3</rdb-marker-line-width>
  <ruler-templates-v2>mode=normal,title=Ruler,category=_ruler,version=1,fmt=$D,fmt_x=$X,fmt_y=$Y,position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=ruler,outline=diag,snap=true,angle_constraint=global;mode=multi_segment,title='Multi-ruler',category=_multi_ruler,version=1,fmt=$D,fmt_x=$X,fmt_y=$Y,position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=ruler,outline=diag,snap=true,angle_constraint=global;mode=single_click,title=Cross,category=_cross,version=1,fmt='$U,$V',fmt_x='',fmt_y='',position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=cross_both,outline=diag,snap=true,angle_constraint=global;mode=auto_metric,title=Measure,category=_measure,version=1,fmt=$D,fmt_x=$X,fmt_y=$Y,position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=ruler,outline=diag,snap=true,angle_constraint=global;mode=auto_metric_edge,title='Measure edge',category=_measure_edge,version=1,fmt=$D,fmt_x=$X,fmt_y=$Y,position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=ruler,outline=diag,snap=true,angle_constraint=global;mode=angle,title=Angle,category=_angle,version=1,fmt='$(sprintf(\'%.5g\',G))\302\260',fmt_x='',fmt_y='',position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=line,outline=angle,snap=true,angle_constraint=any;mode=angle,title=Radius,category=_radius,version=1,fmt='R=$D',fmt_x='',fmt_y='',position=center,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=arrow_end,outline=radius,snap=true,angle_constraint=any;mode=normal,title=Ellipse,category='',version=1,fmt='',fmt_x='W=$(abs(X))',fmt_y='H=$(abs(Y))',position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=line,outline=ellipse,snap=true,angle_constraint=any;mode=normal,title=Box,category='',version=1,fmt='',fmt_x='W=$(abs(X))',fmt_y='H=$(abs(Y))',position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=line,outline=box,snap=true,angle_constraint=any;mode=normal,title='Ruler+',category='',version=1,fmt='',fmt_x='W=$(abs(X))',fmt_y='H=$(abs(Y))',position=auto,xalign=auto,yalign=auto,xlabel_xalign=auto,xlabel_yalign=auto,ylabel_xalign=auto,ylabel_yalign=auto,style=ruler,outline=xy,snap=true,angle_constraint=global</ruler-templates-v2>
  <background-color>#000000</background-color>
+ <bitmap-oversampling>3</bitmap-oversampling>
  <inst-color>#ff8000</inst-color>
  <ruler-color>#ff8000</ruler-color>
  <sel-color>#f3ff80</sel-color>
@@ -49,7 +61,6 @@ edit_menu.selection_menu.sel_move_to:']';
 edit_menu.selection_menu.sel_rot_ccw:'Ctrl+Shift+R';
 edit_menu.selection_menu.sel_rot_cw:'Shift+R';
 edit_menu.selection_menu.union:'Shift+M';
-edit_menu.selection_menu.difference:'Shift+C';
 edit_menu.selection_menu.intersection:'Shift+I';
 edit_menu.undo:U;
 file_menu.new_layout:none;
