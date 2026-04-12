@@ -17,6 +17,9 @@ apt-get install -y \
 	python3-dev
 rm -rf /var/lib/apt/lists/*
 
+# Help cmake find Qhull in Debian multiarch paths (needed for gdstk on aarch64)
+export Qhull_DIR="/usr/lib/$(uname -m)-linux-gnu/cmake/Qhull"
+
 echo "[INFO] Install EDA packages via PIP"
 pip3 install $PIP_FLAGS \
 	"amaranth[builtin-yosys]==0.5.8" \
