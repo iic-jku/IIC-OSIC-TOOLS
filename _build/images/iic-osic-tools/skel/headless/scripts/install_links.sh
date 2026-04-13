@@ -56,10 +56,10 @@ rm -f "${TOOLS}"/bin/klayout
 echo '#!/bin/bash
 case "$PDK" in
     sky130A|sky130B|gf180mcuC|gf180mcuD)
-        exec env -u PDK "${TOOLS}/klayout/bin/klayout" "$@"
+        exec env -u PDK "${TOOLS}/klayout/klayout" "$@"
         ;;
     *)
-        exec "${TOOLS}/klayout/bin/klayout" "$@"
+        exec "${TOOLS}/klayout/klayout" "$@"
         ;;
 esac' > "${TOOLS}"/bin/klayout
 chmod +x "${TOOLS}"/bin/klayout
