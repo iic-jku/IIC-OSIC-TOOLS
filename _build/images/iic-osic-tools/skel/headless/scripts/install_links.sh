@@ -44,22 +44,3 @@ echo '#!/bin/bash
 export PATH=${TOOLS}/openroad-librelane/bin:${PATH} 
 exec -a "$0" /usr/local/bin/librelane --manual-pdk "$@"' > "${TOOLS}"/bin/librelane
 chmod +x "${TOOLS}"/bin/librelane
-
-# Install wrapper for KLayout to unset PDK env var for gdsfactory-based PDKs.
-# gdsfactory's pydantic-settings reads PDK from the environment and tries to import
-# it as a Python module (e.g. 'import sky130A'). When this fails, KLayout's pcell
-# libraries cannot initialize and KLayout reports "ERROR: no PDK info found for tech".
-# Only sky130A/B and gf180mcuC/D use gdsfactory-based pcells, so PDK is only stripped
-# for those. All other PDKs (e.g. ihp-sg13g2) receive PDK unchanged.
-rm -f "${TOOLS}"/bin/klayout
-# shellcheck disable=SC2016
-echo '#!/bin/bash
-case "$PDK" in
-    sky130A|sky130B|gf180mcuC|gf180mcuD)
-        exec env -u PDK "${TOOLS}/klayout/klayout" "$@"
-        ;;
-    *)
-        exec "${TOOLS}/klayout/klayout" "$@"
-        ;;
-esac' > "${TOOLS}"/bin/klayout
-chmod +x "${TOOLS}"/bin/klayout

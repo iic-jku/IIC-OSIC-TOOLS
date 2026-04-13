@@ -90,35 +90,10 @@ gem install \
 	rggen-veryl
 
 # Create dedicated gdsfactory venvs for KLayout pcell compatibility.
-# sky130A/B pcell libraries require gdsfactory==8.0.0 (the version that introduced
-# the KLayout/kdb backend with kfactory 0.17.x APIs).
-# gf180mcuC/D pcell libraries require gdsfactory==9.20.6.
-# sak-pdk sets KLAYOUT_PYTHONPATH to the matching venv's site-packages when
-# switching PDKs, so KLayout prepends it to Python sys.path and pcell libraries
-# load correctly.
+
 echo "[INFO] Creating gdsfactory8 venv for KLayout sky130A/B pcell compatibility"
 python3 -m venv /foss/tools/klayout_gdsfactory8
 /foss/tools/klayout_gdsfactory8/bin/pip install --no-cache-dir "gdsfactory==8.0.0"
-
-# Suppress the (harmless) "in um is deprecated" loguru WARNINGs from gdsfactory 8.0.0.
-_GF8_SITE=$(/foss/tools/klayout_gdsfactory8/bin/python3 -c 'import site; print(site.getsitepackages()[0])')
-cat > "${_GF8_SITE}/sitecustomize.py" << 'PYEOF'
-"""Suppress gdsfactory 8.0.0 attribute-access deprecation warnings in KLayout.
-
-The sky130A pcell code accesses .ymax/.xmax etc. on Component objects, which
-triggers "in um is deprecated" WARNINGs from gdsfactory 8 (via loguru). Since we
-pin to gdsfactory==8.0.0 where the behavior is still correct (returns um as the
-pcell code expects), these warnings are harmless noise. They are suppressed here
-so that loguru output from pcell loading remains clean.
-"""
-import sys as _sys
-
-from loguru import logger as _logger
-
-_logger.remove()
-_logger.add(_sys.stderr, filter=lambda r: "in um is deprecated" not in r["message"])
-PYEOF
-unset _GF8_SITE
 
 echo "[INFO] Creating gdsfactory9 venv for KLayout gf180mcuC/D pcell compatibility"
 python3 -m venv /foss/tools/klayout_gdsfactory9
