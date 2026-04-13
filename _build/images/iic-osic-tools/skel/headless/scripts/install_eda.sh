@@ -74,36 +74,6 @@ python3 -m venv /foss/tools/vlsirtools
 #pip3 install $PIP_FLAGS \
 #	https://github.com/librelane/librelane/tarball/dev
 
-#FIXME Patch for mag_gds.tcl from https://github.com/librelane/librelane/commit/a07aa852
-echo "[INFO] Patching LibreLane mag_gds.tcl"
-MAG_GDS_TCL=$(python3 -c "import librelane; import os; print(os.path.join(os.path.dirname(librelane.__file__), 'scripts/magic/def/mag_gds.tcl'))")
-if [ -f "$MAG_GDS_TCL" ]; then
-	# Add "units microns" before the MAGIC_ZEROIZE_ORIGIN check
-	if grep -q 'if { \$::env(MAGIC_ZEROIZE_ORIGIN) }' "$MAG_GDS_TCL"; then
-		sed -i '/if { \$::env(MAGIC_ZEROIZE_ORIGIN) }/i units microns' "$MAG_GDS_TCL"
-	else
-		echo "[WARN] MAGIC_ZEROIZE_ORIGIN pattern not found in mag_gds.tcl, skipping patch"
-	fi
-	# Replace "property FIXED_BBOX [box values]" with explicit DIE_AREA coordinates
-	if grep -q 'property FIXED_BBOX \[box values\]' "$MAG_GDS_TCL"; then
-		sed -i 's/property FIXED_BBOX \[box values\]/property FIXED_BBOX [lindex $::env(DIE_AREA) 0]um [lindex $::env(DIE_AREA) 1]um [lindex $::env(DIE_AREA) 2]um [lindex $::env(DIE_AREA) 3]um/' "$MAG_GDS_TCL"
-	else
-		echo "[WARN] FIXED_BBOX pattern not found in mag_gds.tcl, skipping patch"
-	fi
-	echo "[INFO] LibreLane mag_gds.tcl patched successfully"
-else
-	echo "[WARN] Could not find mag_gds.tcl at $MAG_GDS_TCL"
-fi
-
-#FIXME Below line to be removed when LibreLane is fixed (dependency issue with newer pyosys versions)
-echo "[INFO] Patching LibreLane pyosys/ys_common.py"
-YS_COMMON_PY=$(python3 -c "import librelane; import os; print(os.path.join(os.path.dirname(librelane.__file__), 'scripts/pyosys/ys_common.py'))")
-if [ -f "$YS_COMMON_PY" ]; then
-	sed -i 's/__YOSYS_NAMESPACE_RTLIL_Design__std_vector_string_//' "$YS_COMMON_PY"
-else
-	echo "[WARN] Could not find ys_common.py at $YS_COMMON_PY"
-fi
-
 # Setup Qucs-S for IHP SG13G2
 echo "[INFO] Setting up Qucs-S for IHP SG13G2"
 python3 "$PDK_ROOT"/ihp-sg13g2/libs.tech/qucs-s/install.py --no-model-compile --no-qucs-check
