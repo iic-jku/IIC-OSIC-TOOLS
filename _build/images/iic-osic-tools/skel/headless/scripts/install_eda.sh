@@ -55,7 +55,8 @@ if [ "$(uname -m)" = "x86_64" ]; then
 fi
 
 echo "[INFO] Installing CharLib"
-pip3 install $PIP_FLAGS \
+python3 -m venv /foss/tools/charlib
+/foss/tools/charlib/bin/pip install --no-cache-dir \
 	git+https://github.com/stineje/charlib
 
 #FIXME OpenRAM is removed for now, waiting for a release via PyPi
