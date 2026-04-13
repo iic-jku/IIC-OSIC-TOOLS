@@ -65,7 +65,8 @@ python3 -m venv /foss/tools/charlib
 #	git+https://github.com/VLSIDA/OpenRAM
 
 echo "[INFO] Installing Hdl21/vlsirtools"
-pip3 install $PIP_FLAGS \
+python3 -m venv /foss/tools/vlsirtools
+/foss/tools/vlsirtools/bin/pip install --no-cache-dir \
 	git+https://github.com/dan-fritchman/Hdl21
 
 #FIXME See https://github.com/librelane/librelane/issues/767
