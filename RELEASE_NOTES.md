@@ -21,12 +21,12 @@ This document summarizes the most important changes of the individual releases o
 * [Update] gdsfactory strategy: gdsfactory 9 for `gf180mcuD`, gdsfactory 8 venv for `sky130A`.
 * [Update] various tool versions.
 * [Fix] KLayout netlist import for `ihp-sg13g2`: make `m=` optional and support `nf=` for MOSFET finger count.
+* [Fix] AppCSXCAD GLX context failure via wrapper script (issue #254).
 * [Fix] KLayout pcells for `sky130A` and `gf180mcuD` (gdsfactory version compatibility).
 * [Fix] KLayout `ERROR: no PDK info found for tech` by wrapping PDK env var unset for gdsfactory-based PDKs.
 * [Fix] VACASK OSDI models using AVX-512 instructions (restrict to x86-64-v2).
 * [Fix] non-root/rootless setup: add Podman detection and `XDG_RUNTIME_DIR` fallback in `start_x.sh`.
 * [Fix] `gf180mcuD` transistor OP annotation in `xschem` symbol files.
-* [Fix] LibreLane `mag_gds.tcl` patched during install.
 * [Fix] prevent JSON injection in startup scripts using `jq --arg`.
 * [Fix] path quoting and `PYTHONPATH`/library directory setup in profile scripts.
 * [Docs] add X11 authorization failure (xauthority directory) to `KNOWN_ISSUES.md`.
