@@ -15,10 +15,6 @@ apt-get install -y \
 	libqhull-dev \
 	potrace \
 	python3-dev
-rm -rf /var/lib/apt/lists/*
-
-# Help cmake find Qhull in Debian multiarch paths (needed for gdstk on aarch64)
-export Qhull_DIR="/usr/lib/$(uname -m)-linux-gnu/cmake/Qhull"
 
 echo "[INFO] Install EDA packages via PIP"
 pip3 install $PIP_FLAGS \
@@ -70,10 +66,6 @@ pip3 install $PIP_FLAGS \
 echo "[INFO] Installing Hdl21/vlsirtools"
 pip3 install $PIP_FLAGS \
 	git+https://github.com/dan-fritchman/Hdl21
-
-echo "[INFO] Removing build dependencies"
-apt-get purge -y libqhull-dev python3-dev
-apt-get autoremove -y
 
 #FIXME See https://github.com/librelane/librelane/issues/767
 #echo "[INFO] Installing dev version of LibreLane"
@@ -162,3 +154,8 @@ PYEOF
 unset _GF8_SITE
 
 echo "[INFO] EDA package installation completed"
+
+echo "[INFO] Removing build dependencies"
+apt-get purge -y libqhull-dev python3-dev
+apt-get autoremove -y
+rm -rf /var/lib/apt/lists/*
