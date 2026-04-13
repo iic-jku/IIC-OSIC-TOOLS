@@ -44,3 +44,14 @@ echo '#!/bin/bash
 export PATH=${TOOLS}/openroad-librelane/bin:${PATH} 
 exec -a "$0" /usr/local/bin/librelane --manual-pdk "$@"' > "${TOOLS}"/bin/librelane
 chmod +x "${TOOLS}"/bin/librelane
+
+# Install wrapper for AppCSXCAD to fix GLX context failure when LIBGL_ALWAYS_INDIRECT=1
+# (set by start_x.sh). AppCSXCAD uses VTK which cannot create a GLX context in indirect mode.
+# This wrapper overrides LIBGL_ALWAYS_INDIRECT=0 so that VTK can render correctly.
+# A wrapper is used (not an alias) so that subprocess calls from Python scripts also benefit.
+# see https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/254
+rm -f "${TOOLS}"/bin/AppCSXCAD
+# shellcheck disable=SC2016
+echo '#!/bin/bash
+exec env LIBGL_ALWAYS_INDIRECT=0 "${TOOLS}/openems/bin/AppCSXCAD" "$@"' > "${TOOLS}"/bin/AppCSXCAD
+chmod +x "${TOOLS}"/bin/AppCSXCAD
