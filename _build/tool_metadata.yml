@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: f7e69991f0cb07d9a48fe2725919583fb3cba3b9
+  commit: 3dcaf42a57ef55edbcecee8a8bb1ce970c9333a1
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 9aba9af9d285ca3cff602feeef19a4655279de6f
@@ -39,13 +39,13 @@
   commit: 8aff6307f464f2a3020710e0a6cd0e4a0dd6a132
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
-  commit: v0.30.7
+  commit: f70c3abff54033c982fb773fc3631ea52017fa63
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
   commit: fd06d0c5d0368c0be8b27935ad132f50a8c4815b
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.635
+  commit: 8.3.636
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.318
@@ -66,10 +66,10 @@
   commit: 7b70722e33c03fcb5dabcf4d479fb0822d9251c9
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: a30587728affa4f8451e13819981899bd8ab6b64
+  commit: b981309789fb515cc15450385264f150aa7d5347
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: b7b01536f5345146819206ff7f2fafe7ddad9a71
+  commit: 61932e897ed1171d85734f2a54064965f691d758
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 5908126bfb0faaa76f5fe997f917006a92d5fb9f
+  commit: e72ad3b6aa8af6fc7a9e08a5cb1b387cc3c8beba
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 6f96f662157790d08d01dab47575a4f9f32fac49
+  commit: 777a6553fa3ddf9b2bfee4eaab8acbf27773b72c
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 4e53d772996184b07e9bfe784060f96e6cb0a267
