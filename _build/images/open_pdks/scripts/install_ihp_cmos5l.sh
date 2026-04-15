@@ -20,7 +20,7 @@ fi
 
 # Install IHP-SG13CMOS5L
 PDK="ihp-sg13cmos5l"
-IHP_CMOS5L_REPO_URL="https://github.com/IHP-GmbH/ihp-sg13cmos5l.git"
+IHP_CMOS5L_REPO_URL="https://github.com/iic-jku/ihp-sg13cmos5l.git"
 
 echo "[INFO] Installing IHP SG13CMOS5L PDK."
 git clone "$IHP_CMOS5L_REPO_URL" ihp-cmos5l
