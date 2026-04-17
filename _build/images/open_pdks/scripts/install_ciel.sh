@@ -81,8 +81,6 @@ if [ -d "$PDK_ROOT/sky130B" ]; then
 	sed -i '/<original-base-path>/c\ <original-base-path>$PDK_ROOT/$PDK/libs.tech/klayout</original-base-path>' "$PDK_ROOT/sky130B/libs.tech/klayout/tech/sky130B.lyt"
 fi
 
-<<<<<<<< HEAD:_build/images/open_pdks/scripts/install_volare.sh
-========
 ######################
 # INSTALL GF180MCU PDK
 ######################
@@ -139,4 +137,3 @@ fi
 rm -rf /tmp/glofo-mjk
 
 echo "[INFO] GF180 PDK installation complete."
->>>>>>>> next_release:_build/images/open_pdks/scripts/install_ciel.sh
