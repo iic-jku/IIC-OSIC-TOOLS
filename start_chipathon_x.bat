@@ -1,7 +1,7 @@
 @echo off
 
 :: ========================================================================
-:: SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
+:: SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
 :: Johannes Kepler University, Department for Integrated Circuits
 ::.
 :: Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ if not exist "%DESIGNS%" %ECHO_IF_DRY_RUN% mkdir "%DESIGNS%"
 
 IF "%DOCKER_USER%"=="" SET DOCKER_USER=hpretl
 IF "%DOCKER_IMAGE%"=="" SET DOCKER_IMAGE=iic-osic-tools
-IF "%DOCKER_TAG%"=="" SET DOCKER_TAG=chipathon
+IF "%DOCKER_TAG%"=="" SET DOCKER_TAG=chipathon26
 
 IF "%CONTAINER_USER%"=="" SET CONTAINER_USER=1000
 IF "%CONTAINER_GROUP%"=="" SET CONTAINER_GROUP=1000
@@ -45,16 +45,10 @@ IF "%CONTAINER_NAME%"=="" SET CONTAINER_NAME=iic-osic-tools_chipathon_xserver
 IF "%DISP%"=="" SET DISP=:0
 IF "%WAYLAND_DISP%"=="" SET WAYLAND_DISP=wayland-0
 
-IF "%JUPYTER_PORT%"=="" SET JUPYTER_PORT=8888
-
 IF %CONTAINER_USER% NEQ 0 if %CONTAINER_USER% LSS 1000 echo WARNING: Selected User ID %CONTAINER_USER% is below 1000. This ID might interfere with User-IDs inside the container and cause undefined behaviour!
 IF %CONTAINER_GROUP% NEQ 0 if %CONTAINER_GROUP% LSS 1000 echo WARNING: Selected Group ID %CONTAINER_GROUP% is below 1000. This ID might interfere with Group-IDs inside the container and cause undefined behaviour!
 
-SET PARAMS=
-
-IF %JUPYTER_PORT% GTR 0 (
-  SET PARAMS=%PARAMS% -p %JUPYTER_PORT%:8888
-)
+SET PARAMS=--security-opt seccomp=unconfined
 
 IF DEFINED DOCKER_EXTRA_PARAMS (
   SET PARAMS=%PARAMS% %DOCKER_EXTRA_PARAMS%

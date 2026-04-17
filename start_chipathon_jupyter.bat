@@ -1,7 +1,9 @@
+@echo off
+
 :: ========================================================================
-:: Start script for DIC docker images (use for Jupyter notebooks only)
+:: Start script for ICD@JKU docker images (use for Jupyter notebooks only)
 ::
-:: SPDX-FileCopyrightText: 2022-2025 Harald Pretl and Georg Zachl
+:: SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
 :: Johannes Kepler University, Department for Integrated Circuits 
 ::
 :: Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +19,6 @@
 :: limitations under the License.
 :: SPDX-License-Identifier: Apache-2.0
 :: ========================================================================
-@echo off
 
 SETLOCAL
 
@@ -37,7 +38,7 @@ IF NOT DEFINED JUPYTER_PORT SET JUPYTER_PORT=8888
 
 IF NOT DEFINED DOCKER_USER SET DOCKER_USER=hpretl
 IF NOT DEFINED DOCKER_IMAGE SET DOCKER_IMAGE=iic-osic-tools
-IF NOT DEFINED DOCKER_TAG SET DOCKER_TAG=chipathon
+IF NOT DEFINED DOCKER_TAG SET DOCKER_TAG=chipathon26
 
 IF NOT DEFINED CONTAINER_USER SET CONTAINER_USER=1000
 IF NOT DEFINED CONTAINER_GROUP SET CONTAINER_GROUP=1000

@@ -1,7 +1,7 @@
 #######################################################################
 # Setup base image
 #######################################################################
-ARG BASE_IMAGE=hpretl/iic-osic-tools:chipathon
+ARG BASE_IMAGE=hpretl/iic-osic-tools:chipathon26
 FROM ${BASE_IMAGE} AS base
 FROM base AS iic-osic-tools
 
