@@ -2,7 +2,7 @@
 # ========================================================================
 # GDS<>OASIS conversion script using KLayout
 #
-# SPDX-FileCopyrightText: 2024-2025 Harald Pretl
+# SPDX-FileCopyrightText: 2024-2026 Harald Pretl
 # Johannes Kepler University, Institute for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
 
 # Add essential plugins to KLayout: plugin-utils, align-tool, move-tool, layer-shortcuts, klayout-auto-backup, klayout-pin-tool
 git clone --depth=1 https://github.com/iic-jku/klayout-plugin-utils.git /headless/.klayout/salt/KLayoutPluginUtils

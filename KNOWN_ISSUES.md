@@ -51,30 +51,14 @@ export LIBGL_ALWAYS_INDIRECT=0
 
 ### Issues with KLayout PCell Libraries
 
-Some pcell libraries were developed for `gdsfactory7`, such as
+Some pcell libraries were developed for older `gdsfactory` versions:
 
-- Skywater `sky130A`
-- Global Foundries `gf180mcuD`
+- Skywater `sky130A`/`sky130B`: pcells require `gdsfactory==8.0.0` (the version that introduced the KLayout/kdb backend with kfactory 0.17.x APIs). System `gdsfactory9` is incompatible.
+- Global Foundries `gf180mcuC`/`gf180mcuD`: pcells work with `gdsfactory==9.20.6`. The image pins the system `gdsfactory` to this version.
 
-The image installs `gdsfactory9` by default, which is incompatible with `gdsfactory7` code (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162#issuecomment-3219211141>)
-
-#### Workaround for GF180
-
-The workaround, as described by the pcell authors [in this README](https://github.com/mabrains/gf180mcu_setup_pdk/blob/main/README.md), is to start KLayout from a custom Python VENV:
-
-```bash
-# create the venv (done once)
-mkdir -p /foss/designs/venvs/
-python3 -m venv /foss/designs/venvs/klayout_gf180
-pip3 install gdsfactory==7.9.4
-
-# this must be done everytime
-source /foss/designs/venvs/klayout_gf180/bin/activate
-export USER=designer
-export KLAYOUT_PYTHONPATH=/foss/designs/venvs/klayout_gf180/lib/python3.12/site-packages
-sak-pdk gf180mcuD
-klayout -e
-```
+The image addresses these automatically (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162>):
+- A `gdsfactory==8.0.0` virtual environment is installed at `/foss/tools/klayout_gdsfactory8/`. When `sak-pdk sky130A` (or `sky130B`) is run, `KLAYOUT_PYTHONPATH` is set to this venv's `site-packages`. KLayout prepends `KLAYOUT_PYTHONPATH` to its embedded Python `sys.path`, so the sky130 pcell libraries load correctly.
+- A `gdsfactory==9.20.6` virtual environment is installed at `/foss/tools/klayout_gdsfactory9/`. When `sak-pdk gf180mcuC` (or `gf180mcuD`) is run, `KLAYOUT_PYTHONPATH` is set to this venv's `site-packages`. KLayout prepends `KLAYOUT_PYTHONPATH` to its embedded Python `sys.path`, so the sky130 pcell libraries load correctly.
 
 ### The OpenROAD Flow Scripts (ORFS)
 
@@ -95,10 +79,6 @@ git checkout $(cat $TOOLS/openroad/ORFS_COMMIT)
 ### Surfer Crashing
 
 As of image `2025.01` Surfer has been added. Surfer is known to crash on quite a few platforms due to issues with OpenGL drivers. If Surfer works on your platform, great. If Surfer does crash then this is not good, but there is currently no solution available. Please do not file bug reports. As soon as we are aware of a solution for these crashes we will implement the fixes.
-
-### OpenEMS
-
-The visualization tool AppCSXCAD will not work in the container with our default settings (`vtkXOpenGLRenderWindow (0x....): Cannot create GLX context.  Aborting.`). The issue has been located to be connected with the environment variable `LIBGL_ALWAYS_INDIRECT`. As a workaround, we suggest either unsetting the variable or setting it to 0 (`unset LIBGL_ALWAYS_INDIRECT` or `export LIBGL_ALWAYS_INDIRECT=0`) which is persistent for the running terminal or run AppCSXCAD with the variable set to zero inline: `LIBGL_ALWAYS_INDIRECT=0 AppCSXCAD`.
 
 ### Podman Compatibility
 

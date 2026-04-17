@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
 #######################################################################
 # Compile FPGA tools (icestorm, nextpnr) prepared for iCE-40
 #######################################################################
@@ -7,6 +10,6 @@ ARG FPGA_NAME="fpga"
 ARG ICESTORM_REPO_URL="https://github.com/YosysHQ/icestorm.git"
 ARG ICESTORM_REPO_COMMIT="f31c39cc2eadd0ab7f29f34becba1348ae9f8721"
 ARG NEXTPNR_REPO_URL="https://github.com/YosysHQ/nextpnr.git"
-ARG NEXTPNR_REPO_COMMIT="25482d990fa8b6dbbda429d835d06658c3c800be"
+ARG NEXTPNR_REPO_COMMIT="e6ecd8fab487746fd61f2cfbb39ead023a4e8820"
 RUN --mount=type=bind,source=images/fpga-tools,target=/images/fpga-tools \
     bash /images/fpga-tools/scripts/install.sh

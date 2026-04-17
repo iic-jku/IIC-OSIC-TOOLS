@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+
 target "base" {
   platforms = ["linux/amd64", "linux/arm64"]
   dockerfile = "images/base/Dockerfile"

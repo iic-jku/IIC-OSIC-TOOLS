@@ -3,7 +3,6 @@
 
 import amaranth
 import cace
-import charlib
 import ciel
 import cocotb
 import edalize
@@ -11,10 +10,8 @@ import fusesoc
 import gdsfactory
 import gdsfill
 import gdspy
-import hdl21
 import najaeda
 import librelane
-# import openram
 import pygmid
 import PySpice
 import skrf

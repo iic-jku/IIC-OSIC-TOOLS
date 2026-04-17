@@ -2,7 +2,7 @@
 # ========================================================================
 # DRC (Design Rule Check) Script for Open-Source IC Design
 #
-# SPDX-FileCopyrightText: 2021-2025 Harald Pretl
+# SPDX-FileCopyrightText: 2021-2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,14 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-drc.sh [-d] [-m|-k|-b] [-c] [-w workdir] <cellname>
+# Usage: sak-drc.sh [-d] [-m|-k|-b] [-c] [-f <pattern>] [-w workdir] <cellname>
+#        -m  Run Magic DRC (default)
+#        -k  Run KLayout DRC
+#        -b  Run Magic and KLayout DRC
+#        -c  Clean output files before running
+#        -f  Set gds flatglob pattern for Magic (e.g., '*' to flatten all)
+#        -w  Use <workdir> to store result files (default: current dir)
+#        -d  Enable debug information
 # ========================================================================
 
 ERR_DRC=1
@@ -33,11 +40,12 @@ if [ $# -eq 0 ]; then
 	echo
 	echo "DRC script for Magic-VLSI and KLayout (ICD@JKU)"
 	echo
-	echo "Usage: $0 [-d] [-m|-k|-b] [-c] [-w workdir] <cellname>"
+	echo "Usage: $0 [-d] [-m|-k|-b] [-c] [-f <pattern>] [-w workdir] <cellname>"
 	echo "       -m Run Magic DRC (default)"
 	echo "       -k Run KLayout DRC"
 	echo "       -b Run Magic and KLayout DRC"
 	echo "       -c Clean output files"
+	echo "       -f Set gds flatglob pattern for Magic (e.g., '*' to flatten all)"
 	echo "       -w Use <workdir> to store result files (default current dir)"
 	echo "       -d Enable debug information"
 	echo
@@ -53,6 +61,7 @@ RUN_CLEAN=0
 DEBUG=0
 DRC_CLEAN=1
 RESDIR=$PWD
+FLATGLOB=""
 
 # check if the PDK is already supported by this script
 # ----------------------------------------------------
@@ -73,8 +82,12 @@ fi
 # check flags
 # -----------
 
-while getopts "mkbcw:d" flag; do
+while getopts "mkbcf:w:d" flag; do
 	case $flag in
+		f)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -f is set to <$OPTARG>."
+			FLATGLOB="$OPTARG"
+			;;
 		m)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -m is set."
 			RUN_MAGIC=1
@@ -179,7 +192,8 @@ if [ $RUN_MAGIC -eq 1 ]; then
 	elif echo "$CELL_LAY" | grep -q -i "\.gds"; then
 		[ $DEBUG -eq 1 ] && echo "[INFO] Magic runs DRC on .gds file."
 		{
-			echo "crashbackups stop"	
+			echo "crashbackups stop"
+			[ -n "$FLATGLOB" ] && echo "gds flatglob $FLATGLOB"
 			echo "gds read $CELL_LAY"
 			echo "load $CELL_NAME"
 		} > "$EXT_SCRIPT"

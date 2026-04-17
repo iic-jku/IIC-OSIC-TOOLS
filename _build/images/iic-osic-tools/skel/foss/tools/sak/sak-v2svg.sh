@@ -2,7 +2,7 @@
 # ========================================================================
 # Verilog-to-SVG conversion script using Yosys and netlistsvg
 #
-# SPDX-FileCopyrightText: 2022-2025 Harald Pretl
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

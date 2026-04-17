@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
 # shellcheck shell=bash
 
 function _path_add_tool() {
@@ -67,6 +70,11 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
 
     export FOSS_INIT_DONE=1
 fi
+
+# Ensure USER is set — gdsfactory's pydantic-settings reads it at startup.
+# When the container is run with a numeric UID (--user UID:GID) without a matching
+# /etc/passwd entry, the shell may not populate USER automatically.
+[ -z "${USER}" ] && USER=$(id -un 2>/dev/null || echo designer) && export USER
 
 # shellcheck disable=SC2086
 LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${TOOLS}/openems/lib:${TOOLS}/kactus2:${TOOLS}/gtkwave/lib/$(uname -m)-linux-gnu:${TOOLS}/kepler-formal/lib" && export LD_LIBRARY_PATH
