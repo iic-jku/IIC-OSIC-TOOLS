@@ -103,6 +103,16 @@ Volker Muehlaus' `setupEM`/`gds2palace` tool for AWS Palace is only installed fo
 
 At least since tag `2025.12` GDS3D is crashing with an error message. Unfortunately, there is no known fix at the moment. See <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/220>.
 
+### Xschem Library Path (IHP Open-PDK)
+
+Since tag `2026.04`, the IHP Open-PDK changed its `xschemrc` (see commit https://github.com/IHP-GmbH/IHP-Open-PDK/commit/2bda257623753d0571bc40c5f50481e8389309e0), which adds a `sg13g2_pr/` prefix to all symbol paths. Schematics created with earlier container versions will show missing symbols.
+
+This can be fixed by updating the symbol paths directly in the `.sch` files. Since `.sch` files from Xschem are text-based, a bulk find-and-replace in an editor is done quite fast. Another workaround is to add the PDK xschem library to `XSCHEM_USER_LIBRARY_PATH` in your `.designinit` (see issue https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/257):
+
+```bash
+export XSCHEM_USER_LIBRARY_PATH=${PDK_ROOT}/${PDK}/libs.tech/xschem:<your-project-xschem-path>
+```
+
 ## Build
 
 No known issues at the moment. However, be warned that building the image is quite involved and may take several hours depending on the host system performance and network connection. For a multi-architecture build (`amd64` + `arm64`) dedicated build servers with sufficient resources are recommended. Cross-architecture builds take ages and are not recommended. Plus, a private Docker registry is currently used by the build system to store intermediate build stages, which requires a fast network connection to the registry server.
