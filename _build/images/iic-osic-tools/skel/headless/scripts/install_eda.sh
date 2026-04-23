@@ -20,28 +20,28 @@ echo "[INFO] Install EDA packages via PIP"
 pip3 install $PIP_FLAGS \
 	"amaranth[builtin-yosys]==0.5.8" \
 	cace==2.9.0 \
-	ciel==2.4.0 \
+	ciel==2.4.1 \
 	cocotb==2.0.1 \
 	cocotbext-ams==0.1.0 \
-	edalize==0.6.6 \
+	edalize==0.6.7 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.5 \
-	gdsfactory==9.40.1 \
+	gdsfactory==9.40.2 \
 	gdsfill==0.1.5 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.3.10 \
+	klayout-pex==0.3.12 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.0.2 \
-	najaeda==0.5.4 \
+	najaeda==0.6.0 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
 	pyuvm==4.0.1 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.22" \
 	scikit-rf==1.11.0 \
-	siliconcompiler==0.37.5 \
+	siliconcompiler==0.37.7 \
 	spicelib==1.5.1 \
 	spyci==1.0.2
 
