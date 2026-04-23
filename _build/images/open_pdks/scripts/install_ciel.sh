@@ -55,6 +55,13 @@ if [ -d "$PDK_ROOT/sky130A" ]; then
 	sed -i '/<base-path>/c\ <base-path/>' "$PDK_ROOT/sky130A/libs.tech/klayout/tech/sky130A.lyt"
 	# shellcheck disable=SC2016
 	sed -i '/<original-base-path>/c\ <original-base-path>$PDK_ROOT/$PDK/libs.tech/klayout</original-base-path>' "$PDK_ROOT/sky130A/libs.tech/klayout/tech/sky130A.lyt"
+
+	# Fix gdsfactory boolean operation "A-B" -> "-" for gdsfactory 8.x compatibility
+	# (gdsfactory 8.x does not support the "A-B" operation string; use "-" instead)
+	if [ -d "$PDK_ROOT/sky130A/libs.tech/klayout/python/cells" ]; then
+		find "$PDK_ROOT/sky130A/libs.tech/klayout/python/cells" -name "*.py" \
+			-exec sed -i 's/operation="A-B"/operation="-"/g' {} \;
+	fi
 fi
 
 if [ -d "$PDK_ROOT/sky130B" ]; then
