@@ -8,8 +8,8 @@ FROM base AS iic-osic-tools
 USER 0:0
 # update only the runGL.sh script
 COPY images/base/skel/dockerstartup/scripts/run_GL.sh /dockerstartup/scripts/run_GL.sh
-# Allow scripts to be executed by any user
-RUN chmod a+x /dockerstartup/scripts/run_GL.sh
+# Set permissions to 755 (rwxr-xr-x)
+RUN chmod 755 /dockerstartup/scripts/run_GL.sh
 
 # Override default PDK for the chipathon flavor.
 # Sourced after /etc/profile.d/iic-osic-tools-setup.sh (alphabetical order),
