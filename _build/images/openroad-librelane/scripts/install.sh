@@ -23,9 +23,6 @@ git clone --filter=blob:none "${OPENROAD_LIBRELANE_REPO_URL}" "${OPENROAD_LIBREL
 cd "${OPENROAD_LIBRELANE_NAME}" || exit 1
 git checkout "${OPENROAD_LIBRELANE_REPO_COMMIT}"
 git submodule update --init --recursive
-#FIXME We apply this patch to allow control of analog routes.
-#FIXME https://github.com/FPGA-Research/heichips25-tapeout/blob/main/disable_auto_taper.patch
-sed -i 's/bool AUTO_TAPER_NDR_NETS = true;/bool AUTO_TAPER_NDR_NETS = false;/' src/drt/src/global.h
 # Fix Tcl_Size compatibility: SWIG 4.2 generates Tcl_Size (Tcl 9.0) but we have Tcl 8.6.
 # Patch system tcl.h so ALL compilation units see it (including SWIG-generated wrappers).
 if ! grep -q 'Tcl_Size' /usr/include/tcl/tcl.h; then
