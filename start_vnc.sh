@@ -112,6 +112,12 @@ if [ -n "${VNC_PW}" ]; then
 	PARAMS="${PARAMS} -e VNC_PW=${VNC_PW}"
 fi
 
+# Allow configuration of X11 keyboard layout (e.g. us, de, at, …)
+DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e XKB_KEYBOARD_LAYOUT=${XKB_KEYBOARD_LAYOUT:-us}"
+
+# Allow configuration of X11 keyboard variant (e.g. pc105, nodeadkeys, …)
+DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e XKB_KEYBOARD_VARIANT=${XKB_KEYBOARD_VARIANT:-}"
+
 if [ -n "${IIC_OSIC_TOOLS_QUIET}" ]; then
 	DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e IIC_OSIC_TOOLS_QUIET=1"
 fi
