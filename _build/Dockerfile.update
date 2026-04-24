@@ -11,4 +11,11 @@ COPY images/base/skel/dockerstartup/scripts/run_GL.sh /dockerstartup/scripts/run
 # Allow scripts to be executed by any user
 RUN chmod a+x /dockerstartup/scripts/run_GL.sh
 
+# Override default PDK for the chipathon flavor.
+# Sourced after /etc/profile.d/iic-osic-tools-setup.sh (alphabetical order),
+# so it re-applies PDK / PDKPATH / STD_CELL_LIBRARY / SPICE_USERINIT_DIR /
+# KLAYOUT_PATH / KLAYOUT_PYTHONPATH consistent with `sak-pdk`.
+COPY chipathon-overlay/etc/profile.d/zz-chipathon-pdk.sh /etc/profile.d/zz-chipathon-pdk.sh
+RUN chmod a+r /etc/profile.d/zz-chipathon-pdk.sh
+
 USER 1000:1000
