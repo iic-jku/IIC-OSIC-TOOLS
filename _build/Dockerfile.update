@@ -12,10 +12,60 @@ COPY images/base/skel/dockerstartup/scripts/run_GL.sh /dockerstartup/scripts/run
 RUN chmod 755 /dockerstartup/scripts/run_GL.sh
 
 # Override default PDK for the chipathon flavor.
-# Sourced after /etc/profile.d/iic-osic-tools-setup.sh (alphabetical order),
-# so it re-applies PDK / PDKPATH / STD_CELL_LIBRARY / SPICE_USERINIT_DIR /
-# KLAYOUT_PATH / KLAYOUT_PYTHONPATH consistent with `sak-pdk`.
-COPY chipathon-overlay/etc/profile.d/zz-chipathon-pdk.sh /etc/profile.d/zz-chipathon-pdk.sh
-RUN chmod a+r /etc/profile.d/zz-chipathon-pdk.sh
+#
+# The base image hardcodes PDK=ihp-sg13g2 in TWO files, and both are read
+# at every shell startup:
+#   1. /headless/.bashrc                           (non-login shells:
+#      xfce4-terminal, VNC shells, explicitly sourced by ui_startup.sh)
+#   2. /etc/profile.d/iic-osic-tools-setup.sh      (login shells: SSH,
+#      docker exec -l, jupyter-spawned shells)
+# A `/etc/profile.d/zz-*.sh` drop-in does NOT help because (a) non-login
+# shells don't source profile.d at all, and (b) the ".bashrc" export runs
+# at every sub-shell and resets PDK again.
+#
+# Fix:
+#   (a) Patch the hardcoded `export PDK=` / `export STD_CELL_LIBRARY=`
+#       lines in-place. Derived variables PDKPATH, SPICE_USERINIT_DIR and
+#       KLAYOUT_PATH reference $PDK and therefore stay consistent with
+#       sak-pdk for free.
+#   (b) Append a trailing block that sets KLAYOUT_PYTHONPATH from the
+#       current $PDK, identical to sak-pdk-script.sh's logic. This is
+#       required for gf180mcuC/D (gdsfactory 9) and sky130A/B
+#       (gdsfactory 8) KLayout pcell libraries. The base image leaves
+#       KLAYOUT_PYTHONPATH unset because its default (ihp-sg13g2) does
+#       not need it. The block runs AFTER $DESIGNS/.designinit, so user
+#       overrides (e.g. `sak-pdk sky130A` in .designinit) keep working.
+#
+# Supported target PDKs: sky130A, sky130B, gf180mcuC, gf180mcuD,
+#                        ihp-sg13g2, ihp-sg13cmos5l
+ARG CHIPATHON_PDK=gf180mcuD
+ARG CHIPATHON_STD_CELL_LIBRARY=gf180mcu_fd_sc_mcu7t5v0
+RUN set -eu; \
+    cat > /tmp/chipathon_pdk_tail.sh <<'EOF'
+
+# --- chipathon: KLAYOUT_PYTHONPATH parity with sak-pdk (per current $PDK) ---
+case "${PDK:-}" in
+    sky130A|sky130B)         _chipathon_klayout_venv=/foss/tools/klayout_gdsfactory8 ;;
+    gf180mcuC|gf180mcuD)     _chipathon_klayout_venv=/foss/tools/klayout_gdsfactory9 ;;
+    *)                       _chipathon_klayout_venv="" ;;
+esac
+if [ -n "$_chipathon_klayout_venv" ] && [ -x "$_chipathon_klayout_venv/bin/python3" ]; then
+    KLAYOUT_PYTHONPATH=$("$_chipathon_klayout_venv/bin/python3" -c 'import site; print(site.getsitepackages()[0])') && export KLAYOUT_PYTHONPATH
+fi
+unset _chipathon_klayout_venv
+EOF
+    for f in /headless/.bashrc /etc/profile.d/iic-osic-tools-setup.sh; do \
+        test -f "$f" || { echo "ERROR: $f missing in base image" >&2; exit 1; }; \
+        grep -q '^export PDK=' "$f" || { echo "ERROR: no 'export PDK=' line in $f" >&2; exit 1; }; \
+        grep -q '^export STD_CELL_LIBRARY=' "$f" || { echo "ERROR: no 'export STD_CELL_LIBRARY=' line in $f" >&2; exit 1; }; \
+        if ! grep -q 'chipathon: KLAYOUT_PYTHONPATH parity' "$f"; then \
+            sed -i "s|^export PDK=.*|export PDK=${CHIPATHON_PDK}|" "$f"; \
+            sed -i "s|^export STD_CELL_LIBRARY=.*|export STD_CELL_LIBRARY=${CHIPATHON_STD_CELL_LIBRARY}|" "$f"; \
+            cat /tmp/chipathon_pdk_tail.sh >> "$f"; \
+        fi; \
+        echo "--- patched $f ---"; \
+        grep -E '^export (PDK|STD_CELL_LIBRARY)=' "$f"; \
+    done; \
+    rm -f /tmp/chipathon_pdk_tail.sh
 
 USER 1000:1000
