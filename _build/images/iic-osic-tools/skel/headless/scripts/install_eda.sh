@@ -23,7 +23,7 @@ pip3 install $PIP_FLAGS \
 	ciel==2.4.1 \
 	cocotb==2.0.1 \
 	cocotbext-ams==0.1.0 \
-	edalize==0.6.7 \
+	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.5 \
 	gdsfactory==9.40.2 \

@@ -36,7 +36,7 @@
   commit: v3.14.0
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: b596df4121f2b13ac1b6fd03920a3b2053ae80f5
+  commit: 70f7810ecb7d64b8d0a53cc502eb1dca0f73cbe6
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.8
@@ -69,7 +69,7 @@
   commit: b981309789fb515cc15450385264f150aa7d5347
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 19580ed81c816a56a97282e4454ecacfb3ee50ce
+  commit: ff455853de2650176d78f5533dbcfabbc1687cc4
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: f05f062111f1024eb684ce5fcf13816406c3e093
+  commit: c13e409f255392b9d78369c386276cf9343c2205
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -102,10 +102,10 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 62fba9139f2a30e467805ff4c1419871d44bde54
+  commit: 48641b4410696c76e6ba248ced819d07396ec39a
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: eabdfd1b836f08047de64dca93c286f2a935d68a
+  commit: 3a7f19d9783de95f58940d9e983d068959a07ada
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
@@ -132,7 +132,7 @@
   commit: 0.11.7
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 6434ed0aa6fefdb282af6d03f00be8f2455625f9
+  commit: 7a45ef0ca12fe5519c65f8e8549b83ba6e008250
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.046
@@ -144,7 +144,7 @@
   commit: 9d4949228bc2c43c07941b6eda012924843e67ca
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 0a1512201f9acb71df6578510bfe9befceed914f
+  commit: 75a313405170b21e6c2e0ad8497c81d1733d28f3
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
