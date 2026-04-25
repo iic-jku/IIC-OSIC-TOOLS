@@ -91,11 +91,8 @@ export CPATH="${TOOLS}/ghdl/include:${TOOLS}/ghdl/include/ghdl:${CPATH}"
 export LIBRARY_PATH="${TOOLS}/ghdl/lib:${LIBRARY_PATH}"
 
 # Setting default PDK
-export PDK=ihp-sg13g2
-export PDKPATH=$PDK_ROOT/$PDK
-export STD_CELL_LIBRARY=sg13g2_stdcell
-export SPICE_USERINIT_DIR=$PDK_ROOT/$PDK/libs.tech/ngspice
-export KLAYOUT_PATH="/headless/.klayout:$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech"
+# shellcheck source=/dev/null
+source "$TOOLS/sak/sak-pdk-script.sh" ihp-sg13g2 > /dev/null
 
 # This gets rid of the DBUS warning
 # https://unix.stackexchange.com/questions/230238/x-applications-warn-couldnt-connect-to-accessibility-bus-on-stderr/230442#230442
