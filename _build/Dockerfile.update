@@ -30,6 +30,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     liblzma-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Install additional KLayout packages
+COPY chipathon-overlay/klayout_install_packages.sh /tmp/klayout_install_packages.sh
+RUN chmod +x /tmp/klayout_install_packages.sh \
+    && /tmp/klayout_install_packages.sh \
+    && rm -f /tmp/klayout_install_packages.sh
+
 # Update only the runGL.sh script
 COPY images/base/skel/dockerstartup/scripts/run_GL.sh /dockerstartup/scripts/run_GL.sh
 # Set permissions to 755 (rwxr-xr-x)
