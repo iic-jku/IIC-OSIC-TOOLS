@@ -14,6 +14,22 @@ RUN chmod +x /tmp/patch-pdk.sh \
     && /tmp/patch-pdk.sh "${CHIPATHON_PDK}" "${CHIPATHON_STD_CELL_LIBRARY}" \
     && rm -f /tmp/patch-pdk.sh
 
+# Install dependencies for pyenv (build-essential, curl, wget and the
+# libssl/libreadline/libsqlite/libncurses/libffi/liblzma runtime libs are
+# already provided by the base image; only the matching -dev headers and
+# xz-utils need to be added here).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libncursesw5-dev \
+    xz-utils \
+    libffi-dev \
+    liblzma-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Update only the runGL.sh script
 COPY images/base/skel/dockerstartup/scripts/run_GL.sh /dockerstartup/scripts/run_GL.sh
 # Set permissions to 755 (rwxr-xr-x)
