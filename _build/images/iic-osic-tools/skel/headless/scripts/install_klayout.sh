@@ -28,7 +28,7 @@ mkdir -p "$KLAYOUT_SALT"
 
 # Add essential plugins to KLayout: plugin-utils, align-tool, move-tool, layer-shortcuts,
 # klayout-auto-backup, klayout-pin-tool, library-manager, vector-file-export,
-# klive, xsection, gdsfactory
+# klive, xsection
 packages=(
     KLayoutPluginUtils
     AlignToolPlugin
@@ -40,7 +40,6 @@ packages=(
     VectorFileExportPlugin
     klive
     xsection
-    gdsfactory
 )
 
 for package in "${packages[@]}"; do
