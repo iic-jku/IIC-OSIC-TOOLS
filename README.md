@@ -270,6 +270,8 @@ Both scripts will use default settings, which you can tweak by settings shell va
 - `CONTAINER_USER=$(id -u)` (the current user's ID, `CONTAINER_USER=1000` for `.bat`) The user ID (and also group ID) is especially important on Linux and macOS because those are the IDs used to write files in the `DESIGNS` directory. For debugging/testing, the user and group ID can be set to `0` to gain root access inside the container.
 - `CONTAINER_GROUP=$(id -g)` (the current user's group ID, `CONTAINER_GROUP=1000` for `.bat`)
 - `CONTAINER_NAME="iic-osic-tools_xvnc_uid_"$(id -u)` (attaches the executing user's ID to the name on Unix, or only `CONTAINER_NAME="iic-osic-tools_xvnc` for `.bat`) is the name that is assigned to the container for easy identification. It is used to identify if a container exists and is running.
+- `XKB_KEYBOARD_LAYOUT=us` sets the keyboard layout for the X server. This is necessary for KLayout shortcuts to behave propertly. E.g. you are a student at JKU using a German keyboard, you should set this to `at`.
+- `XKB_KEYBOARD_VARIANT=` sets the keyboard variant for the X server. E.g. this could be set to `nodeadkeys`.
 
 To overwrite the default settings, see [Overwriting Shell Variables](#44-overwriting-shell-variables)
 

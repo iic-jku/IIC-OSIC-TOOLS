@@ -134,6 +134,33 @@ if [ "$start_vnc" = true ]; then
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] noVNC HTML client started:\n\t=> connect via http://localhost/?password=$VNC_PW\n"
 fi
 
+wait_for_x() {
+    local display=${DISPLAY:-:1}
+    local retries=50
+
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Waiting for X server on $display..."
+
+    for ((i=0; i<retries; i++)); do
+        if xdpyinfo -display "$display" >/dev/null 2>&1; then
+            [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] X server is ready."
+            return 0
+        fi
+        sleep 0.1
+    done
+
+    echo "[WARNING] X server not ready after waiting."
+    return 1
+}
+
+wait_for_x
+
+[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Keyboard layout: $XKB_KEYBOARD_LAYOUT ${XKB_KEYBOARD_VARIANT:+($XKB_KEYBOARD_VARIANT)}"
+if [ -n "${XKB_KEYBOARD_VARIANT}"]; then
+  setxkbmap "${XKB_KEYBOARD_LAYOUT}" -variant "${XKB_KEYBOARD_VARIANT}"
+else
+  setxkbmap "${XKB_KEYBOARD_LAYOUT}"
+fi
+
 if [ "$start_x" = true ]; then
     xfce4-terminal | tag "[TERM]" &
     # add an empty newline so one can see that this script is done.
