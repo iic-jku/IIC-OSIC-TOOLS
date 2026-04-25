@@ -165,6 +165,8 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [kepler-formal](https://github.com/keplertech/kepler-formal) logic equivalence checking (LEC) tool for `openroad`
 - [klayout-pex](https://github.com/martinjankoehler/klayout-pex) parasitic extraction for `klayout`
 - [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS
+- [klive](https://github.com/KLayout/klive) KLayout live script connection plugin
+- [xsection](https://github.com/KLayout/xsection) cross-section generation plugin for `klayout`
 - [lctime](https://codeberg.org/librecell/lctime) Characterization kit for CMOS cells
 - [libman](https://github.com/IHP-GmbH/LibMan) design library manager to manage cells and views
 - [librelane](https://github.com/librelane/librelane) successor of OpenLane(2), RTL2GDS flow scripts
