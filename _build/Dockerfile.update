@@ -6,13 +6,16 @@ FROM ${BASE_IMAGE} AS base
 FROM base AS iic-osic-tools
 USER 0:0
 
-# Override default PDK for the chipathon flavor.
+# Override default PDK for the chipathon flavor
+# Patch the LVS so that it works properly
 ARG CHIPATHON_PDK=gf180mcuD
 ARG CHIPATHON_STD_CELL_LIBRARY=gf180mcu_fd_sc_mcu7t5v0
 COPY chipathon-overlay/patch-pdk.sh /tmp/patch-pdk.sh
-RUN chmod +x /tmp/patch-pdk.sh \
+COPY chipathon-overlay/patch-lvs.sh /tmp/patch-lvs.sh
+RUN chmod +x /tmp/patch-pdk.sh /tmp/patch-lvs.sh \
     && /tmp/patch-pdk.sh "${CHIPATHON_PDK}" "${CHIPATHON_STD_CELL_LIBRARY}" \
-    && rm -f /tmp/patch-pdk.sh \
+    && /tmp/patch-lvs.sh \
+    && rm -f /tmp/patch-pdk.sh /tmp/patch-lvs.sh \
     && chmod -R 777 ${PDK_ROOT}/${CHIPATHON_PDK}/libs.tech/klayout/tech/macros
 
 # Install dependencies for pyenv (build-essential, curl, wget and the
