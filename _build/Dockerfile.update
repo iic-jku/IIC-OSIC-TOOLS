@@ -12,7 +12,8 @@ ARG CHIPATHON_STD_CELL_LIBRARY=gf180mcu_fd_sc_mcu7t5v0
 COPY chipathon-overlay/patch-pdk.sh /tmp/patch-pdk.sh
 RUN chmod +x /tmp/patch-pdk.sh \
     && /tmp/patch-pdk.sh "${CHIPATHON_PDK}" "${CHIPATHON_STD_CELL_LIBRARY}" \
-    && rm -f /tmp/patch-pdk.sh
+    && rm -f /tmp/patch-pdk.sh \
+    && chmod -R 777 ${PDK_ROOT}/${CHIPATHON_PDK}/libs.tech/klayout/tech/macros
 
 # Install dependencies for pyenv (build-essential, curl, wget and the
 # libssl/libreadline/libsqlite/libncurses/libffi/liblzma runtime libs are
