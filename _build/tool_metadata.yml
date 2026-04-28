@@ -48,7 +48,7 @@
   commit: 8.3.637
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: 1.5.318
+  commit: 1.5.319
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
   commit: 98c18d7f14434f0a72f982631da5124e3b3a2e83
@@ -66,10 +66,10 @@
   commit: c95f23a75038d54d60ecc7ca060f53851f8f25e5
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: b981309789fb515cc15450385264f150aa7d5347
+  commit: 1930f54ab5cb10cc5f8827b783477a379a848c40
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: ff455853de2650176d78f5533dbcfabbc1687cc4
+  commit: 8829d8afe9604b2be84fc14253e26256f83ea6bb
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -93,16 +93,16 @@
   commit: 52ecda1053bcbd2f6ec88b8379c8179e2a849f7a
 - name: qucs-s
   repo: https://github.com/ra3xdh/qucs_s.git
-  commit: 26.1.0
+  commit: 26.1.1
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: 2026.04.05
+  commit: 2026.04.26
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 48641b4410696c76e6ba248ced819d07396ec39a
+  commit: da377445f85bfe93345809e26d1d8150ffd6fe3b
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 3a7f19d9783de95f58940d9e983d068959a07ada
@@ -111,13 +111,13 @@
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: dbb30bb31a086decd0cf1376dca3418d0a9bac64
+  commit: 632777d37139298f0af1ee8d2a001f3ab0bde98c
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.86
 - name: surfer
   repo: https://gitlab.com/surfer-project/surfer.git
-  commit: v0.6.0
+  commit: v0.7.0
 - name: sv2v
   repo: https://github.com/zachjs/sv2v.git
   commit: 6662fa5da71f87797598060f17728b284b99a9fc
@@ -129,13 +129,13 @@
   commit: trilinos-release-12-12-1
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.11.7
+  commit: 0.11.8
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
   commit: 7a45ef0ca12fe5519c65f8e8549b83ba6e008250
 - name: verilator
   repo: https://github.com/verilator/verilator.git
-  commit: v5.046
+  commit: v5.048
 - name: verible
   repo: https://github.com/chipsalliance/verible.git
   commit: v0.0-4053-g89d4d98a
@@ -144,7 +144,7 @@
   commit: 9d4949228bc2c43c07941b6eda012924843e67ca
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 75a313405170b21e6c2e0ad8497c81d1733d28f3
+  commit: 0a10889abde7d29ab065d9920b3fe1f3263d8736
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0

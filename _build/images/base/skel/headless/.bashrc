@@ -92,7 +92,7 @@ export LIBRARY_PATH="${TOOLS}/ghdl/lib:${LIBRARY_PATH}"
 
 # Setting default PDK
 # shellcheck source=/dev/null
-source "$TOOLS/sak/sak-pdk-script.sh" ihp-sg13g2 > /dev/null
+source "$TOOLS/sak/sak-pdk-script.sh" "ihp-sg13g2" > /dev/null
 
 # This gets rid of the DBUS warning
 # https://unix.stackexchange.com/questions/230238/x-applications-warn-couldnt-connect-to-accessibility-bus-on-stderr/230442#230442
