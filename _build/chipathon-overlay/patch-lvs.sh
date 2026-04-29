@@ -14,7 +14,7 @@
 # and _pr repo (for exposing the klayout GUI options)
 
 REPO_PV="https://github.com/Scafir/globalfoundries-pdk-libs-gf180mcu_fd_pv.git"
-COMMIT_PV="lvs_bjt_m"
+COMMIT_PV="nfet_5v_dn_feature"
 
 DEST_LVS="/foss/pdks/gf180mcuD/libs.tech/klayout/tech/lvs"
 
