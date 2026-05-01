@@ -16,7 +16,7 @@ RUN chmod +x /tmp/patch-pdk.sh /tmp/patch-lvs.sh \
     && /tmp/patch-pdk.sh "${CHIPATHON_PDK}" "${CHIPATHON_STD_CELL_LIBRARY}" \
     && /tmp/patch-lvs.sh \
     && rm -f /tmp/patch-pdk.sh /tmp/patch-lvs.sh \
-    && chmod -R 777 ${PDK_ROOT}/${CHIPATHON_PDK}/libs.tech/klayout/tech/macros
+    && chmod -R 777 ${PDK_ROOT}/${CHIPATHON_PDK}/libs.tech/klayout/tech
 
 # Install dependencies for pyenv (build-essential, curl, wget and the
 # libssl/libreadline/libsqlite/libncurses/libffi/liblzma runtime libs are

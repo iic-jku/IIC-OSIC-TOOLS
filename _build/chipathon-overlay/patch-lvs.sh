@@ -64,3 +64,4 @@ popd
 cp "${SRC_LVS_GUI}/gf180mcu_lvs.lylvs" "${DEST_PV}/gf180mcu_lvs.lylvs"
 cp "${SRC_LVS_GUI}/gf180mcu_options.lym" "${DEST_PV}/gf180mcu_options.lym"
 cp "${SRC_LVS_GUI}/lvs_defaults.yml" "${DEST_PV}/lvs_defaults.yml"
+cp "${TMP_DIR}/repo_pr/tech/klayout/gf180mcu.lyp" "/foss/pdks/gf180mcuD/libs.tech/klayout/tech"
