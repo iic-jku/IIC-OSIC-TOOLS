@@ -26,22 +26,22 @@ pip3 install $PIP_FLAGS \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.5 \
-	gdsfactory==9.40.2 \
+	gdsfactory==9.41.0 \
 	gdsfill==0.1.5 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.12 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
-	librelane==3.0.2 \
-	najaeda==0.6.0 \
+	librelane==3.0.3 \
+	najaeda==0.6.2 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
 	pyuvm==4.0.1 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.22" \
-	scikit-rf==1.11.0 \
-	siliconcompiler==0.37.7 \
+	scikit-rf==1.12.0 \
+	siliconcompiler==0.37.8 \
 	spicelib==1.5.1 \
 	spyci==1.0.2
 
