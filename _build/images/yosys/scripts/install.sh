@@ -46,8 +46,10 @@ make install -j"$(nproc)"
 # Install solver for sby
 # ----------------------
 cd /tmp || exit 1
-git clone --depth=1 https://github.com/SRI-CSL/yices2.git yices2
-cd yices2 || exit 1
+git clone --filter=blob:none "${YICES2_REPO_URL}" "${YICES2_NAME}"
+cd "${YICES2_NAME}" || exit 1
+git checkout "${YICES2_REPO_COMMIT}"
+
 autoconf
 ./configure --prefix="${TOOLS}/${YOSYS_NAME}"
 make -j"$(nproc)"
@@ -57,3 +59,4 @@ echo "${YOSYS_NAME} ${YOSYS_REPO_COMMIT}" > "${TOOLS}/${YOSYS_NAME}/SOURCES"
 echo "${YOSYS_EQY_NAME} ${YOSYS_EQY_REPO_COMMIT}" >> "${TOOLS}/${YOSYS_NAME}/SOURCES"
 echo "${YOSYS_SBY_NAME} ${YOSYS_SBY_REPO_COMMIT}" >> "${TOOLS}/${YOSYS_NAME}/SOURCES"
 echo "${YOSYS_MCY_NAME} ${YOSYS_MCY_REPO_COMMIT}" >> "${TOOLS}/${YOSYS_NAME}/SOURCES"
+echo "${YICES2_NAME} ${YICES2_EFFECTIVE_REPO_COMMIT}" >> "${TOOLS}/${YOSYS_NAME}/SOURCES"
