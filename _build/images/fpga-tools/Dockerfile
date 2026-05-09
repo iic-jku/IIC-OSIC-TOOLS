@@ -10,6 +10,6 @@ ARG FPGA_NAME="fpga"
 ARG ICESTORM_REPO_URL="https://github.com/YosysHQ/icestorm.git"
 ARG ICESTORM_REPO_COMMIT="f31c39cc2eadd0ab7f29f34becba1348ae9f8721"
 ARG NEXTPNR_REPO_URL="https://github.com/YosysHQ/nextpnr.git"
-ARG NEXTPNR_REPO_COMMIT="6fffc4d2c78592504cea1e05bc904bdf73428898"
+ARG NEXTPNR_REPO_COMMIT="9cb5fc6428b81738d2636c63bd90c729c93fd918"
 RUN --mount=type=bind,source=images/fpga-tools,target=/images/fpga-tools \
     bash /images/fpga-tools/scripts/install.sh
