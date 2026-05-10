@@ -51,7 +51,7 @@
   commit: 1.5.319
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 9cb5fc6428b81738d2636c63bd90c729c93fd918
+  commit: 2622bbfcdafff30db6fa2a313cccf953ab0d8023
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-46
@@ -66,10 +66,10 @@
   commit: 7b70722e33c03fcb5dabcf4d479fb0822d9251c9
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: bf64bc6b7515fd6e6333964c3b48e0149dcfc199
+  commit: b37c90f31e39ac1b523795e1ae10a52dcae4f0d8
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: a308dac45cb9c70be0b4159e1dfcc9cf7aa3b48d
+  commit: 45b5518e387dca34c517776c399d0714efb10eb6
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
