@@ -25,7 +25,7 @@ pip3 install $PIP_FLAGS \
 	cocotbext-ams==0.1.0 \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
-	fusesoc==2.4.5 \
+	fusesoc==2.4.6 \
 	gdsfactory==9.41.0 \
 	gdsfill==0.1.5 \
 	gdspy==1.6.13 \

@@ -18,7 +18,7 @@
   commit: 7c43e7255d1beddc4332f1550ee217565835a967
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
-  commit: 9aba9af9d285ca3cff602feeef19a4655279de6f
+  commit: e0427893efb0c6b866d3b75a2bbff289a412dd7f
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
   commit: 7d7b4db9e2f5485afe2aeeab0ad112f5b6a9b94b
@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: e212ea1a1cea330d0a8742db7e7c58df8da35df6
+  commit: bcc3a6665750b25d118bccbd4adc85fd9d77994b
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.0
@@ -45,7 +45,7 @@
   commit: fd06d0c5d0368c0be8b27935ad132f50a8c4815b
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.636
+  commit: 8.3.640
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.319
@@ -69,7 +69,7 @@
   commit: b37c90f31e39ac1b523795e1ae10a52dcae4f0d8
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 45b5518e387dca34c517776c399d0714efb10eb6
+  commit: 8783223436c34cc321a3a5b6955d54bcac212ba6
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.11.12
+  commit: 0.11.13
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
   commit: bca13d7963ad2d8e10c7244d2890f0a9d9171844
