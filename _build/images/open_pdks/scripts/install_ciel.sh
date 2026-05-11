@@ -36,15 +36,6 @@ if [ -d "$PDK_ROOT/sky130A" ]; then
 	#FIXME cd "$PDK_ROOT/sky130A/libs.ref"
 	#FIXME find . -name "*.lib" -exec gzip {} \;
 
-	# Create compact model files
-    cd "$PDK_ROOT/sky130A/libs.tech/ngspice" || exit 1
-
-	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice tt
-	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice ss
-	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice ff
-	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice sf
-	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice fs
-
 	# Add custom bindkeys for Magic
     echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
     echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
@@ -68,15 +59,6 @@ if [ -d "$PDK_ROOT/sky130B" ]; then
 	#FIXME gzip Liberty (.lib) files
 	#FIXME cd "$PDK_ROOT/sky130B/libs.ref"
 	#FIXME find . -name "*.lib" -exec gzip {} \;
-
-	# Create compact model files
-	cd "$PDK_ROOT/sky130B/libs.tech/ngspice" || exit 1
-	
-	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice tt
-	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice ss
-	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice ff
-	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice sf
-	"$SCRIPT_DIR/iic-spice-model-red.py" sky130.lib.spice fs
 
     echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/sky130B/libs.tech/magic/sky130B.magicrc"
     echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/sky130B/libs.tech/magic/sky130B.magicrc"
