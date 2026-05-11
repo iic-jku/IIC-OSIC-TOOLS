@@ -7,6 +7,10 @@ set -e
 set -o pipefail
 export SCRIPT_DIR=$TOOLS/osic-multitool
 
+# Use improved model reduction script that deduplicates .subckt definitions
+# (fixes simulator warnings about redefined subcircuits)
+cp /images/open_pdks/scripts/iic-spice-model-red.py "$SCRIPT_DIR/iic-spice-model-red.py"
+
 if [ ! -d "$PDK_ROOT" ]; then
     mkdir -p "$PDK_ROOT"
 fi
