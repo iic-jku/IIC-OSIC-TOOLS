@@ -133,10 +133,22 @@ else
 	fi
 fi
 
-OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
+# sg13g2tovc.py invokes openvaf-r directly without exposing any CLI/env hook
+# to inject extra flags. To avoid AVX-512 instructions in the generated
+# libs.tech/vacask/osdi/*.osdi files (which would crash on CPUs lacking
+# AVX-512, see iic-jku/IIC-OSIC-TOOLS#279), wrap openvaf-r so that
+# "--target_cpu generic" is always passed, and point OPENVAF_DIR at the wrapper.
+OPENVAF_WRAP_DIR=$(mktemp -d)
+cat > "${OPENVAF_WRAP_DIR}/openvaf-r" <<EOF
+#!/bin/bash
+exec "${TOOLS}/openvaf/bin/openvaf-r" --target_cpu generic "\$@"
+EOF
+chmod +x "${OPENVAF_WRAP_DIR}/openvaf-r"
+
+OPENVAF_DIR=${OPENVAF_WRAP_DIR} PYTHONPATH=/tmp/${VACASK_NAME}/python \
     python3 -m sg13g2tovc
 cp /tmp/${VACASK_NAME}/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/vacask/.vacaskrc.toml"
-rm -rf ${VACASK_NAME}
+rm -rf "${VACASK_NAME}" "${OPENVAF_WRAP_DIR}"
 
 # Remove *.orig files created during PDK preparation
 find "$PDK_ROOT/$PDK/libs.tech/xschem" -name "*.orig" -delete
