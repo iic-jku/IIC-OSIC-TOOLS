@@ -14,7 +14,7 @@
 # and _pr repo (for exposing the klayout GUI options)
 
 REPO_PV="https://github.com/Scafir/globalfoundries-pdk-libs-gf180mcu_fd_pv.git"
-COMMIT_PV="isosub_proper"
+COMMIT_PV="ac1b2f4573e6093090386f0419226daea9277664"
 
 DEST_LVS="/foss/pdks/gf180mcuD/libs.tech/klayout/tech/lvs"
 
@@ -48,12 +48,12 @@ rm -rf "${TESTING_DIR}"
 # Allow write in lvs folder (required for spice translation)
 chmod 777 "${DEST_LVS}"
 
-REPO_PR="https://github.com/fossi-foundation/globalfoundries-pdk-libs-gf180mcu_fd_pr.git"
-COMMIT_PR="3cd18d0f182b282ddd78c8821dcdb4a3c58d5034"
+REPO_PR="https://github.com/Scafir/globalfoundries-pdk-libs-gf180mcu_fd_pr.git"
+COMMIT_PR="fa29abb2b772f4868be10828cea18fd565696b59"
 
-DEST_PV="/foss/pdks/gf180mcuD/libs.tech/klayout/tech/macros"
+DEST_PR="/foss/pdks/gf180mcuD/libs.tech/klayout/tech/macros"
 
-SRC_LVS_GUI="${TMP_DIR}/repo_pr/rules/klayout/macros"
+SRC_PR="${TMP_DIR}/repo_pr/rules/klayout/macros"
 
 # Clone PR repository
 git clone "${REPO_PR}" "${TMP_DIR}/repo_pr"
@@ -61,9 +61,7 @@ pushd "${TMP_DIR}/repo_pr"
 git checkout ${COMMIT_PR}
 popd
 
-cp "${SRC_LVS_GUI}/gf180mcu_lvs.lylvs" "${DEST_PV}/gf180mcu_lvs.lylvs"
-cp "${SRC_LVS_GUI}/gf180mcu_options.lym" "${DEST_PV}/gf180mcu_options.lym"
-cp "${SRC_LVS_GUI}/lvs_defaults.yml" "${DEST_PV}/lvs_defaults.yml"
-cp "${TMP_DIR}/repo_pr/tech/klayout/gf180mcu.lyp" "/foss/pdks/gf180mcuD/libs.tech/klayout/tech"
+rm -rf "${DEST_PR}"
 
-chmod 777 "${DEST_PV}"
+cp -r "${SRC_PR}" "${DEST_PR}"
+cp "${TMP_DIR}/repo_pr/tech/klayout/gf180mcu.lyp" "/foss/pdks/gf180mcuD/libs.tech/klayout/tech"
