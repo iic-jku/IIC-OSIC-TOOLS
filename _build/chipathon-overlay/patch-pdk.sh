@@ -63,7 +63,7 @@ for f in /headless/.bashrc /etc/profile.d/iic-osic-tools-setup.sh; do
 
     sed -i "s|^export PDK=.*|export PDK=${PDK_DEFAULT}|" "$f"
     sed -i "s|^export STD_CELL_LIBRARY=.*|export STD_CELL_LIBRARY=${STDCELL_DEFAULT}|" "$f"
-    sed -i 's|:/foss/pdks/[^/]*/libs\.tech/klayout/tech||g' "$f"
+    sed -i 's|:\$PDKPATH/libs\.tech/klayout/tech||g' "$f"
     printf '%s\n' "$TAIL" >> "$f"
 
     echo "--- patched $f ---"
