@@ -26,7 +26,7 @@ pip3 install $PIP_FLAGS \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.6 \
-	gdsfactory==9.41.0 \
+	gdsfactory==9.42.0 \
 	gdsfill==0.1.5 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
@@ -41,7 +41,7 @@ pip3 install $PIP_FLAGS \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.22" \
 	scikit-rf==1.12.0 \
-	siliconcompiler==0.37.9 \
+	siliconcompiler==0.37.10 \
 	spicelib==1.5.1 \
 	spyci==1.0.2
 
