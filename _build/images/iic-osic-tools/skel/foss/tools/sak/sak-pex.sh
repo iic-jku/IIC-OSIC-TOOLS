@@ -230,16 +230,11 @@ if [ "$EXT_MODE" -eq 3 ]; then
 	# Extraction mode RC
 	EXT_MODE_TEXT="full-RC"
 	{
-		echo "extract do resistance"
-		echo "extract all"
-		echo "ext2sim labels on"
-		echo "ext2sim -p $RESDIR"
 		echo "extresist tolerance 10"
-		echo "extresist all"
+		echo "extract do resistance"
+		echo "extract do unique"
+		echo "extract all"
 		echo "ext2spice extresist on"
-		# FIXME acc. Tim Edwards the "tee on" option might produce wrong netlists by placing resistors twice.
-		# Need to experiment with it!
-		# echo "ext2spice resistor tee on"
 	} >> "$EXT_SCRIPT"
 fi
 
