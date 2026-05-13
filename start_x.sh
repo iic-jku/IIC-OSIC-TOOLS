@@ -21,6 +21,8 @@
 
 SOCAT_PID=""
 XHOST_DO_RESET=""
+XHOST_MAC_DO_RESET=""
+XAUTH_TMP=""
 
 trap cleanup EXIT
 cleanup() {
@@ -33,6 +35,14 @@ cleanup() {
 
     if [ -n "${XHOST_DO_RESET}" ]; then
         ${ECHO_IF_DRY_RUN} xhost - > /dev/null
+    fi
+
+    if [ -n "${XHOST_MAC_DO_RESET}" ]; then
+        ${ECHO_IF_DRY_RUN} xhost -localhost > /dev/null 2>&1 || true
+    fi
+
+    if [ -n "${XAUTH_TMP}" ] && [ -f "${XAUTH_TMP}" ]; then
+        rm -f "${XAUTH_TMP}"
     fi
 }
 
@@ -135,7 +145,9 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 				#DISPLAY_NUM=$(echo $DISPLAY | sed 's/^[^:]*:\([0-9]*\).*/\1/')
 				DISPLAY_NUM=${DISPLAY#*:}
 				DISPLAY_NUM=${DISPLAY_NUM%%.*}
-				socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CONNECT:/tmp/.X11-unix/X$DISPLAY_NUM &
+				# Bind to loopback only; Docker Desktop forwards host.docker.internal
+				# to the host loopback, so the container can still connect.
+				socat TCP-LISTEN:6000,bind=127.0.0.1,reuseaddr,fork UNIX-CONNECT:/tmp/.X11-unix/X$DISPLAY_NUM &
 				SOCAT_PID=$!
 				echo "Started socat with PID ${SOCAT_PID} in the background.."
 			else
@@ -206,13 +218,14 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 				XAUTH=$XAUTHORITY
 			fi
 			# Thanks to https://stackoverflow.com/a/25280523
-			XAUTH_TMP="/tmp/.${CONTAINER_NAME}_xauthority"
-			#create an empty file
-			${ECHO_IF_DRY_RUN} echo -n > "${XAUTH_TMP}"
+			if ! XAUTH_TMP=$(mktemp "/tmp/.${CONTAINER_NAME}_xauthority.XXXXXX"); then
+				echo "[ERROR] Failed to create temporary Xauthority file."
+				exit 1
+			fi
 			if [ -z "${ECHO_IF_DRY_RUN}" ]; then
 				xauth -f "${XAUTH}" nlist "${DISP}" | sed -e 's/^..../ffff/' | xauth -f "${XAUTH_TMP}" nmerge -
 			else
-				${ECHO_IF_DRY_RUN} "xauth -f ${XAUTH} nlist ${DISP} | sed -e 's/^..../ffff/' | xauth -f ${XAUTH_TMP} nmerge -"
+				echo "\$ xauth -f ${XAUTH} nlist ${DISP} | sed -e 's/^..../ffff/' | xauth -f ${XAUTH_TMP} nmerge -"
 			fi
 			XAUTH=${XAUTH_TMP}
 		fi
@@ -239,11 +252,12 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 		DISP="host.docker.internal:0"
 		if [[ $(type -P "xhost") ]]; then
 			${ECHO_IF_DRY_RUN} xhost +localhost > /dev/null
+			XHOST_MAC_DO_RESET=1
 		else
 			echo "[WARNING] xhost could not be found, access control to the X server must be managed manually!"
 		fi
 	fi
-	if [ "$(defaults read org.xquartz.x11 enable_iglx)" = 0 ]; then
+	if [ "$(defaults read org.xquartz.x11 enable_iglx 2>/dev/null)" = 0 ]; then
 		${ECHO_IF_DRY_RUN} defaults write org.xquartz.x11 enable_iglx 1
 		echo "[INFO] Enabled XQuartz OpenGL for indirect rendering."
 		echo "[ERROR] Please restart XQuartz!"
