@@ -2,6 +2,20 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2026.05
+
+* [Adding] `XKB_KEYBOARD_LAYOUT` and `XKB_KEYBOARD_VARIANT` environmental variables for `start_vnc.sh`/`start_vnc.bat` to set the keyboard layout inside the VNC session (`setxkbmap` is called in `ui_startup.sh`).
+* [Update] Refactor `install_klayout.sh` to use the KLayout package manager; harmonized KLayout package list in the README.
+* [Update] `sak-pex.sh` updated based on input from Tim Edwards.
+* [Update] `sak-pdk` sets `KLAYOUT_PATH` only once and quotes the PDK name when sourcing `sak-pdk-script.sh`.
+* [Update] VACASK commit and `sg13g2tovc` flag to fix issue #279.
+* [Update] Various tool versions.
+* [Fix] sky130A KLayout pcells patched to use `gf.boolean operation="-"` instead of the deprecated `"A-B"`.
+* [Fix] KLayout permissions for macros (quick fix for issue #273).
+* [Remove] Compact `ngspice` model generation.
+* [Remove] Revert "KLayout: turn on 3x oversampling" (caused issues on some setups).
+* [Build] Remove inline auto-taper patch from tool install script.
+
 ## 2026.04
 
 * [Adding] `kepler-formal` tool for OpenROAD logic equivalence checking (LEC) support.
