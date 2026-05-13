@@ -152,13 +152,20 @@ wait_for_x() {
     return 1
 }
 
-wait_for_x
+# Do not abort the script if the X server is not (yet) reachable; this only
+# affects the subsequent setxkbmap/xfce4-terminal calls which will report
+# their own errors.
+wait_for_x || true
 
-[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Keyboard layout: $XKB_KEYBOARD_LAYOUT ${XKB_KEYBOARD_VARIANT:+($XKB_KEYBOARD_VARIANT)}"
-if [ -n "${XKB_KEYBOARD_VARIANT}"]; then
-  setxkbmap "${XKB_KEYBOARD_LAYOUT}" -variant "${XKB_KEYBOARD_VARIANT}"
-else
-  setxkbmap "${XKB_KEYBOARD_LAYOUT}"
+# Only set the keyboard layout for VNC sessions; in X11-forwarding mode
+# this would alter the host X server's keyboard configuration.
+if [ "$start_vnc" = true ]; then
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Keyboard layout: $XKB_KEYBOARD_LAYOUT ${XKB_KEYBOARD_VARIANT:+($XKB_KEYBOARD_VARIANT)}"
+    if [ -n "${XKB_KEYBOARD_VARIANT}" ]; then
+        setxkbmap "${XKB_KEYBOARD_LAYOUT}" -variant "${XKB_KEYBOARD_VARIANT}"
+    else
+        setxkbmap "${XKB_KEYBOARD_LAYOUT}"
+    fi
 fi
 
 if [ "$start_x" = true ]; then
