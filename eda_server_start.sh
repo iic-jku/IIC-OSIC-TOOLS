@@ -237,6 +237,7 @@ _write_credentials () {
         echo "[ERROR] Failed to update credentials file"
         return 1
     fi
+    chmod 600 "$credfile" 2>/dev/null || true
 }
 
 # Sanitize input parameters
@@ -303,10 +304,30 @@ if ! command -v jq >/dev/null 2>&1; then
 fi
 
 # Here is the loop
-if ! echo "[]" > "$EDA_CREDENTIAL_FILE"; then
+if [ -e "$EDA_CREDENTIAL_FILE" ]; then
+    echo "[WARNING] Credentials file $EDA_CREDENTIAL_FILE already exists."
+    echo "[HINT] Overwriting will lose access to existing user containers."
+    echo -n "Type \"yes\" to overwrite, anything else aborts: "
+    read -r confirm </dev/tty
+    if [ "$confirm" != "yes" ]; then
+        echo "[INFO] Aborted by user."
+        exit 1
+    fi
+    # Back up the existing file with a timestamp.
+    backup="${EDA_CREDENTIAL_FILE}.$(date +%Y%m%d-%H%M%S).bak"
+    if ! mv "$EDA_CREDENTIAL_FILE" "$backup"; then
+        echo "[ERROR] Failed to back up existing credentials file."
+        exit 1
+    fi
+    echo "[INFO] Previous credentials backed up to $backup."
+fi
+
+# Create the credentials file with restrictive permissions BEFORE writing.
+( umask 077 && echo "[]" > "$EDA_CREDENTIAL_FILE" ) || {
     echo "[ERROR] Failed to initialize credentials file"
     exit 1
-fi
+}
+chmod 600 "$EDA_CREDENTIAL_FILE" 2>/dev/null || true
 
 echo "[INFO] Starting EDA server instances."
 
