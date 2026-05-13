@@ -59,18 +59,40 @@ while getopts "hdm:" flag; do
 done
 shift $((OPTIND-1))
 
-# now search the containers and remove them
+# Snapshot the matching container IDs once, then iterate. This avoids an
+# infinite loop if stop/rm fails for any container (e.g. permission issues).
 echo "[INFO] Stopping and removing EDA containers."
 NO_INSTANCES=0
-while [ "$(docker ps -a -q -f name="$EDA_CONTAINER_PREFIX")" ];
-do
-	CONTAINER_ID=$(docker ps -a -q -f name="$EDA_CONTAINER_PREFIX" | head -n1)
+FAILED=0
+mapfile -t CONTAINER_IDS < <(docker ps -a -q -f name="$EDA_CONTAINER_PREFIX")
+
+if [ "${#CONTAINER_IDS[@]}" -eq 0 ]; then
+	echo "[INFO] No matching containers found."
+	echo "[DONE] Bye!"
+	exit 0
+fi
+
+for CONTAINER_ID in "${CONTAINER_IDS[@]}"; do
 	[ "$DEBUG" = 1 ] && echo "[INFO] Container ID $CONTAINER_ID found, now stopping and removing!"
-	docker stop "$CONTAINER_ID" > /dev/null
-	docker rm "$CONTAINER_ID" > /dev/null
+	if ! docker stop "$CONTAINER_ID" > /dev/null; then
+		echo "[ERROR] Failed to stop container $CONTAINER_ID, skipping."
+		FAILED=$((FAILED + 1))
+		continue
+	fi
+	if ! docker rm "$CONTAINER_ID" > /dev/null; then
+		echo "[ERROR] Failed to remove container $CONTAINER_ID, skipping."
+		FAILED=$((FAILED + 1))
+		continue
+	fi
 	NO_INSTANCES=$((NO_INSTANCES + 1))
 	echo "[INFO] Container nr. $NO_INSTANCES stopped and removed."
-done	
+done
+
+if [ "$FAILED" -gt 0 ]; then
+	echo "[WARNING] $FAILED container(s) could not be stopped/removed."
+	echo "[DONE] Bye!"
+	exit 1
+fi
 
 echo "[INFO] All EDA containers have been stopped and removed!"
 echo "[DONE] Bye!"
