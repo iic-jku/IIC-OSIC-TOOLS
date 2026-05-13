@@ -2,9 +2,14 @@
 # Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 # shellcheck shell=bash
+#
+# Single source of truth for the IIC-OSIC-Tools shell environment.
+# This file is sourced from /etc/profile (login shells) and from
+# /headless/.bashrc (interactive shells); a guard prevents double init.
 
 function _path_add_tool() {
-    tool_name=$1
+    local tool_name=$1
+    local d
     for d in "$TOOLS/$tool_name" ; do
         if [ -d "${d}" ]; then
             export PATH=$PATH:${d%/}
@@ -13,7 +18,8 @@ function _path_add_tool() {
 }
 
 function _path_add_tool_custom() {
-    custom_path=$1
+    local custom_path=$1
+    local d
     for d in "$TOOLS/$custom_path/" ; do
         if [ -d "${d}" ]; then
             export PATH=$PATH:${d%/}
@@ -22,7 +28,8 @@ function _path_add_tool_custom() {
 }
 
 function _path_add_tool_python() {
-    tool_name=$1
+    local tool_name=$1
+    local d
     for d in "$TOOLS/$tool_name"/local/lib/python3*/dist-packages ; do
         if [ -d "${d}" ]; then
             export PYTHONPATH=$PYTHONPATH:${d}
@@ -34,20 +41,20 @@ function _add_resolution () {
     # $1=X, $2=Y
     # Do only in VNC mode
     if [ -v VNCDESKTOP ]; then
+        local x=$1 y=$2
+        local mline mline_trim
         # and only when resolution not yet available
-        # shellcheck disable=SC2143 disable=SC2086
-        if [ -z "$(xrandr 2> /dev/null | awk '{print $1}' | grep $1x$2)" ]; then
-            #echo "[INFO] Set VNC mode $1x$2"
-            MLINE=$(cvt $1 $2 60  | grep -oP '(?<=Modeline ).*')
-            # shellcheck disable=SC2001
-            MLINE_TRIM=$(echo "$MLINE" | sed 's/^[^"]*"[^"]*"//')
-            xrandr --newmode $1x$2 $MLINE_TRIM
-            xrandr --addmode VNC-0 $1x$2
+        if ! xrandr 2> /dev/null | awk '{print $1}' | grep -q "${x}x${y}"; then
+            mline=$(cvt "$x" "$y" 60 | grep -oP '(?<=Modeline ).*')
+            mline_trim=$(echo "$mline" | sed 's/^[^"]*"[^"]*"//')
+            # shellcheck disable=SC2086
+            xrandr --newmode "${x}x${y}" $mline_trim
+            xrandr --addmode VNC-0 "${x}x${y}"
         fi
     fi
 }
 
-if [ -z ${FOSS_INIT_DONE+x} ]; then
+if [ -z "${FOSS_INIT_DONE+x}" ]; then
     _path_add_tool          "kactus2"
     _path_add_tool          "klayout"
     _path_add_tool_custom   "osic-multitool"
@@ -56,14 +63,41 @@ if [ -z ${FOSS_INIT_DONE+x} ]; then
     export PATH=$TOOLS/bin:$SAK:/usr/local/sbin:$PATH
 
     # OpenROAD in Ubuntu 22.04 does not find the PIP modules, so use PYTHONPATH
-    PYTHONPATH=$(python -c "import sys; print(':'.join(x for x in sys.path if x))") && export PYTHONPATH
+    PYTHONPATH=$(python3 -c "import sys; print(':'.join(x for x in sys.path if x))") && export PYTHONPATH
     _path_add_tool_python "ngspyce"
     _path_add_tool_python "openems"
     _path_add_tool_python "pyopus"
     export PYTHONPATH=$PYTHONPATH:$TOOLS/yosys/share/yosys/python3
-    KLAYOUT_PYTHON=("$TOOLS"/klayout/pymod)
-    export PYTHONPATH=$PYTHONPATH:${KLAYOUT_PYTHON[*]}
+    export PYTHONPATH=$PYTHONPATH:$TOOLS/klayout/pymod
     export PYTHONPATH=$PYTHONPATH:$TOOLS/vacask/lib/vacask/python
+
+    # Add local directories in $HOME so the user can upgrade PIP packages.
+    PYTHON_VERSION=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
+    export PATH=$HOME/.local/bin:$PATH
+    export PYTHONPATH=$HOME/.local/lib/python${PYTHON_VERSION}/site-packages:$PYTHONPATH
+    unset PYTHON_VERSION
+
+    # shellcheck disable=SC2086
+    LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${TOOLS}/openems/lib:${TOOLS}/kactus2:${TOOLS}/gtkwave/lib/$(uname -m)-linux-gnu:${TOOLS}/kepler-formal/lib" && export LD_LIBRARY_PATH
+    export EDITOR="gedit"
+    export PYTHONPYCACHEPREFIX="/tmp/pycache"
+    export KLAYOUT_HOME="/headless/.klayout"
+    export SHELL=/bin/bash
+
+    # Enable ngspice co-simulation with VHDL
+    export CPATH="${TOOLS}/ghdl/include:${TOOLS}/ghdl/include/ghdl:${CPATH}"
+    export LIBRARY_PATH="${TOOLS}/ghdl/lib:${LIBRARY_PATH}"
+
+    # Default PDK — only set when not already provided by the user/sub-shell.
+    export PDK=${PDK:-ihp-sg13g2}
+    export PDKPATH=${PDKPATH:-$PDK_ROOT/$PDK}
+    export STD_CELL_LIBRARY=${STD_CELL_LIBRARY:-sg13g2_stdcell}
+    export SPICE_USERINIT_DIR=${SPICE_USERINIT_DIR:-$PDK_ROOT/$PDK/libs.tech/ngspice}
+    export KLAYOUT_PATH=${KLAYOUT_PATH:-"/headless/.klayout:$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech"}
+
+    # This gets rid of the DBUS warning
+    # https://unix.stackexchange.com/questions/230238/x-applications-warn-couldnt-connect-to-accessibility-bus-on-stderr/230442#230442
+    export NO_AT_BRIDGE=1
 
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Final PATH variable: $PATH"
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Final PYTHONPATH variable: $PYTHONPATH"
@@ -75,28 +109,6 @@ fi
 # When the container is run with a numeric UID (--user UID:GID) without a matching
 # /etc/passwd entry, the shell may not populate USER automatically.
 [ -z "${USER}" ] && USER=$(id -un 2>/dev/null || echo designer) && export USER
-
-# shellcheck disable=SC2086
-LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${TOOLS}/openems/lib:${TOOLS}/kactus2:${TOOLS}/gtkwave/lib/$(uname -m)-linux-gnu:${TOOLS}/kepler-formal/lib" && export LD_LIBRARY_PATH
-export EDITOR="gedit"
-export PYTHONPYCACHEPREFIX="/tmp/pycache"
-export KLAYOUT_HOME="/headless/.klayout"
-export SHELL=/bin/bash
-
-# Enable ngspice co-simulation with VHDL
-export CPATH="${TOOLS}/ghdl/include:${TOOLS}/ghdl/include/ghdl:${CPATH}"
-export LIBRARY_PATH="${TOOLS}/ghdl/lib:${LIBRARY_PATH}"
-
-# Setting default PDK
-export PDK=ihp-sg13g2
-export PDKPATH=$PDK_ROOT/$PDK
-export STD_CELL_LIBRARY=sg13g2_stdcell
-export SPICE_USERINIT_DIR=$PDK_ROOT/$PDK/libs.tech/ngspice
-export KLAYOUT_PATH="/headless/.klayout:$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech"
-
-# This gets rid of the DBUS warning
-# https://unix.stackexchange.com/questions/230238/x-applications-warn-couldnt-connect-to-accessibility-bus-on-stderr/230442#230442
-export NO_AT_BRIDGE=1
 
 # First, check if XDG_RUNTIME_DIR is set, if not, set to default.
 if [ -z "${XDG_RUNTIME_DIR+x}" ]; then
@@ -116,100 +128,11 @@ if [ ! -d "$XDG_DATA_HOME" ]; then
     mkdir -p "$XDG_DATA_HOME"
 fi
 
-# Add local directories in $HOME to the path so that the user can upgrade PIP packages
-export PATH=$HOME/.local/bin:$PATH
-PYTHON_VERSION=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
-export PYTHONPATH=$HOME/.local/lib/python${PYTHON_VERSION}/site-packages:$PYTHONPATH
-
-#----------------------------------------
-# Tool aliases
-#----------------------------------------
-
-alias mmagic='MAGTYPE=mag magic'
-alias lmagic='MAGTYPE=maglef magic'
-
-alias k='klayout'
-alias ke='klayout -e'
-
-alias surfer='LIBGL_ALWAYS_INDIRECT=0 surfer'
-# IHP-SG13G2 needs this plugin, using an alias seems to the the only proper solution for now
-alias xyce='xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so'
-alias Xyce='Xyce -plugin $PDK_ROOT/ihp-sg13g2/libs.tech/xyce/plugins/Xyce_Plugin_PSP103_VA.so'
-
-# Show hint that OpenLane has been removed
-alias flow.tcl='printf "[INFO] OpenLane has been depreciated.\n[INFO] Please use LibreLane (start with <librelane>).\n"'
-# Show hint that OpenLane2 has been removed
-alias openlane='printf "[INFO] OpenLane2 has been depreciated.\n[INFO] Please use LibreLane (start with <librelane>).\n"'
-
-alias iic-pdk='source iic-pdk-script.sh'
-alias sak-pdk='source sak-pdk-script.sh'
-alias tt='cd $TOOLS'
-alias dd='cd $DESIGNS'
-alias pp='cd $PDK_ROOT'
-alias destroy='sudo \rm -rf'
-alias cp='cp -i'
-alias egrep='egrep '
-alias fgrep='fgrep '
-alias grep='grep '
-alias ls='ls --color=auto'
-alias l.='ls -d .* '
-alias ll='ls -l'
-alias la='ls -al '
-alias llt='ls -lt'
-alias llta='ls -alt'
-alias du='du -skh'
-alias mv='mv -i'
-alias rm='rm -i'
-alias vrc='vi ~/.bashrc'
-alias dux='du -sh* | sort -h'
-alias shs='md5sum'
-alias h='history'
-alias hh='history | grep'
-alias rc='source ~/.bashrc'
-alias m='less'
-alias term='xfce4-terminal'
-
-#----------------------------------------
-# Git
-#----------------------------------------
-
-alias gcl='git clone'
-alias gcll='git clone --single-branch --depth=1'
-alias ga='git add'
-alias gc='git commit -a'
-alias gps='git push'
-alias gpl='git pull'
-alias gco='git checkout'
-alias gss='git status'
-alias gr='git remote -v'
-alias gl='git log'
-alias gln='git log --name-status'
-alias gsss='git submodule status'
-
-#----------------------------------------
-# User functions
-#----------------------------------------
-
-function mdview() {
-    if [ $# -eq 0 ]; then
-        echo "Usage: mdview <file.md>"
-    else
-        pandoc "$1" > "/tmp/$1.html"
-        xdg-open "/tmp/$1.html"
-  fi
-}
-
-#----------------------------------------
-# Adapt user prompt
-#----------------------------------------
-
-export PS1='\[\033[0;32m\]\w >\[\033[0;38m\] '
-
 #----------------------------------------
 # Source user configs from $DESIGNS
 #----------------------------------------
 
-if [ -f "$DESIGNS/.designinit" ]; then
+if [ -n "${DESIGNS}" ] && [ -f "$DESIGNS/.designinit" ]; then
     # shellcheck source=/dev/null
     source "$DESIGNS/.designinit"
 fi
