@@ -9,6 +9,7 @@
 - [IIC-OSIC-TOOLS](#iic-osic-tools)
   - [Table of Contents](#table-of-contents)
   - [1. How to Use These Open-Source (and Free) IC Design Tools](#1-how-to-use-these-open-source-and-free-ic-design-tools)
+    - [1.0 Quick install (one-liner)](#10-quick-install-one-liner)
     - [1.1 Step 1: Clone/download this GitHub repository onto your computer](#11-step-1-clonedownload-this-github-repository-onto-your-computer)
     - [1.2 Step 2: Install Docker on your computer](#12-step-2-install-docker-on-your-computer)
     - [1.3 Step 3: Start and Use a Docker Container based on our IIC-OSIC-TOOLS Image](#13-step-3-start-and-use-a-docker-container-based-on-our-iic-osic-tools-image)
@@ -43,6 +44,40 @@ It supports multiple *modes of operation*:
 2. Using a local X11 server and directly showing the application windows on your desktop.
 3. Using a Jupyter Notebook running inside the container, opened on the hosts browser.
 4. Using it as a development container in Visual Studio Code (or other IDEs)
+
+### 1.0 Quick install (one-liner)
+
+If you just want to get going on a fresh machine, the repository ships with an
+interactive installer that takes care of the prerequisites (Git, Docker /
+Docker Desktop, WSL2 on Windows, XQuartz on macOS) and clones this repository
+for you. Every action is gated behind a `[y/N]` confirmation prompt.
+
+**Linux and macOS** (Bash, `curl` required):
+
+```bash
+curl -fsSL https://osic.tools/install.sh | bash
+```
+
+**Windows 10 / 11** (PowerShell, run as Administrator for WSL2):
+
+```powershell
+powershell -c "irm https://osic.tools/install.ps1 | iex"
+```
+
+If you would rather review the script first (recommended), download it and run
+it locally:
+
+```bash
+curl -fsSLO https://osic.tools/install.sh && less install.sh && bash install.sh
+```
+
+or on Windows, after cloning the repository, simply double-click
+[install.bat](install.bat) (a thin shim around [install.ps1](install.ps1)).
+
+The installer is **idempotent** — re-running it will skip components that are
+already installed. It refuses to run as `root` on Linux/macOS and refuses to
+clone into system directories. If you prefer a manual installation, follow
+the three steps below instead.
 
 ### 1.1 Step 1: Clone/download this GitHub repository onto your computer
 
