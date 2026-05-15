@@ -1,6 +1,23 @@
 #!/usr/bin/env bash
-# ---------------------------------------------------------------------------
+# ========================================================================
 # install.sh - Interactive installer for IIC-OSIC-TOOLS prerequisites
+#
+# SPDX-FileCopyrightText: 2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# SPDX-License-Identifier: Apache-2.0
+# ========================================================================
 #
 # Supports:
 #   - Linux  (Debian / Ubuntu family, using APT)
@@ -417,11 +434,45 @@ macos_reboot() {
     fi
 }
 
+# ----------------------- disclaimer --------------------------------------
+show_disclaimer() {
+    cat <<EOF
+
+${C_YEL}============================================================${C_RST}
+${C_YEL}                       !!! NOTICE !!!${C_RST}
+${C_YEL}============================================================${C_RST}
+
+This installer will make changes to your system (installing
+packages, adding apt/dnf repositories, modifying group membership,
+starting system services, etc.).
+
+${C_YEL}USE AT YOUR OWN RISK.${C_RST} The authors and contributors of
+IIC-OSIC-TOOLS provide this script "AS IS", WITHOUT WARRANTY OF
+ANY KIND, express or implied. In no event shall the authors be
+liable for any claim, damages, data loss, system corruption, or
+other liability arising from the use of this script.
+
+It is strongly recommended to:
+  * back up important data BEFORE proceeding,
+  * review the script (open install.sh in an editor) to confirm
+    that you are comfortable with the actions it performs,
+  * run it on a freshly installed or test system whenever possible.
+
+Every individual step will still prompt for confirmation.
+${C_YEL}============================================================${C_RST}
+
+EOF
+    if ! ask "I have read the notice above and accept full responsibility. Continue?"; then
+        die "Aborted by user at disclaimer prompt."
+    fi
+}
+
 # ============================== main =====================================
 main() {
     echo "============================================================"
     echo " IIC-OSIC-TOOLS interactive prerequisites installer"
     echo "============================================================"
+    show_disclaimer
     detect_os
 
     if ! ask "This script will install required components interactively. Continue?"; then

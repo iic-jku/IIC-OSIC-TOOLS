@@ -1,7 +1,25 @@
 @echo off
-rem ===========================================================================
-rem install.bat - Interactive installer for IIC-OSIC-TOOLS prerequisites
-rem               (Windows 10 build 19044+ / Windows 11)
+
+:: ========================================================================
+:: install.bat - Interactive installer for IIC-OSIC-TOOLS prerequisites
+::               (Windows 10 build 19044+ / Windows 11)
+::.
+:: SPDX-FileCopyrightText: 2026 Harald Pretl and Georg Zachl
+:: Johannes Kepler University, Department for Integrated Circuits
+::.
+:: Licensed under the Apache License, Version 2.0 (the "License");
+:: you may not use this file except in compliance with the License.
+:: You may obtain a copy of the License at
+::.
+::     http://www.apache.org/licenses/LICENSE-2.0
+::.
+:: Unless required by applicable law or agreed to in writing, software
+:: distributed under the License is distributed on an "AS IS" BASIS,
+:: WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+:: See the License for the specific language governing permissions and
+:: limitations under the License.
+:: SPDX-License-Identifier: Apache-2.0
+:: ========================================================================
 rem
 rem Installs (each step asks for explicit confirmation):
 rem   * winget self-check
@@ -24,6 +42,35 @@ setlocal EnableExtensions EnableDelayedExpansion
 echo ============================================================
 echo  IIC-OSIC-TOOLS interactive prerequisites installer (Windows)
 echo ============================================================
+echo.
+
+rem --- Disclaimer ------------------------------------------------------------
+echo ============================================================
+echo                        !!! NOTICE !!!
+echo ============================================================
+echo.
+echo This installer will make changes to your system (installing
+echo software via winget, enabling Windows features, registering
+echo WSL2 distributions, installing Docker Desktop, and optionally
+echo rebooting the machine).
+echo.
+echo USE AT YOUR OWN RISK. The authors and contributors of
+echo IIC-OSIC-TOOLS provide this script "AS IS", WITHOUT WARRANTY
+echo OF ANY KIND, express or implied. In no event shall the authors
+echo be liable for any claim, damages, data loss, system corruption,
+echo or other liability arising from the use of this script.
+echo.
+echo It is strongly recommended to:
+echo   * back up important data BEFORE proceeding,
+echo   * review the script (open install.bat in an editor) to
+echo     confirm that you are comfortable with its actions,
+echo   * run it on a freshly installed or test system when possible.
+echo.
+echo Every individual step will still prompt for confirmation.
+echo ============================================================
+echo.
+call :ask "I have read the notice above and accept full responsibility. Continue?"
+if errorlevel 1 goto :aborted
 echo.
 
 rem --- Windows version sanity check ------------------------------------------
