@@ -39,6 +39,24 @@
 set -Eeuo pipefail
 IFS=$'\n\t'
 
+# --------------------------- piped-from-curl support ----------------------
+# When invoked as `curl -fsSL https://osic.tools/install.sh | bash`, stdin
+# is connected to the downloaded script, not the terminal. In that case
+# every interactive `read` would silently consume script bytes instead of
+# user input. Reopen stdin from the controlling terminal so all prompts
+# (including `ask`, the target-directory prompt, and `sudo` password
+# entry) work as expected.
+if [[ ! -t 0 ]]; then
+    if [[ -r /dev/tty ]]; then
+        exec </dev/tty
+    else
+        printf '[FAIL] No controlling terminal available; this installer is interactive.\n' >&2
+        printf '       Save the script to a file and run it directly, e.g.:\n' >&2
+        printf '           curl -fsSLO https://osic.tools/install.sh && bash install.sh\n' >&2
+        exit 1
+    fi
+fi
+
 # --------------------------- pretty printing -------------------------------
 if [[ -t 1 ]]; then
     C_RED=$'\033[1;31m'; C_GRN=$'\033[1;32m'; C_YEL=$'\033[1;33m'
