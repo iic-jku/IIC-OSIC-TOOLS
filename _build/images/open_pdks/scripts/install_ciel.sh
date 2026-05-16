@@ -121,6 +121,10 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	# Replace pymacro with working pcells.
 	rm -rf "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
 	cp -a /tmp/glofo-mjk/cells/klayout/pymacros "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
+
+    # Give universal write access to the macro directory, necessary for saving options
+    # and creating the run directory.
+    chmod -R 777 "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/macros"
 fi
 
 rm -rf /tmp/glofo-mjk
