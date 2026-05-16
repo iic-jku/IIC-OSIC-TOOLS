@@ -41,20 +41,24 @@ IFS=$'\n\t'
 
 # --------------------------- piped-from-curl support ----------------------
 # When invoked as `curl -fsSL https://osic.tools/install.sh | bash`, stdin
-# is connected to the downloaded script, not the terminal. In that case
-# every interactive `read` would silently consume script bytes instead of
-# user input. Reopen stdin from the controlling terminal so all prompts
-# (including `ask`, the target-directory prompt, and `sudo` password
-# entry) work as expected.
+# (fd 0) is the pipe carrying the *script body* that bash is still reading.
+# We must NOT redirect fd 0 to /dev/tty — doing so would cut bash off from
+# the rest of its own script and the installer would hang silently after
+# the first command. Instead, open the controlling terminal on fd 3 and
+# route every interactive `read` through fd 3. `sudo` reads its prompt
+# directly from /dev/tty, so it is unaffected.
 if [[ ! -t 0 ]]; then
     if [[ -r /dev/tty ]]; then
-        exec </dev/tty
+        exec 3</dev/tty
     else
         printf '[FAIL] No controlling terminal available; this installer is interactive.\n' >&2
         printf '       Save the script to a file and run it directly, e.g.:\n' >&2
         printf '           curl -fsSLO https://osic.tools/install.sh && bash install.sh\n' >&2
         exit 1
     fi
+else
+    # Running directly from a terminal: fd 0 is already the tty.
+    exec 3<&0
 fi
 
 # --------------------------- pretty printing -------------------------------
@@ -81,7 +85,7 @@ ask() {
     # ask "Prompt message"  -> returns 0 on yes, 1 on no
     local prompt="$1" reply
     while true; do
-        read -r -p "$(printf "%s[?]%s %s [y/N]: " "$C_YEL" "$C_RST" "$prompt")" reply || return 1
+        read -u 3 -r -p "$(printf "%s[?]%s %s [y/N]: " "$C_YEL" "$C_RST" "$prompt")" reply || return 1
         case "${reply:-N}" in
             [Yy]|[Yy][Ee][Ss]) return 0 ;;
             [Nn]|[Nn][Oo]|"")  return 1 ;;
@@ -327,7 +331,7 @@ macos_install_xquartz() {
 # ----------------------- clone repository ---------------------------------
 clone_repo() {
     local default_dir="$HOME/iic-osic-tools" target_dir parent_dir parent_abs
-    read -r -p "$(printf "%s[?]%s Directory to clone iic-osic-tools into [%s]: " "$C_YEL" "$C_RST" "$default_dir")" target_dir
+    read -u 3 -r -p "$(printf "%s[?]%s Directory to clone iic-osic-tools into [%s]: " "$C_YEL" "$C_RST" "$default_dir")" target_dir
     target_dir="${target_dir:-$default_dir}"
 
     # Expand a leading tilde manually (we won't run with `set -f` off-shell quirks).
