@@ -322,10 +322,22 @@ macos_install_docker() {
 macos_install_xquartz() {
     if [[ -d "/Applications/Utilities/XQuartz.app" ]] || brew list --cask xquartz >/dev/null 2>&1; then
         ok "XQuartz already installed."
-        return
+    else
+        brew install --cask xquartz
+        ok "XQuartz installed."
     fi
-    brew install --cask xquartz
-    ok "XQuartz installed. Remember to enable 'Allow connections from network clients' in its Preferences > Security."
+
+    # Enable "Allow connections from network clients" (Preferences > Security).
+    # XQuartz stores this as the 'nolisten_tcp' default: false => allow TCP.
+    local current
+    current="$(defaults read org.xquartz.X11 nolisten_tcp 2>/dev/null || echo "")"
+    if [[ "$current" == "0" ]]; then
+        ok "XQuartz already configured to allow connections from network clients."
+    else
+        defaults write org.xquartz.X11 nolisten_tcp -bool false
+        ok "Enabled 'Allow connections from network clients' in XQuartz preferences."
+        warn "Restart XQuartz (or log out/in) for the setting to take effect."
+    fi
 }
 
 # ----------------------- clone repository ---------------------------------
