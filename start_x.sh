@@ -145,9 +145,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 				#DISPLAY_NUM=$(echo $DISPLAY | sed 's/^[^:]*:\([0-9]*\).*/\1/')
 				DISPLAY_NUM=${DISPLAY#*:}
 				DISPLAY_NUM=${DISPLAY_NUM%%.*}
-				# Bind to loopback only; Docker Desktop forwards host.docker.internal
-				# to the host loopback, so the container can still connect.
-				socat TCP-LISTEN:6000,bind=127.0.0.1,reuseaddr,fork UNIX-CONNECT:/tmp/.X11-unix/X$DISPLAY_NUM &
+				socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CONNECT:/tmp/.X11-unix/X$DISPLAY_NUM &
 				SOCAT_PID=$!
 				echo "Started socat with PID ${SOCAT_PID} in the background.."
 			else
@@ -252,7 +250,9 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 		DISP="host.docker.internal:0"
 		if [[ $(type -P "xhost") ]]; then
 			${ECHO_IF_DRY_RUN} xhost +localhost > /dev/null
-			XHOST_MAC_DO_RESET=1
+			# Note: do NOT reset xhost on script exit. The container is started
+			# detached on macOS and keeps running after this script returns, so
+			# the localhost grant must persist for X11 forwarding to work.
 		else
 			echo "[WARNING] xhost could not be found, access control to the X server must be managed manually!"
 		fi
