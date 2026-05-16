@@ -115,7 +115,7 @@ export PDK=sky130A
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=sky130_fd_sc_hd
 export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
-export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
 ```
 
 | Global Foundries `gf180mcuD` |
@@ -126,7 +126,7 @@ export PDK=gf180mcuD
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=gf180mcu_fd_sc_mcu7t5v0
 export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
-export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
 ```
 
 | IHP Microelectronics `ihp-sg13g2` |
@@ -137,7 +137,7 @@ export PDK=ihp-sg13g2
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=sg13g2_stdcell
 export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
-export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
 ```
 
 | IHP Microelectronics `ihp-sg13cmos5l` |
@@ -148,7 +148,7 @@ export PDK=ihp-sg13cmos5l
 export PDKPATH=$PDK_ROOT/$PDK
 export STD_CELL_LIBRARY=sg13cmos5l_stdcell
 export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
-export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
 ```
 
 Probably the best way to switch between PDKs is to use the command `sak-pdk`. When called without arguments a list of installed PDKs is shown. To e.g. switch to IHP enter
