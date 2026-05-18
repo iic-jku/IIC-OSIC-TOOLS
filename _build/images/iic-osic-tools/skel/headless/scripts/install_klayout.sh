@@ -38,7 +38,6 @@ packages=(
     PinToolPlugin
     LibraryManagerPlugin
     VectorFileExportPlugin
-    klive
     xsection
 )
 
