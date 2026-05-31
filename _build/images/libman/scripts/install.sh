@@ -9,6 +9,8 @@ cd /tmp || exit 1
 git clone --filter=blob:none "${LIBMAN_REPO_URL}" "${LIBMAN_NAME}"
 cd "${LIBMAN_NAME}" || exit 1
 git checkout "${LIBMAN_REPO_COMMIT}"
+# FIXME: Qt6 removed QString::SkipEmptyParts; use Qt::SkipEmptyParts (works on Qt5.14+ and Qt6)
+sed -i 's/QString::SkipEmptyParts/Qt::SkipEmptyParts/g' src/mainwindow.cpp
 mkdir -p build
 cd build || exit 1
 qmake6 ../libman.pro
