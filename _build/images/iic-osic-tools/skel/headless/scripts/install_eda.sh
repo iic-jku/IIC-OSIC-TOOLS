@@ -59,11 +59,6 @@ python3 -m venv /foss/tools/charlib
 /foss/tools/charlib/bin/pip install --no-cache-dir \
 	git+https://github.com/stineje/charlib
 
-#FIXME OpenRAM is removed for now, waiting for a release via PyPi
-#echo "[INFO] Installing OpenRAM"
-#pip3 install $PIP_FLAGS \
-#	git+https://github.com/VLSIDA/OpenRAM
-
 echo "[INFO] Installing Hdl21/vlsirtools"
 python3 -m venv /foss/tools/vlsirtools
 /foss/tools/vlsirtools/bin/pip install --no-cache-dir \
