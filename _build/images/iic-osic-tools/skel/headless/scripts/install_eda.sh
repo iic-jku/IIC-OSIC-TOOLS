@@ -64,11 +64,6 @@ python3 -m venv /foss/tools/vlsirtools
 /foss/tools/vlsirtools/bin/pip install --no-cache-dir \
 	git+https://github.com/dan-fritchman/Hdl21
 
-#FIXME See https://github.com/librelane/librelane/issues/767
-#echo "[INFO] Installing dev version of LibreLane"
-#pip3 install $PIP_FLAGS \
-#	https://github.com/librelane/librelane/tarball/dev
-
 # Setup Qucs-S for IHP SG13G2
 echo "[INFO] Setting up Qucs-S for IHP SG13G2"
 python3 "$PDK_ROOT"/ihp-sg13g2/libs.tech/qucs-s/install.py --no-model-compile --no-qucs-check
