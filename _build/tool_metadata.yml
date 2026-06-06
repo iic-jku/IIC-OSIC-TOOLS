@@ -1,6 +1,6 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
-  commit: 6a68d19dc434be1bcf8b06a058b0c4bc09a7e516
+  commit: c1652385d10beaf56f762815aab92152b8e70595
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -45,13 +45,13 @@
   commit: a5e74246fedb2c3ddec8c857fb51c16b439d646b
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.652
+  commit: 8.3.658
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.320
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 885b71e53dbc772d7eb673791e70ce41084f79ed
+  commit: 32324500c4ae33670df429d2e8e2a83b51b062ab
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-46
@@ -69,7 +69,7 @@
   commit: 112b5f492c1a3a08ff69338d7ef39a0cf3a5b7bc
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 6da1b0d4e079b8bebf575ac42950500ae0f79833
+  commit: e50dbd269b8322148df2e365716381d3d99b3e95
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -96,7 +96,7 @@
   commit: 26.1.1
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: 2026.05.19
+  commit: 2026.06.06
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
@@ -105,7 +105,7 @@
   commit: 59bc730c4a3487153c3be0aa6ba0221f8660acc6
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 35de04061a71c6260f5879ae13855937baad58e1
+  commit: 08bb13bd128c73b79455f4ea344a1785e0a342e9
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
@@ -129,10 +129,10 @@
   commit: trilinos-release-12-12-1
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.11.18
+  commit: 0.11.19
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 71c1f77291a774004300d8fa17af58eae2ef780a
+  commit: 8cca237563e1244c0c5c862a62ad198ad37f1288
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.048
@@ -153,7 +153,7 @@
   commit: Release-2.7.0
 - name: yices2
   repo: https://github.com/SRI-CSL/yices2.git
-  commit: 38fa1bf5f7b58ae92dcd507b26cd8a651083537a
+  commit: e9b6610a26abf052bfd4688583250e1b343ce6e9
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
   commit: v0.66
