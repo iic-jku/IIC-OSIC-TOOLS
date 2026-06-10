@@ -7,7 +7,7 @@
 ARG TOOL_IMAGE_PALACE=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${TOOL_IMAGE_PALACE} AS palace
 ARG PALACE_REPO_URL="https://github.com/awslabs/palace"
-ARG PALACE_REPO_COMMIT="3b8c020436c46f21701d368ddc1ba8a26660194a"
+ARG PALACE_REPO_COMMIT="c6b190054fdda5b78aad8df953cc242b703907bb"
 ARG PALACE_NAME="palace"
 RUN --mount=type=bind,source=images/palace,target=/images/palace \
     bash /images/palace/scripts/install.sh
