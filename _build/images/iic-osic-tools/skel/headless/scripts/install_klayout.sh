@@ -27,8 +27,8 @@ fi
 mkdir -p "$KLAYOUT_SALT"
 
 # Add essential plugins to KLayout: plugin-utils, align-tool, move-tool, layer-shortcuts,
-# klive, xsection
 # auto-backup, pin-tool, library-manager, vector-file-export, netlist-import,
+# xsection
 packages=(
     KLayoutPluginUtils
     AlignToolPlugin
