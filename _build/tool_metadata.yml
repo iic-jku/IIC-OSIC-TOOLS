@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 1ff083621b168745e8dca4b37a7637df47d2316e
+  commit: 8bf9d31cd2e36c9eecfea3400091bedb2061e47e
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 0afb85a32fbda2f1c3e00298d08336e98bc71b10
@@ -36,7 +36,7 @@
   commit: v3.14.1
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: 5a9e7edded7e8d185bc0842e38f2852df814f0d5
+  commit: 0bc2a79c3897a6093aa44bcececcdca75c329d63
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.9
@@ -45,7 +45,7 @@
   commit: fe8c67b15b71b22e7f2de31852d52cf5b6cef051
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.663
+  commit: 8.3.664
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.321
@@ -66,10 +66,10 @@
   commit: 7b70722e33c03fcb5dabcf4d479fb0822d9251c9
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: 112b5f492c1a3a08ff69338d7ef39a0cf3a5b7bc
+  commit: 4ffeed4291724ce5a20aee6df5ad295ae8d36233
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 14b1ef13293b2a4c165d67cd81b4c48a4be9c5f4
+  commit: 012daf5a14c0e3c4a361a3ca83d15e593d21c0ef
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 3abd55914aaae69229ee291907ea5e660b90d41e
+  commit: 54179ddb1f7bacfa40c5a1ed214d15079472606a
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 3251530961e0e8a8054098c9bb8376474958944a
