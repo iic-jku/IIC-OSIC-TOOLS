@@ -1,6 +1,6 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
-  commit: c1652385d10beaf56f762815aab92152b8e70595
+  commit: 3d41edd3440649c9b80c2c602679249b3030047d
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 8bf9d31cd2e36c9eecfea3400091bedb2061e47e
+  commit: 8bc05db0a9fcab717ae73e61636fc35933848665
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 0afb85a32fbda2f1c3e00298d08336e98bc71b10
@@ -42,7 +42,7 @@
   commit: v0.30.9
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
-  commit: fe8c67b15b71b22e7f2de31852d52cf5b6cef051
+  commit: 22f7299c9708be796779ccf5bb7961c3c0a4af17
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
   commit: 8.3.664
@@ -69,13 +69,13 @@
   commit: 4ffeed4291724ce5a20aee6df5ad295ae8d36233
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 012daf5a14c0e3c4a361a3ca83d15e593d21c0ef
+  commit: b084e4561bf51f905345ff0f767434095d79d3bc
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
 - name: openvaf
   repo: https://github.com/arpadbuermen/OpenVAF.git
-  commit: 2e066436d985b05cf8e6563e936daf9ab875775a
+  commit: 44cfee3bc0e4ec6f187f11de7a34e6c751b57aa7
 - name: osic-multitool
   repo: https://github.com/iic-jku/osic-multitool.git
   commit: 073506c3d032b8597f1ec4a3d211451f85d32536
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 54179ddb1f7bacfa40c5a1ed214d15079472606a
+  commit: 4106501b04399a425b8d8e5cadf8b73f2a6beb9c
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 3251530961e0e8a8054098c9bb8376474958944a
@@ -132,19 +132,19 @@
   commit: 0.11.21
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 25cb29d1bc25847e83fc9161d122374ee845d4e7
+  commit: c38e0dc464548332ba0768d855f5f8e02254a367
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.048
 - name: verible
   repo: https://github.com/chipsalliance/verible.git
-  commit: v0.0-4071-g8d9f2c97
+  commit: v0.0-4077-g820464b1
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: 30032514f600e5c2901479cf455fcb2952f0278f
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 80c58e0c9beb7a74ac2e5b0283b4208601d058c0
+  commit: c8b26a17d8d53ce7fbd9e7d45ab6bb03e75996e0
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0

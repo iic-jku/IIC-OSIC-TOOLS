@@ -20,7 +20,7 @@ echo "[INFO] Install EDA packages via PIP"
 pip3 install $PIP_FLAGS \
 	"amaranth[builtin-yosys]==0.5.8" \
 	cace==2.9.0 \
-	ciel==2.5.0 \
+	ciel==2.5.1 \
 	cocotb==2.0.1 \
 	cocotbext-ams==0.1.0 \
 	edalize==0.6.8 \
@@ -34,7 +34,7 @@ pip3 install $PIP_FLAGS \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.0.4 \
-	najaeda==0.7.1 \
+	najaeda==0.7.2 \
 	pygmid==1.2.12 \
 	pyrtl==0.12 \
 	pyuvm==4.0.1 \

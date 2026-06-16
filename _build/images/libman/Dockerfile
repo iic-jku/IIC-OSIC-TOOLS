@@ -7,7 +7,7 @@
 ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS libman
 ARG LIBMAN_REPO_URL="https://github.com/IHP-GmbH/LibMan.git"
-ARG LIBMAN_REPO_COMMIT="fe8c67b15b71b22e7f2de31852d52cf5b6cef051"
+ARG LIBMAN_REPO_COMMIT="22f7299c9708be796779ccf5bb7961c3c0a4af17"
 ARG LIBMAN_NAME="libman"
 RUN --mount=type=bind,source=images/libman,target=/images/libman \
     bash /images/libman/scripts/install.sh
