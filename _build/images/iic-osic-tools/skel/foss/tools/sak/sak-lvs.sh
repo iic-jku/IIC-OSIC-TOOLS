@@ -492,6 +492,8 @@ fi
 # finished
 # --------
 
+# magic writes its intermediate .ext files into the result dir (via `extract path`), remove them
+rm -f "$RESDIR"/*.ext
 [ $DEBUG -eq 0 ] && rm -f "$EXT_SCRIPT"
 
 echo "---"
