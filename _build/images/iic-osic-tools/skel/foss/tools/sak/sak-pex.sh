@@ -262,7 +262,7 @@ if [[ "$CELL_LAY" == *"gds.gz" ]]; then
 fi
 if [[ "$CELL_LAY" == *"gds" ]]; then
 	GDS_MODE=1
-	[ $DEBUG = 1 ] && echo "[INFO] GDS mode is selected."	
+	[ $DEBUG -eq 1 ] && echo "[INFO] GDS mode is selected."
 fi
 
 # Generate extract script for magic
@@ -325,7 +325,7 @@ if [ "$EXT_MODE" -eq 3 ]; then
 	{
 		# The following lines replace the deprecated `extresist tolerance` (now ignored with a warning).
 		# See netgen issue #106: https://github.com/RTimothyEdwards/netgen/issues/106
-		# Defaults and can be overridden with -t/-r/-y (see usage).
+		# Values default to magic's defaults and can be overridden with -t/-r/-y (see usage).
 
 		# Minimum coarse end-to-end resistance (mOhm) a net must exceed before it is considered for resistance extraction.
 		echo "extresist threshold $EXT_THRESHOLD"
