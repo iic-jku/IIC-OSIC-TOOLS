@@ -31,6 +31,7 @@
 #
 #        <cellname> may be a cell name or a layout file; accepted layout
 #        formats are .mag, .mag.gz, .gds, and .gds.gz
+#        NOTE: for GDS input the top cell must be named like the file (<cellname>). Otherwise the script aborts.
 #
 # Example: sak-pex.sh -m 3 -t 5000 -r 500 -y 2 -n mycell_pex -w ./results mycell.gds
 # ========================================================================
@@ -59,6 +60,7 @@ if [ $# -eq 0 ]; then
 	echo "       -d Enable debug information"
 	echo
 	echo "       <cellname> may be a cell name or a layout file (.mag, .mag.gz, .gds, .gds.gz)"
+	echo "       NOTE: for GDS input the top cell must be named like the file (<cellname>)"
 	echo
 	exit $ERR_NO_PARAM
 fi
@@ -206,8 +208,7 @@ fi
 # Define useful variables
 # -----------------------
 
-# Derive the cell name by stripping only the known layout extension, so that
-# cell names which themselves contain dots (e.g. "my.cell.mag") are preserved.
+# Derive the cell name by stripping only the known layout extension, so that cell names which themselves contain dots (e.g. "my.cell.mag") are preserved.
 CELL_BASE=$(basename "$CELL_LAY")
 case "$CELL_BASE" in
 	*.mag.gz)	CELL_NAME=${CELL_BASE%.mag.gz} ;;
@@ -219,6 +220,9 @@ esac
 
 EXT_SCRIPT="$RESDIR/pex_$CELL_NAME.tcl"
 NETLIST_PEX="$RESDIR/$CELL_NAME.pex.spice"
+
+# GDS only: magic creates this marker if the GDS top cell is not named like the file. The shell checks for it after the run to report a clear error.
+CELL_MISMATCH_MARKER="$RESDIR/pex_$CELL_NAME.cellmismatch"
 if [ $CELL_NAME_SET -eq 0 ]; then
 	CELL_NAME_PEX=${CELL_NAME}
 fi
@@ -254,9 +258,15 @@ if [ "$GDS_MODE" -eq 0 ]; then
 		echo "load ${CELL_LAY}"
 	} >> "$EXT_SCRIPT"
 else
-	# we read a .gds/.gds.gz view
+	# We read a .gds/.gds.gz view. Magic loads the cell named after the file (CELL_NAME). If the GDS top cell differs, it would silently load an empty cell. So, in this same run, check whether CELL_NAME is a top cell and, if not, write the found top cells to the marker and quit before extracting.
 	{
 		echo "gds read ${CELL_LAY}"
+		echo "if {[lsearch [cellname list topcells] {${CELL_NAME}}] < 0} {"
+		echo "    set _fp [open {${CELL_MISMATCH_MARKER}} w]"
+		echo "    puts \$_fp [cellname list topcells]"
+		echo "    close \$_fp"
+		echo "    quit -noprompt"
+		echo "}"
 		echo "load ${CELL_NAME}"
 	} >> "$EXT_SCRIPT"
 fi
@@ -330,6 +340,9 @@ fi
 # --------------------------------------------
 echo "[INFO] Running PEX using magic..."
 
+# Drop any stale marker so it only reflects this run.
+rm -f "$CELL_MISMATCH_MARKER"
+
 if [ $DEBUG -eq 0 ]; then
 	magic -dnull -noconsole \
 		-rcfile "$PDKPATH/libs.tech/magic/$PDK.magicrc" \
@@ -339,6 +352,15 @@ else
 	magic -dnull -noconsole \
 		-rcfile "$PDKPATH/libs.tech/magic/$PDK.magicrc" \
 		"$EXT_SCRIPT" "$NO_MESSAGE"
+fi
+
+# GDS top cell did not match the file name (marker written by magic above): report the specific cause instead of the generic "no file" error below.
+if [ -f "$CELL_MISMATCH_MARKER" ]; then
+	echo "[ERROR] GDS top cell does not match the file name <$CELL_NAME>!"
+	echo "[ERROR] GDS top cell(s) found: <$(cat "$CELL_MISMATCH_MARKER")>."
+	echo "[ERROR] Rename the file or the GDS top cell so they match, then re-run."
+	rm -f "$CELL_MISMATCH_MARKER"
+	exit $ERR_GENERAL
 fi
 
 if [ ! -f "$NETLIST_PEX.tmp" ]; then
@@ -355,7 +377,7 @@ else
 	rm -f "$NETLIST_PEX.tmp"
 
 	# Defensive cleanup: should the in-magic `cellname rename` above not have taken effect, the flattened cell may still appear as "<cell>_flat" in the netlist. Replace only that exact token (regex-escaped) with the intended subcircuit name, instead of a global s/_flat//g which would corrupt any legitimate name that happens to contain "_flat" (e.g. a port "vout_flat").
-	_flat_search=$(printf '%s' "${CELL_TOP}_flat" | sed 's/[][\.*^$/]/\\&/g')
+	_flat_search=$(printf '%s' "${CELL_NAME}_flat" | sed 's/[][\.*^$/]/\\&/g')
 	_flat_replace=$(printf '%s' "$CELL_NAME_PEX" | sed 's/[&/\]/\\&/g')
 	sed -i "s/${_flat_search}/${_flat_replace}/g" "$NETLIST_PEX"
 fi
