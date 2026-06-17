@@ -381,11 +381,17 @@ if [ -f "$CELL_MISMATCH_MARKER" ]; then
 	echo "[ERROR] GDS top cell(s) found: <$(cat "$CELL_MISMATCH_MARKER")>."
 	echo "[ERROR] Rename the file or the GDS top cell so they match, then re-run."
 	rm -f "$CELL_MISMATCH_MARKER"
+	[ -n "$TMP_GDS" ] && rm -f "$TMP_GDS"
+	[ -n "$TMP_MAG_DIR" ] && rm -rf "$TMP_MAG_DIR"
+	[ $DEBUG -eq 0 ] && rm -f "$EXT_SCRIPT"
 	exit $ERR_GENERAL
 fi
 
 if [ ! -f "$NETLIST_PEX.tmp" ]; then
 	echo "[ERROR] No PEX file produced, something went wrong!"
+	[ -n "$TMP_GDS" ] && rm -f "$TMP_GDS"
+	[ -n "$TMP_MAG_DIR" ] && rm -rf "$TMP_MAG_DIR"
+	[ $DEBUG -eq 0 ] && rm -f "$EXT_SCRIPT"
 	exit $ERR_GENERAL
 else
 	DATE=$(date)
