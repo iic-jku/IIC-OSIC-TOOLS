@@ -346,12 +346,12 @@ rm -f "$CELL_MISMATCH_MARKER"
 if [ $DEBUG -eq 0 ]; then
 	magic -dnull -noconsole \
 		-rcfile "$PDKPATH/libs.tech/magic/$PDK.magicrc" \
-		"$EXT_SCRIPT" "$NO_MESSAGE" \
+		"$EXT_SCRIPT" \
 		> /dev/null 2> /dev/null
 else
 	magic -dnull -noconsole \
 		-rcfile "$PDKPATH/libs.tech/magic/$PDK.magicrc" \
-		"$EXT_SCRIPT" "$NO_MESSAGE"
+		"$EXT_SCRIPT"
 fi
 
 # GDS top cell did not match the file name (marker written by magic above): report the specific cause instead of the generic "no file" error below.
