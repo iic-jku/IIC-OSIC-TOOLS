@@ -104,35 +104,43 @@ while getopts "s:l:w:c:d" flag; do
 		s)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -s is set to <$OPTARG>."
 			CELL_SCH=$(realpath "$OPTARG")
-			if echo "$CELL_SCH" | grep -q -i "\.sch"; then
-				VERILOG_MODE=0
-				SPICE_MODE=0
-			elif echo "$CELL_SCH" | grep -q -i "\.spice"; then
-				VERILOG_MODE=0
-				SPICE_MODE=1
-			elif echo "$CELL_SCH" | grep -q -i "\.spc"; then
-				VERILOG_MODE=0
-				SPICE_MODE=1
-			elif echo "$CELL_SCH" | grep -q -i "\.v"; then
-				VERILOG_MODE=1
-				SPICE_MODE=0
-			else
-				echo "[ERROR] Unknown file format of <$CELL_SCH>!"
-				exit $ERR_UNKNOWN_FILE
-			fi
+			# match the file extension only, not an occurrence somewhere in the path
+			case "$CELL_SCH" in
+				*.sch)
+					VERILOG_MODE=0
+					SPICE_MODE=0
+					;;
+				*.spice|*.spc)
+					VERILOG_MODE=0
+					SPICE_MODE=1
+					;;
+				*.v)
+					VERILOG_MODE=1
+					SPICE_MODE=0
+					;;
+				*)
+					echo "[ERROR] Unknown file format of <$CELL_SCH>!"
+					exit $ERR_UNKNOWN_FILE
+					;;
+			esac
 			CELLS_GIVEN=1
 			;;
 		l)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -l is set to <$OPTARG>."
 			CELL_LAY=$(realpath "$OPTARG")
-			if echo "$CELL_LAY" | grep -q -i "\.gds"; then
-				GDS_MODE=1
-			elif echo "$CELL_LAY" | grep -q -i "\.mag"; then
-				GDS_MODE=0
-			else
-				echo "[ERROR] Unknown file format of <$CELL_LAY>!"
-				exit $ERR_UNKNOWN_FILE
-			fi
+			# match the file extension only, not an occurrence somewhere in the path
+			case "$CELL_LAY" in
+				*.gds|*.gds.gz)
+					GDS_MODE=1
+					;;
+				*.mag|*.mag.gz)
+					GDS_MODE=0
+					;;
+				*)
+					echo "[ERROR] Unknown file format of <$CELL_LAY>!"
+					exit $ERR_UNKNOWN_FILE
+					;;
+			esac
 			CELLS_GIVEN=1
 			;;
 		c)
