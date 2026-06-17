@@ -18,7 +18,7 @@ mkdir -p "$TMP"
 cd "$TMP" || exit 1
 
 # Clone the main branch of the AMS chip template (incl. submodules)
-echo "[INFO] Cloning $REPO (main branch, incl. submodules) ..."
+[ "$DEBUG" = 1 ] && echo "[INFO] Cloning $REPO (main branch, incl. submodules) ..."
 if ! git clone --recursive --branch main \
         https://github.com/iic-jku/"$REPO".git "$REPO" > "$LOG" 2>&1; then
     echo "[ERROR] Test <AMS chip template with ihp-sg13g2> FAILED! Could not clone the repository. Check the log file $LOG for details."
@@ -31,12 +31,12 @@ cd "$REPO" || exit 1
 git config --global --add safe.directory "$TMP/$REPO"
 
 # Switch to the ihp-sg13g2 PDK
-echo "[INFO] Switching to the ihp-sg13g2 PDK ..."
+[ "$DEBUG" = 1 ] && echo "[INFO] Switching to the ihp-sg13g2 PDK ..."
 # shellcheck source=/dev/null
 source sak-pdk-script.sh ihp-sg13g2 sg13g2_stdcell > /dev/null
 
 # Run the regression target and check the result
-echo "[INFO] Running 'make regression' (output is logged to $LOG) ..."
+[ "$DEBUG" = 1 ] && echo "[INFO] Running 'make regression' (output is logged to $LOG) ..."
 if make regression >> "$LOG" 2>&1; then
     echo "[INFO] Test <AMS chip template with ihp-sg13g2> passed."
     exit 0
