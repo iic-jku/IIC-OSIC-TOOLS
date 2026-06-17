@@ -252,6 +252,11 @@ else
 	fi
 fi
 
+# make the layout path absolute so it still resolves after we cd into $RESDIR
+# --------------------------------------------------------------------------
+
+CELL_LAY=$(realpath "$CELL_LAY")
+
 [ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 1 ] && echo "[INFO] Using Verilog file <$CELL_V>."
 [ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]  && [ "$SPICE_MODE" -eq 0 ] && echo "[INFO] Using schematic file <$CELL_SCH>."
 [ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]  && [ "$SPICE_MODE" -eq 1 ] && echo "[INFO] Using SPICE netlist file <$CELL_SCH>."
