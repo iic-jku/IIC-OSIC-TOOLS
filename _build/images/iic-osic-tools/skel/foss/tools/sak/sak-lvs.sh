@@ -300,6 +300,8 @@ NETLIST_SCH="$RESDIR/$FBASENAME.sch.spc"
 NETLIST_LAY="$RESDIR/$FBASENAME.ext.spc"
 LVS_REPORT="$RESDIR/$FBASENAME.lvs.out"
 LVS_LOG="$RESDIR/$FBASENAME.lvs.log"
+# GDS only: magic writes this marker if the GDS top cell is not named like $TOPCELL; checked after the run.
+CELL_MISMATCH_MARKER="$RESDIR/ext_$FBASENAME.cellmismatch"
 [ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
 
 # remove old netlists
@@ -388,9 +390,15 @@ if [ "$GDS_MODE" -eq 0 ]; then
 		echo "load ${CELL_LAY}"
 	} >> "$EXT_SCRIPT"
 else
-	# we read a .gds/.gds.gz view
+	# We read a .gds/.gds.gz view. Magic loads the cell named $TOPCELL. If the GDS has no such top cell it would silently load an empty cell and produce a bogus LVS. So check for it first and, if missing, write the found top cells to a marker and quit before extracting.
 	{
 		echo "gds read $CELL_LAY"
+		echo "if {[lsearch [cellname list topcells] {${TOPCELL}}] < 0} {"
+		echo "    set _fp [open {${CELL_MISMATCH_MARKER}} w]"
+		echo "    puts \$_fp [cellname list topcells]"
+		echo "    close \$_fp"
+		echo "    quit -noprompt"
+		echo "}"
 		echo "load $TOPCELL"
 	} >> "$EXT_SCRIPT"
 fi
@@ -437,6 +445,8 @@ fi
 # --------------------------------------------
 
 echo "[INFO] Extracting netlist from layout <$CELL_LAY>..."
+# drop any stale marker so it only reflects this run
+rm -f "$CELL_MISMATCH_MARKER"
 OLDDIR=$PWD && cd "$RESDIR" || exit $ERR_NO_RESULT
 magic -dnull -noconsole \
 	-rcfile "$PDKPATH/libs.tech/magic/$PDK.magicrc" \
@@ -446,6 +456,16 @@ cd "$OLDDIR" || exit $ERR_NO_RESULT
 
 # the decompressed layout is no longer needed after extraction
 [ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
+
+# GDS top cell did not match the file name (marker written by magic above): report the specific cause instead of the generic error below.
+if [ -f "$CELL_MISMATCH_MARKER" ]; then
+	echo "[ERROR] GDS top cell does not match <$TOPCELL>!"
+	echo "[ERROR] GDS top cell(s) found: <$(cat "$CELL_MISMATCH_MARKER")>."
+	echo "[ERROR] Rename the layout file/cell or use -c so they match, then re-run."
+	rm -f "$CELL_MISMATCH_MARKER"
+	[ $DEBUG -eq 0 ] && rm -f "$EXT_SCRIPT"
+	exit $ERR_NO_RESULT
+fi
 
 if [ ! -f "$NETLIST_LAY" ]; then
 	echo "[ERROR] No layout netlist produced!"
