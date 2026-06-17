@@ -293,7 +293,8 @@ fi
 # define useful variables
 # -----------------------
 
-FBASENAME=$(basename "$TOPCELL" | cut -d. -f1)
+# keep the cell name verbatim (basename only) so names containing dots are not truncated
+FBASENAME=$(basename "$TOPCELL")
 EXT_SCRIPT="$RESDIR/ext_$FBASENAME.tcl"
 NETLIST_SCH="$RESDIR/$FBASENAME.sch.spc"
 NETLIST_LAY="$RESDIR/$FBASENAME.ext.spc"
