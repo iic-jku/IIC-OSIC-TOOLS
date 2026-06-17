@@ -274,6 +274,23 @@ LVS_LOG="$RESDIR/$FBASENAME.lvs.log"
 [ -f "$NETLIST_SCH" ] && rm -f "$NETLIST_SCH"
 [ -f "$NETLIST_LAY" ] && rm -f "$NETLIST_LAY"
 
+# decompress gzipped layout views, magic cannot read them directly
+# ----------------------------------------------------------------
+
+GZ_TMP=""
+case "$CELL_LAY" in
+	*.gz)
+		if [ "$GDS_MODE" -eq 1 ]; then
+			GZ_TMP="$RESDIR/${FBASENAME}.lvstmp.gds"
+		else
+			GZ_TMP="$RESDIR/${FBASENAME}.lvstmp.mag"
+		fi
+		[ $DEBUG -eq 1 ] && echo "[INFO] Decompressing <$CELL_LAY> to <$GZ_TMP>."
+		gunzip -c "$CELL_LAY" > "$GZ_TMP"
+		CELL_LAY="$GZ_TMP"
+		;;
+esac
+
 # initial checks passed, start working
 # ------------------------------------
 
@@ -392,6 +409,9 @@ magic -dnull -noconsole \
 	 "$EXT_SCRIPT" \
 	 > /dev/null 2> /dev/null
 cd "$OLDDIR" || exit $ERR_NO_RESULT
+
+# the decompressed layout is no longer needed after extraction
+[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
 
 if [ ! -f "$NETLIST_LAY" ]; then
 	echo "[ERROR] No layout netlist produced!"
