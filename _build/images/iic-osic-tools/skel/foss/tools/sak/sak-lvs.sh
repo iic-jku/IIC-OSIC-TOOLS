@@ -408,9 +408,29 @@ echo "---"
 
 if grep -i -q "Circuits match uniquely" "$LVS_REPORT"; then
 	echo "CONGRATULATIONS! LVS is OK, schematic/netlist and layout match!"
+	cat <<'EOF'
+      .-"""""-.
+    .'  _   _  '.
+   /   (o) (o)   \
+  |       <       |
+  |    \_____/    |
+   \             /
+    '.         .'
+      '-.....-'
+EOF
 	echo "---"
 else
-	echo "LVS ERRORS FOUND! Please check <$LVS_REPORT>!" 
+	echo "LVS ERRORS FOUND! Please check <$LVS_REPORT>!"
+	cat <<'EOF'
+      .-"""""-.
+    .'  _   _  '.
+   /   (o) (o)   \
+  |       <       |
+  |     _____     |
+   \   /     \   /
+    '.         .'
+      '-.....-'
+EOF
 	echo "---"
 	exit $ERR_LVS_MISMATCH
 fi
