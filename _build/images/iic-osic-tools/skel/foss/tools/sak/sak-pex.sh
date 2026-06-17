@@ -213,6 +213,9 @@ if [ $CELL_NAME_SET -eq 0 ]; then
 	CELL_NAME_PEX=${CELL_NAME}
 fi
 
+# Make sure the result directory exists (e.g. when set via -w)
+[ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
+
 # Check if GDS file
 # -----------------
 
