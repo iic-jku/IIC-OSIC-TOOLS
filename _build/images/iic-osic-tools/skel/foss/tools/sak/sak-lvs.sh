@@ -344,8 +344,24 @@ else
 	} >> "$EXT_SCRIPT"
 fi
 
+echo "select top cell" >> "$EXT_SCRIPT"
+
+# Note 1: Flatten the layout first to avoid magic extracting a device that is nested in a subcircuit of the same name, which breaks netgen pin matching (e.g. an outer `sg13_<dev>` cell containing an inner `<dev>` subcell that collides with the extracted device `<dev>`).
+# See netgen issue #106: https://github.com/RTimothyEdwards/netgen/issues/106
+# We flatten into a uniquely-named cell (${TOPCELL}_flat) to avoid the "flatten <cell> into <cell>" infinite-loop crash noted in that issue.
+# Note 2: This assumes the loaded top cell is named exactly "$TOPCELL". When using -l/-c with a layout whose internal cellname differs, the delete/rename below would not match that cell.
+# Note 3: The flatten is skipped in Verilog mode to preserve hierarchical standard-cell matching: a full flatten would force netgen to flatten the schematic side too, which is slow on large digital designs and loses subcell error localization.
+if [ "$VERILOG_MODE" -eq 0 ]; then
+	{
+		echo "flatten ${TOPCELL}_flat"
+		echo "load ${TOPCELL}_flat"
+		echo "cellname delete ${TOPCELL}"
+		echo "cellname rename ${TOPCELL}_flat ${TOPCELL}"
+		echo "select top cell"
+	} >> "$EXT_SCRIPT"
+fi
+
 {
-	echo "select top cell"
 	echo "extract path $RESDIR"
 	echo "extract no capacitance"
 	echo "extract no coupling"
