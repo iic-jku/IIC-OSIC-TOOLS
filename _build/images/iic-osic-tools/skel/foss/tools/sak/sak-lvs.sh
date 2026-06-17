@@ -33,6 +33,7 @@ ERR_NO_VAR=4
 ERR_NO_RESULT=5
 ERR_PDK_NOT_SUPPORTED=6
 ERR_UNKNOWN_FILE=7
+ERR_CMD_NOT_FOUND=8
 
 if [ $# -eq 0 ]; then
 	echo
@@ -269,6 +270,24 @@ CELL_LAY=$(realpath "$CELL_LAY")
 [ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]  && [ "$SPICE_MODE" -eq 0 ] && echo "[INFO] Using schematic file <$CELL_SCH>."
 [ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]  && [ "$SPICE_MODE" -eq 1 ] && echo "[INFO] Using SPICE netlist file <$CELL_SCH>."
 [ $DEBUG -eq 1 ] && echo "[INFO] Using layout file <$CELL_LAY>."
+
+# check that the required tools are available
+# -------------------------------------------
+
+for cmd in magic netgen; do
+	if [ ! -x "$(command -v "$cmd")" ]; then
+		echo "[ERROR] $cmd could not be found!"
+		exit $ERR_CMD_NOT_FOUND
+	fi
+done
+
+# xschem is only needed to netlist an .sch schematic
+if [ "$VERILOG_MODE" -eq 0 ] && [ "$SPICE_MODE" -eq 0 ]; then
+	if [ ! -x "$(command -v xschem)" ]; then
+		echo "[ERROR] xschem could not be found!"
+		exit $ERR_CMD_NOT_FOUND
+	fi
+fi
 
 # define useful variables
 # -----------------------
