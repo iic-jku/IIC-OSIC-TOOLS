@@ -354,8 +354,11 @@ else
 	} > "$NETLIST_PEX"
 	rm -f "$NETLIST_PEX.tmp"
 
-	sed -i 's/_flat//g' "$NETLIST_PEX"
-fi 
+	# Defensive cleanup: should the in-magic `cellname rename` above not have taken effect, the flattened cell may still appear as "<cell>_flat" in the netlist. Replace only that exact token (regex-escaped) with the intended subcircuit name, instead of a global s/_flat//g which would corrupt any legitimate name that happens to contain "_flat" (e.g. a port "vout_flat").
+	_flat_search=$(printf '%s' "${CELL_TOP}_flat" | sed 's/[][\.*^$/]/\\&/g')
+	_flat_replace=$(printf '%s' "$CELL_NAME_PEX" | sed 's/[&/\]/\\&/g')
+	sed -i "s/${_flat_search}/${_flat_replace}/g" "$NETLIST_PEX"
+fi
 
 # Cleanup
 # -------
