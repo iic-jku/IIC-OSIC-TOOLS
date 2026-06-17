@@ -18,12 +18,21 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-pex.sh [-d] [-m mode] [-s mode] [-n <subcktname>] [-w <workdir>] <cellname>
+# Usage: sak-pex.sh [-d] [-m mode] [-s mode] [-n <subcktname>] [-w <workdir>]
+#                   [-t <threshold>] [-r <minres>] [-y <mindelay>] <cellname>
 #        -m  Select PEX mode (1 = C-decoupled, 2 = C-coupled [default], 3 = full-RC)
 #        -s  Subcircuit definition (1 = include [default], 0 = no subcircuit)
 #        -n  Name of PEX subcircuit (default: <cellname>)
 #        -w  Use <workdir> to store result files (default: current dir)
+#        -t  full-RC: extresist threshold in mOhm (default: 10000 = 10 Ohm)
+#        -r  full-RC: extresist minres in mOhm (default: 1000 = 1 Ohm)
+#        -y  full-RC: extresist mindelay in ps (default: 1; 0 = gate by resistance)
 #        -d  Enable debug information
+#
+#        <cellname> may be a cell name or a layout file; accepted layout
+#        formats are .mag, .mag.gz, .gds, and .gds.gz
+#
+# Example: sak-pex.sh -m 3 -t 5000 -r 500 -y 2 -n mycell_pex -w ./results mycell.gds
 # ========================================================================
 
 ERR_GENERAL=1
@@ -35,15 +44,21 @@ ERR_PDK_NOT_SUPPORTED=6
 
 if [ $# -eq 0 ]; then
 	echo
-	echo "PEX script using Magic-VLSI (ICD@JKU)"
+	echo "PEX script using Magic (ICD@JKU)"
 	echo
-	echo "Usage: $0 [-d] [-m mode] [-s mode] [-n <subcktname>] [-w <workdir>] <cellname>"
+	echo "Usage: $0 [-d] [-m mode] [-s mode] [-n <subcktname>] [-w <workdir>]"
+	echo "       [-t <threshold>] [-r <minres>] [-y <mindelay>] <cellname>"
 	echo
 	echo "       -m Select PEX mode (1 = C-decoupled, 2 = C-coupled [default], 3 = full-RC)"
 	echo "       -s Subcircuit definition in PEX netlist (1 = include subcircuit definition [default], 0 = no subcircuit)"
 	echo "       -n name of PEX subcircuit (default is <cellname>)"
 	echo "       -w Set <workdir> working directory"
+	echo "       -t full-RC only: extresist threshold in mOhm (default 10000 = 10 Ohm)"
+	echo "       -r full-RC only: extresist minres in mOhm (default 1000 = 1 Ohm)"
+	echo "       -y full-RC only: extresist mindelay in ps (default 1; 0 = gate by resistance instead of delay)"
 	echo "       -d Enable debug information"
+	echo
+	echo "       <cellname> may be a cell name or a layout file (.mag, .mag.gz, .gds, .gds.gz)"
 	echo
 	exit $ERR_NO_PARAM
 fi
@@ -58,10 +73,15 @@ SUBCIRCUIT=1
 RESDIR=$PWD
 CELL_NAME_SET=0
 
+# full-RC (extresist) defaults, matching magic's own defaults
+EXT_THRESHOLD=10000	# mOhm: coarse end-to-end resistance gating extraction
+EXT_MINRES=1000		# mOhm: resistors below this are merged (simplification)
+EXT_MINDELAY=1		# ps: delay-based output gating (0 = gate by resistance)
+
 # Check flags
 # -----------
 
-while getopts "m:s:w:n:d" flag; do
+while getopts "m:s:w:n:t:r:y:d" flag; do
 	case $flag in
 		m)
 			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -m is set to <$OPTARG>."
@@ -70,6 +90,18 @@ while getopts "m:s:w:n:d" flag; do
 		s)
 			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -s is set to <$OPTARG>."
 			SUBCIRCUIT=${OPTARG}
+			;;
+		t)
+			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -t is set to <$OPTARG>."
+			EXT_THRESHOLD=${OPTARG}
+			;;
+		r)
+			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -r is set to <$OPTARG>."
+			EXT_MINRES=${OPTARG}
+			;;
+		y)
+			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -y is set to <$OPTARG>."
+			EXT_MINDELAY=${OPTARG}
 			;;
 		w)
 			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -w is set to <$OPTARG>."
@@ -113,6 +145,23 @@ else
         exit $ERR_WRONG_MODE
 fi
 
+# Check that the full-RC extresist parameters are non-negative integers
+# ---------------------------------------------------------------------
+
+for _ext_par in "threshold:$EXT_THRESHOLD" "minres:$EXT_MINRES" "mindelay:$EXT_MINDELAY"; do
+	_ext_name=${_ext_par%%:*}
+	_ext_val=${_ext_par#*:}
+	if [ -n "$_ext_val" ] && [ "$_ext_val" -eq "$_ext_val" ] 2>/dev/null; then
+		if [ "$_ext_val" -lt 0 ]; then
+			echo "[ERROR] extresist $_ext_name must be >= 0!"
+			exit $ERR_WRONG_MODE
+		fi
+	else
+		echo "[ERROR] extresist $_ext_name must be an integer!"
+		exit $ERR_WRONG_MODE
+	fi
+done
+
 # Check if the PDK is already supported by this script
 # ----------------------------------------------------
 
@@ -129,7 +178,7 @@ else
 	exit $ERR_PDK_NOT_SUPPORTED
 fi
 
-# check if the input file exists
+# Check if the input file exists
 # ------------------------------
 
 if [ -z "$1" ]; then
@@ -164,7 +213,7 @@ if [ $CELL_NAME_SET -eq 0 ]; then
 	CELL_NAME_PEX=${CELL_NAME}
 fi
 
-# check if GDS file
+# Check if GDS file
 # -----------------
 
 if [[ "$CELL_LAY" == *"gds.gz" ]]; then
@@ -230,7 +279,18 @@ if [ "$EXT_MODE" -eq 3 ]; then
 	# Extraction mode RC
 	EXT_MODE_TEXT="full-RC"
 	{
-		echo "extresist tolerance 10"
+		# The following lines replace the deprecated `extresist tolerance` (now ignored with a warning).
+		# See netgen issue #106: https://github.com/RTimothyEdwards/netgen/issues/106
+		# Defaults and can be overridden with -t/-r/-y (see usage).
+
+		# Minimum coarse end-to-end resistance (mOhm) a net must exceed before it is considered for resistance extraction.
+		echo "extresist threshold $EXT_THRESHOLD"
+
+		# Delay-based (ps) output gating applied after extraction. Setting it to 0 gates on the recalculated resistance via `threshold` instead.
+		echo "extresist mindelay $EXT_MINDELAY"
+
+		# "Simplification value" (mOhm): resistors below this are merged.
+		echo "extresist minres $EXT_MINRES"
 		echo "extract do resistance"
 		echo "extract do unique"
 		echo "extract all"
@@ -245,7 +305,7 @@ fi
 	echo "quit -noprompt"
 } >> "$EXT_SCRIPT"
 
-# check if commands exist in the path
+# Check if commands exist in the path
 # -----------------------------------
 
 if [ ! -x "$(command -v magic)" ]; then
@@ -274,6 +334,7 @@ if [ ! -f "$NETLIST_PEX.tmp" ]; then
 else
 	DATE=$(date)
 	HEADER="* PEX produced on $DATE using $0 with m=$EXT_MODE and s=$SUBCIRCUIT"
+	[ "$EXT_MODE" -eq 3 ] && HEADER="$HEADER (extresist threshold=$EXT_THRESHOLD mOhm, minres=$EXT_MINRES mOhm, mindelay=$EXT_MINDELAY ps)"
 	{
 		echo "$HEADER"
 		cat "$NETLIST_PEX.tmp"	
