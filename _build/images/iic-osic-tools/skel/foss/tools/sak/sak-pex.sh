@@ -108,7 +108,8 @@ while getopts "m:s:w:n:t:r:y:d" flag; do
 			;;
 		w)
 			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -w is set to <$OPTARG>."
-			RESDIR=$(realpath "$OPTARG")
+			# -m so a not-yet-existing (multi-level) workdir still resolves. It is created below.
+			RESDIR=$(realpath -m "$OPTARG")
 			;;
 		n)
 			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -n is set to <$OPTARG>."
