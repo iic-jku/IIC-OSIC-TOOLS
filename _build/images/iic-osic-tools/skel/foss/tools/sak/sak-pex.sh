@@ -42,6 +42,7 @@ ERR_NO_PARAM=3
 ERR_WRONG_MODE=4
 ERR_CMD_NOT_FOUND=5
 ERR_PDK_NOT_SUPPORTED=6
+ERR_UNKNOWN_FILE=7
 
 if [ $# -eq 0 ]; then
 	echo
@@ -187,7 +188,14 @@ if [ -z "$1" ]; then
 	echo "[ERROR] No cellname provided!"
 	exit $ERR_FILE_NOT_FOUND
 elif [ -f "$1" ]; then
-	CELL_LAY="$1"
+	# An exact file was given: accept it only if it has a known layout extension, otherwise it would reach magic's `load` and fail confusingly.
+	case "$1" in
+		*.mag|*.mag.gz|*.gds|*.gds.gz)
+			CELL_LAY="$1" ;;
+		*)
+			echo "[ERROR] Unsupported layout format <$1> (expected .mag, .mag.gz, .gds, .gds.gz)!"
+			exit $ERR_UNKNOWN_FILE ;;
+	esac
 elif [ -f "$1.mag" ]; then
 	CELL_LAY="$1.mag"
 elif [ -f "$1.mag.gz" ]; then
