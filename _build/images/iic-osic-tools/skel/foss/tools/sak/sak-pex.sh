@@ -233,11 +233,12 @@ fi
 # Check if GDS file
 # -----------------
 
+# Decompress a gzipped GDS into the result dir under a cell-specific name (not a fixed name in the current dir) to avoid clobbering files there or colliding between runs. TMP_GDS is removed again during cleanup.
+TMP_GDS=""
 if [[ "$CELL_LAY" == *"gds.gz" ]]; then
-	cp "$CELL_LAY" tmp.gds.gz
-	[ -f tmp.gds ] && rm -f tmp.gds
-	gunzip tmp.gds.gz > /dev/null
-	CELL_LAY="tmp.gds"
+	TMP_GDS="$RESDIR/${CELL_NAME}.pextmp.gds"
+	gunzip -c "$CELL_LAY" > "$TMP_GDS"
+	CELL_LAY="$TMP_GDS"
 fi
 if [[ "$CELL_LAY" == *"gds" ]]; then
 	GDS_MODE=1
@@ -384,13 +385,14 @@ fi
 
 # Cleanup
 # -------
-rm -f ./*.ext
-[ -f tmp.gds ] && rm -f tmp.gds
+# Magic writes its intermediate files into the result dir (via `extract path`), so remove them from there, plus the temporary decompressed GDS if any.
+rm -f "$RESDIR"/*.ext
+[ -n "$TMP_GDS" ] && rm -f "$TMP_GDS"
 if [ "$EXT_MODE" -eq 3 ]; then
-	rm -f ./*.nodes
-	rm -f ./*.ext
-	rm -f ./*.sim
-	rm -f ./*.res.ext
+	rm -f "$RESDIR"/*.nodes
+	rm -f "$RESDIR"/*.ext
+	rm -f "$RESDIR"/*.sim
+	rm -f "$RESDIR"/*.res.ext
 fi
 [ $DEBUG -eq 0 ] && rm -f "$EXT_SCRIPT"
 
