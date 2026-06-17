@@ -206,7 +206,17 @@ fi
 # Define useful variables
 # -----------------------
 
-CELL_NAME=$(basename "$CELL_LAY" | cut -f 1 -d '.')
+# Derive the cell name by stripping only the known layout extension, so that
+# cell names which themselves contain dots (e.g. "my.cell.mag") are preserved.
+CELL_BASE=$(basename "$CELL_LAY")
+case "$CELL_BASE" in
+	*.mag.gz)	CELL_NAME=${CELL_BASE%.mag.gz} ;;
+	*.gds.gz)	CELL_NAME=${CELL_BASE%.gds.gz} ;;
+	*.mag)		CELL_NAME=${CELL_BASE%.mag} ;;
+	*.gds)		CELL_NAME=${CELL_BASE%.gds} ;;
+	*)		CELL_NAME=$CELL_BASE ;;
+esac
+
 EXT_SCRIPT="$RESDIR/pex_$CELL_NAME.tcl"
 NETLIST_PEX="$RESDIR/$CELL_NAME.pex.spice"
 if [ $CELL_NAME_SET -eq 0 ]; then
