@@ -230,6 +230,18 @@ fi
 # Make sure the result directory exists (e.g. when set via -w)
 [ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
 
+# Check if gzipped MAG file
+# -------------------------
+
+# magic's `load` cannot read a gzipped .mag, so unpack it first. The unpacked file must keep the cell name (<cell>.mag) so magic loads it as CELL_NAME. A private temp dir is used to keep that name without clobbering anything.
+TMP_MAG_DIR=""
+if [[ "$CELL_LAY" == *"mag.gz" ]]; then
+	TMP_MAG_DIR="$RESDIR/.pextmp_${CELL_NAME}_$$"
+	mkdir -p "$TMP_MAG_DIR"
+	gunzip -c "$CELL_LAY" > "$TMP_MAG_DIR/${CELL_NAME}.mag"
+	CELL_LAY="$TMP_MAG_DIR/${CELL_NAME}.mag"
+fi
+
 # Check if GDS file
 # -----------------
 
@@ -388,6 +400,7 @@ fi
 # Magic writes its intermediate files into the result dir (via `extract path`), so remove them from there, plus the temporary decompressed GDS if any.
 rm -f "$RESDIR"/*.ext
 [ -n "$TMP_GDS" ] && rm -f "$TMP_GDS"
+[ -n "$TMP_MAG_DIR" ] && rm -rf "$TMP_MAG_DIR"
 if [ "$EXT_MODE" -eq 3 ]; then
 	rm -f "$RESDIR"/*.nodes
 	rm -f "$RESDIR"/*.ext
