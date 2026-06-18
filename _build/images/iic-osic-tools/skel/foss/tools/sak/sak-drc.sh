@@ -38,7 +38,7 @@ ERR_NO_OUTPUT=7
 
 if [ $# -eq 0 ]; then
 	echo
-	echo "DRC script for Magic-VLSI and KLayout (ICD@JKU)"
+	echo "DRC script for Magic and KLayout (ICD@JKU)"
 	echo
 	echo "Usage: $0 [-d] [-m|-k|-b] [-c] [-f <pattern>] [-w workdir] <cellname>"
 	echo "       -m Run Magic DRC (default)"
@@ -187,6 +187,17 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 	fi
 fi
 
+# KLayout DRC is implemented for sky130, gf180mcu, and ihp-sg13g2. For any other (already validated) PDK, skip KLayout: warn and continue if Magic DRC was also requested, otherwise there is nothing to check.
+if [ $RUN_KLAYOUT -eq 1 ] && ! echo "$PDK" | grep -q -i -E "sky130|gf180mcu|ihp-sg13g2"; then
+	if [ $RUN_MAGIC -eq 1 ]; then
+		echo "[WARNING] KLayout DRC for $PDK not yet supported, running Magic DRC only."
+		RUN_KLAYOUT=0
+	else
+		echo "[ERROR] KLayout DRC for $PDK not yet supported!"
+		exit $ERR_PDK_NOT_SUPPORTED
+	fi
+fi
+
 echo "[INFO] Results are put into <$RESDIR>."
 # strip only a known layout extension so cell names containing dots are preserved
 CELL_NAME=$(basename "$CELL_LAY")
@@ -196,6 +207,8 @@ case "$CELL_NAME" in
 	*.mag)		CELL_NAME=${CELL_NAME%.mag} ;;
 	*.gds)		CELL_NAME=${CELL_NAME%.gds} ;;
 esac
+# run dir holding the gf180mcu/ihp-sg13g2 KLayout DRC report(s) (.lyrdb)
+KLAYOUT_RUNDIR="$RESDIR/${CELL_NAME}.klayout.drc"
 
 # decompress gzipped layout views, magic cannot read them directly
 # ----------------------------------------------------------------
@@ -369,21 +382,35 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 			-rd report="$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml" \
 			-r "$PDKPATH/libs.tech/klayout/drc/zeroarea.rb.drc" \
 			> /dev/null 2> /dev/null &
-	fi
-
-	if echo "$PDK" | grep -q -i "gf180mcu"; then
-		echo "[ERROR] KLayout DRC for $PDK not yet supported!"
-		exit $ERR_PDK_NOT_SUPPORTED
-	fi
-
-  if echo "$PDK" | grep -q -i "ihp-sg13g2"; then
-		echo "[ERROR] KLayout DRC for $PDK not yet supported!"
-		exit $ERR_PDK_NOT_SUPPORTED
-	fi
-
-	if echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
-		echo "[ERROR] KLayout DRC for $PDK not yet supported!"
-		exit $ERR_PDK_NOT_SUPPORTED
+	elif echo "$PDK" | grep -q -i "gf180mcu"; then
+		# gf180mcu via its gf180mcu.drc deck (run directly). variant=D selects the gf180mcuD stack (metal_top=11K, metal_level=5LM, mim_option=B). run_mode must be set explicitly (the deck aborts on an unknown mode), flat is the gf180 default.
+		# The RDB report is written into the run dir so the shared evaluation below picks it up.
+		rm -rf "$KLAYOUT_RUNDIR"
+		mkdir -p "$KLAYOUT_RUNDIR"
+		klayout -b \
+			-rd input="$CELL_LAY" \
+			-rd topcell="$CELL_NAME" \
+			-rd variant=D \
+			-rd run_mode=flat \
+			-rd threads="$(nproc --ignore 5)" \
+			-rd report="$KLAYOUT_RUNDIR/$CELL_NAME.lyrdb" \
+			-r "$PDKPATH/libs.tech/klayout/tech/drc/gf180mcu.drc" \
+			> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
+	elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
+		# ihp-sg13g2 via its run_drc.py wrapper. It writes <layout>_<topcell>_<tables>.lyrdb (multiple reports are merged into a *_full.lyrdb) into --run_dir.
+		# Scope (per the ICD reference flow): --no_feol --no_density --disable_extra_rules skips FEOL, density, and the extra "maximal" rule set for a faster run.
+		rm -rf "$KLAYOUT_RUNDIR"
+		mkdir -p "$KLAYOUT_RUNDIR"
+		python3 "$PDKPATH/libs.tech/klayout/tech/drc/run_drc.py" \
+			--path="$CELL_LAY" \
+			--topcell="$CELL_NAME" \
+			--run_dir="$KLAYOUT_RUNDIR" \
+			--no_feol \
+			--no_density \
+			--disable_extra_rules \
+			--mp="$(nproc --ignore 5)" \
+			--density_thr="$(nproc --ignore 5)" \
+			> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
 	fi
 fi
 
@@ -424,7 +451,7 @@ if [ $RUN_MAGIC -eq 1 ]; then
 	fi
 fi
 
-if [ $RUN_KLAYOUT -eq 1 ]; then
+if [ $RUN_KLAYOUT -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 
 	# each KLayout report violation is one <item> regardless of its geometry type (edge-pair, polygon, edge, ...), so count <item> rather than a single type.
 	if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.feol.xml" ]; then
@@ -485,6 +512,20 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 		DRC_CLEAN=0
 	else
 		echo "[INFO] KLayout zero-area DRC is clean!"
+	fi
+elif [ $RUN_KLAYOUT -eq 1 ]; then
+	# gf180mcu / ihp-sg13g2 write their .lyrdb report(s) into the run dir. No report means the run itself failed (a DRC run with violations still writes a report); the reason is in the log.
+	if ! find "$KLAYOUT_RUNDIR" -name '*.lyrdb' 2>/dev/null | grep -q .; then
+		echo "[ERROR] KLayout DRC run failed (no report produced), see <$KLAYOUT_RUNDIR/$CELL_NAME.drc.log>!"
+		exit $ERR_NO_OUTPUT
+	fi
+	# one violation is one <item> in the RDB report, regardless of geometry type
+	DRC_ERRORS=$(find "$KLAYOUT_RUNDIR" -name '*.lyrdb' -exec cat {} + 2>/dev/null | grep -c "<item>")
+	if [ "$DRC_ERRORS" -ne 0 ]; then
+		echo "[INFO] KLayout $DRC_ERRORS DRC errors found! Check <$KLAYOUT_RUNDIR>!"
+		DRC_CLEAN=0
+	else
+		echo "[INFO] KLayout DRC is clean!"
 	fi
 fi
 
