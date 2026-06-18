@@ -208,6 +208,21 @@ if [ $RUN_KLAYOUT -eq 1 ] && ! echo "$PDK" | grep -q -i -E "sky130|gf180mcu|ihp-
 	fi
 fi
 
+# KLayout can only read GDS, not a magic layout. Skip it for a .mag (warn if Magic also runs, error otherwise).
+if [ $RUN_KLAYOUT -eq 1 ]; then
+	case "$CELL_LAY" in
+		*.mag|*.mag.gz)
+			if [ $RUN_MAGIC -eq 1 ]; then
+				echo "[WARNING] KLayout DRC needs a GDS layout, running Magic DRC only."
+				RUN_KLAYOUT=0
+			else
+				echo "[ERROR] KLayout DRC needs a GDS layout (got <$CELL_LAY>)!"
+				exit $ERR_UNKNOWN_FILE
+			fi
+			;;
+	esac
+fi
+
 echo "[INFO] Results are put into <$RESDIR>."
 # strip only a known layout extension so cell names containing dots are preserved
 CELL_NAME=$(basename "$CELL_LAY")
