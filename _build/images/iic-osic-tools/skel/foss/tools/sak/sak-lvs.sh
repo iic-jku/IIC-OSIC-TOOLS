@@ -75,6 +75,11 @@ if [ -z ${PDK+x} ]; then
 	exit $ERR_NO_VAR
 fi
 
+if [ -z ${PDKPATH+x} ]; then
+	echo "[ERROR] Variable PDKPATH not set!"
+	exit $ERR_NO_VAR
+fi
+
 if echo "$PDK" | grep -q -i "sky130"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] sky130 PDK selected."
 elif echo "$PDK" | grep -q -i "gf180mcu"; then
