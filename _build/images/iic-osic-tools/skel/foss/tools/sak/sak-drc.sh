@@ -380,11 +380,12 @@ fi
 
 if [ $RUN_KLAYOUT -eq 1 ]; then
 
+	# each KLayout report violation is one <item> regardless of its geometry type (edge-pair, polygon, edge, ...), so count <item> rather than a single type.
 	if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.feol.xml" ]; then
 		echo "[ERROR] No klayout output found!"
 		exit $ERR_NO_OUTPUT
 	fi
-	DRC_ERRORS=$(grep -c "edge-pair" "$RESDIR/$CELL_NAME.klayout.drc.feol.xml")
+	DRC_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.feol.xml")
 	if [ "$DRC_ERRORS" -ne 0 ]; then
 		echo "[INFO] KLayout $DRC_ERRORS DRC errors found! Check <$CELL_NAME.klayout.drc.feol.xml>!"
 		DRC_CLEAN=0
@@ -396,7 +397,7 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 		echo "[ERROR] No klayout output found!"
 		exit $ERR_NO_OUTPUT
 	fi
-	DRC_ERRORS=$(grep -c "edge-pair" "$RESDIR/$CELL_NAME.klayout.drc.beol.xml")
+	DRC_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.beol.xml")
 	if [ "$DRC_ERRORS" -ne 0 ]; then
 		echo "[INFO] KLayout $DRC_ERRORS DRC errors found! Check <$CELL_NAME.klayout.drc.beol.xml>!"
 		DRC_CLEAN=0
@@ -408,7 +409,7 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 		echo "[ERROR] No klayout output found!"
 		exit $ERR_NO_OUTPUT
 	fi
-	DENSITY_ERRORS=$(grep -c "edge-pair" "$RESDIR/$CELL_NAME.klayout.drc.density.xml")
+	DENSITY_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.density.xml")
 	if [ "$DENSITY_ERRORS" -ne 0 ]; then
 		echo "[INFO] Klayout $DENSITY_ERRORS density errors found! Check <$CELL_NAME.klayout.drc.density.xml>!"
 		DRC_CLEAN=0
@@ -420,7 +421,7 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 		echo "[ERROR] No klayout output found!"
 		exit $ERR_NO_OUTPUT
 	fi
-	PINCHECK_ERRORS=$(grep -c "edge-pair" "$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml")
+	PINCHECK_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml")
 	if [ "$PINCHECK_ERRORS" -ne 0 ]; then
 		echo "[INFO] KLayout $PINCHECK_ERRORS pin errors found! Check <$CELL_NAME.klayout.drc.pincheck.xml>!"
 		DRC_CLEAN=0
@@ -432,7 +433,7 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 		echo "[ERROR] No klayout output found!"
 		exit $ERR_NO_OUTPUT
 	fi
-	ZEROAREA_ERRORS=$(grep -c "edge-pair" "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml")
+	ZEROAREA_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml")
 	if [ "$ZEROAREA_ERRORS" -ne 0 ]; then
 		echo "[INFO] KLayout $ZEROAREA_ERRORS zero-area errors found! Check <$CELL_NAME.klayout.drc.zeroarea.xml>!"
 		DRC_CLEAN=0
