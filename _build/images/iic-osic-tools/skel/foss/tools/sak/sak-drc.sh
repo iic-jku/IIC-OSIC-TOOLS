@@ -219,32 +219,36 @@ if [ $RUN_MAGIC -eq 1 ]; then
 	# drop any stale marker so it only reflects this run
 	rm -f "$CELL_MISMATCH_MARKER"
 
-	# generate DRC script for Magic
-	if echo "$CELL_LAY" | grep -q -i "\.mag"; then
-		[ $DEBUG -eq 1 ] && echo "[INFO] Magic runs DRC on .mag file."
-		{
-			echo "crashbackups stop"
-			echo "load $CELL_LAY"
-		} > "$EXT_SCRIPT"
-	elif echo "$CELL_LAY" | grep -q -i "\.gds"; then
-		[ $DEBUG -eq 1 ] && echo "[INFO] Magic runs DRC on .gds file."
-		{
-			echo "crashbackups stop"
-			[ -n "$FLATGLOB" ] && echo "gds flatglob $FLATGLOB"
-			echo "gds read $CELL_LAY"
-			# Magic loads the cell named $CELL_NAME. If the GDS has no such top cell it would load an empty cell and report DRC clean. Detect that, record the real top cells, and quit.
-			echo "if {[lsearch [cellname list topcells] {${CELL_NAME}}] < 0} {"
-			echo "    set _fp [open {${CELL_MISMATCH_MARKER}} w]"
-			echo "    puts \$_fp [cellname list topcells]"
-			echo "    close \$_fp"
-			echo "    quit -noprompt"
-			echo "}"
-			echo "load $CELL_NAME"
-		} > "$EXT_SCRIPT"
-	else
-		echo "[ERROR] Unknown file format for Magic DRC!"
-		exit $ERR_UNKNOWN_FILE
-	fi
+	# generate DRC script for Magic; match the extension only, not an occurrence in the path
+	case "$CELL_LAY" in
+		*.mag)
+			[ $DEBUG -eq 1 ] && echo "[INFO] Magic runs DRC on .mag file."
+			{
+				echo "crashbackups stop"
+				echo "load $CELL_LAY"
+			} > "$EXT_SCRIPT"
+			;;
+		*.gds)
+			[ $DEBUG -eq 1 ] && echo "[INFO] Magic runs DRC on .gds file."
+			{
+				echo "crashbackups stop"
+				[ -n "$FLATGLOB" ] && echo "gds flatglob $FLATGLOB"
+				echo "gds read $CELL_LAY"
+				# Magic loads the cell named $CELL_NAME. If the GDS has no such top cell it would load an empty cell and report DRC clean. Detect that, record the real top cells, and quit.
+				echo "if {[lsearch [cellname list topcells] {${CELL_NAME}}] < 0} {"
+				echo "    set _fp [open {${CELL_MISMATCH_MARKER}} w]"
+				echo "    puts \$_fp [cellname list topcells]"
+				echo "    close \$_fp"
+				echo "    quit -noprompt"
+				echo "}"
+				echo "load $CELL_NAME"
+			} > "$EXT_SCRIPT"
+			;;
+		*)
+			echo "[ERROR] Unknown file format for Magic DRC!"
+			exit $ERR_UNKNOWN_FILE
+			;;
+	esac
 	{
 		echo "set drc_rpt_path $RESDIR/$CELL_NAME.magic.drc.rpt"
 		# shellcheck disable=SC2016
