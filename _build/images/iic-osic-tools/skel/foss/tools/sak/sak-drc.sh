@@ -355,7 +355,7 @@ if [ $RUN_MAGIC -eq 1 ]; then
 	magic -dnull -noconsole \
 		-rcfile "$PDKPATH/libs.tech/magic/$PDK.magicrc" \
 		"$EXT_SCRIPT" \
-		> /dev/null 2> /dev/null &
+		> "$RESDIR/$CELL_NAME.magic.drc.log" 2>&1 &
 fi
 
 # launch KLayout DRC
@@ -377,7 +377,7 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 			-rd offgrid=true \
 			-rd report="$RESDIR/$CELL_NAME.klayout.drc.feol.xml" \
 			-r "$PDKPATH/libs.tech/klayout/drc/${PDK}_mr.drc" \
-			> /dev/null 2> /dev/null &
+			> "$RESDIR/$CELL_NAME.klayout.drc.feol.log" 2>&1 &
 
 		klayout -b \
 			-rd input="$CELL_LAY" \
@@ -386,13 +386,13 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 			-rd offgrid=false \
 			-rd report="$RESDIR/$CELL_NAME.klayout.drc.beol.xml" \
 			-r "$PDKPATH/libs.tech/klayout/drc/${PDK}_mr.drc" \
-			> /dev/null 2> /dev/null &
+			> "$RESDIR/$CELL_NAME.klayout.drc.beol.log" 2>&1 &
 
 		klayout -b \
 			-rd input="$CELL_LAY" \
 			-rd report="$RESDIR/$CELL_NAME.klayout.drc.density.xml" \
 			-r "$PDKPATH/libs.tech/klayout/drc/met_min_ca_density.lydrc" \
-			> /dev/null 2> /dev/null &
+			> "$RESDIR/$CELL_NAME.klayout.drc.density.log" 2>&1 &
 
 		klayout -b \
 			-rd input="$CELL_LAY" \
@@ -400,13 +400,13 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 			-rd flat_mode=true \
 			-rd report="$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml" \
 			-r "$PDKPATH/libs.tech/klayout/drc/pin_label_purposes_overlapping_drawing.rb.drc" \
-			> /dev/null 2> /dev/null &
+			> "$RESDIR/$CELL_NAME.klayout.drc.pincheck.log" 2>&1 &
 
 		klayout -b \
 			-rd input="$CELL_LAY" \
 			-rd report="$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml" \
 			-r "$PDKPATH/libs.tech/klayout/drc/zeroarea.rb.drc" \
-			> /dev/null 2> /dev/null &
+			> "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.log" 2>&1 &
 	elif echo "$PDK" | grep -q -i "gf180mcu"; then
 		# gf180mcu via its gf180mcu.drc deck (run directly). variant=D selects the gf180mcuD stack (metal_top=11K, metal_level=5LM, mim_option=B). run_mode must be set explicitly (the deck aborts on an unknown mode), flat is the gf180 default.
 		# The RDB report is written into the run dir so the shared evaluation below picks it up.
