@@ -147,7 +147,14 @@ CELL_MISMATCH_MARKER="$RESDIR/drc_$FBASENAME.cellmismatch"
 # ------------------------------
 
 if [ -f "$1" ]; then
-	CELL_LAY="$1"
+	# an exact file was given: accept it only if it has a known layout extension
+	case "$1" in
+		*.mag|*.mag.gz|*.gds|*.gds.gz)
+			CELL_LAY="$1" ;;
+		*)
+			echo "[ERROR] Unsupported layout format <$1> (expected .mag, .mag.gz, .gds, .gds.gz)!"
+			exit $ERR_UNKNOWN_FILE ;;
+	esac
 elif [ -f "$1.mag" ]; then
 	CELL_LAY="$1.mag"
 elif [ -f "$1.mag.gz" ]; then
@@ -219,7 +226,7 @@ if [ $RUN_MAGIC -eq 1 ]; then
 	# drop any stale marker so it only reflects this run
 	rm -f "$CELL_MISMATCH_MARKER"
 
-	# generate DRC script for Magic; match the extension only, not an occurrence in the path
+	# generate DRC script for Magic. match the extension only, not an occurrence in the path
 	case "$CELL_LAY" in
 		*.mag)
 			[ $DEBUG -eq 1 ] && echo "[INFO] Magic runs DRC on .mag file."
