@@ -164,8 +164,8 @@ elif [ -f "$1.gds" ]; then
 elif [ -f "$1.gds.gz" ]; then
 	CELL_LAY="$1.gds.gz"
 else
-	echo "[ERROR] Layout <$CELL_LAY> not found!"
-    exit $ERR_FILE_NOT_FOUND
+	echo "[ERROR] Layout <$1> not found!"
+	exit $ERR_FILE_NOT_FOUND
 fi
 
 [ $DEBUG -eq 1 ] && echo "[INFO] CELL_LAY=$CELL_LAY"
