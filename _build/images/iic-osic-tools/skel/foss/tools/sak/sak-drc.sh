@@ -133,6 +133,8 @@ fi
 
 FBASENAME=$(basename "$1" | cut -d. -f1)
 EXT_SCRIPT="$RESDIR/drc_$FBASENAME.tcl"
+# GDS only: magic writes this marker if the GDS top cell is not named like the loaded cell; checked after the run.
+CELL_MISMATCH_MARKER="$RESDIR/drc_$FBASENAME.cellmismatch"
 
 # check if the input file exists
 # ------------------------------
@@ -200,6 +202,8 @@ if [ $RUN_MAGIC -eq 1 ]; then
 
 	# remove old result files
 	rm -f "$RESDIR/$CELL_NAME.magic.drc.rpt"
+	# drop any stale marker so it only reflects this run
+	rm -f "$CELL_MISMATCH_MARKER"
 
 	# generate DRC script for Magic
 	if echo "$CELL_LAY" | grep -q -i "\.mag"; then
@@ -214,6 +218,13 @@ if [ $RUN_MAGIC -eq 1 ]; then
 			echo "crashbackups stop"
 			[ -n "$FLATGLOB" ] && echo "gds flatglob $FLATGLOB"
 			echo "gds read $CELL_LAY"
+			# Magic loads the cell named $CELL_NAME. If the GDS has no such top cell it would load an empty cell and report DRC clean. Detect that, record the real top cells, and quit.
+			echo "if {[lsearch [cellname list topcells] {${CELL_NAME}}] < 0} {"
+			echo "    set _fp [open {${CELL_MISMATCH_MARKER}} w]"
+			echo "    puts \$_fp [cellname list topcells]"
+			echo "    close \$_fp"
+			echo "    quit -noprompt"
+			echo "}"
 			echo "load $CELL_NAME"
 		} > "$EXT_SCRIPT"
 	else
@@ -365,6 +376,15 @@ echo "---"
 
 if [ $RUN_MAGIC -eq 1 ]; then
 	[ $DEBUG -eq 0 ] && rm -f "$EXT_SCRIPT"
+
+	# GDS top cell did not match the loaded cell name (marker written by magic above): report the specific cause instead of the generic error below.
+	if [ -f "$CELL_MISMATCH_MARKER" ]; then
+		echo "[ERROR] GDS top cell does not match <$CELL_NAME>!"
+		echo "[ERROR] GDS top cell(s) found: <$(cat "$CELL_MISMATCH_MARKER")>."
+		echo "[ERROR] Rename the layout file/cell so they match, then re-run."
+		rm -f "$CELL_MISMATCH_MARKER"
+		exit $ERR_NO_OUTPUT
+	fi
 
 	if [ ! -f "$RESDIR/$CELL_NAME.magic.drc.rpt" ]; then
 		echo "[ERROR] No magic output found!"
