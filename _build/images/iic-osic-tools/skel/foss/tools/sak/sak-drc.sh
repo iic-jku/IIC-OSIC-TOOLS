@@ -464,7 +464,7 @@ if [ $RUN_MAGIC -eq 1 ]; then
 	fi
 
 	if [ ! -f "$RESDIR/$CELL_NAME.magic.drc.rpt" ]; then
-		echo "[ERROR] No magic output found!"
+		echo "[ERROR] Magic DRC produced no report, see <$RESDIR/$CELL_NAME.magic.drc.log>!"
 		exit $ERR_NO_OUTPUT
 	fi
 
@@ -480,7 +480,7 @@ if [ $RUN_KLAYOUT -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 
 	# each KLayout report violation is one <item> regardless of its geometry type (edge-pair, polygon, edge, ...), so count <item> rather than a single type.
 	if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.feol.xml" ]; then
-		echo "[ERROR] No klayout output found!"
+		echo "[ERROR] KLayout DRC produced no report, see the matching .log in <$RESDIR>!"
 		exit $ERR_NO_OUTPUT
 	fi
 	DRC_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.feol.xml")
@@ -492,7 +492,7 @@ if [ $RUN_KLAYOUT -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 	fi
 
 	if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.beol.xml" ]; then
-		echo "[ERROR] No klayout output found!"
+		echo "[ERROR] KLayout DRC produced no report, see the matching .log in <$RESDIR>!"
 		exit $ERR_NO_OUTPUT
 	fi
 	DRC_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.beol.xml")
@@ -504,19 +504,19 @@ if [ $RUN_KLAYOUT -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 	fi
 
 	if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.density.xml" ]; then
-		echo "[ERROR] No klayout output found!"
+		echo "[ERROR] KLayout DRC produced no report, see the matching .log in <$RESDIR>!"
 		exit $ERR_NO_OUTPUT
 	fi
 	DENSITY_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.density.xml")
 	if [ "$DENSITY_ERRORS" -ne 0 ]; then
-		echo "[INFO] Klayout $DENSITY_ERRORS density errors found! Check <$CELL_NAME.klayout.drc.density.xml>!"
+		echo "[INFO] KLayout $DENSITY_ERRORS density errors found! Check <$CELL_NAME.klayout.drc.density.xml>!"
 		DRC_CLEAN=0
 	else
 		echo "[INFO] KLayout metal density DRC is clean!"
 	fi
 
 	if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml" ]; then
-		echo "[ERROR] No klayout output found!"
+		echo "[ERROR] KLayout DRC produced no report, see the matching .log in <$RESDIR>!"
 		exit $ERR_NO_OUTPUT
 	fi
 	PINCHECK_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml")
@@ -528,7 +528,7 @@ if [ $RUN_KLAYOUT -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 	fi
 
 	if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml" ]; then
-		echo "[ERROR] No klayout output found!"
+		echo "[ERROR] KLayout DRC produced no report, see the matching .log in <$RESDIR>!"
 		exit $ERR_NO_OUTPUT
 	fi
 	ZEROAREA_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml")
