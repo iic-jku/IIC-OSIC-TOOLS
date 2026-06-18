@@ -131,7 +131,14 @@ fi
 # define useful variables
 # -----------------------
 
-FBASENAME=$(basename "$1" | cut -d. -f1)
+# strip only a known layout extension (if any) so cell names containing dots are preserved
+FBASENAME=$(basename "$1")
+case "$FBASENAME" in
+	*.mag.gz)	FBASENAME=${FBASENAME%.mag.gz} ;;
+	*.gds.gz)	FBASENAME=${FBASENAME%.gds.gz} ;;
+	*.mag)		FBASENAME=${FBASENAME%.mag} ;;
+	*.gds)		FBASENAME=${FBASENAME%.gds} ;;
+esac
 EXT_SCRIPT="$RESDIR/drc_$FBASENAME.tcl"
 # GDS only: magic writes this marker if the GDS top cell is not named like the loaded cell; checked after the run.
 CELL_MISMATCH_MARKER="$RESDIR/drc_$FBASENAME.cellmismatch"
@@ -174,7 +181,14 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 fi
 
 echo "[INFO] Results are put into <$RESDIR>."
-CELL_NAME=$(basename "$CELL_LAY" | cut -d. -f1)
+# strip only a known layout extension so cell names containing dots are preserved
+CELL_NAME=$(basename "$CELL_LAY")
+case "$CELL_NAME" in
+	*.mag.gz)	CELL_NAME=${CELL_NAME%.mag.gz} ;;
+	*.gds.gz)	CELL_NAME=${CELL_NAME%.gds.gz} ;;
+	*.mag)		CELL_NAME=${CELL_NAME%.mag} ;;
+	*.gds)		CELL_NAME=${CELL_NAME%.gds} ;;
+esac
 
 # decompress gzipped layout views, magic cannot read them directly
 # ----------------------------------------------------------------
