@@ -34,9 +34,9 @@ pip3 install $PIP_FLAGS \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.0.4 \
-	najaeda==0.7.2 \
+	najaeda==0.7.3 \
 	pygmid==1.2.12 \
-	pyrtl==0.12 \
+	pyrtl==1.0.0 \
 	pyuvm==4.0.1 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
