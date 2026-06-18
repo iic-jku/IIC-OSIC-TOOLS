@@ -1,6 +1,6 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
-  commit: af1cb7386fac019a66472e1ecb33f724b0e6bcf0
+  commit: 4ff8b6b843ed240fb3cb268f489a25e33bd6af98
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -69,7 +69,7 @@
   commit: 4ffeed4291724ce5a20aee6df5ad295ae8d36233
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 4db8ad9fda299ac0142ab20da6180df1869b4422
+  commit: 704951546c6d60b3fdd3bebb1a749d09fdd50da8
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -105,7 +105,7 @@
   commit: 4106501b04399a425b8d8e5cadf8b73f2a6beb9c
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 3251530961e0e8a8054098c9bb8376474958944a
+  commit: f3804697ca4927993ac504f2fc0ed88fe5c25317
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
