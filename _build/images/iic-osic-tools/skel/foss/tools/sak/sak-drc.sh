@@ -557,7 +557,7 @@ fi
 echo "---"
 
 if [ "$DRC_CLEAN" -eq 1 ]; then
-		echo "CONGRATULATIONS! No DRC errors in <$CELL_LAY> found!"
+		echo "CONGRATULATIONS! No DRC errors in <$CELL_NAME> found!"
 		echo "---"
 else
 		echo "DRC ERRORS FOUND! Please check the output files!"
