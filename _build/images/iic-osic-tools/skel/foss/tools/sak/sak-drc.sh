@@ -173,6 +173,24 @@ fi
 echo "[INFO] Results are put into <$RESDIR>."
 CELL_NAME=$(basename "$CELL_LAY" | cut -d. -f1)
 
+# decompress gzipped layout views, magic cannot read them directly
+# ----------------------------------------------------------------
+
+GZ_TMP=""
+case "$CELL_LAY" in
+	*.gds.gz)
+		GZ_TMP="$RESDIR/${CELL_NAME}.drctmp.gds"
+		;;
+	*.mag.gz)
+		GZ_TMP="$RESDIR/${CELL_NAME}.drctmp.mag"
+		;;
+esac
+if [ -n "$GZ_TMP" ]; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] Decompressing <$CELL_LAY> to <$GZ_TMP>."
+	gunzip -c "$CELL_LAY" > "$GZ_TMP"
+	CELL_LAY="$GZ_TMP"
+fi
+
 # launch Magic DRC
 # ----------------
 
@@ -337,6 +355,9 @@ fi
 
 wait
 echo "---"
+
+# the decompressed layout is no longer needed after the DRC runs
+[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
 
 # evaluate results of runs
 # ------------------------
