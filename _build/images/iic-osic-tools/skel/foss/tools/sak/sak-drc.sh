@@ -133,8 +133,9 @@ shift $((OPTIND-1))
 
 [ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
 if [ $RUN_CLEAN -eq 1 ]; then
-	rm -f -- "$RESDIR"/*.magic.*.rpt
-	rm -f -- "$RESDIR"/*.klayout.*.xml
+	rm -f  -- "$RESDIR"/*.magic.*.rpt "$RESDIR"/*.magic.*.log
+	rm -f  -- "$RESDIR"/*.klayout.*.xml "$RESDIR"/*.klayout.*.log
+	rm -rf -- "$RESDIR"/*.klayout.drc
 fi
 
 # define useful variables
