@@ -35,6 +35,7 @@ ERR_CMD_NOT_FOUND=4
 ERR_UNKNOWN_FILE=5
 ERR_PDK_NOT_SUPPORTED=6
 ERR_NO_OUTPUT=7
+ERR_NO_VAR=8
 
 if [ $# -eq 0 ]; then
 	echo
@@ -62,6 +63,14 @@ DEBUG=0
 DRC_CLEAN=1
 RESDIR=$PWD
 FLATGLOB=""
+
+# check that the PDK environment is set up
+# ----------------------------------------
+
+if [ -z "${PDKPATH+x}" ]; then
+	echo "[ERROR] Variable PDKPATH not set!"
+	exit $ERR_NO_VAR
+fi
 
 # check if the PDK is already supported by this script
 # ----------------------------------------------------
