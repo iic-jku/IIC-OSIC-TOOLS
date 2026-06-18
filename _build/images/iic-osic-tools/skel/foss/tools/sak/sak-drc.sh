@@ -413,7 +413,7 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 	fi
 	ZEROAREA_ERRORS=$(grep -c "edge-pair" "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml")
 	if [ "$ZEROAREA_ERRORS" -ne 0 ]; then
-		echo "[INFO] KLayout $ZEROAREA_ERRORS zero-area errors found! Check <$CELL_LAY.klayout.drc.zeroarea.xml>!"
+		echo "[INFO] KLayout $ZEROAREA_ERRORS zero-area errors found! Check <$CELL_NAME.klayout.drc.zeroarea.xml>!"
 		DRC_CLEAN=0
 	else
 		echo "[INFO] KLayout zero-area DRC is clean!"
