@@ -408,19 +408,28 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 			-r "$PDKPATH/libs.tech/klayout/drc/zeroarea.rb.drc" \
 			> "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.log" 2>&1 &
 	elif echo "$PDK" | grep -q -i "gf180mcu"; then
-		# gf180mcu via its gf180mcu.drc deck (run directly). variant=D selects the gf180mcuD stack (metal_top=11K, metal_level=5LM, mim_option=B). run_mode must be set explicitly (the deck aborts on an unknown mode), flat is the gf180 default.
-		# The RDB report is written into the run dir so the shared evaluation below picks it up.
+		# gf180mcu via its run_drc.py wrapper. --variant is required. D selects the gf180mcuD stack. It writes <layout>_<table>.lyrdb report(s) into --run_dir.
 		rm -rf "$KLAYOUT_RUNDIR"
 		mkdir -p "$KLAYOUT_RUNDIR"
-		klayout -b \
-			-rd input="$CELL_LAY" \
-			-rd topcell="$CELL_NAME" \
-			-rd variant=D \
-			-rd run_mode=flat \
-			-rd threads="$(nproc --ignore 5)" \
-			-rd report="$KLAYOUT_RUNDIR/$CELL_NAME.lyrdb" \
-			-r "$PDKPATH/libs.tech/klayout/tech/drc/gf180mcu.drc" \
+		python3 "$PDKPATH/libs.tech/klayout/tech/drc/run_drc.py" \
+			--path="$CELL_LAY" \
+			--variant=D \
+			--topcell="$CELL_NAME" \
+			--run_dir="$KLAYOUT_RUNDIR" \
+			--mp="$(nproc --ignore 5)" \
 			> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
+		# Alternative (to be enabled in a future update): run the gf180mcu.drc deck directly (no wrapper). run_mode must be set explicitly (the deck aborts on an unknown mode). flat is the gf180 default.
+		# rm -rf "$KLAYOUT_RUNDIR"
+		# mkdir -p "$KLAYOUT_RUNDIR"
+		# klayout -b \
+		#	-rd input="$CELL_LAY" \
+		#	-rd topcell="$CELL_NAME" \
+		#	-rd variant=D \
+		#	-rd run_mode=flat \
+		#	-rd threads="$(nproc --ignore 5)" \
+		#	-rd report="$KLAYOUT_RUNDIR/$CELL_NAME.lyrdb" \
+		#	-r "$PDKPATH/libs.tech/klayout/tech/drc/gf180mcu.drc" \
+		#	> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
 	elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
 		# ihp-sg13g2 via its run_drc.py wrapper. It writes <layout>_<topcell>_<tables>.lyrdb (multiple reports are merged into a *_full.lyrdb) into --run_dir.
 		# Scope (per the ICD reference flow): --no_feol --no_density --disable_extra_rules skips FEOL, density, and the extra "maximal" rule set for a faster run.
