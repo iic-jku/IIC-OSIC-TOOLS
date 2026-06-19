@@ -436,10 +436,10 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 			> "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.log" 2>&1 &
 	elif echo "$PDK" | grep -q -i "gf180mcu"; then
 		# gf180mcu via its run_drc.py wrapper. --variant is required. D selects the gf180mcuD stack.
-		# DRC level (precheck is skipped earlier as gf180 has none): regular checks everything (incl. density and antenna), macro skips FEOL (density/antenna are off by default here).
+		# DRC level (precheck is skipped earlier as gf180 has none): regular checks everything (incl. density and antenna), macro skips FEOL and connectivity (density/antenna are off by default here).
 		case "$DRC_LEVEL" in
 			regular)	DRC_FLAGS="--density --antenna" ;;
-			macro)		DRC_FLAGS="--no_feol" ;;
+			macro)		DRC_FLAGS="--no_feol --no_connectivity" ;;
 			*)		DRC_FLAGS="" ;;
 		esac
 		rm -rf "$KLAYOUT_RUNDIR"
@@ -456,8 +456,8 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 		# Alternative (to be enabled in a future update): run the gf180mcu.drc deck directly (no wrapper). run_mode must be set explicitly (the deck aborts on an unknown mode). flat is the gf180 default.
 		# DRC level -> -rd scope (param names assume the old deck switches; the framework deck may select scope via -rd decks=..., verify with -rd help=true):
 		# case "$DRC_LEVEL" in
-		#	regular)	DRC_RD="-rd density=true" ;;
-		#	macro)		DRC_RD="-rd feol=false" ;;
+		#	regular)	DRC_RD="-rd density=true -rd antenna=true" ;;
+		#	macro)		DRC_RD="-rd feol=false -rd conn_drc=false" ;;
 		#	*)		DRC_RD="" ;;
 		# esac
 		# rm -rf "$KLAYOUT_RUNDIR"
