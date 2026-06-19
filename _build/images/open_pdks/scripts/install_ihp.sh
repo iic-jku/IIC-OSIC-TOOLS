@@ -31,6 +31,14 @@ else
 	exit 1
 fi
 
+# Copy the repo-level `versions.txt` next to the PDK (at $PDK_ROOT) so the KLayout DRC/LVS version check can find it. run_drc.py / run_lvs.py resolve versions.txt as a sibling of the ihp-sg13g2/ directory, which in this flattened layout is $PDK_ROOT (mirroring its repo-root position in a normal checkout).
+if [ -f "versions.txt" ]; then
+	cp "versions.txt" "$PDK_ROOT/versions.txt"
+else
+	echo "[ERROR] versions.txt not found in PDK repo. KLayout DRC/LVS version check may fail."
+	exit 1
+fi
+
 # Store git hash of installed PDK version for reference
 PDK_COMMIT=$(git rev-parse HEAD)
 echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
