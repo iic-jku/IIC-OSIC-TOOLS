@@ -31,7 +31,8 @@ else
 	exit 1
 fi
 
-# Copy the repo-level `versions.txt` next to the PDK (at $PDK_ROOT) so the KLayout DRC/LVS version check can find it. run_drc.py / run_lvs.py resolve versions.txt as a sibling of the ihp-sg13g2/ directory, which in this flattened layout is $PDK_ROOT (mirroring its repo-root position in a normal checkout).
+# Copy the repo-level `versions.txt` next to the PDK (at $PDK_ROOT) so the KLayout DRC/LVS version check can find it.
+# This is mandatory since commit: https://github.com/IHP-GmbH/IHP-Open-PDK/commit/d54e4a48a3d34c555a038b64a0869cd295134376
 if [ -f "versions.txt" ]; then
 	cp "versions.txt" "$PDK_ROOT/versions.txt"
 else
