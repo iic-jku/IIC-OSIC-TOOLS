@@ -2,7 +2,7 @@
 # ========================================================================
 # DRC (Design Rule Check) Script for Open-Source IC Design
 #
-# SPDX-FileCopyrightText: 2021-2026 Harald Pretl
+# SPDX-FileCopyrightText: 2021-2026 Harald Pretl, Simon Dorrer
 # Johannes Kepler University, Department for Integrated Circuits
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,11 +18,13 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-drc.sh [-d] [-m|-k|-b] [-c] [-f <pattern>] [-w workdir] <cellname>
+# Usage: sak-drc.sh [-d] [-m|-k|-b] [-c] [-l <level>] [-f <pattern>] [-w workdir] <cellname>
 #        -m  Run Magic DRC (default)
 #        -k  Run KLayout DRC
 #        -b  Run Magic and KLayout DRC
 #        -c  Clean output files before running
+#        -l  KLayout DRC level for gf180mcu/ihp-sg13g2: precheck | regular | macro (default: macro).
+#            Ignored for sky130, which always runs all checks.
 #        -f  Set gds flatglob pattern for Magic (e.g., '*' to flatten all)
 #        -w  Use <workdir> to store result files (default: current dir)
 #        -d  Enable debug information
@@ -41,11 +43,12 @@ if [ $# -eq 0 ]; then
 	echo
 	echo "DRC script for Magic and KLayout (ICD@JKU)"
 	echo
-	echo "Usage: $0 [-d] [-m|-k|-b] [-c] [-f <pattern>] [-w workdir] <cellname>"
+	echo "Usage: $0 [-d] [-m|-k|-b] [-c] [-l <level>] [-f <pattern>] [-w workdir] <cellname>"
 	echo "       -m Run Magic DRC (default)"
 	echo "       -k Run KLayout DRC"
 	echo "       -b Run Magic and KLayout DRC"
 	echo "       -c Clean output files"
+	echo "       -l KLayout DRC level for gf180mcu/ihp-sg13g2: precheck | regular | macro (default: macro). Ignored for sky130, which always runs all checks."
 	echo "       -f Set gds flatglob pattern for Magic (e.g., '*' to flatten all)"
 	echo "       -w Use <workdir> to store result files (default current dir)"
 	echo "       -d Enable debug information"
@@ -63,6 +66,7 @@ DEBUG=0
 DRC_CLEAN=1
 RESDIR=$PWD
 FLATGLOB=""
+DRC_LEVEL="macro"
 
 # check that the PDK environment is set up
 # ----------------------------------------
@@ -91,11 +95,15 @@ fi
 # check flags
 # -----------
 
-while getopts "mkbcf:w:d" flag; do
+while getopts "mkbcf:w:l:d" flag; do
 	case $flag in
 		f)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -f is set to <$OPTARG>."
 			FLATGLOB="$OPTARG"
+			;;
+		l)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -l is set to <$OPTARG>."
+			DRC_LEVEL="$OPTARG"
 			;;
 		m)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -m is set."
@@ -130,6 +138,14 @@ while getopts "mkbcf:w:d" flag; do
     esac
 done
 shift $((OPTIND-1))
+
+# validate the KLayout DRC level
+case "$DRC_LEVEL" in
+	precheck|regular|macro) ;;
+	*)
+		echo "[ERROR] Unknown KLayout DRC level <$DRC_LEVEL> (expected precheck, regular, or macro)!"
+		exit $ERR_NO_PARAM ;;
+esac
 
 [ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
 if [ $RUN_CLEAN -eq 1 ]; then
@@ -221,6 +237,17 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 			fi
 			;;
 	esac
+fi
+
+# gf180mcu has no precheck DRC level, skip KLayout for it (warn if Magic also runs, error otherwise).
+if [ $RUN_KLAYOUT -eq 1 ] && [ "$DRC_LEVEL" = "precheck" ] && echo "$PDK" | grep -q -i "gf180mcu"; then
+	if [ $RUN_MAGIC -eq 1 ]; then
+		echo "[WARNING] No precheck KLayout DRC level for gf180mcu, running Magic DRC only."
+		RUN_KLAYOUT=0
+	else
+		echo "[ERROR] No precheck KLayout DRC level for gf180mcu!"
+		exit $ERR_NO_PARAM
+	fi
 fi
 
 echo "[INFO] Results are put into <$RESDIR>."
@@ -408,17 +435,31 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 			-r "$PDKPATH/libs.tech/klayout/drc/zeroarea.rb.drc" \
 			> "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.log" 2>&1 &
 	elif echo "$PDK" | grep -q -i "gf180mcu"; then
-		# gf180mcu via its run_drc.py wrapper. --variant is required. D selects the gf180mcuD stack. It writes <layout>_<table>.lyrdb report(s) into --run_dir.
+		# gf180mcu via its run_drc.py wrapper. --variant is required. D selects the gf180mcuD stack.
+		# DRC level (precheck is skipped earlier as gf180 has none): regular checks everything (incl. density and antenna), macro skips FEOL (density/antenna are off by default here).
+		case "$DRC_LEVEL" in
+			regular)	DRC_FLAGS="--density --antenna" ;;
+			macro)		DRC_FLAGS="--no_feol" ;;
+			*)		DRC_FLAGS="" ;;
+		esac
 		rm -rf "$KLAYOUT_RUNDIR"
 		mkdir -p "$KLAYOUT_RUNDIR"
+		# shellcheck disable=SC2086
 		python3 "$PDKPATH/libs.tech/klayout/tech/drc/run_drc.py" \
 			--path="$CELL_LAY" \
 			--variant=D \
 			--topcell="$CELL_NAME" \
 			--run_dir="$KLAYOUT_RUNDIR" \
+			$DRC_FLAGS \
 			--mp="$(nproc --ignore 5)" \
 			> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
 		# Alternative (to be enabled in a future update): run the gf180mcu.drc deck directly (no wrapper). run_mode must be set explicitly (the deck aborts on an unknown mode). flat is the gf180 default.
+		# DRC level -> -rd scope (param names assume the old deck switches; the framework deck may select scope via -rd decks=..., verify with -rd help=true):
+		# case "$DRC_LEVEL" in
+		#	regular)	DRC_RD="-rd density=true" ;;
+		#	macro)		DRC_RD="-rd feol=false" ;;
+		#	*)		DRC_RD="" ;;
+		# esac
 		# rm -rf "$KLAYOUT_RUNDIR"
 		# mkdir -p "$KLAYOUT_RUNDIR"
 		# klayout -b \
@@ -427,21 +468,26 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 		#	-rd variant=D \
 		#	-rd run_mode=flat \
 		#	-rd threads="$(nproc --ignore 5)" \
+		#	$DRC_RD \
 		#	-rd report="$KLAYOUT_RUNDIR/$CELL_NAME.lyrdb" \
 		#	-r "$PDKPATH/libs.tech/klayout/tech/drc/gf180mcu.drc" \
 		#	> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
 	elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
-		# ihp-sg13g2 via its run_drc.py wrapper. It writes <layout>_<topcell>_<tables>.lyrdb (multiple reports are merged into a *_full.lyrdb) into --run_dir.
-		# Scope (per the ICD reference flow): --no_feol --no_density --disable_extra_rules skips FEOL, density, and the extra "maximal" rule set for a faster run.
+		# ihp-sg13g2 via its run_drc.py wrapper (writes <layout>_<topcell>_<tables>.lyrdb, merged into *_full.lyrdb, into --run_dir).
+		# DRC level: precheck = fast pre-check, regular = full chip, macro = single macro (skip FEOL/density/maximal).
+		case "$DRC_LEVEL" in
+			precheck)	DRC_FLAGS="--precheck_drc --no_offgrid --no_angle --disable_extra_rules --no_recommended" ;;
+			regular)	DRC_FLAGS="--antenna" ;;
+			macro)		DRC_FLAGS="--no_feol --no_density --disable_extra_rules" ;;
+		esac
 		rm -rf "$KLAYOUT_RUNDIR"
 		mkdir -p "$KLAYOUT_RUNDIR"
+		# shellcheck disable=SC2086
 		python3 "$PDKPATH/libs.tech/klayout/tech/drc/run_drc.py" \
 			--path="$CELL_LAY" \
 			--topcell="$CELL_NAME" \
 			--run_dir="$KLAYOUT_RUNDIR" \
-			--no_feol \
-			--no_density \
-			--disable_extra_rules \
+			$DRC_FLAGS \
 			--mp="$(nproc --ignore 5)" \
 			--density_thr="$(nproc --ignore 5)" \
 			> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
