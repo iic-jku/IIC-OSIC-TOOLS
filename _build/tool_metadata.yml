@@ -51,7 +51,7 @@
   commit: 1.5.321
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 57682fe5376acd06b0b15eb072ed3b1dd32cedcf
+  commit: 2b560ad0ccc6e7e93ad8bd6cb0f88f925bbb314b
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-46
@@ -69,13 +69,13 @@
   commit: 4ffeed4291724ce5a20aee6df5ad295ae8d36233
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 704951546c6d60b3fdd3bebb1a749d09fdd50da8
+  commit: 4c26918f5a77392910939b51b9c2490b7e7e3201
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
 - name: openvaf
   repo: https://github.com/arpadbuermen/OpenVAF.git
-  commit: 3f11e31f0dd088eb5d86ea59d89fac3c003fb61b
+  commit: c592eed6f7552f979e72c5f6d129a9052713e052
 - name: osic-multitool
   repo: https://github.com/iic-jku/osic-multitool.git
   commit: 073506c3d032b8597f1ec4a3d211451f85d32536
@@ -102,16 +102,16 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 4106501b04399a425b8d8e5cadf8b73f2a6beb9c
+  commit: 44dc55f99b9c64971893013e7931e643fbedcf23
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: f3804697ca4927993ac504f2fc0ed88fe5c25317
+  commit: 009058e4c2615f282db27cb484c4296b28f4ac5b
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: de829033327fb5f34839b9946a213917186b6a4d
+  commit: 1280c3ca1ef0ce5ec95994cb9b7144f3ea2c655c
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.86
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.11.21
+  commit: 0.11.23
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
   commit: ffdb7a31d86b35f82e25b1c07d534bf8051a0fd5

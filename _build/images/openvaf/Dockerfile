@@ -7,7 +7,7 @@
 ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS openvaf
 ARG OPENVAF_REPO_URL="https://github.com/arpadbuermen/OpenVAF.git"
-ARG OPENVAF_REPO_COMMIT="3f11e31f0dd088eb5d86ea59d89fac3c003fb61b"
+ARG OPENVAF_REPO_COMMIT="c592eed6f7552f979e72c5f6d129a9052713e052"
 ARG OPENVAF_NAME="openvaf"
 ENV OPENVAF_NAME=${OPENVAF_NAME}
 RUN --mount=type=bind,source=images/openvaf,target=/images/openvaf \
