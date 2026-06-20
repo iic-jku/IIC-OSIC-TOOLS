@@ -67,30 +67,7 @@ DRC_CLEAN=1
 RESDIR=$PWD
 FLATGLOB=""
 DRC_LEVEL="macro"
-
-# check that the PDK environment is set up
-# ----------------------------------------
-
-if [ -z "${PDKPATH+x}" ]; then
-	echo "[ERROR] Variable PDKPATH not set!"
-	exit $ERR_NO_VAR
-fi
-
-# check if the PDK is already supported by this script
-# ----------------------------------------------------
-
-if echo "$PDK" | grep -q -i "sky130"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] sky130 PDK selected."
-elif echo "$PDK" | grep -q -i "gf180mcu"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] gf180mcu PDK selected."
-elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13g2 PDK selected"
-elif echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13cmos5l PDK selected"
-else
-	echo "[ERROR] The PDK $PDK is not yet supported!"
-	exit $ERR_PDK_NOT_SUPPORTED
-fi
+DRC_LEVEL_SET=0
 
 # check flags
 # -----------
@@ -104,6 +81,7 @@ while getopts "mkbcf:w:l:d" flag; do
 		l)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -l is set to <$OPTARG>."
 			DRC_LEVEL="$OPTARG"
+			DRC_LEVEL_SET=1
 			;;
 		m)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -m is set."
@@ -146,6 +124,27 @@ case "$DRC_LEVEL" in
 		echo "[ERROR] Unknown KLayout DRC level <$DRC_LEVEL> (expected precheck, regular, or macro)!"
 		exit $ERR_NO_PARAM ;;
 esac
+
+# check that the PDK environment is set up and supported
+# ------------------------------------------------------
+
+if [ -z "$PDKPATH" ]; then
+	echo "[ERROR] Variable PDKPATH not set!"
+	exit $ERR_NO_VAR
+fi
+
+if echo "$PDK" | grep -q -i "sky130"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] sky130 PDK selected."
+elif echo "$PDK" | grep -q -i "gf180mcu"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] gf180mcu PDK selected."
+elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13g2 PDK selected."
+elif echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13cmos5l PDK selected."
+else
+	echo "[ERROR] The PDK $PDK is not yet supported!"
+	exit $ERR_PDK_NOT_SUPPORTED
+fi
 
 [ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
 if [ $RUN_CLEAN -eq 1 ]; then
@@ -397,6 +396,7 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] CELL_LAY=$CELL_LAY RESDIR=$RESDIR PDKPATH=$PDKPATH PDK=$PDK"
 
 	if echo "$PDK" | grep -q -i "sky130"; then
+		[ $DRC_LEVEL_SET -eq 1 ] && echo "[INFO] -l is ignored for sky130, all DRC checks are run."
 		klayout -b \
 			-rd input="$CELL_LAY" \
 			-rd feol=true \
@@ -526,7 +526,7 @@ if [ $RUN_MAGIC -eq 1 ]; then
 	if grep -q "COUNT: 0" "$RESDIR/$CELL_NAME.magic.drc.rpt"; then
 		echo "[INFO] Magic DRC is clean!"
 	else
-		echo "[INFO] Magic DRC errors found! Check <$CELL_NAME.magic.drc.rpt>!"
+		echo "[INFO] Magic DRC errors found! Check <$RESDIR/$CELL_NAME.magic.drc.rpt>!"
 		DRC_CLEAN=0	
 	fi
 fi
@@ -540,7 +540,7 @@ if [ $RUN_KLAYOUT -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 	fi
 	DRC_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.feol.xml")
 	if [ "$DRC_ERRORS" -ne 0 ]; then
-		echo "[INFO] KLayout $DRC_ERRORS DRC errors found! Check <$CELL_NAME.klayout.drc.feol.xml>!"
+		echo "[INFO] KLayout $DRC_ERRORS DRC errors found! Check <$RESDIR/$CELL_NAME.klayout.drc.feol.xml>!"
 		DRC_CLEAN=0
 	else
 		echo "[INFO] KLayout FEOL DRC is clean!"
@@ -552,7 +552,7 @@ if [ $RUN_KLAYOUT -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 	fi
 	DRC_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.beol.xml")
 	if [ "$DRC_ERRORS" -ne 0 ]; then
-		echo "[INFO] KLayout $DRC_ERRORS DRC errors found! Check <$CELL_NAME.klayout.drc.beol.xml>!"
+		echo "[INFO] KLayout $DRC_ERRORS DRC errors found! Check <$RESDIR/$CELL_NAME.klayout.drc.beol.xml>!"
 		DRC_CLEAN=0
 	else
 		echo "[INFO] KLayout BEOL DRC is clean!"
@@ -564,7 +564,7 @@ if [ $RUN_KLAYOUT -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 	fi
 	DENSITY_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.density.xml")
 	if [ "$DENSITY_ERRORS" -ne 0 ]; then
-		echo "[INFO] KLayout $DENSITY_ERRORS density errors found! Check <$CELL_NAME.klayout.drc.density.xml>!"
+		echo "[INFO] KLayout $DENSITY_ERRORS density errors found! Check <$RESDIR/$CELL_NAME.klayout.drc.density.xml>!"
 		DRC_CLEAN=0
 	else
 		echo "[INFO] KLayout metal density DRC is clean!"
@@ -576,7 +576,7 @@ if [ $RUN_KLAYOUT -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 	fi
 	PINCHECK_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml")
 	if [ "$PINCHECK_ERRORS" -ne 0 ]; then
-		echo "[INFO] KLayout $PINCHECK_ERRORS pin errors found! Check <$CELL_NAME.klayout.drc.pincheck.xml>!"
+		echo "[INFO] KLayout $PINCHECK_ERRORS pin errors found! Check <$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml>!"
 		DRC_CLEAN=0
 	else
 		echo "[INFO] KLayout pin check DRC is clean!"
@@ -588,7 +588,7 @@ if [ $RUN_KLAYOUT -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 	fi
 	ZEROAREA_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml")
 	if [ "$ZEROAREA_ERRORS" -ne 0 ]; then
-		echo "[INFO] KLayout $ZEROAREA_ERRORS zero-area errors found! Check <$CELL_NAME.klayout.drc.zeroarea.xml>!"
+		echo "[INFO] KLayout $ZEROAREA_ERRORS zero-area errors found! Check <$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml>!"
 		DRC_CLEAN=0
 	else
 		echo "[INFO] KLayout zero-area DRC is clean!"
