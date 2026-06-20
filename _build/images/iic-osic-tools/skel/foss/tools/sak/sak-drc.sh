@@ -117,6 +117,12 @@ while getopts "mkbcf:w:l:d" flag; do
 done
 shift $((OPTIND-1))
 
+# a cellname (or layout file) is required
+if [ -z "$1" ]; then
+	echo "[ERROR] No cellname provided!"
+	exit $ERR_NO_PARAM
+fi
+
 # validate the KLayout DRC level
 case "$DRC_LEVEL" in
 	precheck|regular|macro) ;;
