@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # ========================================================================
 # PEX (Parasitic Extraction) Script for Open-Source IC Design
 #
@@ -43,6 +43,7 @@ ERR_WRONG_MODE=4
 ERR_CMD_NOT_FOUND=5
 ERR_PDK_NOT_SUPPORTED=6
 ERR_UNKNOWN_FILE=7
+ERR_NO_VAR=8
 
 if [ $# -eq 0 ]; then
 	echo
@@ -66,7 +67,7 @@ if [ $# -eq 0 ]; then
 	exit $ERR_NO_PARAM
 fi
 
-# Set the default behavior
+# set the default behavior
 # ------------------------
 
 DEBUG=0
@@ -81,43 +82,43 @@ EXT_THRESHOLD=10000	# mOhm: coarse end-to-end resistance gating extraction
 EXT_MINRES=1000		# mOhm: resistors below this are merged (simplification)
 EXT_MINDELAY=1		# ps: delay-based output gating (0 = gate by resistance)
 
-# Check flags
+# check flags
 # -----------
 
 while getopts "m:s:w:n:t:r:y:d" flag; do
 	case $flag in
 		m)
-			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -m is set to <$OPTARG>."
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -m is set to <$OPTARG>."
 			EXT_MODE=${OPTARG}
 			;;
 		s)
-			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -s is set to <$OPTARG>."
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -s is set to <$OPTARG>."
 			SUBCIRCUIT=${OPTARG}
 			;;
 		t)
-			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -t is set to <$OPTARG>."
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -t is set to <$OPTARG>."
 			EXT_THRESHOLD=${OPTARG}
 			;;
 		r)
-			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -r is set to <$OPTARG>."
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -r is set to <$OPTARG>."
 			EXT_MINRES=${OPTARG}
 			;;
 		y)
-			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -y is set to <$OPTARG>."
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -y is set to <$OPTARG>."
 			EXT_MINDELAY=${OPTARG}
 			;;
 		w)
-			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -w is set to <$OPTARG>."
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -w is set to <$OPTARG>."
 			# -m so a not-yet-existing (multi-level) workdir still resolves. It is created below.
 			RESDIR=$(realpath -m "$OPTARG")
 			;;
 		n)
-			[ $DEBUG -eq 1 ] && echo "[INFO] Flag -n is set to <$OPTARG>."
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -n is set to <$OPTARG>."
 			CELL_NAME_SET=1
 			CELL_NAME_PEX=${OPTARG}
 			;;	
 		d)
-			echo "[INFO] DEBUG is enabled."
+			echo "[INFO] DEBUG is enabled!"
 			DEBUG=1
 			;;
 		*)
@@ -126,7 +127,7 @@ while getopts "m:s:w:n:t:r:y:d" flag; do
 done
 shift $((OPTIND-1))
 
-# Check that the mode is an integer and in a valid range
+# check that the mode is an integer and in a valid range
 # ------------------------------------------------------
 
 if [ -n "$EXT_MODE" ] && [ "$EXT_MODE" -eq "$EXT_MODE" ] 2>/dev/null; then
@@ -149,7 +150,7 @@ else
         exit $ERR_WRONG_MODE
 fi
 
-# Check that the full-RC extresist parameters are non-negative integers
+# check that the full-RC extresist parameters are non-negative integers
 # ---------------------------------------------------------------------
 
 for _ext_par in "threshold:$EXT_THRESHOLD" "minres:$EXT_MINRES" "mindelay:$EXT_MINDELAY"; do
@@ -166,23 +167,39 @@ for _ext_par in "threshold:$EXT_THRESHOLD" "minres:$EXT_MINRES" "mindelay:$EXT_M
 	fi
 done
 
-# Check if the PDK is already supported by this script
-# ----------------------------------------------------
+# check that the PDK environment is set up
+# ----------------------------------------
+
+if [ -z "$PDK_ROOT" ]; then
+	echo "[ERROR] Variable PDK_ROOT not set!"
+	exit $ERR_NO_VAR
+fi
+if [ -z "$PDK" ]; then
+	echo "[ERROR] Variable PDK not set!"
+	exit $ERR_NO_VAR
+fi
+if [ -z "$PDKPATH" ]; then
+	echo "[ERROR] Variable PDKPATH not set!"
+	exit $ERR_NO_VAR
+fi
+
+# check that the PDK is supported
+# -------------------------------
 
 if echo "$PDK" | grep -q -i "sky130"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] sky130 PDK selected"
+	[ $DEBUG -eq 1 ] && echo "[INFO] sky130 PDK selected."
 elif echo "$PDK" | grep -q -i "gf180mcu"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] gf180mcu PDK selected"
+	[ $DEBUG -eq 1 ] && echo "[INFO] gf180mcu PDK selected."
 elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13g2 PDK selected"
+	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13g2 PDK selected."
 elif echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13cmos5l PDK selected"
+	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13cmos5l PDK selected."
 else
 	echo "[ERROR] The PDK $PDK is not yet supported!"
 	exit $ERR_PDK_NOT_SUPPORTED
 fi
 
-# Check if the input file exists
+# check if the input file exists
 # ------------------------------
 
 if [ -z "$1" ]; then
@@ -214,10 +231,10 @@ fi
 
 [ $DEBUG -eq 1 ] && echo "[INFO] CELL_LAY=$CELL_LAY"
 
-# Define useful variables
+# define useful variables
 # -----------------------
 
-# Derive the cell name by stripping only the known layout extension, so that cell names which themselves contain dots (e.g. "my.cell.mag") are preserved.
+# derive the cell name by stripping only the known layout extension, so that cell names which themselves contain dots (e.g. "my.cell.mag") are preserved.
 CELL_BASE=$(basename "$CELL_LAY")
 case "$CELL_BASE" in
 	*.mag.gz)	CELL_NAME=${CELL_BASE%.mag.gz} ;;
@@ -236,37 +253,51 @@ if [ $CELL_NAME_SET -eq 0 ]; then
 	CELL_NAME_PEX=${CELL_NAME}
 fi
 
-# Make sure the result directory exists (e.g. when set via -w)
+# make sure the result directory exists (e.g. when set via -w)
 [ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
 
-# Check if gzipped MAG file
+# check that the required tools are available
+# -------------------------------------------
+
+if [ ! -x "$(command -v magic)" ]; then
+	echo "[ERROR] magic could not be found!"
+	exit $ERR_CMD_NOT_FOUND
+fi
+
+# check if gzipped MAG file
 # -------------------------
 
 # magic's `load` cannot read a gzipped .mag, so unpack it first. The unpacked file must keep the cell name (<cell>.mag) so magic loads it as CELL_NAME. A private temp dir is used to keep that name without clobbering anything.
 TMP_MAG_DIR=""
-if [[ "$CELL_LAY" == *"mag.gz" ]]; then
-	TMP_MAG_DIR="$RESDIR/.pextmp_${CELL_NAME}_$$"
-	mkdir -p "$TMP_MAG_DIR"
-	gunzip -c "$CELL_LAY" > "$TMP_MAG_DIR/${CELL_NAME}.mag"
-	CELL_LAY="$TMP_MAG_DIR/${CELL_NAME}.mag"
-fi
+case "$CELL_LAY" in
+	*mag.gz)
+		TMP_MAG_DIR="$RESDIR/.pextmp_${CELL_NAME}_$$"
+		mkdir -p "$TMP_MAG_DIR"
+		gunzip -c "$CELL_LAY" > "$TMP_MAG_DIR/${CELL_NAME}.mag"
+		CELL_LAY="$TMP_MAG_DIR/${CELL_NAME}.mag"
+		;;
+esac
 
-# Check if GDS file
+# check if GDS file
 # -----------------
 
-# Decompress a gzipped GDS into the result dir under a cell-specific name (not a fixed name in the current dir) to avoid clobbering files there or colliding between runs. TMP_GDS is removed again during cleanup.
+# decompress a gzipped GDS into the result dir under a cell-specific name (not a fixed name in the current dir) to avoid clobbering files there or colliding between runs. TMP_GDS is removed again during cleanup.
 TMP_GDS=""
-if [[ "$CELL_LAY" == *"gds.gz" ]]; then
-	TMP_GDS="$RESDIR/${CELL_NAME}.pextmp.gds"
-	gunzip -c "$CELL_LAY" > "$TMP_GDS"
-	CELL_LAY="$TMP_GDS"
-fi
-if [[ "$CELL_LAY" == *"gds" ]]; then
-	GDS_MODE=1
-	[ $DEBUG -eq 1 ] && echo "[INFO] GDS mode is selected."
-fi
+case "$CELL_LAY" in
+	*gds.gz)
+		TMP_GDS="$RESDIR/${CELL_NAME}.pextmp.gds"
+		gunzip -c "$CELL_LAY" > "$TMP_GDS"
+		CELL_LAY="$TMP_GDS"
+		;;
+esac
+case "$CELL_LAY" in
+	*gds)
+		GDS_MODE=1
+		[ $DEBUG -eq 1 ] && echo "[INFO] GDS mode is selected."
+		;;
+esac
 
-# Generate extract script for magic
+# generate extract script for magic
 # ---------------------------------
 
 {
@@ -350,19 +381,11 @@ fi
 	echo "quit -noprompt"
 } >> "$EXT_SCRIPT"
 
-# Check if commands exist in the path
-# -----------------------------------
-
-if [ ! -x "$(command -v magic)" ]; then
-   	echo "[ERROR] magic could not be found!"
-   	exit $ERR_CMD_NOT_FOUND
-fi
-
-# Extract SPICE netlist from layout with magic
+# extract SPICE netlist from layout with magic
 # --------------------------------------------
 echo "[INFO] Running PEX using magic..."
 
-# Drop any stale marker so it only reflects this run.
+# drop any stale marker so it only reflects this run.
 rm -f "$CELL_MISMATCH_MARKER"
 
 if [ $DEBUG -eq 0 ]; then
@@ -410,9 +433,9 @@ else
 	sed -i "s/${_flat_search}/${_flat_replace}/g" "$NETLIST_PEX"
 fi
 
-# Cleanup
+# cleanup
 # -------
-# Magic writes its intermediate files into the result dir (via `extract path`), so remove them from there, plus the temporary decompressed GDS if any.
+# magic writes its intermediate files into the result dir (via `extract path`), so remove them from there, plus the temporary decompressed GDS if any.
 rm -f "$RESDIR"/*.ext
 [ -n "$TMP_GDS" ] && rm -f "$TMP_GDS"
 [ -n "$TMP_MAG_DIR" ] && rm -rf "$TMP_MAG_DIR"
@@ -424,6 +447,6 @@ if [ "$EXT_MODE" -eq 3 ]; then
 fi
 [ $DEBUG -eq 0 ] && rm -f "$EXT_SCRIPT"
 
-# Finished
+# finished
 # --------
 echo "[DONE] PEX ($EXT_MODE_TEXT) done, extracted SPICE netlist is <$NETLIST_PEX>."
