@@ -117,12 +117,6 @@ while getopts "mkbcf:w:l:d" flag; do
 done
 shift $((OPTIND-1))
 
-# a cellname (or layout file) is required
-if [ -z "$1" ]; then
-	echo "[ERROR] No cellname provided!"
-	exit $ERR_NO_PARAM
-fi
-
 # validate the KLayout DRC level
 case "$DRC_LEVEL" in
 	precheck|regular|macro) ;;
@@ -131,13 +125,24 @@ case "$DRC_LEVEL" in
 		exit $ERR_NO_PARAM ;;
 esac
 
-# check that the PDK environment is set up and supported
-# ------------------------------------------------------
+# check that the PDK environment is set up
+# ----------------------------------------
 
+if [ -z "$PDK_ROOT" ]; then
+	echo "[ERROR] Variable PDK_ROOT not set!"
+	exit $ERR_NO_VAR
+fi
+if [ -z "$PDK" ]; then
+	echo "[ERROR] Variable PDK not set!"
+	exit $ERR_NO_VAR
+fi
 if [ -z "$PDKPATH" ]; then
 	echo "[ERROR] Variable PDKPATH not set!"
 	exit $ERR_NO_VAR
 fi
+
+# check that the PDK is supported
+# -------------------------------
 
 if echo "$PDK" | grep -q -i "sky130"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] sky130 PDK selected."
@@ -150,6 +155,14 @@ elif echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
 else
 	echo "[ERROR] The PDK $PDK is not yet supported!"
 	exit $ERR_PDK_NOT_SUPPORTED
+fi
+
+# a cellname (or layout file) is required
+# ---------------------------------------
+
+if [ -z "$1" ]; then
+	echo "[ERROR] No cellname provided!"
+	exit $ERR_NO_PARAM
 fi
 
 [ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
@@ -201,8 +214,8 @@ fi
 
 [ $DEBUG -eq 1 ] && echo "[INFO] CELL_LAY=$CELL_LAY"
 
-# check if commands exist in the path
-# -----------------------------------
+# check that the required tools are available
+# -------------------------------------------
 
 if [ $RUN_MAGIC -eq 1 ]; then
 	if [ ! -x "$(command -v magic)" ]; then
