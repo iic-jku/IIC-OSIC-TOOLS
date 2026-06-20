@@ -22,7 +22,7 @@
 #        -m  Run Magic+Netgen LVS (default)
 #        -k  Run KLayout LVS
 #        -b  Run Magic+Netgen and KLayout LVS
-#        -s  Use this <schematic> (xschem .sch schematic or a SPICE netlist)
+#        -s  Use this <schematic> (xschem .sch schematic, SPICE/CDL netlist, or Verilog netlist)
 #        -l  Use this <layout> view
 #        -c  Name of <topcell>
 #        -w  Use <workdir> to store result files (default: current dir)
@@ -45,14 +45,14 @@ if [ $# -eq 0 ]; then
 	echo "Usage: $0 [-d] [-m|-k|-b] [-w <workdir>] [-s <schematic>|<netlist> -l <layout> -c <cellname> | <cellname>]"
 	echo
 	echo "       Specify <cellname> to use for schematic and layout, where default file"
-	echo "       locations and name prefixes (.sch|.spice|.spc|.v|.mag|.mag.gz|.gds|.gds.gz)"
+	echo "       locations and name prefixes (.sch|.spice|.spc|.cdl|.v|.mag|.mag.gz|.gds|.gds.gz)"
 	echo "       are used. When no <cellname> is specified use -s, -l, and -c to point to the"
 	echo "       corresponding files and name the topcell."
 	echo
 	echo "       -m Run Magic+Netgen LVS (default)"
 	echo "       -k Run KLayout LVS"
 	echo "       -b Run Magic+Netgen and KLayout LVS"
-	echo "       -s Use this <schematic> (xschem .sch schematic or a SPICE netlist)"
+	echo "       -s Use this <schematic> (xschem .sch schematic, SPICE/CDL netlist, or Verilog netlist)"
 	echo "       -l Use this <layout> view"
 	echo "       -c Name of <topcell>"
 	echo "       -w Use <workdir> to store result files (default current dir)"
@@ -69,6 +69,8 @@ RESDIR=$PWD
 CELLS_GIVEN=0
 RUN_MAGIC=1
 RUN_KLAYOUT=0
+# format of a directly-provided netlist (via -s or auto-derive): "spice" (Magic+Netgen) or "cdl" (KLayout); stays empty for a .sch schematic, which is netlisted per-engine on the fly
+NETLIST_FORMAT=""
 
 # check if PDK variables are properly set and the PDK is supported
 # ----------------------------------------------------------------
@@ -143,10 +145,18 @@ while getopts "mkbs:l:w:c:d" flag; do
 				*.spice|*.spc)
 					VERILOG_MODE=0
 					SPICE_MODE=1
+					NETLIST_FORMAT=spice
+					;;
+				*.cdl)
+					VERILOG_MODE=0
+					SPICE_MODE=1
+					NETLIST_FORMAT=cdl
 					;;
 				*.v)
 					VERILOG_MODE=1
 					SPICE_MODE=0
+					# the Verilog LVS path uses $CELL_V (auto-mode sets it too)
+					CELL_V="$CELL_SCH"
 					;;
 				*)
 					echo "[ERROR] Unknown file format of <$CELL_SCH>!"
@@ -193,16 +203,16 @@ shift $((OPTIND-1))
 
 if [ $CELLS_GIVEN -eq 1 ]; then
 	if [ -z ${CELL_SCH+x} ]; then
-	echo "[ERROR] Parameter -s not set! All 3 parameters (-s, -l, -c) are needed."
-	exit $ERR_NO_VAR
+		echo "[ERROR] Parameter -s not set! All 3 parameters (-s, -l, -c) are needed."
+		exit $ERR_NO_VAR
 	fi
 	if [ -z ${CELL_LAY+x} ]; then
-	echo "[ERROR] Parameter -l not set! All 3 parameters (-s, -l, -c) are needed."
-	exit $ERR_NO_VAR
+		echo "[ERROR] Parameter -l not set! All 3 parameters (-s, -l, -c) are needed."
+		exit $ERR_NO_VAR
 	fi
 	if [ -z ${TOPCELL+x} ]; then
-	echo "[ERROR] Parameter -c not set! All 3 parameters (-s, -l, -c) are needed."
-	exit $ERR_NO_VAR
+		echo "[ERROR] Parameter -c not set! All 3 parameters (-s, -l, -c) are needed."
+		exit $ERR_NO_VAR
 	fi
 fi
 
@@ -239,11 +249,17 @@ else
 		elif [ -f "$1.spice" ]; then
 			CELL_SCH="$1.spice"
 			SPICE_MODE=1
+			NETLIST_FORMAT=spice
 		elif [ -f "$1.spc" ]; then
 			CELL_SCH="$1.spc"
 			SPICE_MODE=1
+			NETLIST_FORMAT=spice
+		elif [ -f "$1.cdl" ]; then
+			CELL_SCH="$1.cdl"
+			SPICE_MODE=1
+			NETLIST_FORMAT=cdl
 		else
-			echo "[ERROR] No schematic/SPICE netlist/Verilog file found!"
+			echo "[ERROR] No schematic/SPICE/CDL netlist/Verilog file found!"
 			exit $ERR_FILE_NOT_FOUND
 		fi
 	fi
@@ -297,7 +313,7 @@ CELL_LAY=$(realpath "$CELL_LAY")
 
 [ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 1 ] && echo "[INFO] Using Verilog file <$CELL_V>."
 [ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]  && [ "$SPICE_MODE" -eq 0 ] && echo "[INFO] Using schematic file <$CELL_SCH>."
-[ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]  && [ "$SPICE_MODE" -eq 1 ] && echo "[INFO] Using SPICE netlist file <$CELL_SCH>."
+[ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]  && [ "$SPICE_MODE" -eq 1 ] && echo "[INFO] Using SPICE/CDL netlist file <$CELL_SCH>."
 [ $DEBUG -eq 1 ] && echo "[INFO] Using layout file <$CELL_LAY>."
 
 # check that the required tools are available
@@ -360,6 +376,28 @@ if [ "$RUN_KLAYOUT" -eq 1 ] && [ "$VERILOG_MODE" -eq 1 ]; then
 	fi
 fi
 
+# A directly-provided netlist is engine-specific: Magic+Netgen needs a SPICE netlist, KLayout needs a CDL netlist (they are netlisted with different xschem flags and are not interchangeable). A .sch is fine for either since the matching netlist is generated on the fly. Skip the incompatible engine: warn and continue if the other engine still runs, otherwise error out.
+# ----------------------------------------------------------------------------------------------
+
+if [ "$SPICE_MODE" -eq 1 ] && [ "$NETLIST_FORMAT" = "spice" ] && [ "$RUN_KLAYOUT" -eq 1 ]; then
+	if [ "$RUN_MAGIC" -eq 1 ]; then
+		echo "[WARNING] KLayout LVS needs a CDL netlist but a SPICE netlist was provided, running Magic+Netgen LVS only."
+		RUN_KLAYOUT=0
+	else
+		echo "[ERROR] KLayout LVS needs a CDL netlist, but a SPICE netlist was provided (<$CELL_SCH>)!"
+		exit $ERR_UNKNOWN_FILE
+	fi
+fi
+if [ "$SPICE_MODE" -eq 1 ] && [ "$NETLIST_FORMAT" = "cdl" ] && [ "$RUN_MAGIC" -eq 1 ]; then
+	if [ "$RUN_KLAYOUT" -eq 1 ]; then
+		echo "[WARNING] Magic+Netgen LVS needs a SPICE netlist but a CDL netlist was provided, running KLayout LVS only."
+		RUN_MAGIC=0
+	else
+		echo "[ERROR] Magic+Netgen LVS needs a SPICE netlist, but a CDL netlist was provided (<$CELL_SCH>)!"
+		exit $ERR_UNKNOWN_FILE
+	fi
+fi
+
 # define useful variables
 # -----------------------
 
@@ -416,7 +454,7 @@ fi
 if [ "$RUN_MAGIC" -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]; then
 	if [ "$SPICE_MODE" -eq 0 ]; then
 		echo "[INFO] Extracting SPICE netlist from schematic <$CELL_SCH>..."
-		RESDIR_TCL=$(printf '%s' "$RESDIR" | sed 's/[\\$"[]]/\\&/g')
+		RESDIR_TCL=$(printf '%s' "$RESDIR" | sed 's/[][\\$"]/\\&/g')
 		XSCHEMTCL="set spiceprefix 1; set lvs_netlist 0; set top_is_subckt 1; set lvs_ignore 1; set ev_precision 5; set netlist_dir \"$RESDIR_TCL\""
 		xschem --rcfile "$PDK_ROOT/$PDK/libs.tech/xschem/xschemrc" \
 			-n -s -q --no_x \
@@ -444,14 +482,14 @@ if [ "$RUN_MAGIC" -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]; then
 		# remove .save statements from xschem (if there are any)
 		sed -i '/\.save/d' "$NETLIST_SCH"
 	else
-		echo "[INFO] Using SPICE netlist <$CELL_SCH>..."
+		echo "[INFO] Using SPICE/CDL netlist <$CELL_SCH>..."
 		cp "$CELL_SCH" "$NETLIST_SCH"
 	fi
 fi
 
 # extract the CDL netlist from schematic (for KLayout LVS)
 # -------------------------------------------------------
-# KLayout LVS uses a CDL netlist (set lvs_netlist 1; set lvs_ignore 0), which differs from the Magic SPICE netlist (set lvs_netlist 0; set lvs_ignore 1). A given SPICE netlist is used as-is.
+# KLayout LVS uses a CDL netlist (set lvs_netlist 1; set lvs_ignore 0), which differs from the Magic SPICE netlist (set lvs_netlist 0; set lvs_ignore 1). A given SPICE/CDL netlist is used as-is.
 
 if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	if [ "$SPICE_MODE" -eq 1 ]; then
@@ -459,7 +497,7 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	else
 		echo "[INFO] Extracting CDL netlist from schematic <$CELL_SCH>..."
 		[ -f "$NETLIST_KLAYOUT" ] && rm -f "$NETLIST_KLAYOUT"
-		RESDIR_TCL=$(printf '%s' "$RESDIR" | sed 's/[\\$"[]]/\\&/g')
+		RESDIR_TCL=$(printf '%s' "$RESDIR" | sed 's/[][\\$"]/\\&/g')
 		XSCHEMTCL_KLAYOUT="set spiceprefix 1; set lvs_netlist 1; set top_is_subckt 1; set lvs_ignore 0; set ev_precision 5; set netlist_dir \"$RESDIR_TCL\""
 		xschem --rcfile "$PDK_ROOT/$PDK/libs.tech/xschem/xschemrc" \
 			-n -s -q --no_x \
@@ -626,11 +664,13 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			--run_mode=deep \
 			> "$KLAYOUT_LOG" 2>&1
 	elif echo "$PDK" | grep -q -i "gf180mcu"; then
-		# gf180mcu wrapper requires --variant. D selects the gf180mcuD stack.
+		# gf180mcu wrapper requires --variant; derive the letter from the PDK name (e.g. gf180mcuD -> D), default D.
+		GF180_VARIANT=$(printf '%s' "$PDK" | sed 's/.*[Gg][Ff]180[Mm][Cc][Uu]//' | cut -c1 | tr 'a-z' 'A-Z')
+		[ -z "$GF180_VARIANT" ] && GF180_VARIANT=D
 		python3 "$PDKPATH/libs.tech/klayout/tech/lvs/run_lvs.py" \
 			--layout="$CELL_LAY" \
 			--netlist="$NETLIST_KLAYOUT" \
-			--variant=D \
+			--variant="$GF180_VARIANT" \
 			--topcell="$TOPCELL" \
 			--run_dir="$KLAYOUT_RUNDIR" \
 			--run_mode=deep \
