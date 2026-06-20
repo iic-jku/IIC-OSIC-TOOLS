@@ -69,44 +69,8 @@ RESDIR=$PWD
 CELLS_GIVEN=0
 RUN_MAGIC=1
 RUN_KLAYOUT=0
-# format of a directly-provided netlist (via -s or auto-derive): "spice" (Magic+Netgen) or "cdl" (KLayout); stays empty for a .sch schematic, which is netlisted per-engine on the fly
+# format of a directly-provided netlist (via -s or auto-derive): "spice" (Magic+Netgen) or "cdl" (KLayout). stays empty for a .sch schematic, which is netlisted per-engine on the fly
 NETLIST_FORMAT=""
-
-# check if PDK variables are properly set and the PDK is supported
-# ----------------------------------------------------------------
-
-if [ -z ${PDK_ROOT+x} ]; then
-	echo "[ERROR] Variable PDK_ROOT not set!"
-	exit $ERR_NO_VAR
-fi
-
-if [ -z ${PDK+x} ]; then
-	echo "[ERROR] Variable PDK not set!"
-	exit $ERR_NO_VAR
-fi
-
-if [ -z ${PDKPATH+x} ]; then
-	echo "[ERROR] Variable PDKPATH not set!"
-	exit $ERR_NO_VAR
-fi
-
-if echo "$PDK" | grep -q -i "sky130"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] sky130 PDK selected."
-elif echo "$PDK" | grep -q -i "gf180mcu"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] gf180mcu PDK selected."
-elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13g2 PDK selected"
-elif echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
-	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13cmos5l PDK selected"
-else
-	echo "[ERROR] The PDK $PDK is not yet supported!"
-	exit $ERR_PDK_NOT_SUPPORTED
-fi
-
-if [ -z ${STD_CELL_LIBRARY+x} ]; then
-	echo "[ERROR] Variable STD_CELL_LIBRARY not set!"
-	exit $ERR_NO_VAR
-fi
 
 # check flags
 # -----------
@@ -198,7 +162,7 @@ while getopts "mkbs:l:w:c:d" flag; do
 done
 shift $((OPTIND-1))
 
-# Check if all 3 parameters -s -l and -c are specified
+# check if all 3 parameters -s -l and -c are specified
 # ----------------------------------------------------
 
 if [ $CELLS_GIVEN -eq 1 ]; then
@@ -216,7 +180,43 @@ if [ $CELLS_GIVEN -eq 1 ]; then
 	fi
 fi
 
-# Check if files exist, look into usual directories
+# check that the PDK environment is set up
+# ----------------------------------------
+
+if [ -z "$PDK_ROOT" ]; then
+	echo "[ERROR] Variable PDK_ROOT not set!"
+	exit $ERR_NO_VAR
+fi
+if [ -z "$PDK" ]; then
+	echo "[ERROR] Variable PDK not set!"
+	exit $ERR_NO_VAR
+fi
+if [ -z "$PDKPATH" ]; then
+	echo "[ERROR] Variable PDKPATH not set!"
+	exit $ERR_NO_VAR
+fi
+if [ -z "$STD_CELL_LIBRARY" ]; then
+	echo "[ERROR] Variable STD_CELL_LIBRARY not set!"
+	exit $ERR_NO_VAR
+fi
+
+# check that the PDK is supported
+# -------------------------------
+
+if echo "$PDK" | grep -q -i "sky130"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] sky130 PDK selected."
+elif echo "$PDK" | grep -q -i "gf180mcu"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] gf180mcu PDK selected."
+elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13g2 PDK selected."
+elif echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13cmos5l PDK selected."
+else
+	echo "[ERROR] The PDK $PDK is not yet supported!"
+	exit $ERR_PDK_NOT_SUPPORTED
+fi
+
+# check if files exist, look into usual directories
 # -------------------------------------------------
 
 if [ $CELLS_GIVEN -eq 1 ]; then
