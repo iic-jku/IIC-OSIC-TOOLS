@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=snp2le
+GenericName=S-parameter to Lumped-Element Netlist Converter
+Comment=Convert Touchstone .sNp S-parameters to SPICE/Spectre lumped-element netlists
+Exec=snp2le
+Type=Application
+Icon=/foss/tools/snp2le/converter/gui/assets/snp2le.ico
+Terminal=false
+Categories=Development;Electronics;

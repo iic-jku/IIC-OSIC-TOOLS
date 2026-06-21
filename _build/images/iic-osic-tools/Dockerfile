@@ -41,6 +41,7 @@ ARG TOOL_IMAGE_RFTOOLKIT="registry.iic.jku.at:5000/iic-osic-tools:tool-rftoolkit
 ARG TOOL_IMAGE_RISCV_GNU_TOOLCHAIN="registry.iic.jku.at:5000/iic-osic-tools:tool-riscv-gnu-toolchain-latest"
 ARG TOOL_IMAGE_SLANG="registry.iic.jku.at:5000/iic-osic-tools:tool-slang-latest"
 ARG TOOL_IMAGE_SLANG_YOSYS_PLUGIN="registry.iic.jku.at:5000/iic-osic-tools:tool-slang-yosys-plugin-latest"
+ARG TOOL_IMAGE_SNP2LE="registry.iic.jku.at:5000/iic-osic-tools:tool-snp2le-latest"
 ARG TOOL_IMAGE_SPICEBIND="registry.iic.jku.at:5000/iic-osic-tools:tool-spicebind-latest"
 ARG TOOL_IMAGE_SPIKE="registry.iic.jku.at:5000/iic-osic-tools:tool-spike-latest"
 ARG TOOL_IMAGE_SURELOG="registry.iic.jku.at:5000/iic-osic-tools:tool-surelog-latest"
@@ -92,6 +93,7 @@ FROM ${TOOL_IMAGE_RFTOOLKIT} AS rftoolkit
 FROM ${TOOL_IMAGE_RISCV_GNU_TOOLCHAIN} AS riscv-gnu-toolchain
 FROM ${TOOL_IMAGE_SLANG} AS slang
 FROM ${TOOL_IMAGE_SLANG_YOSYS_PLUGIN} AS slang-yosys-plugin
+FROM ${TOOL_IMAGE_SNP2LE} AS snp2le
 FROM ${TOOL_IMAGE_SPICEBIND} AS spicebind
 FROM ${TOOL_IMAGE_SPIKE} AS spike
 FROM ${TOOL_IMAGE_SURELOG} AS surelog
@@ -152,6 +154,7 @@ COPY --link --from=rftoolkit                    ${TOOLS}/rftoolkit              
 COPY --link --from=riscv-gnu-toolchain          ${TOOLS}/riscv-gnu-toolchain    ${TOOLS}/riscv-gnu-toolchain/
 COPY --link --from=slang                        ${TOOLS}/slang                  ${TOOLS}/slang/
 COPY --link --from=slang-yosys-plugin           ${TOOLS}/slang-yosys-plugin     ${TOOLS}/slang-yosys-plugin/
+COPY --link --from=snp2le                       ${TOOLS}/snp2le                 ${TOOLS}/snp2le/
 COPY --link --from=spicebind                    ${TOOLS}/spicebind              ${TOOLS}/spicebind/
 COPY --link --from=spike                        ${TOOLS}/spike                  ${TOOLS}/spike/
 COPY --link --from=surelog                      ${TOOLS}/surelog                ${TOOLS}/surelog/

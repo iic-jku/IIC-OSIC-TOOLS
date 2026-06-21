@@ -106,6 +106,9 @@
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: cf20b1ba0d2c9df0508f927930a87565e7e0d220
+- name: snp2le
+  repo: https://github.com/iic-jku/snp2le.git
+  commit: e0af3048e0051f582740013908981f6e9ffaf21a # ToDo: update
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
