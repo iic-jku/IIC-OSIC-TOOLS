@@ -234,7 +234,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [sky130](https://github.com/google/skywater-pdk) SkyWater Technologies 130 nm CMOS PDK
 - [slang yosys plugin](https://github.com/povik/yosys-slang) Slang-based plugin for `yosys` for SystemVerilog support
 - [slang](https://github.com/MikePopoloski/slang) SystemVerilog parsing and translation (e.g. to Verilog)
-- [snp2le](https://github.com/iic-jku/snp2le) converts Touchstone `.sNp` S-parameter files into equivalent lumped-element netlists for `ngspice` (SPICE3) and `vacask` (Spectre), with a PySide6 GUI (`snp2le`) and a CLI (`snp2le-cli`)
+- [snp2le](https://github.com/iic-jku/snp2le) converts Touchstone `.sNp` S-parameter files into equivalent lumped-element netlists for `ngspice` (SPICE) and `vacask` (Spectre), with a PySide6 GUI (`snp2le`) and a CLI (`snp2le-cli`)
 - [spicebind](https://github.com/themperek/spicebind) lightweight bridge enabling co-simulation of analog `ngspice` circuits alongside HDL simulators
 - [spicelib](https://github.com/nunobrum/spicelib) library to interact with SPICE-like simulators
 - [spike](https://github.com/riscv-software-src/riscv-isa-sim) Spike RISC-V ISA simulator
