@@ -15,10 +15,10 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 8bc05db0a9fcab717ae73e61636fc35933848665
+  commit: 2bb1a77248b97ac0e2f1d7f1f6fc9b01be2e8d7e
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
-  commit: 0afb85a32fbda2f1c3e00298d08336e98bc71b10
+  commit: a1087d950ad5a62ae108b79b91f1c2aeb985e024
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
   commit: 7d7b4db9e2f5485afe2aeeab0ad112f5b6a9b94b
@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: de415b2f03c1b41ab5b46faa9632716d98c1cd86
+  commit: 8c7f8f3f7ba5d843f9da5867207afc70b7224674
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.1
@@ -60,13 +60,13 @@
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
 - name: nvc
   repo: https://github.com/nickg/nvc.git
-  commit: r1.21.0
+  commit: r1.21.1
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
   commit: b344c97eacc2aaf8e14ae7e43e2e9dc0871de2c0
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: 4ffeed4291724ce5a20aee6df5ad295ae8d36233
+  commit: 16a2bc825074e3494cded988b835b480908ba7f5
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: 4c26918f5a77392910939b51b9c2490b7e7e3201
@@ -102,10 +102,10 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 44dc55f99b9c64971893013e7931e643fbedcf23
+  commit: 24809c8e0b94d0915fe05b44d98c2df7a8e80c3e
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 009058e4c2615f282db27cb484c4296b28f4ac5b
+  commit: b2b718c5a66ad525858298466f7ecaa60497393e
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
@@ -132,7 +132,7 @@
   commit: 0.11.23
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: ffdb7a31d86b35f82e25b1c07d534bf8051a0fd5
+  commit: 9b9c7b215939c658f0b68ce4f90a1fbd5e4fc76a
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.048

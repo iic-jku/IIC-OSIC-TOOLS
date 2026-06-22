@@ -34,7 +34,7 @@ pip3 install $PIP_FLAGS \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev1 \
-	najaeda==0.7.3 \
+	najaeda==0.7.4 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.0 \
 	pyuvm==4.0.1 \
@@ -42,7 +42,7 @@ pip3 install $PIP_FLAGS \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==1.12.0 \
 	siliconcompiler==0.37.12 \
-	spicelib==1.6.1 \
+	spicelib==1.6.2 \
 	spyci==1.0.2
 
 #FIXME There are currently issues with gmsh for arm64 Linux, so only install for x86_64
