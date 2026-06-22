@@ -12,27 +12,6 @@ To install `socat`, here are the commands for popular distributions:
 - Fedora/RHEL/Rocky/Alma (rpm-based, RHEL-clones): `dnf -y install socat`
 - SuSE/openSUSE (rpm-based, SuSE-clones): `zypper install socat`
 
-### X11 Authorization Failure When Xauthority Path Is a Directory (Wayland/Linux)
-
-When running `start_x.sh` on Linux with a Wayland compositor (e.g., KDE Plasma/KWin), the script creates a temporary Xauthority file at `/tmp/.iic-osic-tools_xserver_uid_<UID>_xauthority`. If a **directory** with that name already exists (e.g., left behind by a previous failed run), the script fails with:
-
-```text
-./start_x.sh: line 185: /tmp/.iic-osic-tools_xserver_uid_1000_xauthority: Is a directory
-xauth:  /tmp/.iic-osic-tools_xserver_uid_1000_xauthority not writable, changes will be ignored
-```
-
-As a result, all GUI applications inside the container (e.g., `xschem`, `klayout`) fail with `Authorization required, but no authorization protocol specified` and do not open their graphical interface.
-
-#### Workaround
-
-Remove the stale directory before running `start_x.sh`:
-
-```bash
-rm -rf /tmp/.iic-osic-tools_xserver_uid_$(id -u)_xauthority
-```
-
-Then re-run `start_x.sh` (removing the existing container with `r` if prompted).
-
 ### Switching to WSLg for Graphical Applications on Windows
 
 The current variant of the `start_x.bat` for Windows uses WSLg for audio & visual output, which comes preinstalled/packaged with WSL (Windows 10 Build 19044 or Windows 11). If problems arise, update WSL according to [the Microsoft website](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps).
@@ -102,18 +81,6 @@ Volker Muehlaus' `setupEM`/`gds2palace` tool for AWS Palace is only installed fo
 ### GDS3D crashing on macOS
 
 At least since tag `2025.12` GDS3D is crashing with an error message. Unfortunately, there is no known fix at the moment. See <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/220>.
-
-### Xschem Library Path (IHP Open-PDK)
-
-For tag `2026.04`, the IHP Open-PDK changed its `xschemrc` (see commit https://github.com/IHP-GmbH/IHP-Open-PDK/commit/2bda257623753d0571bc40c5f50481e8389309e0), which adds a `sg13g2_pr/` prefix to all symbol paths. Schematics created with earlier container versions will show missing symbols.
-
-This can be fixed by updating the symbol paths directly in the `.sch` files. Since `.sch` files from Xschem are text-based, a bulk find-and-replace in an editor is done quite fast. Another workaround is to add the PDK xschem library to `XSCHEM_USER_LIBRARY_PATH` in your `.designinit` (see issue https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/257):
-
-```bash
-export XSCHEM_USER_LIBRARY_PATH=${PDK_ROOT}/${PDK}/libs.tech/xschem:<your-project-xschem-path>
-```
-
-Since tag `2026.05` and later, this issue has been fixed again by IHP.
 
 ## Build
 
