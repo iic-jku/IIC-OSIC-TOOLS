@@ -677,7 +677,7 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			> "$KLAYOUT_LOG" 2>&1
 	else
 		# ihp-sg13g2 wrapper
-		python3 "$PDKPATH/libs.tech/klayout/lvs/run_lvs.py" \
+		python3 "$PDKPATH/libs.tech/klayout/tech/lvs/run_lvs.py" \
 			--layout="$CELL_LAY" \
 			--netlist="$NETLIST_KLAYOUT" \
 			--topcell="$TOPCELL" \
