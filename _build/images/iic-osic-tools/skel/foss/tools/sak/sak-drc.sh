@@ -454,43 +454,25 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 			-r "$PDKPATH/libs.tech/klayout/drc/zeroarea.rb.drc" \
 			> "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.log" 2>&1 &
 	elif echo "$PDK" | grep -q -i "gf180mcu"; then
-		# gf180mcu via its run_drc.py wrapper. --variant is required. D selects the gf180mcuD stack.
-		# DRC level (precheck is skipped earlier as gf180 has none): regular checks everything (incl. density and antenna), macro skips FEOL and connectivity (density/antenna are off by default here).
+		# gf180mcu via the gf180mcu.drc framework deck directly (no run_drc.py wrapper).
+		# Scope is selected with -rd decks=<comma-separated tags>, a leading '-' excludes (default "all"). precheck is skipped earlier (gf180 has none). regular = all decks, macro skips the front-end (feol) and density decks.
 		case "$DRC_LEVEL" in
-			regular)	DRC_FLAGS="--density --antenna" ;;
-			macro)		DRC_FLAGS="--no_feol --no_connectivity" ;;
-			*)		DRC_FLAGS="" ;;
+			macro)	DRC_DECKS="all,-feol,-density" ;;
+			*)	DRC_DECKS="all" ;;
 		esac
 		rm -rf "$KLAYOUT_RUNDIR"
 		mkdir -p "$KLAYOUT_RUNDIR"
-		# shellcheck disable=SC2086
-		python3 "$PDKPATH/libs.tech/klayout/tech/drc/run_drc.py" \
-			--path="$CELL_LAY" \
-			--variant=D \
-			--topcell="$CELL_NAME" \
-			--run_dir="$KLAYOUT_RUNDIR" \
-			$DRC_FLAGS \
-			--mp="$(nproc --ignore 5)" \
+		# variant=$PDK selects the matching gf180mcu stack preset (metal_top/metal_level/mim_option); run_mode=deep is the deck default.
+		klayout -b \
+			-rd input="$CELL_LAY" \
+			-rd report="$KLAYOUT_RUNDIR/$CELL_NAME.lyrdb" \
+			-rd topcell="$CELL_NAME" \
+			-rd variant="$PDK" \
+			-rd run_mode=deep \
+			-rd threads="$(nproc --ignore 5)" \
+			-rd decks="$DRC_DECKS" \
+			-r "$PDKPATH/libs.tech/klayout/tech/drc/gf180mcu.drc" \
 			> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
-		# Alternative (to be enabled in a future update): run the gf180mcu.drc deck directly (no wrapper). run_mode must be set explicitly (the deck aborts on an unknown mode). flat is the gf180 default.
-		# DRC level -> -rd scope (param names assume the old deck switches; the framework deck may select scope via -rd decks=..., verify with -rd help=true):
-		# case "$DRC_LEVEL" in
-		#	regular)	DRC_RD="-rd density=true -rd antenna=true" ;;
-		#	macro)		DRC_RD="-rd feol=false -rd conn_drc=false" ;;
-		#	*)		DRC_RD="" ;;
-		# esac
-		# rm -rf "$KLAYOUT_RUNDIR"
-		# mkdir -p "$KLAYOUT_RUNDIR"
-		# klayout -b \
-		#	-rd input="$CELL_LAY" \
-		#	-rd topcell="$CELL_NAME" \
-		#	-rd variant=D \
-		#	-rd run_mode=flat \
-		#	-rd threads="$(nproc --ignore 5)" \
-		#	$DRC_RD \
-		#	-rd report="$KLAYOUT_RUNDIR/$CELL_NAME.lyrdb" \
-		#	-r "$PDKPATH/libs.tech/klayout/tech/drc/gf180mcu.drc" \
-		#	> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
 	elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
 		# ihp-sg13g2 via its run_drc.py wrapper (writes <layout>_<topcell>_<tables>.lyrdb, merged into *_full.lyrdb, into --run_dir).
 		# DRC level: precheck = fast pre-check, regular = full chip, macro = single macro (skip FEOL/density/maximal).
