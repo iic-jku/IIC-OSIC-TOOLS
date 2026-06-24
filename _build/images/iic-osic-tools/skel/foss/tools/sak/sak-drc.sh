@@ -23,8 +23,8 @@
 #        -k  Run KLayout DRC
 #        -b  Run Magic and KLayout DRC
 #        -c  Clean output files before running
-#        -l  KLayout DRC level for gf180mcu/ihp-sg13g2: precheck | regular | macro (default: macro).
-#            Ignored for sky130, which always runs all checks.
+#        -l  KLayout DRC level: precheck | regular | macro (default: macro).
+#            precheck = core FEOL+BEOL rules only, macro = + off-grid/pin/zero-area (skips chip-level density/antenna), regular = all checks.
 #        -f  Set gds flatglob pattern for Magic (e.g., '*' to flatten all)
 #        -w  Use <workdir> to store result files (default: current dir)
 #        -d  Enable debug information
@@ -48,7 +48,7 @@ if [ $# -eq 0 ]; then
 	echo "       -k Run KLayout DRC"
 	echo "       -b Run Magic and KLayout DRC"
 	echo "       -c Clean output files"
-	echo "       -l KLayout DRC level for gf180mcu/ihp-sg13g2: precheck | regular | macro (default: macro). Ignored for sky130, which always runs all checks."
+	echo "       -l KLayout DRC level: precheck | regular | macro (default: macro). precheck = core FEOL+BEOL rules only, macro = + off-grid/pin/zero-area (skips chip-level density/antenna), regular = all checks."
 	echo "       -f Set gds flatglob pattern for Magic (e.g., '*' to flatten all)"
 	echo "       -w Use <workdir> to store result files (default current dir)"
 	echo "       -d Enable debug information"
@@ -67,7 +67,6 @@ DRC_CLEAN=1
 RESDIR=$PWD
 FLATGLOB=""
 DRC_LEVEL="macro"
-DRC_LEVEL_SET=0
 
 # check flags
 # -----------
@@ -81,7 +80,6 @@ while getopts "mkbcf:w:l:d" flag; do
 		l)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -l is set to <$OPTARG>."
 			DRC_LEVEL="$OPTARG"
-			DRC_LEVEL_SET=1
 			;;
 		m)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -m is set."
@@ -257,17 +255,6 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 	esac
 fi
 
-# gf180mcu has no precheck DRC level, skip KLayout for it (warn if Magic also runs, error otherwise).
-if [ $RUN_KLAYOUT -eq 1 ] && [ "$DRC_LEVEL" = "precheck" ] && echo "$PDK" | grep -q -i "gf180mcu"; then
-	if [ $RUN_MAGIC -eq 1 ]; then
-		echo "[WARNING] No precheck KLayout DRC level for gf180mcu, running Magic DRC only."
-		RUN_KLAYOUT=0
-	else
-		echo "[ERROR] No precheck KLayout DRC level for gf180mcu!"
-		exit $ERR_NO_PARAM
-	fi
-fi
-
 echo "[INFO] Results are put into <$RESDIR>."
 # strip only a known layout extension so cell names containing dots are preserved
 CELL_NAME=$(basename "$CELL_LAY")
@@ -403,6 +390,19 @@ if [ $RUN_MAGIC -eq 1 ]; then
 		> "$RESDIR/$CELL_NAME.magic.drc.log" 2>&1 &
 fi
 
+# sky130 KLayout DRC level -> which checks run (FEOL+BEOL core rules always run)
+# precheck: core rules only (off-grid off, no aux decks)
+# macro: + off-grid + pin + zero-area, skip chip-level density
+# regular: all checks
+SKY130_OFFGRID=true
+SKY130_DENSITY=1
+SKY130_PIN=1
+SKY130_ZEROAREA=1
+case "$DRC_LEVEL" in
+	precheck)	SKY130_OFFGRID=false; SKY130_DENSITY=0; SKY130_PIN=0; SKY130_ZEROAREA=0 ;;
+	macro)		SKY130_DENSITY=0 ;;
+esac
+
 # launch KLayout DRC
 # ------------------
 
@@ -415,12 +415,12 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] CELL_LAY=$CELL_LAY RESDIR=$RESDIR PDKPATH=$PDKPATH PDK=$PDK"
 
 	if echo "$PDK" | grep -q -i "sky130"; then
-		[ $DRC_LEVEL_SET -eq 1 ] && echo "[INFO] -l is ignored for sky130, all DRC checks are run."
+		# FEOL + BEOL core rules always run. off-grid is folded into the FEOL pass (on for macro/regular, off for precheck).
 		klayout -b \
 			-rd input="$CELL_LAY" \
 			-rd feol=true \
 			-rd beol=false \
-			-rd offgrid=true \
+			-rd offgrid="$SKY130_OFFGRID" \
 			-rd report="$RESDIR/$CELL_NAME.klayout.drc.feol.xml" \
 			-r "$PDKPATH/libs.tech/klayout/drc/${PDK}_mr.drc" \
 			> "$RESDIR/$CELL_NAME.klayout.drc.feol.log" 2>&1 &
@@ -434,35 +434,48 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 			-r "$PDKPATH/libs.tech/klayout/drc/${PDK}_mr.drc" \
 			> "$RESDIR/$CELL_NAME.klayout.drc.beol.log" 2>&1 &
 
-		klayout -b \
-			-rd input="$CELL_LAY" \
-			-rd report="$RESDIR/$CELL_NAME.klayout.drc.density.xml" \
-			-r "$PDKPATH/libs.tech/klayout/drc/met_min_ca_density.lydrc" \
-			> "$RESDIR/$CELL_NAME.klayout.drc.density.log" 2>&1 &
+		# density: chip-level fill, regular only
+		if [ $SKY130_DENSITY -eq 1 ]; then
+			klayout -b \
+				-rd input="$CELL_LAY" \
+				-rd report="$RESDIR/$CELL_NAME.klayout.drc.density.xml" \
+				-r "$PDKPATH/libs.tech/klayout/drc/met_min_ca_density.lydrc" \
+				> "$RESDIR/$CELL_NAME.klayout.drc.density.log" 2>&1 &
+		fi
 
-		klayout -b \
-			-rd input="$CELL_LAY" \
-			-rd threads="$(nproc --ignore 5)" \
-			-rd flat_mode=true \
-			-rd report="$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml" \
-			-r "$PDKPATH/libs.tech/klayout/drc/pin_label_purposes_overlapping_drawing.rb.drc" \
-			> "$RESDIR/$CELL_NAME.klayout.drc.pincheck.log" 2>&1 &
+		# pin/label check: macro and regular
+		if [ $SKY130_PIN -eq 1 ]; then
+			klayout -b \
+				-rd input="$CELL_LAY" \
+				-rd threads="$(nproc --ignore 5)" \
+				-rd flat_mode=true \
+				-rd report="$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml" \
+				-r "$PDKPATH/libs.tech/klayout/drc/pin_label_purposes_overlapping_drawing.rb.drc" \
+				> "$RESDIR/$CELL_NAME.klayout.drc.pincheck.log" 2>&1 &
+		fi
 
-		klayout -b \
-			-rd input="$CELL_LAY" \
-			-rd report="$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml" \
-			-r "$PDKPATH/libs.tech/klayout/drc/zeroarea.rb.drc" \
-			> "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.log" 2>&1 &
+		# zero-area geometry: macro and regular
+		if [ $SKY130_ZEROAREA -eq 1 ]; then
+			klayout -b \
+				-rd input="$CELL_LAY" \
+				-rd report="$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml" \
+				-r "$PDKPATH/libs.tech/klayout/drc/zeroarea.rb.drc" \
+				> "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.log" 2>&1 &
+		fi
 	elif echo "$PDK" | grep -q -i "gf180mcu"; then
 		# gf180mcu via the gf180mcu.drc framework deck directly (no run_drc.py wrapper).
-		# Scope is selected with -rd decks=<comma-separated tags>, a leading '-' excludes (default "all"). precheck is skipped earlier (gf180 has none). regular = all decks, macro skips the front-end (feol) and density decks.
+		# Scope is selected with -rd decks=<comma-separated tags>, a leading '-' excludes (default "all").
+		# precheck: core rules only (drop off-grid, density, antenna)
+		# macro: keep FEOL but skip chip-level density + antenna
+		# regular: all checks
 		case "$DRC_LEVEL" in
-			macro)	DRC_DECKS="all,-feol,-density" ;;
-			*)	DRC_DECKS="all" ;;
+			precheck)	DRC_DECKS="all,-offgrid,-density,-antenna" ;;
+			macro)		DRC_DECKS="all,-density,-antenna" ;;
+			*)		DRC_DECKS="all" ;;
 		esac
 		rm -rf "$KLAYOUT_RUNDIR"
 		mkdir -p "$KLAYOUT_RUNDIR"
-		# variant=$PDK selects the matching gf180mcu stack preset (metal_top/metal_level/mim_option); run_mode=deep is the deck default.
+		# variant=$PDK selects the matching gf180mcu stack preset (metal_top/metal_level/mim_option). run_mode=deep is the deck default.
 		klayout -b \
 			-rd input="$CELL_LAY" \
 			-rd report="$KLAYOUT_RUNDIR/$CELL_NAME.lyrdb" \
@@ -475,11 +488,13 @@ if [ $RUN_KLAYOUT -eq 1 ]; then
 			> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
 	elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
 		# ihp-sg13g2 via its run_drc.py wrapper (writes <layout>_<topcell>_<tables>.lyrdb, merged into *_full.lyrdb, into --run_dir).
-		# DRC level: precheck = fast pre-check, regular = full chip, macro = single macro (skip FEOL/density/maximal).
+		# precheck: core rules only (no off-grid/angle, no extra/recommended)
+		# macro: keep FEOL but skip chip-level density (and extra rules)
+		# regular: all checks
 		case "$DRC_LEVEL" in
 			precheck)	DRC_FLAGS="--precheck_drc --no_offgrid --no_angle --disable_extra_rules --no_recommended" ;;
 			regular)	DRC_FLAGS="--antenna" ;;
-			macro)		DRC_FLAGS="--no_feol --no_density --disable_extra_rules" ;;
+			macro)		DRC_FLAGS="--no_density --disable_extra_rules" ;;
 		esac
 		rm -rf "$KLAYOUT_RUNDIR"
 		mkdir -p "$KLAYOUT_RUNDIR"
@@ -559,40 +574,46 @@ if [ $RUN_KLAYOUT -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 		echo "[INFO] KLayout BEOL DRC is clean!"
 	fi
 
-	if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.density.xml" ]; then
-		echo "[ERROR] KLayout DRC produced no report, see the matching .log in <$RESDIR>!"
-		exit $ERR_NO_OUTPUT
-	fi
-	DENSITY_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.density.xml")
-	if [ "$DENSITY_ERRORS" -ne 0 ]; then
-		echo "[INFO] KLayout $DENSITY_ERRORS density errors found! Check <$RESDIR/$CELL_NAME.klayout.drc.density.xml>!"
-		DRC_CLEAN=0
-	else
-		echo "[INFO] KLayout metal density DRC is clean!"
-	fi
-
-	if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml" ]; then
-		echo "[ERROR] KLayout DRC produced no report, see the matching .log in <$RESDIR>!"
-		exit $ERR_NO_OUTPUT
-	fi
-	PINCHECK_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml")
-	if [ "$PINCHECK_ERRORS" -ne 0 ]; then
-		echo "[INFO] KLayout $PINCHECK_ERRORS pin errors found! Check <$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml>!"
-		DRC_CLEAN=0
-	else
-		echo "[INFO] KLayout pin check DRC is clean!"
+	if [ $SKY130_DENSITY -eq 1 ]; then
+		if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.density.xml" ]; then
+			echo "[ERROR] KLayout DRC produced no report, see the matching .log in <$RESDIR>!"
+			exit $ERR_NO_OUTPUT
+		fi
+		DENSITY_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.density.xml")
+		if [ "$DENSITY_ERRORS" -ne 0 ]; then
+			echo "[INFO] KLayout $DENSITY_ERRORS density errors found! Check <$RESDIR/$CELL_NAME.klayout.drc.density.xml>!"
+			DRC_CLEAN=0
+		else
+			echo "[INFO] KLayout metal density DRC is clean!"
+		fi
 	fi
 
-	if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml" ]; then
-		echo "[ERROR] KLayout DRC produced no report, see the matching .log in <$RESDIR>!"
-		exit $ERR_NO_OUTPUT
+	if [ $SKY130_PIN -eq 1 ]; then
+		if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml" ]; then
+			echo "[ERROR] KLayout DRC produced no report, see the matching .log in <$RESDIR>!"
+			exit $ERR_NO_OUTPUT
+		fi
+		PINCHECK_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml")
+		if [ "$PINCHECK_ERRORS" -ne 0 ]; then
+			echo "[INFO] KLayout $PINCHECK_ERRORS pin errors found! Check <$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml>!"
+			DRC_CLEAN=0
+		else
+			echo "[INFO] KLayout pin check DRC is clean!"
+		fi
 	fi
-	ZEROAREA_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml")
-	if [ "$ZEROAREA_ERRORS" -ne 0 ]; then
-		echo "[INFO] KLayout $ZEROAREA_ERRORS zero-area errors found! Check <$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml>!"
-		DRC_CLEAN=0
-	else
-		echo "[INFO] KLayout zero-area DRC is clean!"
+
+	if [ $SKY130_ZEROAREA -eq 1 ]; then
+		if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml" ]; then
+			echo "[ERROR] KLayout DRC produced no report, see the matching .log in <$RESDIR>!"
+			exit $ERR_NO_OUTPUT
+		fi
+		ZEROAREA_ERRORS=$(grep -c "<item>" "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml")
+		if [ "$ZEROAREA_ERRORS" -ne 0 ]; then
+			echo "[INFO] KLayout $ZEROAREA_ERRORS zero-area errors found! Check <$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml>!"
+			DRC_CLEAN=0
+		else
+			echo "[INFO] KLayout zero-area DRC is clean!"
+		fi
 	fi
 elif [ $RUN_KLAYOUT -eq 1 ]; then
 	# gf180mcu / ihp-sg13g2 write their .lyrdb report(s) into the run dir. No report means the run itself failed (a DRC run with violations still writes a report); the reason is in the log.
