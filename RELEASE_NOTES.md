@@ -2,6 +2,22 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2026.06
+
+* [Adding] interactive install scripts (`install.sh`, `install.bat`, `install.ps1`) that set up the prerequisites; installer logic moved to `install.ps1` and license header/disclaimer added.
+* [Adding] `eda_server_bkdatadir.sh` backup script and `eda_server_rmdatadir.sh` script for managing the EDA server data directory.
+* [Adding] KLayout netlist import plugin.
+* [Adding] `run_palace` and `combine_snp` wrapper scripts for the `gds2palace` EM workflow.
+* [Adding] `DOCKER_EXTRA_PARAMS` can now be passed in from outside the start scripts.
+* [Adding] `test_ams_chip_sg13g2.sh` regression test (with option to suppress ngspice/xschem plots).
+* [Update] X11 forwarding behavior; start scripts no longer abort on missing X and set the keyboard for VNC.
+* [Update] various tool versions and Python package versions.
+* [Fix] `gf180mcuD` access rights for KLayout macros.
+* [Fix] harden startup scripts: robust container stop/remove, error checks for `docker pull`/`run`, safer permission handling, hardened `nss_wrapper` user generation, and improved X11 socket/xauth/xhost cleanup.
+* [Fix] read interactive user input from `/dev/tty` (and use fd 3) instead of `stdin`.
+* [Remove] `klive` from the KLayout install packages.
+* [Docs] updated `KNOWN_ISSUES.md` ("Xschem Library Path"), `README.md` ("Installed PDKs"), and `TESTS.md`.
+
 ## 2026.05
 
 * [Adding] `XKB_KEYBOARD_LAYOUT` and `XKB_KEYBOARD_VARIANT` environmental variables for `start_vnc.sh`/`start_vnc.bat` to set the keyboard layout inside the VNC session (`setxkbmap` is called in `ui_startup.sh`).
