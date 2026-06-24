@@ -16,16 +16,23 @@ git checkout "${NGSPICE_REPO_COMMIT}"
 # define common compile options
 NGSPICE_COMPILE_OPTS=("--disable-debug" "--enable-openmp" "--with-x" "--with-readline=yes" "--enable-pss" "--enable-xspice" "--with-fftw3=yes" "--enable-osdi" "--enable-klu")
 
-# compile ngspice executable
-./configure "${NGSPICE_COMPILE_OPTS[@]}" --prefix="${TOOLS}/${NGSPICE_NAME}"
+# Build the shared library (libngspice) FIRST.
+# NOTE: with --with-ngshared and --disable-debug, ngspice's configure appends
+# -fvisibility=hidden to the global CFLAGS. This also hides the Cosim_setup
+# entry point in the Icarus Verilog co-simulation bridge (ivlng.so), which
+# breaks mixed-signal simulation ("undefined symbol: Cosim_setup", see #287).
+# Therefore the executable (built with default visibility) must be installed
+# LAST so that its correctly-exported ivlng.so is the one that ends up in the
+# image.
+./configure "${NGSPICE_COMPILE_OPTS[@]}" --with-ngshared --prefix="${TOOLS}/${NGSPICE_NAME}"
 make -j"$(nproc)"
 make install
 
 # cleanup between builds to prevent strange missing symbols in libngspice
 make distclean
 
-# now compile lib
-./configure "${NGSPICE_COMPILE_OPTS[@]}" --with-ngshared --prefix="${TOOLS}/${NGSPICE_NAME}"
+# now compile the ngspice executable (installed last, see note above)
+./configure "${NGSPICE_COMPILE_OPTS[@]}" --prefix="${TOOLS}/${NGSPICE_NAME}"
 make -j"$(nproc)"
 make install
 
