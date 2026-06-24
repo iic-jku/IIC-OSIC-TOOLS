@@ -22,3 +22,4 @@
 | 18       | Test of LibreLane with ihp-sg13g2                                 |
 | 19       | Test of LibreLane with ihp-sg13cmos5l                             |
 | 20       | Test of [AMS chip template](https://github.com/iic-jku/ihp-sg13g2-ams-chip-template) with ihp-sg13g2 |
+| 21       | Test of [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) (LVS, DRC, PEX) with ihp-sg13g2 |

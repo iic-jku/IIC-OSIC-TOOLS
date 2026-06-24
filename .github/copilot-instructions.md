@@ -6,7 +6,7 @@ IIC-OSIC-TOOLS is a comprehensive Docker/Podman-based container distribution for
 
 **Key directories:**
 - `_build/`: Multi-stage Docker build system with tool images and build orchestration
-- `_tests/`: Regression test suite (20 tests covering PDKs, tools, and workflows)
+- `_tests/`: Regression test suite (21 tests covering PDKs, tools, and workflows)
 - Root scripts: Container startup scripts for VNC, X11, Jupyter, and shell modes
 
 ## Architecture & Build System
