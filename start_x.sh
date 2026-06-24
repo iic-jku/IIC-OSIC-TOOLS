@@ -311,6 +311,27 @@ if [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
+		# The xauthority bind-mount source is a temporary file under /tmp that
+		# is removed on script exit and wiped on host reboot (e.g. WSL/Wayland).
+		# Its name is also randomized per run, so it never matches the path
+		# recorded in the existing container. On "docker start" Docker would then
+		# recreate the missing source as a *directory* and fail to mount it onto
+		# the file /headless/.xauthority. Recreate the recorded source as a file
+		# (with the freshly generated cookie) before starting. See issue #300.
+		if [ -z "${ECHO_IF_DRY_RUN}" ]; then
+			XAUTH_SRC=$(docker inspect -f '{{range .Mounts}}{{if eq .Destination "/headless/.xauthority"}}{{.Source}}{{end}}{{end}}' "${CONTAINER_NAME}" 2>/dev/null)
+			if [ -n "${XAUTH_SRC}" ] && [ ! -f "${XAUTH_SRC}" ]; then
+				echo "[INFO] Recreating missing xauthority bind-mount source ${XAUTH_SRC} before restart."
+				# Remove a stale directory that a previous failed start may have created.
+				rm -rf "${XAUTH_SRC}"
+				if [ -n "${XAUTH}" ] && [ -f "${XAUTH}" ]; then
+					cp "${XAUTH}" "${XAUTH_SRC}"
+				else
+					: > "${XAUTH_SRC}"
+				fi
+				chmod 600 "${XAUTH_SRC}" 2>/dev/null || true
+			fi
+		fi
 		${ECHO_IF_DRY_RUN} docker start "${CONTAINER_NAME}"
 	elif [[ $k = r ]] ; then
 		${ECHO_IF_DRY_RUN} docker rm "${CONTAINER_NAME}"
