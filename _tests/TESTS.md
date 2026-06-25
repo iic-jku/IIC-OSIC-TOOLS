@@ -1,24 +1,25 @@
 # Regression tests
 
-| Test No. | Description                                                       |
-| -------- | ------------------------------------------------------------------|
-| 01       | Test of LibreLane with sky130A                                    |
-| 02       | Test of DRC and LVS with sky130A                                  |
-| 03       | Test import of Python packages                                    |
-| 04       | Test of LibreLane with gf180mcuD                                  |
-| 05       | Test of ngspice with SG13G2                                       |
-| 06       | Test of ngspice with sky130A                                      |
-| 07       | Test of LibreLane with sky130A and VHDL                           |
-| 08       | Test of PULP flow                                                 |
-| 09       | Test of RISC-V toolchain                                          |
-| 10       | Test of OpenROAD flow scripts with SG13G2                         |
-| 11       | Test of Xyce with SG13G2                                          |
-| 12       | Test of iVerilog functionality                                    |
-| 13       | Test the <https://www.zerotoasiccourse.com> examples of Matt Venn |
-| 14       | Test of ngspice with gf180mcuD                                    |
-| 15       | Test Chisel with a simple example ALU                             |
-| 16       | Test VACASK with a simple example                                 |
-| 17       | Test of Veryl                                                     |
-| 18       | Test of LibreLane with ihp-sg13g2                                 |
-| 19       | Test of LibreLane with ihp-sg13cmos5l                             |
-| 20       | Test of [AMS chip template](https://github.com/iic-jku/ihp-sg13g2-ams-chip-template) with ihp-sg13g2 |
+| Test No. | Description                                                                                                                     |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 01       | LibreLane with sky130A                                                                                                          |
+| 02       | DRC and LVS with sky130A                                                                                                        |
+| 03       | Import of Python packages                                                                                                       |
+| 04       | LibreLane with gf180mcuD                                                                                                        |
+| 05       | ngspice with SG13G2                                                                                                             |
+| 06       | ngspice with sky130A                                                                                                            |
+| 07       | LibreLane with sky130A and VHDL                                                                                                 |
+| 08       | PULP flow                                                                                                                       |
+| 09       | RISC-V toolchain                                                                                                                |
+| 10       | OpenROAD flow scripts with SG13G2                                                                                               |
+| 11       | Xyce with SG13G2                                                                                                                |
+| 12       | iVerilog functionality                                                                                                          |
+| 13       | <https://www.zerotoasiccourse.com> examples of Matt Venn                                                                        |
+| 14       | ngspice with gf180mcuD                                                                                                          |
+| 15       | Chisel with a simple example ALU                                                                                                |
+| 16       | VACASK with a simple example                                                                                                    |
+| 17       | Veryl                                                                                                                           |
+| 18       | LibreLane with ihp-sg13g2                                                                                                       |
+| 19       | LibreLane with ihp-sg13cmos5l                                                                                                   |
+| 20       | [AMS chip template](https://github.com/iic-jku/ihp-sg13g2-ams-chip-template) with ihp-sg13g2                                    |
+| 21       | [analog circuit design](https://github.com/iic-jku/analog-circuit-design) xschem/ngspice simulation testbenches with ihp-sg13g2 |
