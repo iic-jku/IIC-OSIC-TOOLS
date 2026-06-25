@@ -54,6 +54,20 @@ if [ "$(uname -m)" = "x86_64" ]; then
 		setupEM==0.1.22
 fi
 
+echo "[INFO] Install EDA packages via Cargo"
+
+export RUSTUP_HOME=/tmp/rustup
+export CARGO_HOME=/tmp/cargo
+export PATH=$CARGO_HOME/bin:$PATH
+rustup default stable
+
+cargo install \
+	gdsfill --version 0.1.7 \
+	--root "${TOOLS}"
+
+# Drop the Rust toolchain and registry cache so they don't bloat the image.
+rm -rf "$RUSTUP_HOME" "$CARGO_HOME"
+
 echo "[INFO] Installing CharLib"
 python3 -m venv /foss/tools/charlib
 /foss/tools/charlib/bin/pip install --no-cache-dir \
