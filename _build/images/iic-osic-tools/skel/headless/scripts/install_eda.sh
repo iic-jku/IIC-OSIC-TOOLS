@@ -19,28 +19,28 @@ apt-get install -y \
 echo "[INFO] Install EDA packages via PIP"
 pip3 install $PIP_FLAGS \
 	"amaranth[builtin-yosys]==0.5.8" \
-	cace==2.9.0 \
-	ciel==2.5.1 \
+	cace==2.11.0 \
+	ciel==2.6.0 \
 	cocotb==2.0.1 \
 	cocotbext-ams==0.1.0 \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.6 \
 	gdsfactory==9.44.0 \
-	gdsfill==0.1.5 \
+	gdsfill==0.1.8 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.12 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev1 \
-	najaeda==0.7.4 \
+	najaeda==0.7.8 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.0 \
 	pyuvm==4.0.1 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
-	scikit-rf==1.12.0 \
+	scikit-rf==1.13.0 \
 	siliconcompiler==0.37.12 \
 	spicelib==1.6.2 \
 	spyci==1.0.2
@@ -62,7 +62,7 @@ export PATH=$CARGO_HOME/bin:$PATH
 rustup default stable
 
 cargo install \
-	gdsfill --version 0.1.7 \
+	gdsfill --version 0.1.8 \
 	--root "${TOOLS}"
 
 # Drop the Rust toolchain and registry cache so they don't bloat the image.
@@ -88,10 +88,10 @@ cp "$PDK_ROOT"/ihp-sg13g2/libs.tech/vacask/.vacaskrc.toml /headless
 
 echo "[INFO] Install EDA packages via GEM"
 gem install \
-	rggen \
-	rggen-verilog \
-	rggen-vhdl \
-	rggen-veryl
+	rggen:0.36.1 \
+	rggen-verilog:0.14.0 \
+	rggen-vhdl:0.13.0 \
+	rggen-veryl:0.8.0
 
 # Create dedicated gdsfactory venvs for KLayout pcell compatibility.
 
