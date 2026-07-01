@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: a2d55aa8c7af114fc3814bb28f63c1ec9a4258ac
+  commit: 0bd365acf02651485a3b5d6c2ed2c76744cf2b28
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: a45a8fbf19827cd9c4780b00cec9781ef9961293
@@ -30,13 +30,13 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 78750c51d0065d29cc493669344175f72c5de95f
+  commit: a1c333ea6e0d32a7e2655dc5bf5d354d0f03970e
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.1
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: 0bc2a79c3897a6093aa44bcececcdca75c329d63
+  commit: 63ec30d64393aed5fcfc59230bf05efe45e8dfef
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.9
@@ -48,7 +48,7 @@
   commit: 8.3.668
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: 1.5.321
+  commit: 1.5.322
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
   commit: 2b560ad0ccc6e7e93ad8bd6cb0f88f925bbb314b
@@ -69,7 +69,7 @@
   commit: 5e007ea4980518c705e11c783d1844701ecf09bb
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 9348ba4d4e4847a880c44e23668406082b172a97
+  commit: 5c5380c49a63466536b20ddf5c7e4e151ff40daa
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: a3388743aa47fd13aefecc6b2ef56f7554e338ea
+  commit: 0ceb865ccea228bc29747feb3f3a44744d669789
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 1c9da2c71281f964612888a97bd12702cfa7f6c6
+  commit: b60d729d66b9cdeec158b800f898461a138d505e
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: b08e87ca0de19490f98f5c2937fd933c55cbfc30
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.11.25
+  commit: 0.11.26
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
   commit: 9b9c7b215939c658f0b68ce4f90a1fbd5e4fc76a
@@ -153,7 +153,7 @@
   commit: Release-2.7.0
 - name: yices2
   repo: https://github.com/SRI-CSL/yices2.git
-  commit: af9478179811dfeb2a8728c7fb9feea92f942f37
+  commit: f5da304c826f987f7f70952007846ffc50d9241b
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
   commit: v0.66

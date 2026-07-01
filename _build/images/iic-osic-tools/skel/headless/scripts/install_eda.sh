@@ -40,7 +40,7 @@ pip3 install $PIP_FLAGS \
 	pyuvm==4.0.1 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
-	scikit-rf==1.13.0 \
+	scikit-rf==2.0.0 \
 	siliconcompiler==0.37.12 \
 	spicelib==1.6.2 \
 	spyci==1.0.2
@@ -49,7 +49,7 @@ pip3 install $PIP_FLAGS \
 if [ "$(uname -m)" = "x86_64" ]; then
 	echo "[INFO] Install x86_64-only EDA packages via PIP"
 	pip3 install $PIP_FLAGS \
-		gds2palace==0.1.19 \
+		gds2palace==0.2.0 \
 		gmsh==4.15.2 \
 		setupEM==0.1.22
 fi
