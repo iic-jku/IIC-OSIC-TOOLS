@@ -42,7 +42,7 @@
   commit: v0.30.9
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
-  commit: 293bb01804807a66740b739c536f7f71a31d8e60
+  commit: 00d5562cfeb96fe875310da9e84f157aecd248a1
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
   commit: 8.3.668

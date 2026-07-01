@@ -13,7 +13,8 @@ git checkout "${LIBMAN_REPO_COMMIT}"
 sed -i 's/QString::SkipEmptyParts/Qt::SkipEmptyParts/g' src/mainwindow.cpp
 mkdir -p build
 cd build || exit 1
-qmake6 ../libman.pro
+# CommonDB (CORE) is a private IHP repo we have no token for; build without it.
+qmake6 CONFIG+=no_core ../libman.pro
 export CAPNP_SKIP_CHECK=1
 make -j1 capnp_install
 make -j1 lstream_schemas
