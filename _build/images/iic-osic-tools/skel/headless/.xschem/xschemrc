@@ -1,5 +1,5 @@
+# Append the VACASK analyses symbols so they show up in the library manager
+append XSCHEM_LIBRARY_PATH :$env(TOOLS)/xschem/share/doc/xschem/analyses
+
 # Source the PDK xschemrc file
 source $env(PDK_ROOT)/$env(PDK)/libs.tech/xschem/xschemrc
-
-# Append the VACASK analyses symbols so they show up in the library manager (append, do not override, the paths set by the PDK xschemrc above)
-append XSCHEM_LIBRARY_PATH :$env(TOOLS)/xschem/share/doc/xschem/analyses
