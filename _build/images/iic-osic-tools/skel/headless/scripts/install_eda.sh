@@ -26,7 +26,7 @@ pip3 install $PIP_FLAGS \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.6 \
-	gdsfactory==9.44.0 \
+	gdsfactory==9.45.0 \
 	gdsfill==0.1.8 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
@@ -34,13 +34,13 @@ pip3 install $PIP_FLAGS \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev1 \
-	najaeda==0.7.8 \
+	najaeda==0.7.9 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.0 \
 	pyuvm==4.0.1 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
-	scikit-rf==2.0.0 \
+	scikit-rf==2.0.1 \
 	siliconcompiler==0.37.12 \
 	spicelib==1.6.2 \
 	spyci==1.0.2

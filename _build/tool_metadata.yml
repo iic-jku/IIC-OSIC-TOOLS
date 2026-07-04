@@ -1,6 +1,6 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
-  commit: 4ff8b6b843ed240fb3cb268f489a25e33bd6af98
+  commit: 6330635431d680dd4deaefa37584fa63be85829c
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: a1c333ea6e0d32a7e2655dc5bf5d354d0f03970e
+  commit: 60a81493cdde043b65f7fcf08afab9988d06152a
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.1
@@ -45,7 +45,7 @@
   commit: 00d5562cfeb96fe875310da9e84f157aecd248a1
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.668
+  commit: 8.3.669
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.322
@@ -69,7 +69,7 @@
   commit: 5e007ea4980518c705e11c783d1844701ecf09bb
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 5c5380c49a63466536b20ddf5c7e4e151ff40daa
+  commit: 3a15695692bdb3cdc7fa47c5e6b60fbd312b6711
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 0ceb865ccea228bc29747feb3f3a44744d669789
+  commit: 9b9d6524dd5b7c1aed9872ac56660f0c12e3f03b
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: b60d729d66b9cdeec158b800f898461a138d505e
+  commit: 6175750969f17289695f94be5105f6006c82eb61
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: b08e87ca0de19490f98f5c2937fd933c55cbfc30
@@ -135,7 +135,7 @@
   commit: 9b9c7b215939c658f0b68ce4f90a1fbd5e4fc76a
 - name: verilator
   repo: https://github.com/verilator/verilator.git
-  commit: v5.048
+  commit: v5.050
 - name: verible
   repo: https://github.com/chipsalliance/verible.git
   commit: v0.0-4080-ga0a8d8eb
@@ -153,7 +153,7 @@
   commit: Release-2.7.0
 - name: yices2
   repo: https://github.com/SRI-CSL/yices2.git
-  commit: f5da304c826f987f7f70952007846ffc50d9241b
+  commit: c61661297e33db1b6ab64a37de405d7a349d7962
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
   commit: v0.66
