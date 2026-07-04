@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg11"
+   sodipodi:docname="sparam_logo.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs11" />
+  <sodipodi:namedview
+     id="namedview11"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.97917716"
+     inkscape:cx="92.935174"
+     inkscape:cy="254.80578"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg11" />
+  <rect
+     width="512"
+     height="512"
+     rx="112"
+     fill="#0084BB"
+     id="rect1" />
+  <path
+     d="m 104,58 h 64 c 28,0 46,18 64,54 14,28 18,50 24,50 6,0 10,-22 24,-50 18,-36 36,-54 64,-54 h 64"
+     id="path1"
+     style="fill:none;stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+  <path
+     d="m 256,190 v 68"
+     id="path2"
+     style="fill:none;stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+  <path
+     d="m 234,248 22,28 22,-28"
+     id="path3"
+     style="fill:none;stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+  <line
+     x1="96"
+     y1="324"
+     x2="140"
+     y2="324"
+     id="line3"
+     style="fill:none;stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+  <path
+     d="m 140,324 a 17.5,17.5 0 0 1 35,0 17.5,17.5 0 0 1 35,0 17.5,17.5 0 0 1 35,0 17.5,17.5 0 0 1 35,0"
+     id="path4"
+     style="fill:none;stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+  <line
+     x1="280"
+     y1="324"
+     x2="416"
+     y2="324"
+     id="line4"
+     style="fill:none;stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+  <line
+     x1="332"
+     y1="323.25723"
+     x2="332"
+     y2="372.24347"
+     id="line5"
+     style="fill:none;stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+  <line
+     x1="296"
+     y1="374"
+     x2="368"
+     y2="374"
+     id="line6"
+     style="fill:none;stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+  <line
+     x1="296"
+     y1="402"
+     x2="368"
+     y2="402"
+     id="line7"
+     style="fill:none;stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+  <line
+     x1="332"
+     y1="403.2955"
+     x2="332"
+     y2="447.24609"
+     id="line8"
+     style="fill:none;stroke:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round" />
+  <line
+     x1="298"
+     y1="452"
+     x2="366"
+     y2="452"
+     stroke-width="14"
+     id="line9"
+     style="fill:none;stroke:#ffffff;stroke-linecap:round;stroke-linejoin:round" />
+  <line
+     x1="312"
+     y1="470"
+     x2="352"
+     y2="470"
+     stroke-width="14"
+     id="line10"
+     style="fill:none;stroke:#ffffff;stroke-linecap:round;stroke-linejoin:round" />
+  <line
+     x1="324"
+     y1="488"
+     x2="340"
+     y2="488"
+     stroke-width="14"
+     id="line11"
+     style="fill:none;stroke:#ffffff;stroke-linecap:round;stroke-linejoin:round" />
+  <ellipse
+     cx="332"
+     cy="324"
+     fill="#ffffff"
+     id="circle11"
+     style="stroke-width:1"
+     rx="18.1047"
+     ry="17.933237" />
+</svg>
