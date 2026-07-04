@@ -136,3 +136,18 @@ if [ -n "${DESIGNS}" ] && [ -f "$DESIGNS/.designinit" ]; then
     # shellcheck source=/dev/null
     source "$DESIGNS/.designinit"
 fi
+
+# Always make the (PDK-independent) VACASK analyses symbols available in the xschem
+# symbol browser, from any working directory. This runs after .designinit so it adds
+# to any XSCHEM_USER_LIBRARY_PATH the user set there instead of overwriting it. The
+# analyses path is prepended so it sorts ahead of the user's project-specific paths.
+# The PDK xschemrc appends XSCHEM_USER_LIBRARY_PATH to XSCHEM_LIBRARY_PATH, so this
+# also works in project folders that ship their own xschemrc. The case statement skips
+# the change when the path is already present, so a re-sourced login shell does not
+# add a duplicate.
+_iic_analyses_lib="${TOOLS}/xschem/share/doc/xschem/analyses"
+case ":${XSCHEM_USER_LIBRARY_PATH}:" in
+    *":${_iic_analyses_lib}:"*) ;;
+    *) export XSCHEM_USER_LIBRARY_PATH="${_iic_analyses_lib}${XSCHEM_USER_LIBRARY_PATH:+:${XSCHEM_USER_LIBRARY_PATH}}" ;;
+esac
+unset _iic_analyses_lib
