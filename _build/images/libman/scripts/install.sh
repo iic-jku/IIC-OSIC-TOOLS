@@ -36,4 +36,18 @@ if [ -z "$binary" ]; then
 fi
 mv "$binary" "${TOOLS}/${LIBMAN_NAME}/bin/libman"
 
+# Copy the capnp shared libraries that libman was linked against so the
+# binary can find them at runtime (capnp is built from source into
+# capnp-install/ and is NOT part of the base runtime image).
+CAPNP_LIB_DIR="/tmp/${LIBMAN_NAME}/capnp-install/lib"
+mkdir -p "${TOOLS}/${LIBMAN_NAME}/lib"
+if [ -d "${CAPNP_LIB_DIR}" ]; then
+    find "${CAPNP_LIB_DIR}" \( -name "*.so" -o -name "*.so.*" \) -exec cp -a {} "${TOOLS}/${LIBMAN_NAME}/lib/" \;
+fi
+
+# Fix the binary RPATH so it resolves the capnp libraries relative to its
+# own location (works regardless of the value of LD_LIBRARY_PATH).
+apt-get -y install --no-install-recommends patchelf
+patchelf --set-rpath '$ORIGIN/../lib' "${TOOLS}/${LIBMAN_NAME}/bin/libman"
+
 echo "${LIBMAN_NAME} ${LIBMAN_REPO_COMMIT}" > "${TOOLS}/${LIBMAN_NAME}/SOURCES"

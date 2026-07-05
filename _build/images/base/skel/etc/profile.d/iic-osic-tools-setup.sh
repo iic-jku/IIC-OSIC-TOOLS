@@ -78,7 +78,7 @@ if [ -z "${FOSS_INIT_DONE+x}" ]; then
     unset PYTHON_VERSION
 
     # shellcheck disable=SC2086
-    LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${TOOLS}/openems/lib:${TOOLS}/kactus2:${TOOLS}/gtkwave/lib/$(uname -m)-linux-gnu:${TOOLS}/kepler-formal/lib" && export LD_LIBRARY_PATH
+    LD_LIBRARY_PATH="${TOOLS}/klayout:${TOOLS}/ngspice/lib:${TOOLS}/iverilog/lib:${TOOLS}/openems/lib:${TOOLS}/kactus2:${TOOLS}/gtkwave/lib/$(uname -m)-linux-gnu:${TOOLS}/kepler-formal/lib:${TOOLS}/libman/lib" && export LD_LIBRARY_PATH
     export EDITOR="gedit"
     export PYTHONPYCACHEPREFIX="/tmp/pycache"
     export KLAYOUT_HOME="/headless/.klayout"
