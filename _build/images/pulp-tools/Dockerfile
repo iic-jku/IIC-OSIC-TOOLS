@@ -11,6 +11,5 @@ ARG BENDER_REPO_URL="https://github.com/pulp-platform/bender.git"
 ARG BENDER_REPO_COMMIT="6330635431d680dd4deaefa37584fa63be85829c"
 ARG SV2V_REPO_URL="https://github.com/zachjs/sv2v.git"
 ARG SV2V_REPO_COMMIT="6662fa5da71f87797598060f17728b284b99a9fc"
-ARG VERIBLE_VERSION="v0.0-3724-gdec56671"
 RUN --mount=type=bind,source=images/pulp-tools,target=/images/pulp-tools \
     bash /images/pulp-tools/scripts/install.sh

@@ -22,20 +22,10 @@ cargo build --release -j"$(nproc)"
 strip target/release/bender
 cp target/release/bender "${TOOLS}/${PULP_NAME}/bin"
 
-# Install Verible
-# ---------------
-cd /tmp || exit 1
-# we don't build locally (too many strange dependencies), but get the binary instead
-echo "[INFO] Installing Verible"
-if [ "$(arch)" == "aarch64" ]; then
-    CPUID="arm64"
-else
-    CPUID="x86_64"
-fi
-LOC=https://github.com/chipsalliance/verible/releases/download/${VERIBLE_VERSION}
-FILE=verible-${VERIBLE_VERSION}-linux-static-${CPUID}.tar.gz
-wget --no-verbose $LOC/$FILE && tar xfz $FILE && rm -f $FILE
-cp verible*/bin/* "${TOOLS}/${PULP_NAME}/bin"
+# NOTE: Verible is provided by the dedicated 'verible' tool image (built from
+# source, see images/verible). It was previously bundled here as a prebuilt
+# binary, which shipped a second, older Verible that shadowed the standalone
+# one on PATH. Removed to keep a single source of truth.
 
 # Build SV2V
 # ----------
@@ -52,5 +42,4 @@ strip bin/sv2v
 cp bin/sv2v "${TOOLS}/${PULP_NAME}/bin"
 
 echo "bender ${BENDER_REPO_COMMIT}" > "${TOOLS}/${PULP_NAME}/SOURCES"
-echo "verible ${VERIBLE_VERSION}" >> "${TOOLS}/${PULP_NAME}/SOURCES"
 echo "sv2v ${SV2V_REPO_COMMIT}" >> "${TOOLS}/${PULP_NAME}/SOURCES"
