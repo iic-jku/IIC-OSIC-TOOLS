@@ -42,7 +42,7 @@ mv "$binary" "${TOOLS}/${LIBMAN_NAME}/bin/libman"
 CAPNP_LIB_DIR="/tmp/${LIBMAN_NAME}/capnp-install/lib"
 mkdir -p "${TOOLS}/${LIBMAN_NAME}/lib"
 if [ -d "${CAPNP_LIB_DIR}" ]; then
-    find "${CAPNP_LIB_DIR}" -name "*.so*" -exec cp -a {} "${TOOLS}/${LIBMAN_NAME}/lib/" \;
+    find "${CAPNP_LIB_DIR}" \( -name "*.so" -o -name "*.so.*" \) -exec cp -a {} "${TOOLS}/${LIBMAN_NAME}/lib/" \;
 fi
 
 # Fix the binary RPATH so it resolves the capnp libraries relative to its
