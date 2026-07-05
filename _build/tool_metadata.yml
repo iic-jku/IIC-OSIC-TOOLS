@@ -30,13 +30,13 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 60a81493cdde043b65f7fcf08afab9988d06152a
+  commit: 2b67d9f7540191454a91361c0e5f220b5364bd5a
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.1
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: 63ec30d64393aed5fcfc59230bf05efe45e8dfef
+  commit: df2fff283392e98b7f0710914529001f0893c844
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.9
@@ -45,7 +45,7 @@
   commit: 00d5562cfeb96fe875310da9e84f157aecd248a1
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.669
+  commit: 8.3.670
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.322
@@ -69,7 +69,7 @@
   commit: 5e007ea4980518c705e11c783d1844701ecf09bb
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 3a15695692bdb3cdc7fa47c5e6b60fbd312b6711
+  commit: 8b730317a8cc14be0caa015503195065a47da049
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -102,10 +102,10 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 6175750969f17289695f94be5105f6006c82eb61
+  commit: 2e7495bcb64180553ae84d1d78307090823c794c
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: b08e87ca0de19490f98f5c2937fd933c55cbfc30
+  commit: a8c027e6bf3f213885ec089bd5f7f338ce779986
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
@@ -153,7 +153,7 @@
   commit: Release-2.7.0
 - name: yices2
   repo: https://github.com/SRI-CSL/yices2.git
-  commit: c61661297e33db1b6ab64a37de405d7a349d7962
+  commit: 963b6c53505e04a543a8f402bfe79e47af8ebc1c
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
   commit: v0.66
