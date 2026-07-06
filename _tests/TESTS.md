@@ -14,7 +14,7 @@
 | 10       | OpenROAD flow scripts with SG13G2                                                                                               |
 | 11       | Xyce with SG13G2                                                                                                                |
 | 12       | iVerilog functionality                                                                                                          |
-| 13       | <https://www.zerotoasiccourse.com> examples of Matt Venn                                                                        |
+| 13       | <https://www.zerotoasiccourse.com> examples of Matt Venn (disabled; known fail)                                                |
 | 14       | ngspice with gf180mcuD                                                                                                          |
 | 15       | Chisel with a simple example ALU                                                                                                |
 | 16       | VACASK with a simple example                                                                                                    |

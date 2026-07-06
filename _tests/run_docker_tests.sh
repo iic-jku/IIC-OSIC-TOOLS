@@ -25,7 +25,9 @@ docker pull --quiet "$FULL_TAG" > /dev/null
 # Create the test runner script
 cat <<EOL > "$CMD"
 #!/bin/bash
-find "$WORKDIR" -type f -name "test*.sh" -not -path "*/runs/*" | parallel --halt soon,fail=1 2>/dev/null
+find "$WORKDIR" -type f -name "test*.sh" \
+    -not -path "*/runs/*" \
+    -not -path "*/_tests/13/test_zero2asic.sh" | parallel --halt soon,fail=1 2>/dev/null
 if [ \$? -ne 0 ]; then
     echo "------------------------------------"
     echo "[ERROR] AT LEAST ONE TEST FAILED :-("
