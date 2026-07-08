@@ -31,8 +31,10 @@ cp target/release/bender "${TOOLS}/${PULP_NAME}/bin"
 # ----------
 cd /tmp || exit 1
 echo "[INFO] Building SV2V"
-# get Haskell stack first
-wget -qO- https://get.haskellstack.org/ | sh
+# get Haskell stack first; force install into a PATH dir so the `stack`
+# command is found below (the installer otherwise picks a dir that may not
+# be on PATH, which made `stack install` fail with "command not found").
+wget -qO- https://get.haskellstack.org/ | sh -s - -d /usr/local/bin
 # now build SV2V using Haskell and Stack
 git clone --filter=blob:none "${SV2V_REPO_URL}" sv2v
 cd sv2v || exit 1
