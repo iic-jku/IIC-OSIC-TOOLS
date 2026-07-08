@@ -1,6 +1,6 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
-  commit: 6330635431d680dd4deaefa37584fa63be85829c
+  commit: bb5f891c2ffff099be03d3862f94f2516f432c18
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -30,25 +30,25 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 2b67d9f7540191454a91361c0e5f220b5364bd5a
+  commit: e02a0bc2ec21ace2a65a88288f0d4dcab56bb901
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.1
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: df2fff283392e98b7f0710914529001f0893c844
+  commit: b688c57c3bd02cce916d2bb94b248c2e0aa2a942
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.9
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
-  commit: 00d5562cfeb96fe875310da9e84f157aecd248a1
+  commit: e3a139f762677e02f47406fb49af42fdb18b7e49
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.670
+  commit: 8.3.671
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: 1.5.322
+  commit: 1.5.323
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
   commit: 2b560ad0ccc6e7e93ad8bd6cb0f88f925bbb314b
@@ -69,7 +69,7 @@
   commit: 5e007ea4980518c705e11c783d1844701ecf09bb
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 8b730317a8cc14be0caa015503195065a47da049
+  commit: e82300449bc71da46a0959fdb67ab6686f7b1240
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -105,7 +105,7 @@
   commit: 2e7495bcb64180553ae84d1d78307090823c794c
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: a8c027e6bf3f213885ec089bd5f7f338ce779986
+  commit: 2caaaefa831a1d548a681268ccf3eea925ca1312
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.11.26
+  commit: 0.11.28
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
   commit: 9b9c7b215939c658f0b68ce4f90a1fbd5e4fc76a
@@ -153,7 +153,7 @@
   commit: Release-2.7.0
 - name: yices2
   repo: https://github.com/SRI-CSL/yices2.git
-  commit: 963b6c53505e04a543a8f402bfe79e47af8ebc1c
+  commit: 11fb92aeda4d00e2679150826011022219f310b1
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
   commit: v0.66
