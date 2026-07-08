@@ -105,7 +105,7 @@
   commit: 2e7495bcb64180553ae84d1d78307090823c794c
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 2caaaefa831a1d548a681268ccf3eea925ca1312
+  commit: a8c027e6bf3f213885ec089bd5f7f338ce779986
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
