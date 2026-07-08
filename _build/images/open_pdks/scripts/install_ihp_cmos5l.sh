@@ -77,6 +77,7 @@ done
 # compilation (diodes, pnpMPA BJT, cap_mfringe are plain SPICE subckts/models).
 echo "[INFO] Preparing IHP CMOS5L PDK for VACASK."
 cd /tmp || exit 1
+rm -rf "${VACASK_NAME}"
 
 if [ -z "${VACASK_REPO_COMMIT:-}" ]; then
 	# No specific ref -> shallow clone the default branch for speed

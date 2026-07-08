@@ -145,7 +145,8 @@ fi
 OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
     python3 -m sg13g2tovc --openvaf-options --target_cpu generic
 cp /tmp/${VACASK_NAME}/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/vacask/.vacaskrc.toml"
-rm -rf ${VACASK_NAME}
+cd /tmp || exit 1
+rm -rf "${VACASK_NAME}"
 
 # Remove *.orig files created during PDK preparation
 find "$PDK_ROOT/$PDK/libs.tech/xschem" -name "*.orig" -delete
