@@ -47,14 +47,16 @@ pip3 install $PIP_FLAGS \
 	spicelib==1.6.2 \
 	spyci==1.0.2
 
-#FIXME There are currently issues with gmsh for arm64 Linux, so only install for x86_64
-if [ "$(uname -m)" = "x86_64" ]; then
-	echo "[INFO] Install x86_64-only EDA packages via PIP"
-	pip3 install $PIP_FLAGS \
-		gds2palace==0.2.0 \
-		gmsh==4.15.2 \
-		setupEM==0.1.22
-fi
+# gds2palace and setupEM depend on gmsh, which upstream ships no Linux-aarch64
+# wheel/SDK for. gmsh is instead provided for both architectures via the
+# python3-gmsh APT package installed above (/usr/lib/python3/dist-packages).
+# Install these two here WITHOUT --ignore-installed so pip honours the
+# APT-provided gmsh as satisfying the dependency (the main block's --ignore-installed
+# would otherwise force a PyPI gmsh reinstall that fails on arm64).
+echo "[INFO] Install gmsh-dependent EDA packages via PIP"
+pip3 install --no-cache-dir --break-system-packages \
+	gds2palace==0.2.0 \
+	setupEM==0.1.22
 
 echo "[INFO] Install EDA packages via Cargo"
 
