@@ -7,16 +7,20 @@ set -e
 
 # Build yosys
 # -----------
+# As of v0.67 yosys uses a CMake build system (replacing the old Makefile flow).
+# Requires CMake >= 3.28, GCC >= 13 / Clang >= 16, and Python >= 3.11.
 cd /tmp || exit 1
 git clone --filter=blob:none "${YOSYS_REPO_URL}" "${YOSYS_NAME}"
 cd "${YOSYS_NAME}" || exit 1
 git checkout "${YOSYS_REPO_COMMIT}"
 git submodule update --init
-#FIXME This is a WA for a build failure due to an unused parameter in the pyosys code.
-sed -i 's/-Werror=unused /-Werror=unused -Wno-error=unused-parameter /' Makefile
-make install -j"$(nproc)" \
-    PREFIX="${TOOLS}/${YOSYS_NAME}" \
-    CONFIG=gcc ENABLE_PYOSYS=1 PYOSYS_USE_UV=0
+cmake -B build . --fresh \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX="${TOOLS}/${YOSYS_NAME}" \
+    -DYOSYS_WITH_PYTHON=ON \
+    -DYOSYS_INSTALL_PYTHON=ON
+cmake --build build --config Release --parallel "$(nproc)"
+cmake --install build
 
 export PATH=$PATH:${TOOLS}/${YOSYS_NAME}/bin
 

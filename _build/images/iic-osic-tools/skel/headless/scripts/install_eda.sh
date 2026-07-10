@@ -14,7 +14,8 @@ apt-get install -y \
 	gnuplot-x11 \
 	libqhull-dev \
 	potrace \
-	python3-dev
+	python3-dev \
+	python3-gmsh
 
 echo "[INFO] Install EDA packages via PIP"
 pip3 install $PIP_FLAGS \
