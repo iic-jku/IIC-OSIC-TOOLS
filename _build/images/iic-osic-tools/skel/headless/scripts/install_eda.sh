@@ -42,7 +42,7 @@ pip3 install $PIP_FLAGS \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==1.12.0 \
 	siliconcompiler==0.37.12 \
-	snp2le==0.1.2 \
+	snp2le==0.1.3 \
 	spicelib==1.6.2 \
 	spyci==1.0.2
 
