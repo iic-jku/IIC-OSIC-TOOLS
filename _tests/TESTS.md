@@ -23,3 +23,4 @@
 | 19       | LibreLane with ihp-sg13cmos5l                                                                                                   |
 | 20       | [AMS chip template](https://github.com/iic-jku/ihp-sg13g2-ams-chip-template) with ihp-sg13g2                                    |
 | 21       | [analog circuit design](https://github.com/iic-jku/analog-circuit-design) xschem/ngspice simulation testbenches with ihp-sg13g2 |
+| 22       | [SPARX](https://github.com/iic-jku/SG13CMOS_SPARX) six-port receiver with ihp-sg13g2                                            |
