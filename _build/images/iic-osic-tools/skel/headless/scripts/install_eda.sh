@@ -35,7 +35,7 @@ pip3 install $PIP_FLAGS \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev1 \
-	najaeda==0.7.12 \
+	najaeda==0.7.14 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.0 \
 	pyuvm==4.0.1 \
@@ -43,7 +43,7 @@ pip3 install $PIP_FLAGS \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.0.1 \
 	siliconcompiler==0.38.1 \
-	snp2le==0.1.2 \
+	snp2le==0.1.4 \
 	spicelib==1.6.2 \
 	spyci==1.0.2
 
