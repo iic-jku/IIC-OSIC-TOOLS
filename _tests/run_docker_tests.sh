@@ -17,8 +17,6 @@ CONTAINER_NAME=iic-osic-tools_test${RAND}
 CMD=_run_tests_${RAND}.sh
 WORKDIR=/foss/designs
 
-mkdir -p "/tmp/regression/${RAND}"
-
 # Check if newer image is available and pull if needed
 docker pull --quiet "$FULL_TAG" > /dev/null
 
@@ -26,8 +24,7 @@ docker pull --quiet "$FULL_TAG" > /dev/null
 cat <<EOL > "$CMD"
 #!/bin/bash
 find "$WORKDIR" -type f -name "test*.sh" \
-    -not -path "*/runs/*" \
-    -not -path "*/_tests/13/test_zero2asic.sh" | parallel --halt soon,fail=1 2>/dev/null
+    -not -path "*/runs/*" | parallel --will-cite --halt soon,fail=1
 if [ \$? -ne 0 ]; then
     echo "------------------------------------"
     echo "[ERROR] AT LEAST ONE TEST FAILED :-("
@@ -44,6 +41,9 @@ chmod +x "$CMD"
 
 # Now run the actual tests
 docker run -i --rm --name "$CONTAINER_NAME" --user "$(id -u):$(id -g)" -e DISPLAY= -e RAND="$RAND" -v "$PWD":"$WORKDIR":rw "$FULL_TAG" -s "$WORKDIR/$CMD"
+RESULT=$?
 
 # Cleanup
 rm -f "$CMD"
+
+exit $RESULT
