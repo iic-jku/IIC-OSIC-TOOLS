@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 10b2393084a8d28a7eaf82881d6a1f9e757d0ef9
+  commit: e8653994f3945902283adbdb96ae64e5453014e2
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: a45a8fbf19827cd9c4780b00cec9781ef9961293
@@ -69,7 +69,7 @@
   commit: 3e57150aa7c22b6db7c96656d5e4fe014cf43f8d
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 32ae71be8b8e722228dd0bb21ea52f5057324cfb
+  commit: 3976b644717076d108fe4cbffea7fe4cc46901b9
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: fba6a5b9d17ef09db2907e9c4c6f92d123d131c0
+  commit: b4adf041d24d630d8f1aed2f43ec8f4b9b0bf14f
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.11.28
+  commit: 0.11.29
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
   commit: 9b9c7b215939c658f0b68ce4f90a1fbd5e4fc76a
@@ -144,7 +144,7 @@
   commit: 30032514f600e5c2901479cf455fcb2952f0278f
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: c8b26a17d8d53ce7fbd9e7d45ab6bb03e75996e0
+  commit: d24a9f521e64df0875527f741e04c1fe8a224038
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0

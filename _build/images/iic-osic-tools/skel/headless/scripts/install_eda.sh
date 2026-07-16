@@ -42,7 +42,7 @@ pip3 install $PIP_FLAGS \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.0.1 \
-	siliconcompiler==0.38.1 \
+	siliconcompiler==0.38.2 \
 	snp2le==0.1.4 \
 	spicelib==1.6.2 \
 	spyci==1.0.2
