@@ -327,6 +327,8 @@ or
 
 **Attention macOS users:** Please disable the *Enable VirtioFS accelerated directory sharing* setting available as "Beta Setting," as this will cause issues accessing the mounted drives! However, enabling the *VirtioFS* general setting works in Docker >v4.15.0!
 
+**Attention macOS users:** On macOS the X11 mode talks to XQuartz over TCP (no local Unix socket or MIT-SHM across the Docker VM boundary), so it is bound by network round-trip latency. For redraw-heavy GUIs (e.g. KLayout, GTKWave), the VNC mode (`./start_vnc.sh`) renders inside the container and is usually noticeably faster and smoother.
+
 #### 4.3.1 Variables for X11
 
 The following environment variables are used for configuration:
