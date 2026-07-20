@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-pex.sh [-d] [-m mode] [-s mode] [-n <subcktname>] [-w <workdir>]
+# Usage: sak-pex.sh [-d] [-m <mode>] [-s <mode>] [-n <subcktname>] [-w <workdir>]
 #                   [-t <threshold>] [-r <minres>] [-y <mindelay>] <cellname>
 #        -m  Select PEX mode (1 = C-decoupled, 2 = C-coupled [default], 3 = full-RC)
 #        -s  Subcircuit definition (1 = include [default], 0 = no subcircuit)
@@ -48,7 +48,7 @@ if [ $# -eq 0 ]; then
 	echo
 	echo "PEX script using Magic (ICD@JKU)"
 	echo
-	echo "Usage: $0 [-d] [-m mode] [-s mode] [-n <subcktname>] [-w <workdir>]"
+	echo "Usage: $0 [-d] [-m <mode>] [-s <mode>] [-n <subcktname>] [-w <workdir>]"
 	echo "       [-t <threshold>] [-r <minres>] [-y <mindelay>] <cellname>"
 	echo
 	echo "       -m Select PEX mode (1 = C-decoupled, 2 = C-coupled [default], 3 = full-RC)"
