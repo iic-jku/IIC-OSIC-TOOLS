@@ -34,7 +34,7 @@ source "$STARTUPDIR/scripts/generate_container_user.sh"
 source "$HOME/.bashrc"
 
 # if the first parameter is `skip`:
-if [[ $1 =~ -s|--skip ]]; then
+if [[ $1 == "-s" || $1 == "--skip" ]]; then
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] SKIPPING UI STARTUP"
     # shellcheck disable=SC2145
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Executing command: '${@:2}'"
@@ -74,13 +74,25 @@ done
 # correct forwarding of shutdown signal
 cleanup () {
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Cleanup called, exiting..."
-    kill -s SIGTERM $!
+    # Terminate all background jobs started by this script, not just the last one.
+    local pids
+    pids=$(jobs -p)
+    if [ -n "$pids" ]; then
+        # shellcheck disable=SC2086
+        kill -s SIGTERM $pids 2>/dev/null || true
+    fi
     exit 0
 }
 
 # Marks log lines of outputs so they can be identified
 # https://unix.stackexchange.com/questions/67392/multiple-background-processes-in-a-script
-tag() { stdbuf -oL sed "s%^%$1 %"; }
+# Use a literal delimiter that is unlikely to appear in tag names and escape
+# any backslashes/ampersands in the tag to keep sed happy.
+tag() {
+    local t=${1//\\/\\\\}
+    t=${t//&/\\&}
+    stdbuf -oL sed "s|^|${t} |"
+}
 
 if [ "$start_x" != true ] && [ "$start_vnc" != true ]; then
     if [ -z "${DISPLAY+x}" ]; then
@@ -95,8 +107,9 @@ if [ "$start_x" != true ] && [ "$start_vnc" != true ]; then
 fi
 
 if [ "$start_vnc" = true ]; then
-    # resolve_vnc_connection
-    VNC_IP=$(hostname -i)
+    # resolve_vnc_connection (best-effort; only used for the info log below)
+    VNC_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
+    [ -z "$VNC_IP" ] && VNC_IP="<unknown>"
 
     # change the vnc password
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Change VNC password..."

@@ -3,6 +3,7 @@
 
 import amaranth
 import cace
+import chipify
 import ciel
 import cocotb
 import edalize

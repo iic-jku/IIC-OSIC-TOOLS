@@ -31,6 +31,15 @@ else
 	exit 1
 fi
 
+# Copy the repo-level `versions.txt` next to the PDK (at $PDK_ROOT) so the KLayout DRC/LVS version check can find it.
+# This is mandatory since commit: https://github.com/IHP-GmbH/IHP-Open-PDK/commit/d54e4a48a3d34c555a038b64a0869cd295134376
+if [ -f "versions.txt" ]; then
+	cp "versions.txt" "$PDK_ROOT/versions.txt"
+else
+	echo "[ERROR] versions.txt not found in PDK repo. KLayout DRC/LVS version check may fail."
+	exit 1
+fi
+
 # Store git hash of installed PDK version for reference
 PDK_COMMIT=$(git rev-parse HEAD)
 echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
@@ -136,7 +145,8 @@ fi
 OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
     python3 -m sg13g2tovc --openvaf-options --target_cpu generic
 cp /tmp/${VACASK_NAME}/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/vacask/.vacaskrc.toml"
-rm -rf ${VACASK_NAME}
+cd /tmp || exit 1
+rm -rf "${VACASK_NAME}"
 
 # Remove *.orig files created during PDK preparation
 find "$PDK_ROOT/$PDK/libs.tech/xschem" -name "*.orig" -delete

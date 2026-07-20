@@ -1,0 +1,11 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+#
+# Wrapper to combine Palace S-parameter output (port-S.csv) into Touchstone SnP format.
+# Usage: combine_snp
+# Run this in the simulation data directory after palace has finished.
+
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+exec python3 "$SCRIPT_DIR/../lib/combine_extend_snp.py"

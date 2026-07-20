@@ -173,6 +173,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [amaranth](https://github.com/amaranth-lang/amaranth) a Python-based HDL tool chain
 - [cace](https://github.com/efabless/cace) a Python-based circuit automatic characterization engine
 - [charlib](https://github.com/stineje/CharLib) a characterization library for standard cells
+- [chipify](https://github.com/santihofi/chipify) GUI and CLI wrapper for mismatch simulation, parameter sweeps, and yield analysis with `xschem` and `ngspice`
 - [ciel](https://github.com/fossi-foundation/ciel) version manager (and builder) for open-source PDKs
 - [cocotb](https://github.com/cocotb/cocotb) simulation library for writing VHDL and Verilog test benches in Python
 - [covered](https://github.com/hpretl/verilog-covered) Verilog code coverage
@@ -184,7 +185,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [gds2palace](https://github.com/VolkerMuehlhaus/setupEM)/`setupEM` setup tools for `palace` EM simulation
 - [gds3d](https://github.com/trilomix/GDS3D) a 3D viewer for GDS files
 - [gdsfactory](https://github.com/gdsfactory/gdsfactory) Python library for GDS generation
-- [gdsfill](https://github.com/aesc-silicon/gdsfill) Python tool for inserting dummy metal fill into semiconductor layouts
+- [gdsfill](https://github.com/aesc-silicon/gdsfill) Rust tool for inserting dummy metal fill into semiconductor layouts
 - [gdspy](https://github.com/heitzmann/gdspy) Python module for the creation and manipulation of GDS files
 - [gf180mcu](https://github.com/google/gf180mcu-pdk) GlobalFoundries 180 nm CMOS PDK
 - [ghdl-yosys-plugin](https://github.com/ghdl/ghdl-yosys-plugin) VHDL-plugin for `yosys`
@@ -234,6 +235,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [sky130](https://github.com/google/skywater-pdk) SkyWater Technologies 130 nm CMOS PDK
 - [slang yosys plugin](https://github.com/povik/yosys-slang) Slang-based plugin for `yosys` for SystemVerilog support
 - [slang](https://github.com/MikePopoloski/slang) SystemVerilog parsing and translation (e.g. to Verilog)
+- [snp2le](https://github.com/iic-jku/snp2le) converts Touchstone S-parameter files into lumped-element netlists for `ngspice` and `vacask`
 - [spicebind](https://github.com/themperek/spicebind) lightweight bridge enabling co-simulation of analog `ngspice` circuits alongside HDL simulators
 - [spicelib](https://github.com/nunobrum/spicelib) library to interact with SPICE-like simulators
 - [spike](https://github.com/riscv-software-src/riscv-isa-sim) Spike RISC-V ISA simulator
@@ -326,6 +328,8 @@ or
 **Attention macOS users:** The X-server connection is automatically killed if there is a too-long idle period in the terminal (when this happens, it looks like a **crash** of the system). A **workaround** is to start a second terminal from the initial terminal that pops up when executing the start scripts `./start_x.sh` or `.\start_x.bat` and then start `htop` in the initial terminal. In this way, there is an ongoing display activity in the initial terminal, and as a positive side effect, the usage of the machine can be monitored. We are looking for a better long-term solution.
 
 **Attention macOS users:** Please disable the *Enable VirtioFS accelerated directory sharing* setting available as "Beta Setting," as this will cause issues accessing the mounted drives! However, enabling the *VirtioFS* general setting works in Docker >v4.15.0!
+
+**Attention macOS users:** On macOS the X11 mode talks to XQuartz over TCP (no local Unix socket or MIT-SHM across the Docker VM boundary), so it is bound by network round-trip latency. For redraw-heavy GUIs (e.g. KLayout, GTKWave), the VNC mode (`./start_vnc.sh`) renders inside the container and is usually noticeably faster and smoother.
 
 #### 4.3.1 Variables for X11
 

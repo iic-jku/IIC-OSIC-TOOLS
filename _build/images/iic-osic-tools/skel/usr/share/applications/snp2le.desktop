@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=snp2le
+Exec=snp2le
+Type=Application
+Icon=snp2le
+Categories=Development;Electronics;
+Comment=Convert Touchstone S-parameters to lumped-element netlists
