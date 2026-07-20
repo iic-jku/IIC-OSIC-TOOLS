@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-lvs.sh [-d] [-m|-k|-b] [-w workdir] [-s <schematic> -l <layout> -c <cellname> | <cellname>]
+# Usage: sak-lvs.sh [-d] [-m|-k|-b] [-w <workdir>] [-s <schematic> -l <layout> -c <cellname> | <cellname>]
 #        -m  Run Magic+Netgen LVS (default)
 #        -k  Run KLayout LVS
 #        -b  Run Magic+Netgen and KLayout LVS
