@@ -14,3 +14,9 @@ cmake --build . -- -j "$(nproc)"
 cmake --install .
 
 echo "${PALACE_NAME} ${PALACE_REPO_COMMIT}" > "${TOOLS}/${PALACE_NAME}/SOURCES"
+
+# Install gds2palace wrapper scripts (run_palace, combine_snp, combine_extend_snp.py)
+mkdir -p "${TOOLS}/${PALACE_NAME}/bin" "${TOOLS}/${PALACE_NAME}/lib"
+install -m 755 /images/palace/scripts/run_palace   "${TOOLS}/${PALACE_NAME}/bin/run_palace"
+install -m 755 /images/palace/scripts/combine_snp  "${TOOLS}/${PALACE_NAME}/bin/combine_snp"
+install -m 644 /images/palace/scripts/combine_extend_snp.py "${TOOLS}/${PALACE_NAME}/lib/combine_extend_snp.py"

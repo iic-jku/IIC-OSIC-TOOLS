@@ -138,11 +138,17 @@ elif [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 else
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container does not exist, creating ${CONTAINER_NAME} ..."
 	# Finally, run the container, and sets DISPLAY to the local display number
-	${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
+	if ! ${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null; then
+		echo "[ERROR] Failed to pull image ${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}."
+		exit 1
+	fi
 	# Disable SC2086, $PARAMS must be globbed and splitted.
 	# shellcheck disable=SC2086
-	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" $PARAMS -v "$DESIGNS":"/foss/designs":rw --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" -s jupyter lab > /dev/null
+	if ! ${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" $PARAMS -v "$DESIGNS":"/foss/designs":rw --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" -s jupyter lab > /dev/null; then
+		echo "[ERROR] Failed to start container ${CONTAINER_NAME}."
+		exit 1
+	fi
 	NB_STARTED=1
 fi
 
-[ $NB_STARTED = 1 ] && echo "[INFO] Jupyter Notebook is running, point your browser to <http://localhost:8888>."
+[ $NB_STARTED = 1 ] && echo "[INFO] Jupyter Notebook is running, point your browser to <http://localhost:${JUPYTER_PORT}>."
