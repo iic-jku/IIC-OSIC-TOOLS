@@ -104,6 +104,10 @@ cp "$D/$CELL.gds"   "$W/auto2/gds/$CELL.gds"
 check "ihp: auto-derive in current dir"    0 bash -c "cd '$W/auto'  && '$SAK' -m '$CELL'"
 check "ihp: auto-derive with gds/ subdir"  0 bash -c "cd '$W/auto2' && '$SAK' -m '$CELL'"
 
+# reuse a netlist that already is the target file in the workdir (the script must not delete its own input)
+cp "$D/$CELL.spice" "$W/${CELL}_magic.spice"
+check "ihp: -s reuses netlist in workdir"  0 "$SAK" -m -s "$W/${CELL}_magic.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
+
 # LVS mismatch detection (broken netlists must FAIL with exit 1)
 check "ihp: -m broken SPICE reports mismatch" 1 "$SAK" -m -s "$D/${CELL}_broken.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 check "ihp: -k broken CDL reports mismatch"   1 "$SAK" -k -s "$D/${CELL}_broken.cdl"   -l "$D/$CELL.gds" -c "$CELL" -w "$W"
