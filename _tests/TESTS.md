@@ -22,3 +22,4 @@
 | 18       | Test of LibreLane with ihp-sg13g2                                 |
 | 19       | Test of LibreLane with ihp-sg13cmos5l                             |
 | 20       | Test of [AMS chip template](https://github.com/iic-jku/ihp-sg13g2-ams-chip-template) with ihp-sg13g2 |
+| 25       | Smoke/regression test of sak-pex.sh (all PDKs and PEX modes)      |

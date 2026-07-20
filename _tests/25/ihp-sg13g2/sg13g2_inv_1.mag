@@ -1,0 +1,158 @@
+magic
+tech ihp-sg13g2
+magscale 1 2
+timestamp 1613069369
+<< checkpaint >>
+rect -2048 -2056 2336 2834
+<< nwell >>
+rect -48 350 336 834
+<< pwell >>
+rect 36 56 250 292
+rect -26 -56 314 56
+<< nmos >>
+rect 130 118 156 266
+<< pmos >>
+rect 130 415 156 639
+<< ndiff >>
+rect 62 232 130 266
+rect 62 200 76 232
+rect 108 200 130 232
+rect 62 164 130 200
+rect 62 132 76 164
+rect 108 132 130 164
+rect 62 118 130 132
+rect 156 232 224 266
+rect 156 200 178 232
+rect 210 200 224 232
+rect 156 164 224 200
+rect 156 132 178 164
+rect 210 132 224 164
+rect 156 118 224 132
+<< pdiff >>
+rect 62 625 130 639
+rect 62 593 76 625
+rect 108 593 130 625
+rect 62 557 130 593
+rect 62 525 76 557
+rect 108 525 130 557
+rect 62 489 130 525
+rect 62 457 76 489
+rect 108 457 130 489
+rect 62 415 130 457
+rect 156 625 224 639
+rect 156 593 178 625
+rect 210 593 224 625
+rect 156 557 224 593
+rect 156 525 178 557
+rect 210 525 224 557
+rect 156 489 224 525
+rect 156 457 178 489
+rect 210 457 224 489
+rect 156 415 224 457
+<< ndiffc >>
+rect 76 200 108 232
+rect 76 132 108 164
+rect 178 200 210 232
+rect 178 132 210 164
+<< pdiffc >>
+rect 76 593 108 625
+rect 76 525 108 557
+rect 76 457 108 489
+rect 178 593 210 625
+rect 178 525 210 557
+rect 178 457 210 489
+<< psubdiff >>
+rect 0 16 288 30
+rect 0 -16 32 16
+rect 64 -16 128 16
+rect 160 -16 224 16
+rect 256 -16 288 16
+rect 0 -30 288 -16
+<< nsubdiff >>
+rect 0 772 288 786
+rect 0 740 32 772
+rect 64 740 128 772
+rect 160 740 224 772
+rect 256 740 288 772
+rect 0 726 288 740
+<< psubdiffcont >>
+rect 32 -16 64 16
+rect 128 -16 160 16
+rect 224 -16 256 16
+<< nsubdiffcont >>
+rect 32 740 64 772
+rect 128 740 160 772
+rect 224 740 256 772
+<< poly >>
+rect 130 639 156 675
+rect 130 370 156 415
+rect 62 353 156 370
+rect 62 321 79 353
+rect 111 321 156 353
+rect 62 304 156 321
+rect 130 266 156 304
+rect 130 82 156 118
+<< polycont >>
+rect 79 321 111 353
+<< metal1 >>
+rect 0 772 288 800
+rect 0 740 32 772
+rect 64 740 128 772
+rect 160 740 224 772
+rect 256 740 288 772
+rect 0 712 288 740
+rect 66 625 118 712
+rect 66 593 76 625
+rect 108 593 118 625
+rect 66 557 118 593
+rect 66 525 76 557
+rect 108 525 118 557
+rect 66 489 118 525
+rect 66 457 76 489
+rect 108 457 118 489
+rect 66 447 118 457
+rect 171 625 217 635
+rect 171 593 178 625
+rect 210 593 217 625
+rect 171 557 217 593
+rect 171 525 178 557
+rect 210 525 217 557
+rect 171 489 217 525
+rect 171 457 178 489
+rect 210 457 217 489
+rect 62 353 125 370
+rect 62 321 79 353
+rect 111 321 125 353
+rect 62 304 125 321
+rect 66 232 118 242
+rect 66 200 76 232
+rect 108 200 118 232
+rect 66 164 118 200
+rect 66 132 76 164
+rect 108 132 118 164
+rect 66 44 118 132
+rect 171 232 217 457
+rect 171 200 178 232
+rect 210 200 217 232
+rect 171 164 217 200
+rect 171 132 178 164
+rect 210 132 217 164
+rect 171 122 217 132
+rect 0 16 288 44
+rect 0 -16 32 16
+rect 64 -16 128 16
+rect 160 -16 224 16
+rect 256 -16 288 16
+rect 0 -44 288 -16
+<< labels >>
+flabel metal1 s 171 122 217 635 0 FreeSans 400 0 0 0 Y
+port 2 nsew
+flabel metal1 s 62 304 125 370 0 FreeSans 400 0 0 0 A
+port 3 nsew
+flabel metal1 s 0 -44 288 44 0 FreeSans 400 0 0 0 VSS
+port 4 nsew
+flabel metal1 s 0 712 288 800 0 FreeSans 400 0 0 0 VDD
+port 5 nsew
+<< properties >>
+string FIXED_BBOX 0 0 288 756
+<< end >>
