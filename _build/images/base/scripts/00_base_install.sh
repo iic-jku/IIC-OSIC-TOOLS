@@ -97,6 +97,8 @@ apt-get -y install \
 	libgettextpo0 \
 	libgirepository-1.0-1 \
 	libgit2-1.7 \
+	libegl1 \
+	libgl1 \
 	libglu1-mesa \
 	libgmp10 \
 	libgomp1 \
@@ -155,8 +157,17 @@ apt-get -y install \
 	libx11-xcb1 \
 	libxaw7 \
 	libxcb1 \
+	libxcb-cursor0 \
+	libxcb-icccm4 \
+	libxcb-image0 \
+	libxcb-keysyms1 \
+	libxcb-randr0 \
+	libxcb-render-util0 \
+	libxcb-shape0 \
+	libxcb-xinerama0 \
 	libxext6 \
 	libxft2 \
+	libxkbcommon-x11-0 \
 	libxml2 \
 	libxpm4 \
 	libxrender1 \

@@ -6,6 +6,7 @@
 #######################################################################
 ARG BASE_IMAGE=registry.iic.jku.at:5000/iic-osic-tools:base
 
+ARG TOOL_IMAGE_CHIPIFY="registry.iic.jku.at:5000/iic-osic-tools:tool-chipify-latest"
 ARG TOOL_IMAGE_COVERED="registry.iic.jku.at:5000/iic-osic-tools:tool-covered-latest"
 ARG TOOL_IMAGE_CVC_RV="registry.iic.jku.at:5000/iic-osic-tools:tool-cvc_rv-latest"
 ARG TOOL_IMAGE_FPGA="registry.iic.jku.at:5000/iic-osic-tools:tool-fpga-latest"
@@ -57,6 +58,7 @@ ARG TOOL_IMAGE_XYCE="registry.iic.jku.at:5000/iic-osic-tools:tool-xyce-latest"
 #ARG TOOL_IMAGE_XYCE_XDM="registry.iic.jku.at:5000/iic-osic-tools:tool-xyce-xdm-latest"
 ARG TOOL_IMAGE_YOSYS="registry.iic.jku.at:5000/iic-osic-tools:tool-yosys-latest"
 
+FROM ${TOOL_IMAGE_CHIPIFY} AS chipify
 FROM ${TOOL_IMAGE_COVERED} AS covered
 FROM ${TOOL_IMAGE_CVC_RV} AS cvc_rv
 FROM ${TOOL_IMAGE_FPGA} AS fpga
@@ -116,6 +118,7 @@ ARG CONTAINER_TAG=unknown
 ENV IIC_OSIC_TOOLS_VERSION=${CONTAINER_TAG}
 
 # Copy all layers into the final container
+COPY --link --from=chipify                      ${TOOLS}/chipify                ${TOOLS}/chipify/
 COPY --link --from=covered                      ${TOOLS}/covered                ${TOOLS}/covered/
 COPY --link --from=cvc_rv                       ${TOOLS}/cvc_rv                 ${TOOLS}/cvc_rv/
 COPY --link --from=fpga                         ${TOOLS}/fpga                   ${TOOLS}/fpga/

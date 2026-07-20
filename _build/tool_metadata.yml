@@ -1,6 +1,9 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
   commit: bb5f891c2ffff099be03d3862f94f2516f432c18
+- name: chipify
+  repo: https://github.com/santihofi/chipify.git
+  commit: 18022f787933aa86c42a77fe243363601dfd6b7f
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9

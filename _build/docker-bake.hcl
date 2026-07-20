@@ -89,6 +89,13 @@ target "covered" {
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-covered-latest"]
 }
 
+target "chipify" {
+  inherits = ["base-tool"]
+  dockerfile = "images/chipify/Dockerfile"
+  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-chipify-latest"]
+  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-chipify-latest"]
+}
+
 target "cvc_rv" {
   inherits = ["base-tool"]
   dockerfile = "images/cvc_rv/Dockerfile"
@@ -409,7 +416,7 @@ target "spicebind" {
 # Group targets for tools-level-1
 group "tools-level-1" {
   targets = [
-    "magic", "openvaf", "osic-multitool", "xyce", "covered", "cvc_rv", "fpga", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "kepler-formal", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "palace", "pulp-tools", "pyopus", "surelog", "surfer", "svck", "uv", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "vacask", "verible", "verilator", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit", "openroad", "openroad-librelane"
+    "magic", "openvaf", "osic-multitool", "xyce", "chipify", "covered", "cvc_rv", "fpga", "gaw3-xschem", "ghdl", "gtkwave", "irsim", "iverilog", "kactus2", "kepler-formal", "klayout", "libman", "netgen", "ngspyce", "nvc", "openems", "padring", "palace", "pulp-tools", "pyopus", "surelog", "surfer", "svck", "uv", "qflow", "qucs-s", "riscv-gnu-toolchain", "slang", "vacask", "verible", "verilator", "veryl", "xcircuit", "xschem", "yosys", "rftoolkit", "openroad", "openroad-librelane"
   ]
 }
 
