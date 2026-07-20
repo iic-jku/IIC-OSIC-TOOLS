@@ -416,10 +416,10 @@ KLAYOUT_LOG="$KLAYOUT_RUNDIR/${FBASENAME}.klayout.lvs.log"
 CELL_MISMATCH_MARKER="$RESDIR/ext_$FBASENAME.cellmismatch"
 [ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
 
-# remove old netlists
-# -------------------
+# remove old netlists (keep a directly provided netlist that already is the target file)
+# --------------------------------------------------------------------------------------
 
-[ -f "$NETLIST_SCH" ] && rm -f "$NETLIST_SCH"
+[ -f "$NETLIST_SCH" ] && [ "$CELL_SCH" != "$NETLIST_SCH" ] && rm -f "$NETLIST_SCH"
 [ -f "$NETLIST_LAY" ] && rm -f "$NETLIST_LAY"
 
 # decompress gzipped layout views, magic cannot read them directly
