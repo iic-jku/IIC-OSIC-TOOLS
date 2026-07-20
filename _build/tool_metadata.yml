@@ -63,7 +63,7 @@
   commit: r1.21.1
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
-  commit: b344c97eacc2aaf8e14ae7e43e2e9dc0871de2c0
+  commit: f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
   commit: 3e57150aa7c22b6db7c96656d5e4fe014cf43f8d
@@ -132,7 +132,7 @@
   commit: 0.11.29
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 8c22dfe1f7b6b6daa3af1e2c223d8343c4a7ca01
+  commit: 49329891241a42eaae25b0f66fddc2e557ac4599
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.050
