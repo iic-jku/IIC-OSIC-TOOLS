@@ -69,7 +69,7 @@ RESDIR=$PWD
 CELLS_GIVEN=0
 RUN_MAGIC=1
 RUN_KLAYOUT=0
-# format of a directly-provided netlist (via -s or auto-derive): "spice" (Magic+Netgen) or "cdl" (KLayout). stays empty for a .sch schematic, which is netlisted per-engine on the fly
+# format of a directly provided netlist (via -s or auto-derive): "spice" (Magic+Netgen) or "cdl" (KLayout). Stays empty for a .sch schematic, which is netlisted per engine on the fly.
 NETLIST_FORMAT=""
 
 # check flags
@@ -312,8 +312,8 @@ fi
 CELL_LAY=$(realpath "$CELL_LAY")
 
 [ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 1 ] && echo "[INFO] Using Verilog file <$CELL_V>."
-[ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]  && [ "$SPICE_MODE" -eq 0 ] && echo "[INFO] Using schematic file <$CELL_SCH>."
-[ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]  && [ "$SPICE_MODE" -eq 1 ] && echo "[INFO] Using SPICE/CDL netlist file <$CELL_SCH>."
+[ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ] && [ "$SPICE_MODE" -eq 0 ] && echo "[INFO] Using schematic file <$CELL_SCH>."
+[ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ] && [ "$SPICE_MODE" -eq 1 ] && echo "[INFO] Using SPICE/CDL netlist file <$CELL_SCH>."
 [ $DEBUG -eq 1 ] && echo "[INFO] Using layout file <$CELL_LAY>."
 
 # check that the required tools are available
@@ -337,7 +337,7 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	done
 fi
 
-# xschem is only needed to netlist an .sch schematic
+# xschem is only needed to netlist a .sch schematic
 if [ "$VERILOG_MODE" -eq 0 ] && [ "$SPICE_MODE" -eq 0 ]; then
 	if [ ! -x "$(command -v xschem)" ]; then
 		echo "[ERROR] xschem could not be found!"
@@ -345,10 +345,10 @@ if [ "$VERILOG_MODE" -eq 0 ] && [ "$SPICE_MODE" -eq 0 ]; then
 	fi
 fi
 
-# KLayout LVS is implemented for sky130/gf180mcu/ihp-sg13g2 and needs a GDS layout and a schematic/CDL netlist (no Verilog). In each unmet case skip KLayout: warn and continue if Magic+Netgen also runs, otherwise error out.
+# KLayout LVS is implemented for sky130/gf180mcu/ihp-sg13g2/ihp-sg13cmos5l and needs a GDS layout and a schematic/CDL netlist (no Verilog). In each unmet case skip KLayout: warn and continue if Magic+Netgen also runs, otherwise error out.
 # ----------------------------------------------------------------------------------------------
 
-if [ "$RUN_KLAYOUT" -eq 1 ] && ! echo "$PDK" | grep -q -i -E "sky130|gf180mcu|ihp-sg13g2"; then
+if [ "$RUN_KLAYOUT" -eq 1 ] && ! echo "$PDK" | grep -q -i -E "sky130|gf180mcu|ihp-sg13g2|ihp-sg13cmos5l"; then
 	if [ "$RUN_MAGIC" -eq 1 ]; then
 		echo "[WARNING] KLayout LVS for $PDK not yet supported, running Magic+Netgen LVS only."
 		RUN_KLAYOUT=0
@@ -376,7 +376,7 @@ if [ "$RUN_KLAYOUT" -eq 1 ] && [ "$VERILOG_MODE" -eq 1 ]; then
 	fi
 fi
 
-# A directly-provided netlist is engine-specific: Magic+Netgen needs a SPICE netlist, KLayout needs a CDL netlist (they are netlisted with different xschem flags and are not interchangeable). A .sch is fine for either since the matching netlist is generated on the fly. Skip the incompatible engine: warn and continue if the other engine still runs, otherwise error out.
+# A directly provided netlist is engine-specific: Magic+Netgen needs a SPICE netlist, KLayout needs a CDL netlist (they are netlisted with different xschem flags and are not interchangeable). A .sch is fine for either since the matching netlist is generated on the fly. Skip the incompatible engine: warn and continue if the other engine still runs, otherwise error out.
 # ----------------------------------------------------------------------------------------------
 
 if [ "$SPICE_MODE" -eq 1 ] && [ "$NETLIST_FORMAT" = "spice" ] && [ "$RUN_KLAYOUT" -eq 1 ]; then
@@ -412,7 +412,7 @@ LVS_LOG="$RESDIR/$FBASENAME.lvs.log"
 # run dir holding the KLayout LVS report(s) (.lvsdb) and log
 KLAYOUT_RUNDIR="$RESDIR/${FBASENAME}.klayout.lvs"
 KLAYOUT_LOG="$KLAYOUT_RUNDIR/${FBASENAME}.klayout.lvs.log"
-# GDS only: magic writes this marker if the GDS top cell is not named like $TOPCELL; checked after the run.
+# GDS only: magic writes this marker if the GDS top cell is not named like $TOPCELL. It is checked after the run.
 CELL_MISMATCH_MARKER="$RESDIR/ext_$FBASENAME.cellmismatch"
 [ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
 
@@ -465,25 +465,27 @@ if [ "$RUN_MAGIC" -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]; then
 
 		if [ ! -f "$NETLIST_SCH" ]; then
 			echo "[ERROR] No schematic netlist produced!"
+			[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
 			exit $ERR_NO_RESULT
 		fi
 
 		# check if the schematic netlist contains standard cells: if yes, include the library with
 		# SPICE netlists for the standard cells
 		if grep -q "$STD_CELL_LIBRARY" "$NETLIST_SCH"; then
-				# Remove the .end
-				sed -i '/\.end\b/d' "$NETLIST_SCH"
-				# Append sky130 lib
-				cat "$PDK_ROOT/$PDK/libs.ref/$STD_CELL_LIBRARY/spice/$STD_CELL_LIBRARY.spice" >> "$NETLIST_SCH"
-				# Add .end
-				echo ".end" >> "$NETLIST_SCH"
+			# remove the .end
+			sed -i '/\.end\b/d' "$NETLIST_SCH"
+			# append the standard cell library netlists
+			cat "$PDK_ROOT/$PDK/libs.ref/$STD_CELL_LIBRARY/spice/$STD_CELL_LIBRARY.spice" >> "$NETLIST_SCH"
+			# add the .end again
+			echo ".end" >> "$NETLIST_SCH"
 		fi
 
 		# remove .save statements from xschem (if there are any)
 		sed -i '/\.save/d' "$NETLIST_SCH"
 	else
 		echo "[INFO] Using SPICE/CDL netlist <$CELL_SCH>..."
-		cp "$CELL_SCH" "$NETLIST_SCH"
+		# skip the copy if the given netlist is already the target file (e.g. reusing the output of an earlier run)
+		[ "$CELL_SCH" != "$NETLIST_SCH" ] && cp "$CELL_SCH" "$NETLIST_SCH"
 	fi
 fi
 
@@ -508,6 +510,7 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 
 		if [ ! -f "$NETLIST_KLAYOUT" ]; then
 			echo "[ERROR] No KLayout CDL netlist produced!"
+			[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
 			exit $ERR_NO_RESULT
 		fi
 	fi
@@ -535,7 +538,7 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 			echo "load ${CELL_LAY}"
 		} >> "$EXT_SCRIPT"
 	else
-		# We read a .gds/.gds.gz view. Magic loads the cell named $TOPCELL. If the GDS has no such top cell it would silently load an empty cell and produce a bogus LVS. So check for it first and, if missing, write the found top cells to a marker and quit before extracting.
+		# we read a .gds/.gds.gz view. Magic loads the cell named $TOPCELL. If the GDS has no such top cell it would silently load an empty cell and produce a bogus LVS. So check for it first and, if missing, write the found top cells to a marker and quit before extracting.
 		{
 			echo "gds read $CELL_LAY"
 			echo "if {[lsearch [cellname list topcells] {${TOPCELL}}] < 0} {"
@@ -578,7 +581,7 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 	if [ "$VERILOG_MODE" -eq 1 ]; then
 		# this is needed for the LVS in netgen because the standard cells
 		# are not instantiated in the (powered) .v file
-		echo "ext2spice subcircuit descend off"		>> "$EXT_SCRIPT"
+		echo "ext2spice subcircuit descend off" >> "$EXT_SCRIPT"
 	fi
 
 	{
@@ -606,11 +609,13 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 		echo "[ERROR] Rename the layout file/cell or use -c so they match, then re-run."
 		rm -f "$CELL_MISMATCH_MARKER"
 		[ $DEBUG -eq 0 ] && rm -f "$EXT_SCRIPT"
+		[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
 		exit $ERR_NO_RESULT
 	fi
 
 	if [ ! -f "$NETLIST_LAY" ]; then
 		echo "[ERROR] No layout netlist produced!"
+		[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
 		exit $ERR_NO_RESULT
 	fi
 
@@ -623,29 +628,28 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 			"$PDK_ROOT/$PDK/libs.tech/netgen/${PDK}_setup.tcl" \
 			"$LVS_REPORT" > "$LVS_LOG"
 	else
-		# this is not needed if subcircuit descend off is applied during the extract
-		# UPDATE: still needed, the subcircuit descend off seems to not work
 		# MAGIC_EXT_USE_GDS=1 makes the netgen PDK setup (${PDK}_setup.tcl) do GDS/device-level LVS and ignore the physical-only tap/fill cells (present in the layout, absent from the .v netlist).
-		# It is read by the netgen setup, not magic. Effect is a no-op on PDKs whose setup ignores it.
+		# It is read by the netgen setup, not magic. On PDKs whose setup ignores it, it has no effect.
 		export MAGIC_EXT_USE_GDS=1
 		netgen -batch lvs "$NETLIST_LAY $TOPCELL" "$CELL_V $TOPCELL" \
-                "$PDK_ROOT/$PDK/libs.tech/netgen/${PDK}_setup.tcl" \
-                "$LVS_REPORT" > "$LVS_LOG"
+			"$PDK_ROOT/$PDK/libs.tech/netgen/${PDK}_setup.tcl" \
+			"$LVS_REPORT" > "$LVS_LOG"
 	fi
 
-	# magic writes its intermediate .ext files into the result dir (via `extract path`), remove them
+	# magic writes its intermediate .ext files into the result dir (via `extract path`), so remove them
 	rm -f "$RESDIR"/*.ext
 	[ $DEBUG -eq 0 ] && rm -f "$EXT_SCRIPT"
 
 	if [ ! -f "$LVS_REPORT" ]; then
 		echo "[ERROR] No netgen LVS report produced!"
+		[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
 		exit $ERR_NO_RESULT
 	fi
 	grep -i -q "Circuits match uniquely" "$LVS_REPORT" || MAGIC_OK=0
 fi
 
 # ============================================================================
-# KLayout LVS (per PDK run_lvs.py wrapper)
+# KLayout LVS (per PDK deck or run_lvs.py wrapper)
 # ============================================================================
 
 KLAYOUT_OK=1
@@ -653,18 +657,19 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	echo "[INFO] Run KLayout LVS..."
 	rm -rf "$KLAYOUT_RUNDIR"
 	mkdir -p "$KLAYOUT_RUNDIR"
-	# run_lvs.py location differs per PDK: sky130/ihp under klayout/lvs, gf180 under klayout/tech/lvs.
+	# sky130 runs its LVS deck directly. The other PDKs use their run_lvs.py wrapper under klayout/tech/lvs.
 	if echo "$PDK" | grep -q -i "sky130"; then
-		# sky130 wrapper uses --design/--net, has no --run_dir/--topcell. outputs go where --report/--output_netlist point.
-		python3 "$PDKPATH/libs.tech/klayout/lvs/run_lvs.py" \
-			--design="$CELL_LAY" \
-			--net="$NETLIST_KLAYOUT" \
-			--report="$KLAYOUT_RUNDIR/$FBASENAME" \
-			--output_netlist="$KLAYOUT_RUNDIR/${FBASENAME}_extracted.cir" \
-			--run_mode=deep \
+		# The sky130 run_lvs.py wrapper is not used because it resolves its deck as $PDK_ROOT/$PDK/sky130.lvs, which does not exist in this installation. The switches below match what the wrapper would pass.
+		klayout -b -r "$PDKPATH/libs.tech/klayout/lvs/sky130.lvs" \
+			-rd input="$CELL_LAY" \
+			-rd top_cell="$TOPCELL" \
+			-rd schematic="$NETLIST_KLAYOUT" \
+			-rd report="$KLAYOUT_RUNDIR/$FBASENAME.lvsdb" \
+			-rd target_netlist="$KLAYOUT_RUNDIR/${FBASENAME}_extracted.cir" \
+			-rd run_mode=deep \
 			> "$KLAYOUT_LOG" 2>&1
 	elif echo "$PDK" | grep -q -i "gf180mcu"; then
-		# gf180mcu wrapper requires --variant; derive the letter from the PDK name (e.g. gf180mcuD -> D), default D.
+		# gf180mcu wrapper requires --variant. The letter is derived from the PDK name (e.g. gf180mcuD -> D), with D as fallback.
 		GF180_VARIANT=$(printf '%s' "$PDK" | sed 's/.*[Gg][Ff]180[Mm][Cc][Uu]//' | cut -c1 | tr 'a-z' 'A-Z')
 		[ -z "$GF180_VARIANT" ] && GF180_VARIANT=D
 		python3 "$PDKPATH/libs.tech/klayout/tech/lvs/run_lvs.py" \
@@ -675,8 +680,8 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			--run_dir="$KLAYOUT_RUNDIR" \
 			--run_mode=deep \
 			> "$KLAYOUT_LOG" 2>&1
-	else
-		# ihp-sg13g2 wrapper
+	elif echo "$PDK" | grep -q -i -E "ihp-sg13g2|ihp-sg13cmos5l"; then
+		# the ihp-sg13g2 and ihp-sg13cmos5l wrappers share the same CLI
 		python3 "$PDKPATH/libs.tech/klayout/tech/lvs/run_lvs.py" \
 			--layout="$CELL_LAY" \
 			--netlist="$NETLIST_KLAYOUT" \
@@ -686,7 +691,7 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			> "$KLAYOUT_LOG" 2>&1
 	fi
 
-	# no .lvsdb means the run itself failed (a comparison with violations still writes one). the reason is in the log.
+	# no .lvsdb means the run itself failed (a comparison with violations still writes one). The reason is in the log.
 	if ! find "$KLAYOUT_RUNDIR" -name '*.lvsdb' 2>/dev/null | grep -q .; then
 		echo "[ERROR] KLayout LVS run failed (no result produced), see <$KLAYOUT_LOG>!"
 		[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
