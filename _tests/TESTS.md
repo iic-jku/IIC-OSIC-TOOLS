@@ -14,7 +14,7 @@
 | 10       | OpenROAD flow scripts with SG13G2                                                                                               |
 | 11       | Xyce with SG13G2                                                                                                                |
 | 12       | iVerilog functionality                                                                                                          |
-| 13       | <https://www.zerotoasiccourse.com> examples of Matt Venn (disabled; known fail)                                                |
+| 13       | <https://www.zerotoasiccourse.com> examples of Matt Venn (disabled; known fail)                                                 |
 | 14       | ngspice with gf180mcuD                                                                                                          |
 | 15       | Chisel with a simple example ALU                                                                                                |
 | 16       | VACASK with a simple example                                                                                                    |
@@ -26,3 +26,4 @@
 | 22       | [SPARX](https://github.com/iic-jku/SG13CMOS_SPARX) six-port receiver with ihp-sg13g2                                            |
 | 23       | Smoke/regression test of sak-lvs.sh (all PDKs, Magic+Netgen and KLayout)                                                        |
 | 24       | Smoke/regression test of sak-drc.sh (all PDKs, Magic and KLayout)                                                               |
+| 25       | Smoke/regression test of sak-pex.sh (all PDKs and PEX modes)                                                                    |
