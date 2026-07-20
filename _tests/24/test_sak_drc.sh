@@ -81,7 +81,7 @@ echo "dummy" > "$W/bad.xyz"
 
 # valid Magic runs (the inverter is DRC clean in ihp-sg13g2)
 check "ihp: -m GDS"                        0 "$SAK" -m -w "$W" "$D/$CELL.gds"
-check "ihp: magic report written"          0 bash -c "grep -q 'COUNT: 0' '$W/$CELL.magic.drc.rpt'"
+check "ihp: magic report written"          0 bash -c "grep -q 'COUNT: 0' '$W/$CELL.magic.drc/$CELL.magic.drc.rpt'"
 check "ihp: -m MAG"                        0 "$SAK" -m -w "$W" "$D/$CELL.mag"
 check "ihp: -m GDS.GZ"                     0 "$SAK" -m -w "$W/gz" "$W/gz/$CELL.gds.gz"
 check "ihp: -m MAG.GZ"                     0 "$SAK" -m -w "$W/gz" "$W/gz/$CELL.mag.gz"
@@ -104,9 +104,9 @@ check "ihp: -b runs both engines"          0 "$SAK" -b -w "$W" "$D/$CELL.gds"
 W2=$WORKDIR/ihp_lastflag
 mkdir -p "$W2"
 check "ihp: last engine flag wins (-k -m)" 0 "$SAK" -k -m -w "$W2" "$D/$CELL.gds"
-check "ihp: (-k -m) ran Magic only"        0 bash -c "[ -f '$W2/$CELL.magic.drc.rpt' ] && [ ! -d '$W2/$CELL.klayout.drc' ]"
+check "ihp: (-k -m) ran Magic only"        0 bash -c "[ -f '$W2/$CELL.magic.drc/$CELL.magic.drc.rpt' ] && [ ! -d '$W2/$CELL.klayout.drc' ]"
 check "ihp: last engine flag wins (-m -k)" 0 "$SAK" -m -k -w "$W2/k" "$D/$CELL.gds"
-check "ihp: (-m -k) ran KLayout only"      0 bash -c "[ -d '$W2/k/$CELL.klayout.drc' ] && [ ! -f '$W2/k/$CELL.magic.drc.rpt' ]"
+check "ihp: (-m -k) ran KLayout only"      0 bash -c "[ -d '$W2/k/$CELL.klayout.drc' ] && [ ! -d '$W2/k/$CELL.magic.drc' ]"
 
 # positional auto-derive
 mkdir -p "$W/auto" "$W/auto2/gds"
