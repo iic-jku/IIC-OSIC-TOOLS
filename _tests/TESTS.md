@@ -25,3 +25,4 @@
 | 21       | [analog circuit design](https://github.com/iic-jku/analog-circuit-design) xschem/ngspice simulation testbenches with ihp-sg13g2 |
 | 22       | [SPARX](https://github.com/iic-jku/SG13CMOS_SPARX) six-port receiver with ihp-sg13g2                                            |
 | 23       | Smoke/regression test of sak-lvs.sh (all PDKs, Magic+Netgen and KLayout)                                                        |
+| 24       | Smoke/regression test of sak-drc.sh (all PDKs, Magic and KLayout)                                                               |
