@@ -24,14 +24,13 @@
 #        -s  Subcircuit definition (1 = include [default], 0 = no subcircuit)
 #        -n  Name of PEX subcircuit (default: <cellname>)
 #        -w  Use <workdir> to store result files (default: current dir)
-#        -t  full-RC: extresist threshold in mOhm (default: 10000 = 10 Ohm)
-#        -r  full-RC: extresist minres in mOhm (default: 1000 = 1 Ohm)
-#        -y  full-RC: extresist mindelay in ps (default: 1; 0 = gate by resistance)
+#        -t  full-RC only: extresist threshold in mOhm (default: 10000 = 10 Ohm)
+#        -r  full-RC only: extresist minres in mOhm (default: 1000 = 1 Ohm)
+#        -y  full-RC only: extresist mindelay in ps (default: 1, 0 = gate by resistance)
 #        -d  Enable debug information
 #
-#        <cellname> may be a cell name or a layout file; accepted layout
-#        formats are .mag, .mag.gz, .gds, and .gds.gz
-#        NOTE: for GDS input the top cell must be named like the file (<cellname>). Otherwise the script aborts.
+#        <cellname> may be a cell name or a layout file (.mag, .mag.gz, .gds, .gds.gz)
+#        NOTE: for a GDS input the top cell must be named like the file, otherwise the script aborts
 #
 # Example: sak-pex.sh -m 3 -t 5000 -r 500 -y 2 -n mycell_pex -w ./results mycell.gds
 # ========================================================================
@@ -54,15 +53,15 @@ if [ $# -eq 0 ]; then
 	echo
 	echo "       -m Select PEX mode (1 = C-decoupled, 2 = C-coupled [default], 3 = full-RC)"
 	echo "       -s Subcircuit definition in PEX netlist (1 = include subcircuit definition [default], 0 = no subcircuit)"
-	echo "       -n name of PEX subcircuit (default is <cellname>)"
-	echo "       -w Set <workdir> working directory"
+	echo "       -n Name of PEX subcircuit (default is <cellname>)"
+	echo "       -w Use <workdir> to store result files (default current dir)"
 	echo "       -t full-RC only: extresist threshold in mOhm (default 10000 = 10 Ohm)"
 	echo "       -r full-RC only: extresist minres in mOhm (default 1000 = 1 Ohm)"
-	echo "       -y full-RC only: extresist mindelay in ps (default 1; 0 = gate by resistance instead of delay)"
+	echo "       -y full-RC only: extresist mindelay in ps (default 1, 0 = gate by resistance instead of delay)"
 	echo "       -d Enable debug information"
 	echo
 	echo "       <cellname> may be a cell name or a layout file (.mag, .mag.gz, .gds, .gds.gz)"
-	echo "       NOTE: for GDS input the top cell must be named like the file (<cellname>)"
+	echo "       NOTE: for a GDS input the top cell must be named like the file (<cellname>)"
 	echo
 	exit $ERR_NO_PARAM
 fi
@@ -71,13 +70,13 @@ fi
 # ------------------------
 
 DEBUG=0
+RESDIR=$PWD
 GDS_MODE=0
 EXT_MODE=2
 SUBCIRCUIT=1
-RESDIR=$PWD
 CELL_NAME_SET=0
 
-# full-RC (extresist) defaults, matching magic's own defaults
+# full-RC (extresist) defaults, matching Magic's own defaults
 EXT_THRESHOLD=10000	# mOhm: coarse end-to-end resistance gating extraction
 EXT_MINRES=1000		# mOhm: resistors below this are merged (simplification)
 EXT_MINDELAY=1		# ps: delay-based output gating (0 = gate by resistance)
@@ -85,7 +84,7 @@ EXT_MINDELAY=1		# ps: delay-based output gating (0 = gate by resistance)
 # check flags
 # -----------
 
-while getopts "m:s:w:n:t:r:y:d" flag; do
+while getopts "m:s:n:w:t:r:y:d" flag; do
 	case $flag in
 		m)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -m is set to <$OPTARG>."
@@ -94,6 +93,16 @@ while getopts "m:s:w:n:t:r:y:d" flag; do
 		s)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -s is set to <$OPTARG>."
 			SUBCIRCUIT=${OPTARG}
+			;;
+		n)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -n is set to <$OPTARG>."
+			CELL_NAME_SET=1
+			CELL_NAME_PEX=${OPTARG}
+			;;
+		w)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -w is set to <$OPTARG>."
+			# -m so a not-yet-existing (multi-level) workdir still resolves. It is created below.
+			RESDIR=$(realpath -m "$OPTARG")
 			;;
 		t)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -t is set to <$OPTARG>."
@@ -107,16 +116,6 @@ while getopts "m:s:w:n:t:r:y:d" flag; do
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -y is set to <$OPTARG>."
 			EXT_MINDELAY=${OPTARG}
 			;;
-		w)
-			[ $DEBUG -eq 1 ] && echo "[INFO] flag -w is set to <$OPTARG>."
-			# -m so a not-yet-existing (multi-level) workdir still resolves. It is created below.
-			RESDIR=$(realpath -m "$OPTARG")
-			;;
-		n)
-			[ $DEBUG -eq 1 ] && echo "[INFO] flag -n is set to <$OPTARG>."
-			CELL_NAME_SET=1
-			CELL_NAME_PEX=${OPTARG}
-			;;	
 		d)
 			echo "[INFO] DEBUG is enabled!"
 			DEBUG=1
@@ -127,27 +126,27 @@ while getopts "m:s:w:n:t:r:y:d" flag; do
 done
 shift $((OPTIND-1))
 
-# check that the mode is an integer and in a valid range
-# ------------------------------------------------------
+# check that the PEX mode and subcircuit setting are valid
+# --------------------------------------------------------
 
 if [ -n "$EXT_MODE" ] && [ "$EXT_MODE" -eq "$EXT_MODE" ] 2>/dev/null; then
 	if [ "$EXT_MODE" -lt 1 ] || [ "$EXT_MODE" -gt 3 ]; then
-        echo "[ERROR] Unknown extraction mode!"
-        exit $ERR_WRONG_MODE
+		echo "[ERROR] Unknown extraction mode!"
+		exit $ERR_WRONG_MODE
 	fi
 else
-        echo "[ERROR] Extraction mode must be an integer!"
-        exit $ERR_WRONG_MODE
+	echo "[ERROR] Extraction mode must be an integer!"
+	exit $ERR_WRONG_MODE
 fi
 
 if [ -n "$SUBCIRCUIT" ] && [ "$SUBCIRCUIT" -eq "$SUBCIRCUIT" ] 2>/dev/null; then
 	if [ "$SUBCIRCUIT" -lt 0 ] || [ "$SUBCIRCUIT" -gt 1 ]; then
-        echo "[ERROR] Illegal subcircuit mode!"
-        exit $ERR_WRONG_MODE
+		echo "[ERROR] Illegal subcircuit mode!"
+		exit $ERR_WRONG_MODE
 	fi
 else
-        echo "[ERROR] Subcircuit mode must be an integer!"
-        exit $ERR_WRONG_MODE
+	echo "[ERROR] Subcircuit mode must be an integer!"
+	exit $ERR_WRONG_MODE
 fi
 
 # check that the full-RC extresist parameters are non-negative integers
@@ -199,14 +198,19 @@ else
 	exit $ERR_PDK_NOT_SUPPORTED
 fi
 
-# check if the input file exists
-# ------------------------------
+# a cellname (or layout file) is required
+# ---------------------------------------
 
 if [ -z "$1" ]; then
 	echo "[ERROR] No cellname provided!"
-	exit $ERR_FILE_NOT_FOUND
-elif [ -f "$1" ]; then
-	# An exact file was given: accept it only if it has a known layout extension, otherwise it would reach magic's `load` and fail confusingly.
+	exit $ERR_NO_PARAM
+fi
+
+# check if the layout file exists, look into usual directories
+# ------------------------------------------------------------
+
+if [ -f "$1" ]; then
+	# an exact file was given, accept it only if it has a known layout extension
 	case "$1" in
 		*.mag|*.mag.gz|*.gds|*.gds.gz)
 			CELL_LAY="$1" ;;
@@ -220,85 +224,107 @@ elif [ -f "$1.mag.gz" ]; then
 	CELL_LAY="$1.mag.gz"
 elif [ -f "$1.gds" ]; then
 	CELL_LAY="$1.gds"
-	GDS_MODE=1
 elif [ -f "$1.gds.gz" ]; then
 	CELL_LAY="$1.gds.gz"
-	GDS_MODE=1
+elif [ -f "lay/$1.mag" ]; then
+	CELL_LAY="lay/$1.mag"
+elif [ -f "lay/$1.mag.gz" ]; then
+	CELL_LAY="lay/$1.mag.gz"
+elif [ -f "lay/$1.gds" ]; then
+	CELL_LAY="lay/$1.gds"
+elif [ -f "lay/$1.gds.gz" ]; then
+	CELL_LAY="lay/$1.gds.gz"
+elif [ -f "mag/$1.mag" ]; then
+	CELL_LAY="mag/$1.mag"
+elif [ -f "mag/$1.mag.gz" ]; then
+	CELL_LAY="mag/$1.mag.gz"
+elif [ -f "gds/$1.gds" ]; then
+	CELL_LAY="gds/$1.gds"
+elif [ -f "gds/$1.gds.gz" ]; then
+	CELL_LAY="gds/$1.gds.gz"
 else
-	echo "[ERROR] Layout $CELL_LAY not found!"
-    exit $ERR_FILE_NOT_FOUND
+	echo "[ERROR] Layout <$1> not found!"
+	exit $ERR_FILE_NOT_FOUND
 fi
 
-[ $DEBUG -eq 1 ] && echo "[INFO] CELL_LAY=$CELL_LAY"
-
-# define useful variables
-# -----------------------
-
-# derive the cell name by stripping only the known layout extension, so that cell names which themselves contain dots (e.g. "my.cell.mag") are preserved.
-CELL_BASE=$(basename "$CELL_LAY")
-case "$CELL_BASE" in
-	*.mag.gz)	CELL_NAME=${CELL_BASE%.mag.gz} ;;
-	*.gds.gz)	CELL_NAME=${CELL_BASE%.gds.gz} ;;
-	*.mag)		CELL_NAME=${CELL_BASE%.mag} ;;
-	*.gds)		CELL_NAME=${CELL_BASE%.gds} ;;
-	*)		CELL_NAME=$CELL_BASE ;;
-esac
-
-EXT_SCRIPT="$RESDIR/pex_$CELL_NAME.tcl"
-NETLIST_PEX="$RESDIR/$CELL_NAME.pex.spice"
-
-# GDS only: magic creates this marker if the GDS top cell is not named like the file. The shell checks for it after the run to report a clear error.
-CELL_MISMATCH_MARKER="$RESDIR/pex_$CELL_NAME.cellmismatch"
-if [ $CELL_NAME_SET -eq 0 ]; then
-	CELL_NAME_PEX=${CELL_NAME}
-fi
-
-# make sure the result directory exists (e.g. when set via -w)
-[ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
+[ $DEBUG -eq 1 ] && echo "[INFO] Using layout file <$CELL_LAY>."
 
 # check that the required tools are available
 # -------------------------------------------
 
 if [ ! -x "$(command -v magic)" ]; then
-	echo "[ERROR] magic could not be found!"
+	echo "[ERROR] Magic could not be found!"
 	exit $ERR_CMD_NOT_FOUND
 fi
 
-# check if gzipped MAG file
-# -------------------------
+# define useful variables
+# -----------------------
 
-# magic's `load` cannot read a gzipped .mag, so unpack it first. The unpacked file must keep the cell name (<cell>.mag) so magic loads it as CELL_NAME. A private temp dir is used to keep that name without clobbering anything.
+# keep the cell name verbatim (basename only, strip a known layout extension) so names containing dots are not truncated
+CELL_NAME=$(basename "$CELL_LAY")
+case "$CELL_NAME" in
+	*.mag.gz)	CELL_NAME=${CELL_NAME%.mag.gz} ;;
+	*.gds.gz)	CELL_NAME=${CELL_NAME%.gds.gz} ;;
+	*.mag)		CELL_NAME=${CELL_NAME%.mag} ;;
+	*.gds)		CELL_NAME=${CELL_NAME%.gds} ;;
+esac
+EXT_SCRIPT="$RESDIR/pex_$CELL_NAME.tcl"
+NETLIST_PEX="$RESDIR/$CELL_NAME.pex.spice"
+PEX_LOG="$RESDIR/$CELL_NAME.pex.log"
+# GDS only: Magic writes this marker if the GDS top cell is not named like the file. It is checked after the run.
+CELL_MISMATCH_MARKER="$RESDIR/pex_$CELL_NAME.cellmismatch"
+# the PEX subcircuit is named like the cell unless -n was given
+[ "$CELL_NAME_SET" -eq 0 ] && CELL_NAME_PEX=${CELL_NAME}
+[ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
+
+# remove old result files
+# -----------------------
+
+# a stale netlist fragment or marker from an aborted run must not be mistaken for output of this run
+rm -f "$NETLIST_PEX.tmp"
+rm -f "$CELL_MISMATCH_MARKER"
+
+# decompress gzipped layout views, Magic cannot read them directly
+# ----------------------------------------------------------------
+
+# a .mag.gz must keep its cell name (<cell>.mag) so Magic loads it as $CELL_NAME. A private temp dir keeps that name without clobbering anything.
 TMP_MAG_DIR=""
+# a .gds.gz is decompressed into the result dir under a cell-specific name so runs do not collide. Both temp copies are removed during cleanup.
+TMP_GDS=""
 case "$CELL_LAY" in
-	*mag.gz)
+	*.mag.gz)
 		TMP_MAG_DIR="$RESDIR/.pextmp_${CELL_NAME}_$$"
 		mkdir -p "$TMP_MAG_DIR"
 		gunzip -c "$CELL_LAY" > "$TMP_MAG_DIR/${CELL_NAME}.mag"
 		CELL_LAY="$TMP_MAG_DIR/${CELL_NAME}.mag"
 		;;
-esac
-
-# check if GDS file
-# -----------------
-
-# decompress a gzipped GDS into the result dir under a cell-specific name (not a fixed name in the current dir) to avoid clobbering files there or colliding between runs. TMP_GDS is removed again during cleanup.
-TMP_GDS=""
-case "$CELL_LAY" in
-	*gds.gz)
+	*.gds.gz)
 		TMP_GDS="$RESDIR/${CELL_NAME}.pextmp.gds"
 		gunzip -c "$CELL_LAY" > "$TMP_GDS"
 		CELL_LAY="$TMP_GDS"
 		;;
 esac
 case "$CELL_LAY" in
-	*gds)
+	*.gds)
 		GDS_MODE=1
 		[ $DEBUG -eq 1 ] && echo "[INFO] GDS mode is selected."
 		;;
 esac
 
-# generate extract script for magic
-# ---------------------------------
+# initial checks passed, start working
+# ------------------------------------
+
+echo "[INFO] Running PEX of <$CELL_LAY>."
+echo "[INFO] Results are put into <$RESDIR>."
+
+# generate the extract script for Magic
+# -------------------------------------
+
+case "$EXT_MODE" in
+	1)	EXT_MODE_TEXT="C-decoupled" ;;
+	2)	EXT_MODE_TEXT="C-coupled" ;;
+	3)	EXT_MODE_TEXT="full-RC" ;;
+esac
 
 {
 	echo "crashbackups stop"
@@ -311,7 +337,7 @@ if [ "$GDS_MODE" -eq 0 ]; then
 		echo "load ${CELL_LAY}"
 	} >> "$EXT_SCRIPT"
 else
-	# We read a .gds/.gds.gz view. Magic loads the cell named after the file (CELL_NAME). If the GDS top cell differs, it would silently load an empty cell. So, in this same run, check whether CELL_NAME is a top cell and, if not, write the found top cells to the marker and quit before extracting.
+	# we read a .gds/.gds.gz view. Magic loads the cell named $CELL_NAME. If the GDS has no such top cell it would silently load an empty cell and produce an empty netlist. So check for it first and, if missing, write the found top cells to a marker and quit.
 	{
 		echo "gds read ${CELL_LAY}"
 		echo "if {[lsearch [cellname list topcells] {${CELL_NAME}}] < 0} {"
@@ -324,6 +350,7 @@ else
 	} >> "$EXT_SCRIPT"
 fi
 
+# the layout is flattened so the PEX netlist is flat, the flat copy gets the PEX subcircuit name
 {
 	echo "select top cell"
 	echo "flatten ${CELL_NAME}_flat"
@@ -336,15 +363,6 @@ fi
 } >> "$EXT_SCRIPT"
 
 if [ "$EXT_MODE" -eq 1 ] || [ "$EXT_MODE" -eq 2 ]; then
-	if [ "$EXT_MODE" -eq 1 ]; then
-		EXT_MODE_TEXT="C-decoupled"
-	elif [ "$EXT_MODE" -eq 2 ]; then
-		EXT_MODE_TEXT="C-coupled"
-	else
-		echo "[ERROR] Illegal branch!"
-		exit $ERR_GENERAL
-	fi
-	
 	{
 		[ "$EXT_MODE" -eq 1 ] && echo "extract no coupling"
 		echo "extract all"
@@ -352,20 +370,15 @@ if [ "$EXT_MODE" -eq 1 ] || [ "$EXT_MODE" -eq 2 ]; then
 fi
 
 if [ "$EXT_MODE" -eq 3 ]; then
-	# Extraction mode RC
-	EXT_MODE_TEXT="full-RC"
 	{
-		# The following lines replace the deprecated `extresist tolerance` (now ignored with a warning).
-		# See netgen issue #106: https://github.com/RTimothyEdwards/netgen/issues/106
-		# Values default to magic's defaults and can be overridden with -t/-r/-y (see usage).
+		# these settings replace the deprecated `extresist tolerance`, which Magic now ignores with a warning.
+		# they default to Magic's own defaults and can be overridden with -t/-r/-y (see usage).
 
-		# Minimum coarse end-to-end resistance (mOhm) a net must exceed before it is considered for resistance extraction.
+		# minimum coarse end-to-end resistance (mOhm) a net must exceed before it is considered for resistance extraction
 		echo "extresist threshold $EXT_THRESHOLD"
-
-		# Delay-based (ps) output gating applied after extraction. Setting it to 0 gates on the recalculated resistance via `threshold` instead.
+		# delay-based (ps) output gating applied after extraction, 0 gates on the recalculated resistance via the threshold instead
 		echo "extresist mindelay $EXT_MINDELAY"
-
-		# "Simplification value" (mOhm): resistors below this are merged.
+		# simplification value (mOhm), resistors below this are merged
 		echo "extresist minres $EXT_MINRES"
 		echo "extract do resistance"
 		echo "extract do unique"
@@ -375,35 +388,31 @@ if [ "$EXT_MODE" -eq 3 ]; then
 fi
 
 {
-	echo "ext2spice cthresh 0.01"	
-	[ "$SUBCIRCUIT" -eq 0 ] && echo "ext2spice subcircuit top off"
+	echo "ext2spice cthresh 0.01"
 	echo "ext2spice -p $RESDIR -o $NETLIST_PEX.tmp"
 	echo "quit -noprompt"
 } >> "$EXT_SCRIPT"
 
-# extract SPICE netlist from layout with magic
-# --------------------------------------------
-echo "[INFO] Running PEX using magic..."
-
-# drop any stale marker so it only reflects this run.
-rm -f "$CELL_MISMATCH_MARKER"
+# extract the PEX netlist from the layout with Magic
+# --------------------------------------------------
 
 if [ $DEBUG -eq 0 ]; then
 	magic -dnull -noconsole \
 		-rcfile "$PDKPATH/libs.tech/magic/$PDK.magicrc" \
 		"$EXT_SCRIPT" \
-		> /dev/null 2> /dev/null
+		> "$PEX_LOG" 2>&1
 else
 	magic -dnull -noconsole \
 		-rcfile "$PDKPATH/libs.tech/magic/$PDK.magicrc" \
-		"$EXT_SCRIPT"
+		"$EXT_SCRIPT" \
+		2>&1 | tee "$PEX_LOG"
 fi
 
-# GDS top cell did not match the file name (marker written by magic above): report the specific cause instead of the generic "no file" error below.
+# GDS top cell did not match the file name (marker written by Magic above), report the specific cause instead of the generic error below
 if [ -f "$CELL_MISMATCH_MARKER" ]; then
-	echo "[ERROR] GDS top cell does not match the file name <$CELL_NAME>!"
+	echo "[ERROR] GDS top cell does not match <$CELL_NAME>!"
 	echo "[ERROR] GDS top cell(s) found: <$(cat "$CELL_MISMATCH_MARKER")>."
-	echo "[ERROR] Rename the file or the GDS top cell so they match, then re-run."
+	echo "[ERROR] Rename the layout file/cell so they match, then re-run."
 	rm -f "$CELL_MISMATCH_MARKER"
 	[ -n "$TMP_GDS" ] && rm -f "$TMP_GDS"
 	[ -n "$TMP_MAG_DIR" ] && rm -rf "$TMP_MAG_DIR"
@@ -412,41 +421,50 @@ if [ -f "$CELL_MISMATCH_MARKER" ]; then
 fi
 
 if [ ! -f "$NETLIST_PEX.tmp" ]; then
-	echo "[ERROR] No PEX file produced, something went wrong!"
+	echo "[ERROR] No PEX netlist produced, see <$PEX_LOG>!"
 	[ -n "$TMP_GDS" ] && rm -f "$TMP_GDS"
 	[ -n "$TMP_MAG_DIR" ] && rm -rf "$TMP_MAG_DIR"
 	[ $DEBUG -eq 0 ] && rm -f "$EXT_SCRIPT"
 	exit $ERR_GENERAL
-else
-	DATE=$(date)
-	HEADER="* PEX produced on $DATE using $0 with m=$EXT_MODE and s=$SUBCIRCUIT"
-	[ "$EXT_MODE" -eq 3 ] && HEADER="$HEADER (extresist threshold=$EXT_THRESHOLD mOhm, minres=$EXT_MINRES mOhm, mindelay=$EXT_MINDELAY ps)"
-	{
-		echo "$HEADER"
-		cat "$NETLIST_PEX.tmp"	
-	} > "$NETLIST_PEX"
-	rm -f "$NETLIST_PEX.tmp"
+fi
 
-	# Defensive cleanup: should the in-magic `cellname rename` above not have taken effect, the flattened cell may still appear as "<cell>_flat" in the netlist. Replace only that exact token (regex-escaped) with the intended subcircuit name, instead of a global s/_flat//g which would corrupt any legitimate name that happens to contain "_flat" (e.g. a port "vout_flat").
-	_flat_search=$(printf '%s' "${CELL_NAME}_flat" | sed 's/[][\.*^$/]/\\&/g')
-	_flat_replace=$(printf '%s' "$CELL_NAME_PEX" | sed 's/[&/\]/\\&/g')
-	sed -i "s/${_flat_search}/${_flat_replace}/g" "$NETLIST_PEX"
+# prepend a header with the run settings, this becomes the final netlist
+DATE=$(date)
+HEADER="* PEX produced on $DATE using $0 with m=$EXT_MODE and s=$SUBCIRCUIT"
+[ "$EXT_MODE" -eq 3 ] && HEADER="$HEADER (extresist threshold=$EXT_THRESHOLD mOhm, minres=$EXT_MINRES mOhm, mindelay=$EXT_MINDELAY ps)"
+{
+	echo "$HEADER"
+	cat "$NETLIST_PEX.tmp"
+} > "$NETLIST_PEX"
+rm -f "$NETLIST_PEX.tmp"
+
+# defensive cleanup, should the in-Magic rename above not have taken effect the flattened cell may still appear as "<cell>_flat" in the netlist.
+# Replace only that exact token (regex-escaped) with the intended subcircuit name, a global s/_flat//g would corrupt any legitimate name that happens to contain "_flat" (e.g. a port "vout_flat").
+_flat_search=$(printf '%s' "${CELL_NAME}_flat" | sed 's/[][\.*^$/]/\\&/g')
+_flat_replace=$(printf '%s' "$CELL_NAME_PEX" | sed 's/[&/\]/\\&/g')
+sed -i "s/${_flat_search}/${_flat_replace}/g" "$NETLIST_PEX"
+
+# -s 0: strip the top-level subcircuit wrapper here in the shell. The in-Magic option for this
+# (ext2spice subcircuits top off) is overridden while hierarchical output is on, and turning the
+# hierarchy off changes the extracted parasitics. Removing the two wrapper lines afterwards keeps
+# the netlist content identical to a -s 1 run. The netlist is flat, so exactly one wrapper exists.
+if [ "$SUBCIRCUIT" -eq 0 ]; then
+	sed -i '/^\.subckt[[:space:]]/Id' "$NETLIST_PEX"
+	sed -i '/^\.ends/Id' "$NETLIST_PEX"
 fi
 
 # cleanup
 # -------
-# magic writes its intermediate files into the result dir (via `extract path`), so remove them from there, plus the temporary decompressed GDS if any.
+
+# Magic writes its intermediate files into the result dir (via `extract path`), so remove them, plus the decompressed temp copies
 rm -f "$RESDIR"/*.ext
 [ -n "$TMP_GDS" ] && rm -f "$TMP_GDS"
 [ -n "$TMP_MAG_DIR" ] && rm -rf "$TMP_MAG_DIR"
 if [ "$EXT_MODE" -eq 3 ]; then
 	rm -f "$RESDIR"/*.nodes
-	rm -f "$RESDIR"/*.ext
 	rm -f "$RESDIR"/*.sim
-	rm -f "$RESDIR"/*.res.ext
 fi
 [ $DEBUG -eq 0 ] && rm -f "$EXT_SCRIPT"
 
-# finished
-# --------
-echo "[DONE] PEX ($EXT_MODE_TEXT) done, extracted SPICE netlist is <$NETLIST_PEX>."
+echo "[INFO] PEX ($EXT_MODE_TEXT) done, the extracted SPICE netlist is <$NETLIST_PEX>."
+echo "[DONE] Bye!"
