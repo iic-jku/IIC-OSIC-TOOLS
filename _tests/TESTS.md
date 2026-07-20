@@ -22,3 +22,4 @@
 | 18       | Test of LibreLane with ihp-sg13g2                                 |
 | 19       | Test of LibreLane with ihp-sg13cmos5l                             |
 | 20       | Test of [AMS chip template](https://github.com/iic-jku/ihp-sg13g2-ams-chip-template) with ihp-sg13g2 |
+| 24       | Smoke/regression test of sak-drc.sh (all PDKs, Magic and KLayout) |
