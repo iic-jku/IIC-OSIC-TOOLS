@@ -469,14 +469,12 @@ if [ "$RUN_MAGIC" -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]; then
 			exit $ERR_NO_RESULT
 		fi
 
-		# check if the schematic netlist contains standard cells: if yes, include the library with
-		# SPICE netlists for the standard cells
-		if grep -q "$STD_CELL_LIBRARY" "$NETLIST_SCH"; then
-			# remove the .end
-			sed -i '/\.end\b/d' "$NETLIST_SCH"
-			# append the standard cell library netlists
-			cat "$PDK_ROOT/$PDK/libs.ref/$STD_CELL_LIBRARY/spice/$STD_CELL_LIBRARY.spice" >> "$NETLIST_SCH"
-			# add the .end again
+		# if the SPICE netlist instantiates standard cells (any cell defined in the library netlist), append the library so netgen can resolve them
+		STD_CELL_SPICE="$PDK_ROOT/$PDK/libs.ref/$STD_CELL_LIBRARY/spice/$STD_CELL_LIBRARY.spice"
+		if [ -f "$STD_CELL_SPICE" ] && grep -iE '^\.subckt[[:space:]]' "$STD_CELL_SPICE" | awk '{print $2}' | grep -qiwFf - "$NETLIST_SCH"; then
+			# remove the .end, append the standard cell library, add the .end again
+			sed -i '/\.end\b/Id' "$NETLIST_SCH"
+			cat "$STD_CELL_SPICE" >> "$NETLIST_SCH"
 			echo ".end" >> "$NETLIST_SCH"
 		fi
 
@@ -512,6 +510,15 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			echo "[ERROR] No KLayout CDL netlist produced!"
 			[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
 			exit $ERR_NO_RESULT
+		fi
+
+		# if the CDL netlist instantiates standard cells (any cell defined in the library netlist), append the library so KLayout can resolve them
+		STD_CELL_CDL="$PDK_ROOT/$PDK/libs.ref/$STD_CELL_LIBRARY/cdl/$STD_CELL_LIBRARY.cdl"
+		if [ -f "$STD_CELL_CDL" ] && grep -iE '^\.subckt[[:space:]]' "$STD_CELL_CDL" | awk '{print $2}' | grep -qiwFf - "$NETLIST_KLAYOUT"; then
+			# remove the .end, append the standard cell library, add the .end again
+			sed -i '/\.end\b/Id' "$NETLIST_KLAYOUT"
+			cat "$STD_CELL_CDL" >> "$NETLIST_KLAYOUT"
+			echo ".END" >> "$NETLIST_KLAYOUT"
 		fi
 	fi
 fi
