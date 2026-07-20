@@ -404,7 +404,7 @@ fi
 # keep the cell name verbatim (basename only) so names containing dots are not truncated
 FBASENAME=$(basename "$TOPCELL")
 EXT_SCRIPT="$RESDIR/ext_$FBASENAME.tcl"
-NETLIST_SCH="$RESDIR/$FBASENAME.sch.spc"
+NETLIST_SCH="$RESDIR/${FBASENAME}_magic.spice"
 NETLIST_LAY="$RESDIR/$FBASENAME.ext.spc"
 NETLIST_KLAYOUT="$RESDIR/${FBASENAME}_klayout.cdl"
 LVS_REPORT="$RESDIR/$FBASENAME.lvs.out"
@@ -455,12 +455,11 @@ if [ "$RUN_MAGIC" -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]; then
 	if [ "$SPICE_MODE" -eq 0 ]; then
 		echo "[INFO] Extracting SPICE netlist from schematic <$CELL_SCH>..."
 		RESDIR_TCL=$(printf '%s' "$RESDIR" | sed 's/[][\\$"]/\\&/g')
-		XSCHEMTCL="set spiceprefix 1; set lvs_netlist 0; set top_is_subckt 1; set lvs_ignore 1; set ev_precision 5; set netlist_dir \"$RESDIR_TCL\""
-		xschem --rcfile "$PDK_ROOT/$PDK/libs.tech/xschem/xschemrc" \
-			-n -s -q --no_x \
-			--tcl "$XSCHEMTCL" \
+		XSCHEMTCL="set spiceprefix 1; set lvs_netlist 0; set top_is_subckt 1; set lvs_ignore 1; set ev_precision 5; set netlist_dir \"$RESDIR_TCL\"; xschem set netlist_name ${FBASENAME}_magic.spice; xschem netlist"
+		xschem -s -r -x -q \
+			--rcfile "$PDK_ROOT/$PDK/libs.tech/xschem/xschemrc" \
+			--command "$XSCHEMTCL" \
 			"$CELL_SCH" \
-			-N "$NETLIST_SCH" \
 			> /dev/null 2> /dev/null
 
 		if [ ! -f "$NETLIST_SCH" ]; then
@@ -489,7 +488,7 @@ fi
 
 # extract the CDL netlist from schematic (for KLayout LVS)
 # -------------------------------------------------------
-# KLayout LVS uses a CDL netlist (set lvs_netlist 1; set lvs_ignore 0), which differs from the Magic SPICE netlist (set lvs_netlist 0; set lvs_ignore 1). A given SPICE/CDL netlist is used as-is.
+# KLayout LVS uses a CDL netlist (set lvs_netlist 1) while Magic+Netgen uses a SPICE netlist (set lvs_netlist 0). Both keep lvs_ignore 1. A given SPICE/CDL netlist is used as-is.
 
 if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	if [ "$SPICE_MODE" -eq 1 ]; then
@@ -498,12 +497,11 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 		echo "[INFO] Extracting CDL netlist from schematic <$CELL_SCH>..."
 		[ -f "$NETLIST_KLAYOUT" ] && rm -f "$NETLIST_KLAYOUT"
 		RESDIR_TCL=$(printf '%s' "$RESDIR" | sed 's/[][\\$"]/\\&/g')
-		XSCHEMTCL_KLAYOUT="set spiceprefix 1; set lvs_netlist 1; set top_is_subckt 1; set lvs_ignore 0; set ev_precision 5; set netlist_dir \"$RESDIR_TCL\""
-		xschem --rcfile "$PDK_ROOT/$PDK/libs.tech/xschem/xschemrc" \
-			-n -s -q --no_x \
-			--tcl "$XSCHEMTCL_KLAYOUT" \
+		XSCHEMTCL_KLAYOUT="set spiceprefix 1; set lvs_netlist 1; set top_is_subckt 1; set lvs_ignore 1; set ev_precision 5; set netlist_dir \"$RESDIR_TCL\"; xschem set netlist_name ${FBASENAME}_klayout.cdl; xschem netlist"
+		xschem -s -r -x -q \
+			--rcfile "$PDK_ROOT/$PDK/libs.tech/xschem/xschemrc" \
+			--command "$XSCHEMTCL_KLAYOUT" \
 			"$CELL_SCH" \
-			-N "$NETLIST_KLAYOUT" \
 			> /dev/null 2> /dev/null
 
 		if [ ! -f "$NETLIST_KLAYOUT" ]; then
