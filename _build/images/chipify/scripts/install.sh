@@ -12,7 +12,9 @@ git checkout "${CHIPIFY_REPO_COMMIT}"
 
 pip3 install . --prefix="${TOOLS}/${CHIPIFY_NAME}" --no-cache-dir
 
-# Create bin symlink so install_links.sh can find the executables
+# On Ubuntu, pip installs scripts to prefix/local/bin when using --prefix.
+# Create a bin symlink at the standard location so install_links.sh can find
+# the chipify and chipify-cli executables (consistent with pyopus pattern).
 ln -s "${TOOLS}/${CHIPIFY_NAME}/local/bin" "${TOOLS}/${CHIPIFY_NAME}/bin"
 
 # Remove clone to save space in final image
