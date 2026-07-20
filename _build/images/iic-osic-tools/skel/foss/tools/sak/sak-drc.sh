@@ -176,36 +176,23 @@ if [ -f "$1" ]; then
 		*.mag|*.mag.gz|*.gds|*.gds.gz)
 			CELL_LAY="$1" ;;
 		*)
-			echo "[ERROR] Unsupported layout format <$1> (expected .mag, .mag.gz, .gds, .gds.gz)!"
+			echo "[ERROR] Unsupported layout format <$1> (expected .mag, .mag.gz, .gds, .gds.gz, .klay.gds)!"
 			exit $ERR_UNKNOWN_FILE ;;
 	esac
-elif [ -f "$1.mag" ]; then
-	CELL_LAY="$1.mag"
-elif [ -f "$1.mag.gz" ]; then
-	CELL_LAY="$1.mag.gz"
-elif [ -f "$1.gds" ]; then
-	CELL_LAY="$1.gds"
-elif [ -f "$1.gds.gz" ]; then
-	CELL_LAY="$1.gds.gz"
-elif [ -f "lay/$1.mag" ]; then
-	CELL_LAY="lay/$1.mag"
-elif [ -f "lay/$1.mag.gz" ]; then
-	CELL_LAY="lay/$1.mag.gz"
-elif [ -f "lay/$1.gds" ]; then
-	CELL_LAY="lay/$1.gds"
-elif [ -f "lay/$1.gds.gz" ]; then
-	CELL_LAY="lay/$1.gds.gz"
-elif [ -f "mag/$1.mag" ]; then
-	CELL_LAY="mag/$1.mag"
-elif [ -f "mag/$1.mag.gz" ]; then
-	CELL_LAY="mag/$1.mag.gz"
-elif [ -f "gds/$1.gds" ]; then
-	CELL_LAY="gds/$1.gds"
-elif [ -f "gds/$1.gds.gz" ]; then
-	CELL_LAY="gds/$1.gds.gz"
 else
-	echo "[ERROR] Layout <$1> not found!"
-	exit $ERR_FILE_NOT_FOUND
+	# otherwise derive the layout file from the cellname, resolved against the current dir.
+	# The list encodes the lookup priority, the magic view is found before the GDS views.
+	CELL_LAY=""
+	for _lay in "$1.mag" "$1.mag.gz" "$1.gds" "$1.gds.gz" "$1.klay.gds"; do
+		if [ -f "$_lay" ]; then
+			CELL_LAY="$_lay"
+			break
+		fi
+	done
+	if [ -z "$CELL_LAY" ]; then
+		echo "[ERROR] Layout <$1> not found!"
+		exit $ERR_FILE_NOT_FOUND
+	fi
 fi
 
 [ $DEBUG -eq 1 ] && echo "[INFO] Using layout file <$CELL_LAY>."
@@ -258,9 +245,11 @@ fi
 # define useful variables
 # -----------------------
 
-# keep the cell name verbatim (basename only, strip a known layout extension) so names containing dots are not truncated
+# keep the cell name verbatim (basename only, strip a known layout extension) so names containing dots are not truncated.
+# A KLayout-drawn layout uses the <cell>.klay.gds naming convention, so the .klay marker is stripped as well to reach the GDS top cell name.
 CELL_NAME=$(basename "$CELL_LAY")
 case "$CELL_NAME" in
+	*.klay.gds)	CELL_NAME=${CELL_NAME%.klay.gds} ;;
 	*.mag.gz)	CELL_NAME=${CELL_NAME%.mag.gz} ;;
 	*.gds.gz)	CELL_NAME=${CELL_NAME%.gds.gz} ;;
 	*.mag)		CELL_NAME=${CELL_NAME%.mag} ;;

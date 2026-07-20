@@ -3,7 +3,7 @@
 `test_sak_drc.sh` runs `sak-drc.sh` through its full input matrix:
 
 - Magic (`-m`) and KLayout (`-k`) DRC on a standard cell inverter in all supported PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l)
-- input variants: `.gds`/`.mag` layouts, gzipped layouts, positional auto-derive (incl. the `gds/` subdirectory convention), multi-level `-w` work dirs, `-c` clean, `-f` flatglob, `-d` debug
+- input variants: `.gds`/`.mag`/`.klay.gds` layouts, gzipped layouts, positional auto-derive (resolved against the current dir), multi-level `-w` work dirs, `-c` clean, `-f` flatglob, `-d` debug
 - engine selection: `-b`, last-flag-wins, `-b` fallback to Magic for a `.mag` layout
 - all three `-l` DRC levels (`precheck`/`macro`/`regular`) incl. asserting which per-level reports are (not) produced
 - guard checks: every invalid combination (unknown layout format, unknown DRC level, `.mag` for KLayout, GDS top cell name mismatch, missing files, unset PDK variables, unsupported PDK, missing tools) must exit with its documented error code
@@ -17,6 +17,7 @@ The data files are the same standard cell inverters as in test 23, extracted fro
 - `<cell>.gds`: the inverter cell extracted from the library GDS
 - `<cell>.mag` (ihp-sg13g2): magic-native view written by magic from the GDS
 - `<cell>_wrongtop.gds` (ihp-sg13g2): top cell renamed so it does not match the file name, triggers the top cell guard
+- `<cell>.klay.gds` (ihp-sg13g2): the inverter saved by KLayout with library context (the `.klay.klib` file is KLayout's library reference belonging to it). The file carries an extra `$$$CONTEXT_INFO$$$` top cell that the GDS top cell guard must tolerate, and the `.klay` marker in the file name is stripped when deriving the cell name. Magic logs a harmless unknown-layer complaint for the context cell and reads on.
 
 ## Expected-dirty baselines
 
