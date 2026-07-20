@@ -1,0 +1,4 @@
+.SUBCKT gf180mcu_fd_sc_mcu7t5v0__inv_1 I ZN VDD VNW VPW VSS
+X_i_0 ZN I VSS VPW nfet_05v0 W=8.2e-07 L=6e-07
+X_i_1 ZN I VDD VNW pfet_05v0 W=1.22e-06 L=5e-07
+.ENDS
