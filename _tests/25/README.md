@@ -5,7 +5,7 @@
 - PEX on a standard cell inverter in all supported PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l)
 - all PEX modes: `-m 1` (C-decoupled), `-m 2` (C-coupled, default), `-m 3` (full-RC) incl. the `-t`/`-r`/`-y` extresist overrides (verified via the netlist header)
 - subcircuit handling: `-s 0` (wrapper stripped, devices preserved), `-n` (subcircuit renamed), and both combined
-- input variants: `.mag`/`.gds` layouts, gzipped layouts (created at runtime), positional auto-derive (incl. the `gds/` subdirectory convention), multi-level `-w` work dirs, `-d` debug
+- input variants: `.mag`/`.gds`/`.klay.gds` layouts, gzipped layouts (created at runtime), positional auto-derive (resolved against the current dir), multi-level `-w` work dirs, `-d` debug
 - netlist and cleanup checks: header present, devices/parasitics present, no `.ext`/`.tmp`/temp-dir/Tcl-script leftovers, magic log written
 - guard checks: every invalid combination (out-of-range or non-integer `-m`/`-s`/`-t`/`-y`, unknown layout format, GDS top cell name mismatch, missing files, unset PDK variables, unsupported PDK, missing tools) must exit with its documented error code
 
@@ -20,6 +20,7 @@ extracted from the standard cell libraries of the installed PDKs
 - `<cell>.gds`: the inverter cell extracted from the library GDS
 - `<cell>.mag` (ihp-sg13g2): magic-native view written by magic from the GDS
 - `<cell>_wrongtop.gds` (ihp-sg13g2): top cell renamed so it does not match the file name, triggers the top cell guard
+- `<cell>.klay.gds` (ihp-sg13g2): the inverter saved by KLayout with library context (the `.klay.klib` file is KLayout's library reference belonging to it). The file carries an extra `$$$CONTEXT_INFO$$$` top cell that the GDS top cell guard must tolerate, and the `.klay` marker in the file name is stripped when deriving the cell name. Magic logs a harmless unknown-layer complaint for the context cell and reads on.
 
 ## Notes on expected behavior
 

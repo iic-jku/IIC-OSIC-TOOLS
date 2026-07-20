@@ -8,8 +8,8 @@
 # Runs PEX on a standard cell inverter in all supported PDKs (sky130A,
 # gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l), covers all PEX modes (C-decoupled,
 # C-coupled, full-RC incl. the -t/-r/-y extresist overrides), the subcircuit
-# handling (-s/-n), the input variants (.mag/.gds, gzipped layouts, positional
-# auto-derive), and checks that invalid combinations are caught with the
+# handling (-s/-n), the input variants (.mag/.gds/.klay.gds, gzipped layouts,
+# positional auto-derive), and checks that invalid combinations are caught with the
 # documented exit codes. Netlist content is verified where deterministic
 # (header, subcircuit wrapper, devices).
 #
@@ -120,12 +120,21 @@ check "ihp: -w creates multi-level dir"    0 "$SAK" -w "$W/deep/a/b" "$D/$CELL.g
 check "ihp: nested netlist written"        0 bash -c "[ -f '$W/deep/a/b/$CELL.pex.spice' ]"
 check "ihp: -d debug run"                  0 "$SAK" -d -w "$W" "$D/$CELL.gds"
 
-# positional auto-derive
-mkdir -p "$W/auto" "$W/auto2/gds"
+# positional auto-derive (the cellname is resolved against the current dir only)
+mkdir -p "$W/auto"
 cp "$D/$CELL.gds" "$W/auto/$CELL.gds"
-cp "$D/$CELL.gds" "$W/auto2/gds/$CELL.gds"
 check "ihp: auto-derive in current dir"    0 bash -c "cd '$W/auto'  && '$SAK' '$CELL'"
-check "ihp: auto-derive with gds/ subdir"  0 bash -c "cd '$W/auto2' && '$SAK' '$CELL'"
+
+# KLayout-drawn layouts use the <cell>.klay.gds naming convention, the .klay marker is
+# stripped for the cell name. The stored sg13g2_inv_1.klay.gds was saved by KLayout with
+# library context, so it carries an extra $$$CONTEXT_INFO$$$ top cell that the GDS top
+# cell guard must tolerate.
+W4=$WORKDIR/ihp_klay
+mkdir -p "$W4" "$W4/auto"
+check "ihp: PEX on .klay.gds"              0 "$SAK" -w "$W4" "$D/$CELL.klay.gds"
+check "ihp: netlist uses stripped name"    0 bash -c "grep -qi '^\.subckt $CELL ' '$W4/$CELL.pex.spice'"
+cp "$D/$CELL.klay.gds" "$W4/auto/$CELL.klay.gds"
+check "ihp: auto-derive finds .klay.gds"   0 bash -c "cd '$W4/auto' && '$SAK' '$CELL'"
 
 # guard checks (invalid input combinations a designer should not use)
 check "guard: no arguments"                3 "$SAK"
