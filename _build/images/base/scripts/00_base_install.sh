@@ -85,6 +85,7 @@ apt-get -y install \
 	libcurl4 \
 	libdw1 \
 	libedit2 \
+	libegl1 \
 	libexpat1 \
 	libffi8 \
 	libfftw3-double3 \
@@ -97,6 +98,7 @@ apt-get -y install \
 	libgettextpo0 \
 	libgirepository-1.0-1 \
 	libgit2-1.7 \
+	libgl1 \
 	libglu1-mesa \
 	libgmp10 \
 	libgomp1 \
@@ -154,6 +156,7 @@ apt-get -y install \
 	libx11-6 \
 	libx11-xcb1 \
 	libxaw7 \
+	libxcb-cursor0 \
 	libxcb1 \
 	libxext6 \
 	libxft2 \

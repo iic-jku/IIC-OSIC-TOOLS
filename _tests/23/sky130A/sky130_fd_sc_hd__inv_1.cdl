@@ -1,0 +1,7 @@
+.SUBCKT sky130_fd_sc_hd__inv_1 A VGND VNB VPB VPWR Y
+*.PININFO A:I VGND:I VNB:I VPB:I VPWR:I Y:O
+MMIN1 Y A VGND VNB nfet_01v8 m=1 w=0.65 l=0.15 mult=1 sa=0.265
++ sb=0.265 sd=0.28 topography=normal area=0.063 perim=1.14
+MMIP1 Y A VPWR VPB pfet_01v8_hvt m=1 w=1.0 l=0.15 mult=1 sa=0.265
++ sb=0.265 sd=0.28 topography=normal area=0.063 perim=1.14
+.ENDS sky130_fd_sc_hd__inv_1

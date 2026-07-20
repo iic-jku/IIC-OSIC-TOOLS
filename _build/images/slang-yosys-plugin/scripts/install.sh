@@ -13,7 +13,8 @@ git clone --filter=blob:none "${SLANG_YOSYS_PLUGIN_REPO_URL}" "${SLANG_YOSYS_PLU
 cd "${SLANG_YOSYS_PLUGIN_NAME}" || exit 1
 git checkout "${SLANG_YOSYS_PLUGIN_REPO_COMMIT}"
 git submodule update --init --recursive
-make -j"$(nproc)"
+cmake -B build -DCMAKE_BUILD_TYPE=Release .
+make -C build -j"$(nproc)"
 
 mkdir -p "${TOOLS}/${SLANG_YOSYS_PLUGIN_NAME}"
 cp build/slang.so "${TOOLS}/${SLANG_YOSYS_PLUGIN_NAME}"
