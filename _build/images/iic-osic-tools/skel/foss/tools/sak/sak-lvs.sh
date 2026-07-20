@@ -688,13 +688,15 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			--run_mode=deep \
 			> "$KLAYOUT_LOG" 2>&1
 	elif echo "$PDK" | grep -q -i -E "ihp-sg13g2|ihp-sg13cmos5l"; then
-		# the ihp-sg13g2 and ihp-sg13cmos5l wrappers share the same CLI
+		# the ihp-sg13g2 and ihp-sg13cmos5l wrappers share the same CLI.
+		# --disable_tap_extraction skips ntap1/ptap1 device extraction so taps are not required in the schematic (aligns with Magic+Netgen LVS).
 		python3 "$PDKPATH/libs.tech/klayout/tech/lvs/run_lvs.py" \
 			--layout="$CELL_LAY" \
 			--netlist="$NETLIST_KLAYOUT" \
 			--topcell="$TOPCELL" \
 			--run_dir="$KLAYOUT_RUNDIR" \
 			--run_mode=deep \
+			--disable_tap_extraction \
 			> "$KLAYOUT_LOG" 2>&1
 	fi
 
