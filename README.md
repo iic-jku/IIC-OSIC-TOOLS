@@ -173,6 +173,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [amaranth](https://github.com/amaranth-lang/amaranth) a Python-based HDL tool chain
 - [cace](https://github.com/efabless/cace) a Python-based circuit automatic characterization engine
 - [charlib](https://github.com/stineje/CharLib) a characterization library for standard cells
+- [chipify](https://github.com/santihofi/chipify) GUI and CLI wrapper for mismatch simulation, parameter sweeps, and yield analysis with `xschem` and `ngspice`
 - [ciel](https://github.com/fossi-foundation/ciel) version manager (and builder) for open-source PDKs
 - [cocotb](https://github.com/cocotb/cocotb) simulation library for writing VHDL and Verilog test benches in Python
 - [covered](https://github.com/hpretl/verilog-covered) Verilog code coverage

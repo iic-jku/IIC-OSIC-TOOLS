@@ -21,6 +21,7 @@ echo "[INFO] Install EDA packages via PIP"
 pip3 install $PIP_FLAGS \
 	"amaranth[builtin-yosys]==0.5.9" \
 	cace==2.11.0 \
+	chipify==0.2.1 \
 	ciel==2.6.1 \
 	cocotb==2.0.1 \
 	cocotbext-ams==0.1.0 \
