@@ -7,6 +7,10 @@ set -e
 
 PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages --ignore-installed"
 
+echo "[INFO] Install EDA packages via PIP"
+pip3 install $PIP_FLAGS \
+	chipify
+
 echo "[INFO] Install support packages via PIP"
 pip3 install $PIP_FLAGS \
 	anytree \
