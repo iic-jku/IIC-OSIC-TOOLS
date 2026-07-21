@@ -176,36 +176,23 @@ if [ -f "$1" ]; then
 		*.mag|*.mag.gz|*.gds|*.gds.gz)
 			CELL_LAY="$1" ;;
 		*)
-			echo "[ERROR] Unsupported layout format <$1> (expected .mag, .mag.gz, .gds, .gds.gz)!"
+			echo "[ERROR] Unsupported layout format <$1> (expected .mag, .mag.gz, .gds, .gds.gz, .klay.gds)!"
 			exit $ERR_UNKNOWN_FILE ;;
 	esac
-elif [ -f "$1.mag" ]; then
-	CELL_LAY="$1.mag"
-elif [ -f "$1.mag.gz" ]; then
-	CELL_LAY="$1.mag.gz"
-elif [ -f "$1.gds" ]; then
-	CELL_LAY="$1.gds"
-elif [ -f "$1.gds.gz" ]; then
-	CELL_LAY="$1.gds.gz"
-elif [ -f "lay/$1.mag" ]; then
-	CELL_LAY="lay/$1.mag"
-elif [ -f "lay/$1.mag.gz" ]; then
-	CELL_LAY="lay/$1.mag.gz"
-elif [ -f "lay/$1.gds" ]; then
-	CELL_LAY="lay/$1.gds"
-elif [ -f "lay/$1.gds.gz" ]; then
-	CELL_LAY="lay/$1.gds.gz"
-elif [ -f "mag/$1.mag" ]; then
-	CELL_LAY="mag/$1.mag"
-elif [ -f "mag/$1.mag.gz" ]; then
-	CELL_LAY="mag/$1.mag.gz"
-elif [ -f "gds/$1.gds" ]; then
-	CELL_LAY="gds/$1.gds"
-elif [ -f "gds/$1.gds.gz" ]; then
-	CELL_LAY="gds/$1.gds.gz"
 else
-	echo "[ERROR] Layout <$1> not found!"
-	exit $ERR_FILE_NOT_FOUND
+	# otherwise derive the layout file from the cellname, resolved against the current dir.
+	# The list encodes the lookup priority, the magic view is found before the GDS views.
+	CELL_LAY=""
+	for _lay in "$1.mag" "$1.mag.gz" "$1.gds" "$1.gds.gz" "$1.klay.gds"; do
+		if [ -f "$_lay" ]; then
+			CELL_LAY="$_lay"
+			break
+		fi
+	done
+	if [ -z "$CELL_LAY" ]; then
+		echo "[ERROR] Layout <$1> not found!"
+		exit $ERR_FILE_NOT_FOUND
+	fi
 fi
 
 [ $DEBUG -eq 1 ] && echo "[INFO] Using layout file <$CELL_LAY>."
@@ -258,19 +245,23 @@ fi
 # define useful variables
 # -----------------------
 
-# keep the cell name verbatim (basename only, strip a known layout extension) so names containing dots are not truncated
+# keep the cell name verbatim (basename only, strip a known layout extension) so names containing dots are not truncated.
+# A KLayout-drawn layout uses the <cell>.klay.gds naming convention, so the .klay marker is stripped as well to reach the GDS top cell name.
 CELL_NAME=$(basename "$CELL_LAY")
 case "$CELL_NAME" in
+	*.klay.gds)	CELL_NAME=${CELL_NAME%.klay.gds} ;;
 	*.mag.gz)	CELL_NAME=${CELL_NAME%.mag.gz} ;;
 	*.gds.gz)	CELL_NAME=${CELL_NAME%.gds.gz} ;;
 	*.mag)		CELL_NAME=${CELL_NAME%.mag} ;;
 	*.gds)		CELL_NAME=${CELL_NAME%.gds} ;;
 esac
-EXT_SCRIPT="$RESDIR/drc_$CELL_NAME.tcl"
+# run dir holding the Magic DRC report, log, and generated extract script. It is wiped at the start of each Magic run.
+MAGIC_RUNDIR="$RESDIR/${CELL_NAME}.magic.drc"
+EXT_SCRIPT="$MAGIC_RUNDIR/drc_$CELL_NAME.tcl"
 # run dir holding the gf180mcu/ihp KLayout DRC report(s) (.lyrdb) and log, sky130 writes its reports directly into $RESDIR
 KLAYOUT_RUNDIR="$RESDIR/${CELL_NAME}.klayout.drc"
 # GDS only: magic writes this marker if the GDS top cell is not named like the loaded cell. It is checked after the run.
-CELL_MISMATCH_MARKER="$RESDIR/drc_$CELL_NAME.cellmismatch"
+CELL_MISMATCH_MARKER="$MAGIC_RUNDIR/drc_$CELL_NAME.cellmismatch"
 [ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
 
 # remove old result files when requested (-c)
@@ -279,6 +270,7 @@ CELL_MISMATCH_MARKER="$RESDIR/drc_$CELL_NAME.cellmismatch"
 if [ "$RUN_CLEAN" -eq 1 ]; then
 	rm -f  -- "$RESDIR"/*.magic.*.rpt "$RESDIR"/*.magic.*.log
 	rm -f  -- "$RESDIR"/*.klayout.*.xml "$RESDIR"/*.klayout.*.log
+	rm -rf -- "$RESDIR"/*.magic.drc
 	rm -rf -- "$RESDIR"/*.klayout.drc
 fi
 
@@ -313,9 +305,9 @@ echo "[INFO] Results are put into <$RESDIR>."
 if [ "$RUN_MAGIC" -eq 1 ]; then
 	echo "[INFO] Launching Magic DRC..."
 
-	# remove old result files so they only reflect this run
-	rm -f "$RESDIR/$CELL_NAME.magic.drc.rpt"
-	rm -f "$CELL_MISMATCH_MARKER"
+	# the run dir is wiped so its contents only reflect this run
+	rm -rf "$MAGIC_RUNDIR"
+	mkdir -p "$MAGIC_RUNDIR"
 
 	# generate the DRC script for Magic, match the file extension only, not an occurrence in the path
 	case "$CELL_LAY" in
@@ -348,7 +340,7 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 			;;
 	esac
 	{
-		echo "set drc_rpt_path $RESDIR/$CELL_NAME.magic.drc.rpt"
+		echo "set drc_rpt_path $MAGIC_RUNDIR/$CELL_NAME.magic.drc.rpt"
 		# shellcheck disable=SC2016
 		echo 'set fout [open $drc_rpt_path w]'
 		echo 'set oscale [cif scale out]'
@@ -406,7 +398,7 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 	magic -dnull -noconsole \
 		-rcfile "$PDKPATH/libs.tech/magic/$PDK.magicrc" \
 		"$EXT_SCRIPT" \
-		> "$RESDIR/$CELL_NAME.magic.drc.log" 2>&1 &
+		> "$MAGIC_RUNDIR/$CELL_NAME.magic.drc.log" 2>&1 &
 fi
 
 # ============================================================================
@@ -556,15 +548,15 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 		exit $ERR_NO_OUTPUT
 	fi
 
-	if [ ! -f "$RESDIR/$CELL_NAME.magic.drc.rpt" ]; then
-		echo "[ERROR] Magic DRC produced no report, see <$RESDIR/$CELL_NAME.magic.drc.log>!"
+	if [ ! -f "$MAGIC_RUNDIR/$CELL_NAME.magic.drc.rpt" ]; then
+		echo "[ERROR] Magic DRC produced no report, see <$MAGIC_RUNDIR/$CELL_NAME.magic.drc.log>!"
 		exit $ERR_NO_OUTPUT
 	fi
 
-	if grep -q "COUNT: 0" "$RESDIR/$CELL_NAME.magic.drc.rpt"; then
+	if grep -q "COUNT: 0" "$MAGIC_RUNDIR/$CELL_NAME.magic.drc.rpt"; then
 		echo "[INFO] Magic DRC is clean!"
 	else
-		echo "[INFO] Magic DRC errors found! Check <$RESDIR/$CELL_NAME.magic.drc.rpt>!"
+		echo "[INFO] Magic DRC errors found! Check <$MAGIC_RUNDIR/$CELL_NAME.magic.drc.rpt>!"
 		DRC_CLEAN=0
 	fi
 fi

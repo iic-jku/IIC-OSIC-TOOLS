@@ -7,7 +7,7 @@
 #
 # Runs Magic and KLayout DRC on a standard cell inverter in all supported
 # PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l), covers the input
-# variants (.gds/.mag layout, gzipped layouts, positional auto-derive), all
+# variants (.gds/.mag/.klay.gds layouts, gzipped layouts, auto-derive), all
 # three -l DRC levels incl. the per-level report gating, and checks that
 # invalid combinations are caught with the documented exit codes.
 #
@@ -103,7 +103,7 @@ echo "dummy" > "$W/bad.xyz"
 
 # valid Magic runs (the inverter is DRC clean in ihp-sg13g2)
 check "ihp: -m GDS"                        0 "$SAK" -m -w "$W" "$D/$CELL.gds"
-check "ihp: magic report written"          0 bash -c "grep -q 'COUNT: 0' '$W/$CELL.magic.drc.rpt'"
+check "ihp: magic report written"          0 bash -c "grep -q 'COUNT: 0' '$W/$CELL.magic.drc/$CELL.magic.drc.rpt'"
 check "ihp: -m MAG"                        0 "$SAK" -m -w "$W" "$D/$CELL.mag"
 check "ihp: -m GDS.GZ"                     0 "$SAK" -m -w "$W/gz" "$W/gz/$CELL.gds.gz"
 check "ihp: -m MAG.GZ"                     0 "$SAK" -m -w "$W/gz" "$W/gz/$CELL.mag.gz"
@@ -126,16 +126,26 @@ check "ihp: -b runs both engines"          0 "$SAK" -b -w "$W" "$D/$CELL.gds"
 W2=$WORKDIR/ihp_lastflag
 mkdir -p "$W2"
 check "ihp: last engine flag wins (-k -m)" 0 "$SAK" -k -m -w "$W2" "$D/$CELL.gds"
-check "ihp: (-k -m) ran Magic only"        0 bash -c "[ -f '$W2/$CELL.magic.drc.rpt' ] && [ ! -d '$W2/$CELL.klayout.drc' ]"
+check "ihp: (-k -m) ran Magic only"        0 bash -c "[ -f '$W2/$CELL.magic.drc/$CELL.magic.drc.rpt' ] && [ ! -d '$W2/$CELL.klayout.drc' ]"
 check "ihp: last engine flag wins (-m -k)" 0 "$SAK" -m -k -w "$W2/k" "$D/$CELL.gds"
-check "ihp: (-m -k) ran KLayout only"      0 bash -c "[ -d '$W2/k/$CELL.klayout.drc' ] && [ ! -f '$W2/k/$CELL.magic.drc.rpt' ]"
+check "ihp: (-m -k) ran KLayout only"      0 bash -c "[ -d '$W2/k/$CELL.klayout.drc' ] && [ ! -d '$W2/k/$CELL.magic.drc' ]"
 
-# positional auto-derive
-mkdir -p "$W/auto" "$W/auto2/gds"
+# positional auto-derive (the cellname is resolved against the current dir only)
+mkdir -p "$W/auto"
 cp "$D/$CELL.gds" "$W/auto/$CELL.gds"
-cp "$D/$CELL.gds" "$W/auto2/gds/$CELL.gds"
 check "ihp: auto-derive in current dir"    0 bash -c "cd '$W/auto'  && '$SAK' -m '$CELL'"
-check "ihp: auto-derive with gds/ subdir"  0 bash -c "cd '$W/auto2' && '$SAK' -m '$CELL'"
+
+# KLayout-drawn layouts use the <cell>.klay.gds naming convention, the .klay marker is
+# stripped for the cell name. The stored sg13g2_inv_1.klay.gds was saved by KLayout with
+# library context, so it carries extra top cells ($$$CONTEXT_INFO$$$) that the GDS top
+# cell guard must tolerate.
+W3=$WORKDIR/ihp_klay
+mkdir -p "$W3" "$W3/auto"
+check "ihp: -m on .klay.gds"               0 "$SAK" -m -w "$W3" "$D/$CELL.klay.gds"
+check "ihp: report uses stripped name"     0 bash -c "grep -q 'COUNT: 0' '$W3/$CELL.magic.drc/$CELL.magic.drc.rpt'"
+check "ihp: -k on .klay.gds"               0 "$SAK" -k -w "$W3" "$D/$CELL.klay.gds"
+cp "$D/$CELL.klay.gds" "$W3/auto/$CELL.klay.gds"
+check "ihp: auto-derive finds .klay.gds"   0 bash -c "cd '$W3/auto' && '$SAK' -m '$CELL'"
 
 # guard checks (invalid input combinations a designer should not use)
 check "guard: no arguments"                3 "$SAK"
