@@ -44,10 +44,10 @@ if [ $# -eq 0 ]; then
 	echo
 	echo "Usage: $0 [-d] [-m|-k|-b] [-w <workdir>] [-s <schematic>|<netlist> -l <layout> -c <cellname> | <cellname>]"
 	echo
-	echo "       Specify <cellname> to use for schematic and layout, where default file"
-	echo "       locations and name prefixes (.sch|.spice|.spc|.cdl|.v|.mag|.mag.gz|.gds|.gds.gz)"
-	echo "       are used. When no <cellname> is specified use -s, -l, and -c to point to the"
-	echo "       corresponding files and name the topcell."
+	echo "       Specify <cellname> to use for schematic and layout, resolved against the"
+	echo "       current dir using default name prefixes (.sch|.spice|.spc|.cdl|.v|.mag|"
+	echo "       .mag.gz|.gds|.gds.gz|.klay.gds). When no <cellname> is specified use -s,"
+	echo "       -l, and -c to point to the corresponding files and name the topcell."
 	echo
 	echo "       -m Run Magic+Netgen LVS (default)"
 	echo "       -k Run KLayout LVS"
@@ -240,12 +240,6 @@ else
 		if [ -f "$1.sch" ]; then
 			CELL_SCH="$1.sch"
 			SPICE_MODE=0
-		elif [ -f "sch/$1.sch" ]; then
-			CELL_SCH="sch/$1.sch"
-			SPICE_MODE=0
-		elif [ -f "xschem/$1.sch" ]; then
-			CELL_SCH="xschem/$1.sch"
-			SPICE_MODE=0
 		elif [ -f "$1.spice" ]; then
 			CELL_SCH="$1.spice"
 			SPICE_MODE=1
@@ -259,51 +253,28 @@ else
 			SPICE_MODE=1
 			NETLIST_FORMAT=cdl
 		else
-			echo "[ERROR] No schematic/SPICE/CDL netlist/Verilog file found!"
+			echo "[ERROR] No schematic/SPICE/CDL netlist/Verilog file for <$1> found!"
 			exit $ERR_FILE_NOT_FOUND
 		fi
 	fi
 
-	if [ -f "$1.mag" ]; then
-		CELL_LAY="$1.mag"
-		GDS_MODE=0
-	elif [ -f "$1.mag.gz" ]; then
-		CELL_LAY="$1.mag.gz"
-		GDS_MODE=0
-	elif [ -f "$1.gds" ]; then
-		CELL_LAY="$1.gds"
-		GDS_MODE=1
-	elif [ -f "$1.gds.gz" ]; then
-		CELL_LAY="$1.gds.gz"
-		GDS_MODE=1
-	elif [ -f "lay/$1.mag" ]; then
-		CELL_LAY="lay/$1.mag"
-		GDS_MODE=0
-	elif [ -f "lay/$1.mag.gz" ]; then
-		CELL_LAY="lay/$1.mag.gz"
-		GDS_MODE=0
-	elif [ -f "lay/$1.gds" ]; then
-		CELL_LAY="lay/$1.gds"
-		GDS_MODE=1
-	elif [ -f "lay/$1.gds.gz" ]; then
-		CELL_LAY="lay/$1.gds.gz"
-		GDS_MODE=1
-	elif [ -f "mag/$1.mag" ]; then
-		CELL_LAY="mag/$1.mag"
-		GDS_MODE=0
-	elif [ -f "mag/$1.mag.gz" ]; then
-		CELL_LAY="mag/$1.mag.gz"
-		GDS_MODE=0
-	elif [ -f "gds/$1.gds" ]; then
-		CELL_LAY="gds/$1.gds"
-		GDS_MODE=1
-	elif [ -f "gds/$1.gds.gz" ]; then
-		CELL_LAY="gds/$1.gds.gz"
-		GDS_MODE=1
-	else
-		echo "[ERROR] No layout file found!"
+	# derive the layout file from the cellname, resolved against the current dir.
+	# The list encodes the lookup priority, the magic view is found before the GDS views.
+	CELL_LAY=""
+	for _lay in "$1.mag" "$1.mag.gz" "$1.gds" "$1.gds.gz" "$1.klay.gds"; do
+		if [ -f "$_lay" ]; then
+			CELL_LAY="$_lay"
+			break
+		fi
+	done
+	if [ -z "$CELL_LAY" ]; then
+		echo "[ERROR] No layout file for <$1> found!"
 		exit $ERR_FILE_NOT_FOUND
 	fi
+	case "$CELL_LAY" in
+		*.mag|*.mag.gz)	GDS_MODE=0 ;;
+		*)		GDS_MODE=1 ;;
+	esac
 fi
 
 # make the layout path absolute so it still resolves after we cd into $RESDIR
@@ -403,24 +374,25 @@ fi
 
 # keep the cell name verbatim (basename only) so names containing dots are not truncated
 FBASENAME=$(basename "$TOPCELL")
-EXT_SCRIPT="$RESDIR/ext_$FBASENAME.tcl"
+# run dir holding the Magic+Netgen LVS report, log, layout netlist, and generated extract script. It is wiped at the start of each Magic+Netgen run.
+MAGIC_RUNDIR="$RESDIR/${FBASENAME}.magic.lvs"
+EXT_SCRIPT="$MAGIC_RUNDIR/ext_$FBASENAME.tcl"
 NETLIST_SCH="$RESDIR/${FBASENAME}_magic.spice"
-NETLIST_LAY="$RESDIR/$FBASENAME.ext.spc"
+NETLIST_LAY="$MAGIC_RUNDIR/$FBASENAME.ext.spc"
 NETLIST_KLAYOUT="$RESDIR/${FBASENAME}_klayout.cdl"
-LVS_REPORT="$RESDIR/$FBASENAME.lvs.out"
-LVS_LOG="$RESDIR/$FBASENAME.lvs.log"
+LVS_REPORT="$MAGIC_RUNDIR/$FBASENAME.lvs.out"
+LVS_LOG="$MAGIC_RUNDIR/$FBASENAME.lvs.log"
 # run dir holding the KLayout LVS report(s) (.lvsdb) and log
 KLAYOUT_RUNDIR="$RESDIR/${FBASENAME}.klayout.lvs"
 KLAYOUT_LOG="$KLAYOUT_RUNDIR/${FBASENAME}.klayout.lvs.log"
 # GDS only: magic writes this marker if the GDS top cell is not named like $TOPCELL. It is checked after the run.
-CELL_MISMATCH_MARKER="$RESDIR/ext_$FBASENAME.cellmismatch"
+CELL_MISMATCH_MARKER="$MAGIC_RUNDIR/ext_$FBASENAME.cellmismatch"
 [ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
 
 # remove old netlists (keep a directly provided netlist that already is the target file)
 # --------------------------------------------------------------------------------------
 
 [ -f "$NETLIST_SCH" ] && [ "$CELL_SCH" != "$NETLIST_SCH" ] && rm -f "$NETLIST_SCH"
-[ -f "$NETLIST_LAY" ] && rm -f "$NETLIST_LAY"
 
 # decompress gzipped layout views, magic cannot read them directly
 # ----------------------------------------------------------------
@@ -481,8 +453,8 @@ if [ "$RUN_MAGIC" -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]; then
 		sed -i '/\.save/d' "$NETLIST_SCH"
 	else
 		echo "[INFO] Using SPICE/CDL netlist <$CELL_SCH>..."
-		# skip the copy if the given netlist is already the target file (e.g. reusing the output of an earlier run)
-		[ "$CELL_SCH" != "$NETLIST_SCH" ] && cp "$CELL_SCH" "$NETLIST_SCH"
+		# use the provided netlist in place (mirrors the KLayout branch), instead of copying it into the workdir
+		NETLIST_SCH="$CELL_SCH"
 	fi
 fi
 
@@ -527,6 +499,10 @@ fi
 
 MAGIC_OK=1
 if [ "$RUN_MAGIC" -eq 1 ]; then
+
+	# remove old result files so the run dir only reflects this run
+	rm -rf "$MAGIC_RUNDIR"
+	mkdir -p "$MAGIC_RUNDIR"
 
 	# generate extract script for magic
 	# ---------------------------------
@@ -574,7 +550,7 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 	fi
 
 	{
-		echo "extract path $RESDIR"
+		echo "extract path $MAGIC_RUNDIR"
 		echo "extract no capacitance"
 		echo "extract no coupling"
 		echo "extract no resistance"
@@ -590,7 +566,7 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 	fi
 
 	{
-		echo "ext2spice -p $RESDIR -o $NETLIST_LAY"
+		echo "ext2spice -p $MAGIC_RUNDIR -o $NETLIST_LAY"
 		echo "quit -noprompt"
 	} >> "$EXT_SCRIPT"
 
@@ -598,9 +574,7 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 	# --------------------------------------------
 
 	echo "[INFO] Extracting netlist from layout <$CELL_LAY>..."
-	# drop any stale marker so it only reflects this run
-	rm -f "$CELL_MISMATCH_MARKER"
-	OLDDIR=$PWD && cd "$RESDIR" || exit $ERR_NO_RESULT
+	OLDDIR=$PWD && cd "$MAGIC_RUNDIR" || exit $ERR_NO_RESULT
 	magic -dnull -noconsole \
 		-rcfile "$PDKPATH/libs.tech/magic/$PDK.magicrc" \
 		 "$EXT_SCRIPT" \
@@ -641,8 +615,8 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 			"$LVS_REPORT" > "$LVS_LOG"
 	fi
 
-	# magic writes its intermediate .ext files into the result dir (via `extract path`), so remove them
-	rm -f "$RESDIR"/*.ext
+	# magic writes its intermediate .ext files into the run dir (via `extract path`), so remove them
+	rm -f "$MAGIC_RUNDIR"/*.ext
 	[ $DEBUG -eq 0 ] && rm -f "$EXT_SCRIPT"
 
 	if [ ! -f "$LVS_REPORT" ]; then

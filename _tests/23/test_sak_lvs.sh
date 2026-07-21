@@ -7,8 +7,8 @@
 #
 # Runs Magic+Netgen and KLayout LVS on a known-good standard cell inverter in
 # all supported PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l), covers
-# the input variants (SPICE/CDL netlist, .gds/.mag layout, gzipped layouts,
-# positional auto-derive), and checks that invalid combinations are caught
+# the input variants (SPICE/CDL netlist, .gds/.mag/.klay.gds layout, gzipped
+# layouts, positional auto-derive), and checks that invalid combinations are caught
 # with the documented exit codes.
 #
 # The test data in this directory is derived from the standard cell libraries
@@ -117,14 +117,23 @@ check "ihp: -b CDL falls back to KLayout"  0 "$SAK" -b -s "$D/$CELL.cdl"   -l "$
 check "ihp: -b MAG falls back to Magic"    0 "$SAK" -b -s "$D/$CELL.spice" -l "$D/$CELL.mag" -c "$CELL" -w "$W"
 check "ihp: last engine flag wins (-m -k)" 0 "$SAK" -m -k -s "$D/$CELL.cdl" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 
-# positional auto-derive
-mkdir -p "$W/auto" "$W/auto2/gds"
+# positional auto-derive (the cellname is resolved against the current dir only)
+mkdir -p "$W/auto"
 cp "$D/$CELL.spice" "$W/auto/$CELL.spice"
 cp "$D/$CELL.gds"   "$W/auto/$CELL.gds"
-cp "$D/$CELL.spice" "$W/auto2/$CELL.spice"
-cp "$D/$CELL.gds"   "$W/auto2/gds/$CELL.gds"
 check "ihp: auto-derive in current dir"    0 bash -c "cd '$W/auto'  && '$SAK' -m '$CELL'"
-check "ihp: auto-derive with gds/ subdir"  0 bash -c "cd '$W/auto2' && '$SAK' -m '$CELL'"
+
+# KLayout-drawn layouts use the <cell>.klay.gds naming convention. The stored
+# sg13g2_inv_1.klay.gds was saved by KLayout with library context, so it carries an
+# extra $$$CONTEXT_INFO$$$ top cell that the GDS top cell guard must tolerate.
+W5=$WORKDIR/ihp_klay
+mkdir -p "$W5" "$W5/auto"
+check "ihp: -m with .klay.gds layout"      0 "$SAK" -m -s "$D/$CELL.spice" -l "$D/$CELL.klay.gds" -c "$CELL" -w "$W5"
+check "ihp: magic report in run dir"       0 bash -c "grep -qi 'Circuits match uniquely' '$W5/$CELL.magic.lvs/$CELL.lvs.out'"
+check "ihp: -k with .klay.gds layout"      0 "$SAK" -k -s "$D/$CELL.cdl"   -l "$D/$CELL.klay.gds" -c "$CELL" -w "$W5"
+cp "$D/$CELL.spice"    "$W5/auto/$CELL.spice"
+cp "$D/$CELL.klay.gds" "$W5/auto/$CELL.klay.gds"
+check "ihp: auto-derive finds .klay.gds"   0 bash -c "cd '$W5/auto' && '$SAK' -m '$CELL'"
 
 # reuse a netlist that already is the target file in the workdir (the script must not delete its own input)
 cp "$D/$CELL.spice" "$W/${CELL}_magic.spice"
