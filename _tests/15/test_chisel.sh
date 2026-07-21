@@ -9,8 +9,11 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
-TMP=/foss/designs/runs/${RAND}/15
-LOG=/foss/designs/runs/${RAND}/15/chisel.log
+# test output is kept out of the bind-mounted source tree (see run_docker_tests.sh)
+RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
+
+TMP=${RUNS_DIR}/${RAND}/15
+LOG=${RUNS_DIR}/${RAND}/15/chisel.log
 
 mkdir -p "$TMP"
 

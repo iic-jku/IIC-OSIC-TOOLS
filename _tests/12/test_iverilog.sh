@@ -9,6 +9,9 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
+# test output is kept out of the bind-mounted source tree (see run_docker_tests.sh)
+RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
+
 set -euo pipefail
 
 if ! command -v iverilog >/dev/null 2>&1; then
@@ -16,8 +19,8 @@ if ! command -v iverilog >/dev/null 2>&1; then
     exit 1
 fi
 
-TMP=/foss/designs/runs/${RAND}/12
-LOG=/foss/designs/runs/${RAND}/12/test_iverilog.log
+TMP=${RUNS_DIR}/${RAND}/12
+LOG=${RUNS_DIR}/${RAND}/12/test_iverilog.log
 
 mkdir -p "$TMP"
 

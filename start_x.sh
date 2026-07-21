@@ -21,6 +21,8 @@
 
 SOCAT_PID=""
 XHOST_DO_RESET=""
+XHOST_MAC_DO_RESET=""
+XAUTH_TMP=""
 
 trap cleanup EXIT
 cleanup() {
@@ -33,6 +35,14 @@ cleanup() {
 
     if [ -n "${XHOST_DO_RESET}" ]; then
         ${ECHO_IF_DRY_RUN} xhost - > /dev/null
+    fi
+
+    if [ -n "${XHOST_MAC_DO_RESET}" ]; then
+        ${ECHO_IF_DRY_RUN} xhost -localhost > /dev/null 2>&1 || true
+    fi
+
+    if [ -n "${XAUTH_TMP}" ] && [ -f "${XAUTH_TMP}" ]; then
+        rm -f "${XAUTH_TMP}"
     fi
 }
 
@@ -206,13 +216,14 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 				XAUTH=$XAUTHORITY
 			fi
 			# Thanks to https://stackoverflow.com/a/25280523
-			XAUTH_TMP="/tmp/.${CONTAINER_NAME}_xauthority"
-			#create an empty file
-			${ECHO_IF_DRY_RUN} echo -n > "${XAUTH_TMP}"
+			if ! XAUTH_TMP=$(mktemp "/tmp/.${CONTAINER_NAME}_xauthority.XXXXXX"); then
+				echo "[ERROR] Failed to create temporary Xauthority file."
+				exit 1
+			fi
 			if [ -z "${ECHO_IF_DRY_RUN}" ]; then
 				xauth -f "${XAUTH}" nlist "${DISP}" | sed -e 's/^..../ffff/' | xauth -f "${XAUTH_TMP}" nmerge -
 			else
-				${ECHO_IF_DRY_RUN} "xauth -f ${XAUTH} nlist ${DISP} | sed -e 's/^..../ffff/' | xauth -f ${XAUTH_TMP} nmerge -"
+				echo "\$ xauth -f ${XAUTH} nlist ${DISP} | sed -e 's/^..../ffff/' | xauth -f ${XAUTH_TMP} nmerge -"
 			fi
 			XAUTH=${XAUTH_TMP}
 		fi
@@ -239,11 +250,14 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 		DISP="host.docker.internal:0"
 		if [[ $(type -P "xhost") ]]; then
 			${ECHO_IF_DRY_RUN} xhost +localhost > /dev/null
+			# Note: do NOT reset xhost on script exit. The container is started
+			# detached on macOS and keeps running after this script returns, so
+			# the localhost grant must persist for X11 forwarding to work.
 		else
 			echo "[WARNING] xhost could not be found, access control to the X server must be managed manually!"
 		fi
 	fi
-	if [ "$(defaults read org.xquartz.x11 enable_iglx)" = 0 ]; then
+	if [ "$(defaults read org.xquartz.x11 enable_iglx 2>/dev/null)" = 0 ]; then
 		${ECHO_IF_DRY_RUN} defaults write org.xquartz.x11 enable_iglx 1
 		echo "[INFO] Enabled XQuartz OpenGL for indirect rendering."
 		echo "[ERROR] Please restart XQuartz!"
@@ -297,6 +311,27 @@ if [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
+		# The xauthority bind-mount source is a temporary file under /tmp that
+		# is removed on script exit and wiped on host reboot (e.g. WSL/Wayland).
+		# Its name is also randomized per run, so it never matches the path
+		# recorded in the existing container. On "docker start" Docker would then
+		# recreate the missing source as a *directory* and fail to mount it onto
+		# the file /headless/.xauthority. Recreate the recorded source as a file
+		# (with the freshly generated cookie) before starting. See issue #300.
+		if [ -z "${ECHO_IF_DRY_RUN}" ]; then
+			XAUTH_SRC=$(docker inspect -f '{{range .Mounts}}{{if eq .Destination "/headless/.xauthority"}}{{.Source}}{{end}}{{end}}' "${CONTAINER_NAME}" 2>/dev/null)
+			if [ -n "${XAUTH_SRC}" ] && [ ! -f "${XAUTH_SRC}" ]; then
+				echo "[INFO] Recreating missing xauthority bind-mount source ${XAUTH_SRC} before restart."
+				# Remove a stale directory that a previous failed start may have created.
+				rm -rf "${XAUTH_SRC}"
+				if [ -n "${XAUTH}" ] && [ -f "${XAUTH}" ]; then
+					cp "${XAUTH}" "${XAUTH_SRC}"
+				else
+					: > "${XAUTH_SRC}"
+				fi
+				chmod 600 "${XAUTH_SRC}" 2>/dev/null || true
+			fi
+		fi
 		${ECHO_IF_DRY_RUN} docker start "${CONTAINER_NAME}"
 	elif [[ $k = r ]] ; then
 		${ECHO_IF_DRY_RUN} docker rm "${CONTAINER_NAME}"

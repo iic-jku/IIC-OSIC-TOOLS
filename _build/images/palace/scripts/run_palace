@@ -1,0 +1,35 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+#
+# Wrapper to run Palace FEM solver for the gds2palace workflow.
+# Usage: run_palace [-np N] config.json
+#   -np N  : number of MPI processes (default: 1)
+
+NP=1
+CONFIG=""
+
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+		-np)
+			NP="$2"
+			shift 2
+			;;
+		*)
+			CONFIG="$1"
+			shift
+			;;
+	esac
+done
+
+if [ -z "$CONFIG" ]; then
+	echo "Usage: run_palace [-np N] config.json"
+	exit 1
+fi
+
+if [ "$NP" -gt 1 ]; then
+	exec mpirun -np "$NP" palace "$CONFIG"
+else
+	exec palace "$CONFIG"
+fi

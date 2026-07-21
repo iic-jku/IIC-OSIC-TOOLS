@@ -10,7 +10,10 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
-TMP=/foss/designs/runs/${RAND}/21
+# test output is kept out of the bind-mounted source tree (see run_docker_tests.sh)
+RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
+
+TMP=${RUNS_DIR}/${RAND}/26
 LOG=$TMP/lvs_drc_pex_sg13g2.log
 REPO=open-pdks-regression-tests
 

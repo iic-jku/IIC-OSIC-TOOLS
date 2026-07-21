@@ -48,6 +48,7 @@ pip3 install $PIP_FLAGS \
 	simanneal \
 	svgutils \
 	sympy \
+	termcolor \
 	tomli \
 	torch_geometric \
 	ziamath

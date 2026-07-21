@@ -9,6 +9,9 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
+# test output is kept out of the bind-mounted source tree (see run_docker_tests.sh)
+RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
+
 # test if a command finishes successfully
 run_test() {
     local cmd="$1"
@@ -36,8 +39,8 @@ done
 shift $((OPTIND-1))
 
 
-TMP=/foss/designs/runs/${RAND}/09
-LOG=/foss/designs/runs/${RAND}/09/riscv_elf_tools.log
+TMP=${RUNS_DIR}/${RAND}/09
+LOG=${RUNS_DIR}/${RAND}/09/riscv_elf_tools.log
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 mkdir -p "$TMP"
