@@ -1,5 +1,17 @@
 # Regression tests
 
+## Test output
+
+Logs, work dirs and cloned repositories of a full run add up to several GB, so they are *not* written into this source tree (which is bind-mounted into the container) but into `/tmp/iic-osic-tools-tests/<run-id>`. `run_docker_tests.sh` prints the exact location at the start of the run and keeps it afterwards for post-mortem analysis, so remove old run dirs manually when you no longer need them.
+
+Set `IIC_TEST_RUNDIR=<path>` to collect the output somewhere else, for example on a larger volume:
+
+```bash
+IIC_TEST_RUNDIR=/mnt/scratch/osic-tests ./run_docker_tests.sh hpretl/iic-osic-tools:latest
+```
+
+## Test list
+
 | Test No. | Description                                                                                                                     |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | 01       | LibreLane with sky130A                                                                                                          |

@@ -9,13 +9,16 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
+# test output is kept out of the bind-mounted source tree (see run_docker_tests.sh)
+RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
+
 set -euo pipefail
 
 echo "[INFO] Test <Zero2ASIC> disabled: known fail."
 exit 0
 
-TMP=/foss/designs/runs/${RAND}/13
-LOG=/foss/designs/runs/${RAND}/13/z2a.log
+TMP=${RUNS_DIR}/${RAND}/13
+LOG=${RUNS_DIR}/${RAND}/13/z2a.log
 mkdir -p "$TMP"
 cd "$TMP" || exit 1
 

@@ -9,10 +9,13 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
+# test output is kept out of the bind-mounted source tree (see run_docker_tests.sh)
+RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
+
 if command -v librelane >/dev/null 2>&1; then
-    LOG=/foss/designs/runs/${RAND}/19/result_ll_sg13cmos5l.log
-    STDERR_LOG=/foss/designs/runs/${RAND}/19/result_ll_sg13cmos5l.stderr.log
-    WORKDIR=/foss/designs/runs/${RAND}/19
+    LOG=${RUNS_DIR}/${RAND}/19/result_ll_sg13cmos5l.log
+    STDERR_LOG=${RUNS_DIR}/${RAND}/19/result_ll_sg13cmos5l.stderr.log
+    WORKDIR=${RUNS_DIR}/${RAND}/19
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
     # Switch to ihp-sg13cmos5l PDK

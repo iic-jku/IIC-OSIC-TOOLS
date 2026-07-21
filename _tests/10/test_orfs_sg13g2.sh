@@ -10,9 +10,12 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
-WORK_DIR=/foss/designs/runs/${RAND}/10
-RESULT=/foss/designs/runs/${RAND}/10/result_orfs_sg13g2.log
-STDERR_LOG=/foss/designs/runs/${RAND}/10/result_orfs_sg13g2.stderr.log
+# test output is kept out of the bind-mounted source tree (see run_docker_tests.sh)
+RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
+
+WORK_DIR=${RUNS_DIR}/${RAND}/10
+RESULT=${RUNS_DIR}/${RAND}/10/result_orfs_sg13g2.log
+STDERR_LOG=${RUNS_DIR}/${RAND}/10/result_orfs_sg13g2.stderr.log
 FLOW_HOME=$WORK_DIR/orfs/flow
 
 mkdir -p "$WORK_DIR" && cd "$WORK_DIR" || exit 1

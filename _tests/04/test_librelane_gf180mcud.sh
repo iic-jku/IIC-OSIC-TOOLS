@@ -13,10 +13,13 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
+# test output is kept out of the bind-mounted source tree (see run_docker_tests.sh)
+RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
+
 if command -v librelane >/dev/null 2>&1; then
-    LOG=/foss/designs/runs/${RAND}/04/result_ll_gf180mcud.log
-    STDERR_LOG=/foss/designs/runs/${RAND}/04/result_ll_gf180mcud.stderr.log
-    WORKDIR=/foss/designs/runs/${RAND}/04
+    LOG=${RUNS_DIR}/${RAND}/04/result_ll_gf180mcud.log
+    STDERR_LOG=${RUNS_DIR}/${RAND}/04/result_ll_gf180mcud.stderr.log
+    WORKDIR=${RUNS_DIR}/${RAND}/04
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
     # Switch to gf180mcuD PDK

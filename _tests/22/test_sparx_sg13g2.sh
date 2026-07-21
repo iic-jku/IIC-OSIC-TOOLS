@@ -15,9 +15,12 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
+# test output is kept out of the bind-mounted source tree (see run_docker_tests.sh)
+RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
+
 DEBUG=${DEBUG:-0}
 
-TMP=/foss/designs/runs/${RAND}/22
+TMP=${RUNS_DIR}/${RAND}/22
 LOG=$TMP/sparx_sg13g2.log
 REPO=SG13CMOS_SPARX
 

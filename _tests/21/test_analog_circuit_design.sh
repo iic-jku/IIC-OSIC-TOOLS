@@ -15,9 +15,12 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
+# test output is kept out of the bind-mounted source tree (see run_docker_tests.sh)
+RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
+
 DEBUG=${DEBUG:-0}
 
-TMP=/foss/designs/runs/${RAND}/21
+TMP=${RUNS_DIR}/${RAND}/21
 LOG=$TMP/analog_circuit_design.log
 REPO=analog-circuit-design
 
