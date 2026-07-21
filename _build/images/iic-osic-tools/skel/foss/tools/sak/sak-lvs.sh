@@ -453,8 +453,8 @@ if [ "$RUN_MAGIC" -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ]; then
 		sed -i '/\.save/d' "$NETLIST_SCH"
 	else
 		echo "[INFO] Using SPICE/CDL netlist <$CELL_SCH>..."
-		# skip the copy if the given netlist is already the target file (e.g. reusing the output of an earlier run)
-		[ "$CELL_SCH" != "$NETLIST_SCH" ] && cp "$CELL_SCH" "$NETLIST_SCH"
+		# use the provided netlist in place (mirrors the KLayout branch), instead of copying it into the workdir
+		NETLIST_SCH="$CELL_SCH"
 	fi
 fi
 
