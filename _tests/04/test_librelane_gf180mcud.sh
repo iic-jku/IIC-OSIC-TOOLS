@@ -15,6 +15,7 @@ fi
 
 if command -v librelane >/dev/null 2>&1; then
     LOG=/foss/designs/runs/${RAND}/04/result_ll_gf180mcud.log
+    STDERR_LOG=/foss/designs/runs/${RAND}/04/result_ll_gf180mcud.stderr.log
     WORKDIR=/foss/designs/runs/${RAND}/04
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -25,10 +26,10 @@ if command -v librelane >/dev/null 2>&1; then
     # Run the LibreLane smoke test
     mkdir -p "$WORKDIR"
     find "$DIR" -maxdepth 1 -type f -exec cp {} "$WORKDIR" \;
-    librelane "$WORKDIR"/counter.json > "$LOG"
+    librelane "$WORKDIR"/counter.json > "$LOG" 2> "$STDERR_LOG"
     # Check if there is an error in the log
     if grep -q "ERROR" "$LOG"; then
-        echo "[ERROR] Test <LibreLane smoke-test with gf180mcuD> FAILED. Check the log <$LOG>."
+        echo "[ERROR] Test <LibreLane smoke-test with gf180mcuD> FAILED. Check the logs <$LOG> and <$STDERR_LOG>."
         exit 1
     else
         echo "[INFO] Test <LibreLane smoke-test with gf180mcuD> passed."

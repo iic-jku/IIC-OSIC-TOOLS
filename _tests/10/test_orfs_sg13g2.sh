@@ -12,6 +12,7 @@ fi
 
 WORK_DIR=/foss/designs/runs/${RAND}/10
 RESULT=/foss/designs/runs/${RAND}/10/result_orfs_sg13g2.log
+STDERR_LOG=/foss/designs/runs/${RAND}/10/result_orfs_sg13g2.stderr.log
 FLOW_HOME=$WORK_DIR/orfs/flow
 
 mkdir -p "$WORK_DIR" && cd "$WORK_DIR" || exit 1
@@ -32,11 +33,13 @@ export GDS_ALLOW_EMPTY=spi_DEF_FILL
 
 # run ORFS with IHP130 SG13G2
 export DESIGN_CONFIG=./designs/ihp-sg13g2/spi/config.mk
-make > "$RESULT"
+# stderr goes into its own log: ORFS reports the per-step runtime there, which
+# would otherwise leak onto the console shared by all tests running in parallel
+make > "$RESULT" 2> "$STDERR_LOG"
 
 # check if there is an error in the log
 if grep -q "ERROR" "$RESULT"; then
-    echo "[ERROR] Test <ORFS with ihp-sg13g2> FAILED. Check the log <$RESULT>."
+    echo "[ERROR] Test <ORFS with ihp-sg13g2> FAILED. Check the logs <$RESULT> and <$STDERR_LOG>."
     exit 1
 else
     echo "[INFO] Test <ORFS with ihp-sg13g2> passed."

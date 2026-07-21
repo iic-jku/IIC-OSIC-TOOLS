@@ -15,6 +15,9 @@
 # of the installed PDKs (see README.md for how to regenerate it).
 #
 # Set SAK_LVS=<path> to test a not-yet-installed version of the script.
+#
+# Only the verdict is printed on the console; the per-case results and the full
+# command output go into the log. Set SAK_TEST_VERBOSE=1 to see every case.
 
 if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
@@ -38,6 +41,22 @@ PASS=0
 FAIL=0
 KNOWN=0
 
+# All tests of the suite run in parallel and share one console, so a test may
+# only report its verdict there. Per-case results go into the log; set
+# SAK_TEST_VERBOSE=1 to get them on the console while debugging a regression.
+VERBOSE=${SAK_TEST_VERBOSE:-0}
+
+# report the result of one case: always to the log, to the console only if the
+# case failed or verbose mode is on
+report() {
+    local line=$1
+    local failed=$2
+    echo "$line" >> "$LOG"
+    if [ "$failed" -ne 0 ] || [ "$VERBOSE" -ne 0 ]; then
+        echo "$line"
+    fi
+}
+
 # run one test case and compare the exit code against the expected one
 check() {
     local name=$1
@@ -53,10 +72,10 @@ check() {
     echo "==== EXIT: $rc" >> "$LOG"
     if [ "$rc" -eq "$expect" ]; then
         PASS=$((PASS+1))
-        echo "[PASS] $name"
+        report "[PASS] $name" 0
     else
         FAIL=$((FAIL+1))
-        echo "[FAIL] $name (exit $rc, expected $expect)"
+        report "[FAIL] $name (exit $rc, expected $expect)" 1
     fi
 }
 
@@ -187,25 +206,24 @@ echo "==== TEST: sky130: -k CDL + GDS (known upstream deck issue)" >> "$LOG"
 rc=$?
 if [ "$rc" -eq 0 ]; then
     PASS=$((PASS+1))
-    echo "[PASS] sky130: -k CDL + GDS (upstream sky130.lvs deck got fixed, remove the known-issue handling)"
+    # worth surfacing on the console: the known-issue handling can now be removed
+    echo "[INFO] sky130: -k CDL + GDS passed, the upstream sky130.lvs deck got fixed."
 elif [ "$rc" -eq 1 ]; then
     KNOWN=$((KNOWN+1))
-    echo "[KNOWN] sky130: -k reports mismatch due to the upstream sky130.lvs deck issue (not counted as failure)"
+    report "[KNOWN] sky130: -k reports mismatch due to the upstream sky130.lvs deck issue (not counted as failure)" 0
 else
     FAIL=$((FAIL+1))
-    echo "[FAIL] sky130: -k CDL + GDS (exit $rc, expected 0 or the known mismatch 1)"
+    report "[FAIL] sky130: -k CDL + GDS (exit $rc, expected 0 or the known mismatch 1)" 1
 fi
 
 # ============================================================================
 # summary
 # ============================================================================
 
-echo "--------------------------------------------------------------------"
-echo "[INFO] sak-lvs.sh regression: $PASS passed, $FAIL failed, $KNOWN known issue(s). Log: $LOG"
 if [ "$FAIL" -ne 0 ]; then
-    echo "[ERROR] Test <sak-lvs.sh regression> FAILED! Check the log file $LOG for details."
+    echo "[ERROR] Test <sak-lvs.sh regression> FAILED! $PASS passed, $FAIL failed. Check the log file $LOG for details."
     exit 1
 else
-    echo "[INFO] Test <sak-lvs.sh regression> passed."
+    echo "[INFO] Test <sak-lvs.sh regression> passed ($PASS checks, $KNOWN known issue(s))."
     exit 0
 fi

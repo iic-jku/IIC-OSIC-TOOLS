@@ -11,6 +11,8 @@
 
 Set `SAK_PEX=<path>` to test a not-yet-installed version of the script.
 
+The test reports only its verdict on the console; the per-case `[PASS]`/`[FAIL]` results and the full command output go into the log. Set `SAK_TEST_VERBOSE=1` to get every case on the console while debugging a regression.
+
 ## Test data
 
 The data files are the same standard cell inverters as in tests 23/24,

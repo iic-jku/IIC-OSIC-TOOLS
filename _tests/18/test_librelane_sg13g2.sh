@@ -11,6 +11,7 @@ fi
 
 if command -v librelane >/dev/null 2>&1; then
     LOG=/foss/designs/runs/${RAND}/18/result_ll_sg13g2.log
+    STDERR_LOG=/foss/designs/runs/${RAND}/18/result_ll_sg13g2.stderr.log
     WORKDIR=/foss/designs/runs/${RAND}/18
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -20,10 +21,10 @@ if command -v librelane >/dev/null 2>&1; then
     # Run the LibreLane smoke test
     mkdir -p "$WORKDIR"
     find "$DIR" -maxdepth 1 -type f -exec cp {} "$WORKDIR" \;
-    librelane --manual-pdk "$WORKDIR/counter.json" > "$LOG"
+    librelane --manual-pdk "$WORKDIR/counter.json" > "$LOG" 2> "$STDERR_LOG"
     # Check if there is an error in the log
     if grep -q "ERROR" "$LOG"; then
-        echo "[ERROR] Test <LibreLane smoke-test with ihp-sg13g2> FAILED. Check the log <$LOG>."
+        echo "[ERROR] Test <LibreLane smoke-test with ihp-sg13g2> FAILED. Check the logs <$LOG> and <$STDERR_LOG>."
         exit 1
     else
         echo "[INFO] Test <LibreLane smoke-test with ihp-sg13g2> passed."

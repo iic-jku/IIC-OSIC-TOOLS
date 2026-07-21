@@ -17,6 +17,9 @@
 # changes such a verdict, this test flags it so the baseline can be reviewed.
 #
 # Set SAK_DRC=<path> to test a not-yet-installed version of the script.
+#
+# Only the verdict is printed on the console; the per-case results and the full
+# command output go into the log. Set SAK_TEST_VERBOSE=1 to see every case.
 
 if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
@@ -39,6 +42,22 @@ fi
 PASS=0
 FAIL=0
 
+# All tests of the suite run in parallel and share one console, so a test may
+# only report its verdict there. Per-case results go into the log; set
+# SAK_TEST_VERBOSE=1 to get them on the console while debugging a regression.
+VERBOSE=${SAK_TEST_VERBOSE:-0}
+
+# report the result of one case: always to the log, to the console only if the
+# case failed or verbose mode is on
+report() {
+    local line=$1
+    local failed=$2
+    echo "$line" >> "$LOG"
+    if [ "$failed" -ne 0 ] || [ "$VERBOSE" -ne 0 ]; then
+        echo "$line"
+    fi
+}
+
 # run one test case and compare the exit code against the expected one
 check() {
     local name=$1
@@ -54,10 +73,10 @@ check() {
     echo "==== EXIT: $rc" >> "$LOG"
     if [ "$rc" -eq "$expect" ]; then
         PASS=$((PASS+1))
-        echo "[PASS] $name"
+        report "[PASS] $name" 0
     else
         FAIL=$((FAIL+1))
-        echo "[FAIL] $name (exit $rc, expected $expect)"
+        report "[FAIL] $name (exit $rc, expected $expect)" 1
     fi
 }
 
@@ -204,12 +223,10 @@ check "sky130: -b combines the verdicts"   1 "$SAK" -b -w "$W" "$D/$CELL.gds"
 # summary
 # ============================================================================
 
-echo "--------------------------------------------------------------------"
-echo "[INFO] sak-drc.sh regression: $PASS passed, $FAIL failed. Log: $LOG"
 if [ "$FAIL" -ne 0 ]; then
-    echo "[ERROR] Test <sak-drc.sh regression> FAILED! Check the log file $LOG for details."
+    echo "[ERROR] Test <sak-drc.sh regression> FAILED! $PASS passed, $FAIL failed. Check the log file $LOG for details."
     exit 1
 else
-    echo "[INFO] Test <sak-drc.sh regression> passed."
+    echo "[INFO] Test <sak-drc.sh regression> passed ($PASS checks)."
     exit 0
 fi
