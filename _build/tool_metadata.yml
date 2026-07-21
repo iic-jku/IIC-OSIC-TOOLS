@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 11af9fb3b3ab45b7914c681260f8d2b391fed49f
+  commit: a4989d023d4d9dedf05a95ed544ee501c69faa81
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.1
@@ -69,7 +69,7 @@
   commit: 3e57150aa7c22b6db7c96656d5e4fe014cf43f8d
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 06c1421033841db1a79fea1e2de55f548c666934
+  commit: 3bb413296ea26effaed490373d4b9b768a4fa50d
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -129,10 +129,10 @@
   commit: trilinos-release-12-12-1
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.11.29
+  commit: 0.11.30
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 49329891241a42eaae25b0f66fddc2e557ac4599
+  commit: ae9533635e26187bb57435189c09499014de59dd
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.050
