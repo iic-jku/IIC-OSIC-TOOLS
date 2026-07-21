@@ -253,7 +253,7 @@ else
 			SPICE_MODE=1
 			NETLIST_FORMAT=cdl
 		else
-			echo "[ERROR] No schematic/SPICE/CDL netlist/Verilog file found!"
+			echo "[ERROR] No schematic/SPICE/CDL netlist/Verilog file for <$1> found!"
 			exit $ERR_FILE_NOT_FOUND
 		fi
 	fi
@@ -268,7 +268,7 @@ else
 		fi
 	done
 	if [ -z "$CELL_LAY" ]; then
-		echo "[ERROR] No layout file found!"
+		echo "[ERROR] No layout file for <$1> found!"
 		exit $ERR_FILE_NOT_FOUND
 	fi
 	case "$CELL_LAY" in
