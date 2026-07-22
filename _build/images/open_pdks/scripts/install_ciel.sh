@@ -163,8 +163,6 @@ if [ ! -d "$PDK_ROOT/gf180mcuD" ]; then
 	exit 1
 fi
 
-git clone --depth=1 https://github.com/martinjankoehler/globalfoundries-pdk-libs-gf180mcu_fd_pr.git --branch gdsfactory-v7-to-v9-port /tmp/glofo-mjk
-
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	#FIXME gzip Liberty (.lib) files
 	#FIXME cd "$PDK_ROOT/gf180mcuD/libs.ref"
@@ -191,10 +189,6 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	find "$PDK_ROOT/gf180mcuD/libs.tech/xschem" -name "*.sym" \
 		-exec sed -i 's/msky130_fd_pr__@model/m0/g' {} \;
 
-	# Replace pymacro with working pcells.
-	rm -rf "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
-	cp -a /tmp/glofo-mjk/cells/klayout/pymacros "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
-
 	# gdsfactory >= 9.29 no longer auto-activates its generic PDK (the CONF.pdk
 	# default changed from "generic" to None), but the pcell drawing code relies
 	# on an active PDK for layer-tuple resolution in Component.add_polygon().
@@ -219,7 +213,5 @@ PYEOF
     # and creating the run directory.
     chmod -R 777 "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/macros"
 fi
-
-rm -rf /tmp/glofo-mjk
 
 echo "[INFO] GF180 PDK installation complete."
