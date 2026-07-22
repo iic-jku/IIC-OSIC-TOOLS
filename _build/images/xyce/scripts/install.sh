@@ -36,5 +36,9 @@ cd ../../..
 make -j"$(nproc)"
 make install
 
+# Remove static link libraries (~220 MB); only needed when linking new
+# programs against Xyce, which is done in the build stage, not at runtime
+find "${TOOLS}/${XYCE_NAME}" -type f -name "*.a" -delete
+
 echo "${XYCE_NAME} ${XYCE_REPO_COMMIT}" > "${TOOLS}/${XYCE_NAME}/SOURCES"
 echo "${XYCE_TRILINOS_NAME} ${XYCE_TRILINOS_REPO_COMMIT}" >> "${TOOLS}/${XYCE_NAME}/SOURCES"

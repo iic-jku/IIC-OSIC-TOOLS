@@ -13,6 +13,10 @@ cmake .. -DCMAKE_INSTALL_PREFIX="${TOOLS}/${PALACE_NAME}" -DCMAKE_BUILD_TYPE=Rel
 cmake --build . -- -j "$(nproc)"
 cmake --install .
 
+# Remove static link libraries (~200 MB, mfem/petsc/palace); the palace
+# binary is fully linked and does not need them at runtime
+find "${TOOLS}/${PALACE_NAME}" -type f -name "*.a" -delete
+
 echo "${PALACE_NAME} ${PALACE_REPO_COMMIT}" > "${TOOLS}/${PALACE_NAME}/SOURCES"
 
 # Install gds2palace wrapper scripts (run_palace, combine_snp, combine_extend_snp.py)
