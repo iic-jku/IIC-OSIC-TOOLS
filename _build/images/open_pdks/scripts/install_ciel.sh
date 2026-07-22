@@ -189,25 +189,19 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	find "$PDK_ROOT/gf180mcuD/libs.tech/xschem" -name "*.sym" \
 		-exec sed -i 's/msky130_fd_pr__@model/m0/g' {} \;
 
-	# gdsfactory >= 9.29 no longer auto-activates its generic PDK (the CONF.pdk
-	# default changed from "generic" to None), but the pcell drawing code relies
-	# on an active PDK for layer-tuple resolution in Component.add_polygon().
-	# Activate it once at import if no PDK is active (no-op on older versions,
-	# and it never overrides a PDK the user has activated themselves).
-	cat >> "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros/cells/_patches.py" <<'PYEOF'
-
-
-def _activate_generic_pdk():
-    import gdsfactory as gf
-
-    try:
-        gf.get_active_pdk()
-    except ValueError:
-        gf.gpdk.PDK.activate()
-
-
-_activate_generic_pdk()
-PYEOF
+	# Port the bundled (gdsfactory v7 era) pcells to the current gdsfactory 9.x:
+	#  - cells/_patches.py (new): runtime shims for removed v7 APIs (add_array,
+	#    size, get_polygons(by_spec=...), connect(destination=...), geometry
+	#    namespace, duplicate cell names) plus explicit generic-PDK activation
+	#    (gdsfactory >= 9.29 no longer auto-activates it).
+	#  - explicit defaults for all TypeList pcell parameters (KLayout batch API
+	#    passes None otherwise, yielding silently empty pfet/via_dev devices).
+	#  - fix the draw_via_dev() call in vias_gen.py (stray v7-era arguments).
+	# See patches/gf180mcu-pcells-gdsfactory9.patch for the full change.
+	(
+		cd "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros" || exit 1
+		git apply /images/open_pdks/patches/gf180mcu-pcells-gdsfactory9.patch
+	)
 
     # Give universal write access to the macro directory, necessary for saving options
     # and creating the run directory.
