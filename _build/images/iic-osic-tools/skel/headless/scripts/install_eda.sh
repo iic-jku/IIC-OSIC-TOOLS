@@ -28,7 +28,7 @@ pip3 install $PIP_FLAGS \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.6 \
-	gdsfactory==9.45.0 \
+	gdsfactory==9.46.0 \
 	gdsfill==0.1.8 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
@@ -45,7 +45,7 @@ pip3 install $PIP_FLAGS \
 	scikit-rf==2.0.1 \
 	siliconcompiler==0.38.2 \
 	snp2le==0.1.4 \
-	spicelib==1.6.2 \
+	spicelib==1.6.3 \
 	spyci==1.0.2
 
 # gds2palace and setupEM depend on gmsh, which upstream ships no Linux-aarch64
