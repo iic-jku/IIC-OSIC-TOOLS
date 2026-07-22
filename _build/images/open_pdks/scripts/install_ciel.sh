@@ -47,11 +47,84 @@ if [ -d "$PDK_ROOT/sky130A" ]; then
 	# shellcheck disable=SC2016
 	sed -i '/<original-base-path>/c\ <original-base-path>$PDK_ROOT/$PDK/libs.tech/klayout</original-base-path>' "$PDK_ROOT/sky130A/libs.tech/klayout/tech/sky130A.lyt"
 
-	# Fix gdsfactory boolean operation "A-B" -> "-" for gdsfactory 8.x compatibility
-	# (gdsfactory 8.x does not support the "A-B" operation string; use "-" instead)
+	# Patch the pcells for compatibility with gdsfactory >= 8.x / kfactory >= 1.x
+	# so they work with the current system gdsfactory (no dedicated venv needed).
 	if [ -d "$PDK_ROOT/sky130A/libs.tech/klayout/python/cells" ]; then
+		# gdsfactory >= 8 does not support the "A-B" boolean operation string
+		# anymore; use "-" instead. Some occurrences are spelled 'operation= "A-B"'.
 		find "$PDK_ROOT/sky130A/libs.tech/klayout/python/cells" -name "*.py" \
-			-exec sed -i 's/operation="A-B"/operation="-"/g' {} \;
+			-exec sed -i 's/operation= *"A-B"/operation="-"/g' {} \;
+
+		# cells/pdk.py was written against kfactory 0.x internals: the private
+		# _get_default_kcl() and KCell._kdb_cell were removed in kfactory >= 1.x,
+		# and kfactory >= 1.x locks cells produced by cached cell functions, which
+		# breaks the scale_and_snap grid snapping in take_component().
+		python3 - "$PDK_ROOT/sky130A/libs.tech/klayout/python/cells/pdk.py" <<'PYEOF'
+import sys
+
+path = sys.argv[1]
+with open(path) as f:
+    src = f.read()
+
+old = "  kf.kcell._get_default_kcl().clear()\n"
+new = """  # kfactory >= 1.x removed the private _get_default_kcl(); the default
+  # layout is available as kf.kcl there.
+  try:
+    kf.kcell._get_default_kcl().clear()
+  except AttributeError:
+    kf.kcl.clear()
+"""
+assert old in src, "pdk.py: _get_default_kcl pattern not found"
+src = src.replace(old, new)
+
+old = "  source_cell = c._kdb_cell\n"
+new = """  # kfactory >= 1.x exposes the native cell as the public kdb_cell property.
+  source_cell = getattr(c, "kdb_cell", None)
+  if source_cell is None:
+    source_cell = c._kdb_cell
+
+  # kfactory >= 1.x locks cells produced by cached cell functions; unlock
+  # them so scale_and_snap below may modify the cell tree.
+  for cell in source_cell.layout().each_cell():
+    if cell.locked:
+      cell.locked = False
+"""
+assert old in src, "pdk.py: _kdb_cell pattern not found"
+src = src.replace(old, new)
+
+with open(path, "w") as f:
+    f.write(src)
+PYEOF
+
+		# gdsfactory 9 removed Component.add_array, and gdsfactory >= 9.29 no
+		# longer auto-activates the generic PDK (the CONF.pdk default changed
+		# from "generic" to None), which the drawing code relies on for layer
+		# resolution. Both shims are no-ops on older gdsfactory versions.
+		cat >> "$PDK_ROOT/sky130A/libs.tech/klayout/python/cells/__init__.py" <<'PYEOF'
+
+
+def _gf9_compat():
+    from typing import Optional
+
+    import gdsfactory as gf
+
+    def _add_array(self, component, columns=2, rows=2,
+                   spacing=(100, 100), alias: Optional[str] = None):
+        return self.add_ref(component=component, name=alias,
+                            columns=columns, rows=rows,
+                            column_pitch=spacing[0], row_pitch=spacing[1])
+
+    if not hasattr(gf.Component, "add_array"):
+        gf.Component.add_array = _add_array
+
+    try:
+        gf.get_active_pdk()
+    except ValueError:
+        gf.gpdk.PDK.activate()
+
+
+_gf9_compat()
+PYEOF
 	fi
 fi
 

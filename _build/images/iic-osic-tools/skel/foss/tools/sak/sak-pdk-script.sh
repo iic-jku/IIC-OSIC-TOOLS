@@ -82,25 +82,6 @@ else
 		esac
 	fi
 
-	# sky130A/B pcell libraries require gdsfactory==8.0.0 (KLayout/kdb backend).
-	# Point KLAYOUT_PYTHONPATH at the dedicated venv so KLayout uses it for pcells.
-	# gf180mcuC/D pcells work with the system gdsfactory (no venv needed).
-	case "$1" in
-		sky130A|sky130B)
-			_KLAYOUT_VENV="/foss/tools/klayout_gdsfactory8"
-			;;
-		*)
-			_KLAYOUT_VENV=""
-			;;
-	esac
-	if [ -n "$_KLAYOUT_VENV" ] && [ -x "$_KLAYOUT_VENV/bin/python3" ]; then
-		_KLAYOUT_SITE=$("$_KLAYOUT_VENV/bin/python3" -c 'import site; print(site.getsitepackages()[0])')
-		export KLAYOUT_PYTHONPATH="$_KLAYOUT_SITE"
-	else
-		unset KLAYOUT_PYTHONPATH
-	fi
-	unset _KLAYOUT_VENV _KLAYOUT_SITE
-
 	if [ $ERROR = 0 ]; then
 		echo "PDK_ROOT=$PDK_ROOT"
 		echo "PDK=$PDK"
