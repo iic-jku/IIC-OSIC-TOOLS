@@ -5,9 +5,12 @@
 
 set -e
 
-# Unlike the base install, no --ignore-installed here: it would re-install
-# every dependency already provided by the base image (scipy, pandas, ...)
-# as a shadow copy in this layer, growing the image by several 100 MB
+# Unlike the base install, no --ignore-installed here: (1) it would re-install
+# every dependency already provided by the base image (scipy, pandas, ...) as
+# a shadow copy in this layer, growing the image by several 100 MB; (2) pip
+# must honour the APT-provided python3-gmsh as satisfying the gmsh
+# dependency of gds2palace/setupEM — upstream gmsh ships no
+# Linux-aarch64 wheel, so a forced PyPI reinstall would fail on arm64
 PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages"
 
 echo "[INFO] Install EDA packages via APT"
@@ -34,6 +37,7 @@ pip3 install $PIP_FLAGS \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.6 \
+	gds2palace==0.2.0 \
 	gdsfactory==9.46.0 \
 	gdsfill==0.1.8 \
 	gdspy==1.6.13 \
@@ -49,21 +53,11 @@ pip3 install $PIP_FLAGS \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.0.1 \
+	setupEM==0.1.22 \
 	siliconcompiler==0.38.2 \
 	snp2le==0.1.4 \
 	spicelib==1.6.3 \
 	spyci==1.0.2
-
-# gds2palace and setupEM depend on gmsh, which upstream ships no Linux-aarch64
-# wheel/SDK for. gmsh is instead provided for both architectures via the
-# python3-gmsh APT package installed above (/usr/lib/python3/dist-packages).
-# Install these two here WITHOUT --ignore-installed so pip honours the
-# APT-provided gmsh as satisfying the dependency (the main block's --ignore-installed
-# would otherwise force a PyPI gmsh reinstall that fails on arm64).
-echo "[INFO] Install gmsh-dependent EDA packages via PIP"
-pip3 install --no-cache-dir --break-system-packages \
-	gds2palace==0.2.0 \
-	setupEM==0.1.22
 
 echo "[INFO] Install EDA packages via Cargo"
 
