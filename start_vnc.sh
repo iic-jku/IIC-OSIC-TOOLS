@@ -38,10 +38,11 @@ if [ -z ${CONTAINER_ENGINE+z} ]; then
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container engine auto-set to ${CONTAINER_ENGINE}."
 fi
 
-# Detect Podman rootless mode on Linux (the docker CLI can also be the
-# podman-docker alias, so check the version string).
-if [[ "$OSTYPE" == "linux"* ]] && ${CONTAINER_ENGINE} --version 2>/dev/null | grep -qi "podman"; then
-	if ${CONTAINER_ENGINE} info --format '{{.Host.Security.Rootless}}' 2>/dev/null | grep -qi "true"; then
+# Detect Podman, and Podman rootless mode on Linux (the docker CLI can also
+# be the podman-docker alias, so check the version string).
+if ${CONTAINER_ENGINE} --version 2>/dev/null | grep -qi "podman"; then
+	ENGINE_IS_PODMAN=1
+	if [[ "$OSTYPE" == "linux"* ]] && ${CONTAINER_ENGINE} info --format '{{.Host.Security.Rootless}}' 2>/dev/null | grep -qi "true"; then
 		ENGINE_IS_ROOTLESS=1
 		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Podman rootless mode detected."
 	fi
@@ -151,6 +152,12 @@ if [ -n "${IIC_SERVER_DEPLOYMENT}" ]; then
 	PARAMS=""
 else
 	PARAMS="--security-opt seccomp=unconfined"
+fi
+# Docker sets this namespaced sysctl to 0 in every container by default,
+# Podman does not; it is required so noVNC (running as a non-root user) can
+# bind port 80 inside the container.
+if [ -n "${ENGINE_IS_PODMAN}" ]; then
+	PARAMS="${PARAMS} --sysctl net.ipv4.ip_unprivileged_port_start=0"
 fi
 if [ "$WEBSERVER_PORT" -gt 0 ]; then
 	PARAMS="$PARAMS -p $WEBSERVER_PORT:80"

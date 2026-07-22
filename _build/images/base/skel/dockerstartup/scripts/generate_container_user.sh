@@ -8,7 +8,20 @@ USER_ID=$(id -u)
 GROUP_ID=$(id -g)
 [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] USER_ID: $USER_ID, GROUP_ID: $GROUP_ID"
 
-if [[ "$USER_ID" != "0" ]]; then
+# nss_wrapper fakes a passwd/group entry ("designer") for arbitrary UIDs that
+# have no entry in /etc/passwd (docker/podman run --user UID:GID). It can be
+# disabled by setting IIC_OSIC_TOOLS_DISABLE_NSSWRAPPER (any non-empty value),
+# e.g. when Podman with --userns=keep-id already provides a real passwd entry
+# for the current user.
+# Without any passwd entry the TigerVNC vncserver aborts ("I do not know who
+# you are"), so ignore the disable request if no entry exists for this UID.
+if [ -n "${IIC_OSIC_TOOLS_DISABLE_NSSWRAPPER}" ] && ! getent passwd "$USER_ID" > /dev/null 2>&1; then
+    echo "[WARNING] IIC_OSIC_TOOLS_DISABLE_NSSWRAPPER is set, but no passwd entry exists for UID ${USER_ID}; keeping nss_wrapper enabled."
+    IIC_OSIC_TOOLS_DISABLE_NSSWRAPPER=""
+fi
+if [ -n "${IIC_OSIC_TOOLS_DISABLE_NSSWRAPPER}" ]; then
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] nss_wrapper disabled via IIC_OSIC_TOOLS_DISABLE_NSSWRAPPER."
+elif [[ "$USER_ID" != "0" ]]; then
     if [ -z "${HOME}" ]; then
         echo "[ERROR] HOME is not set; cannot generate nss_wrapper passwd entry."
         return 1 2>/dev/null || exit 1

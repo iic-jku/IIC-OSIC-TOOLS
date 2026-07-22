@@ -10,6 +10,7 @@ help (){
 echo "
 USAGE:
 docker run -d -p 80:80 --user \$(id -u):\$(id -g) hpretl/iic-osic-tools:latest --wait
+(or use podman instead of docker; with Podman add --sysctl net.ipv4.ip_unprivileged_port_start=0 so the internal webserver can bind port 80)
 
 TAGS (See https://hub.docker.com/r/hpretl/iic-osic-tools/tags):
 latest year.month

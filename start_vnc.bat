@@ -89,6 +89,11 @@ IF DEFINED IIC_SERVER_DEPLOYMENT (
   SET PARAMS=--security-opt seccomp=unconfined
 )
 
+:: Docker sets this namespaced sysctl to 0 in every container by default,
+:: Podman does not; it is required so noVNC (running as a non-root user) can
+:: bind port 80 inside the container.
+IF "%CONTAINER_ENGINE%"=="podman" SET PARAMS=%PARAMS% --sysctl net.ipv4.ip_unprivileged_port_start=0
+
 IF %WEBSERVER_PORT% GTR 0 (
   SET PARAMS=%PARAMS% -p %WEBSERVER_PORT%:80
 )

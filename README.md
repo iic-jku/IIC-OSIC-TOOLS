@@ -438,12 +438,19 @@ For container experts, there is also support for other container engines and add
 
 [Podman](https://podman.io/) is a demonless, OCI compatible container engine, that supports rootless containers to contain privileges inside the container. Podman is supported as a co-equal runtime by all start scripts: they auto-detect the installed engine (preferring `docker` if both are present; override with `CONTAINER_ENGINE=podman`), so no `podman-docker` compatibility alias and no script modification is needed. The interactive installers (`install.sh`/`install.ps1`) can install Podman instead of Docker.
 
-In Podman rootless mode, the start scripts automatically handle the two classic pitfalls:
+The start scripts automatically handle the classic Podman pitfalls:
 
-- They add `--userns=keep-id` (unless a `--userns` option is already given via `DOCKER_EXTRA_PARAMS`), so the host user launching the container is mapped to the same UID/GID inside the container, preventing access issues between the container and mounted directories from the host.
-- Since rootless mode cannot bind ports below 1024, `start_vnc.sh` defaults the webserver port to `8080` instead of `80` (an explicitly set `WEBSERVER_PORT` below 1024 produces a warning).
+- In rootless mode, they add `--userns=keep-id` (unless a `--userns` option is already given via `DOCKER_EXTRA_PARAMS`), so the host user launching the container is mapped to the same UID/GID inside the container, preventing access issues between the container and mounted directories from the host.
+- Since rootless mode cannot bind host ports below 1024, `start_vnc.sh` defaults the webserver port to `8080` instead of `80` (an explicitly set `WEBSERVER_PORT` below 1024 produces a warning).
+- `start_vnc.sh` passes `--sysctl net.ipv4.ip_unprivileged_port_start=0` to Podman (rootful and rootless). Docker sets this namespaced sysctl in every container by default, Podman does not — without it, the noVNC webserver (which runs as a non-root user) cannot bind port 80 *inside* the container and the VNC mode fails.
 
-So in most cases, simply running `./start_<mode>.sh` works out of the box with rootless Podman.
+So in most cases, simply running `./start_<mode>.sh` works out of the box with Podman.
+
+By default, the container uses [nss_wrapper](https://cwrap.org/nss_wrapper.html) to fake a passwd/group entry (`designer`) for the arbitrary UID/GID the container is started with. With Podman and `--userns=keep-id` a real passwd entry for the current user already exists inside the container, so the wrapper can optionally be disabled by setting the container environment variable `IIC_OSIC_TOOLS_DISABLE_NSSWRAPPER` (any non-empty value):
+
+`DOCKER_EXTRA_PARAMS="-e IIC_OSIC_TOOLS_DISABLE_NSSWRAPPER=1" ./start_<mode>.sh`
+
+As a safety net, the request is ignored (with a warning) if no passwd entry exists for the container UID, because the TigerVNC server refuses to start without one ("vncserver: I do not know who you are").
 
 > **Note on Docker Rootless Mode:** Docker in rootless mode has known limitations with X11/Wayland socket forwarding due to UID/GID mismatches between the host and container. There is no straightforward fix for Docker rootless mode, and we therefore recommend using Podman with `--userns=keep-id` as the preferred solution for rootless container operation.
 
