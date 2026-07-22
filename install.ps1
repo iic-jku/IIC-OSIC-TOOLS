@@ -31,9 +31,11 @@
 #   * winget self-check
 #   * Git for Windows                          (Git.Git)
 #   * WSL2 (kernel + default distribution)     (wsl --install)
-#   * Docker Desktop                           (Docker.DockerDesktop)
+#   * A container engine, user-selectable:
+#       - Docker Desktop                       (Docker.DockerDesktop), or
+#       - Podman                               (RedHat.Podman)
 #   * Clones the iic-osic-tools repository to a user-chosen directory
-#   * Reboots the machine (recommended after WSL / Docker install)
+#   * Reboots the machine (recommended after WSL / engine install)
 #
 # Safety:
 #   * Uses winget exclusively (signed packages from Microsoft's repository);
@@ -107,8 +109,8 @@ function Show-Disclaimer {
     Write-Host ''
     Write-Host 'This installer will make changes to your system (installing'
     Write-Host 'software via winget, enabling Windows features, registering'
-    Write-Host 'WSL2 distributions, installing Docker Desktop, and optionally'
-    Write-Host 'rebooting the machine).'
+    Write-Host 'WSL2 distributions, installing Docker Desktop or Podman, and'
+    Write-Host 'optionally rebooting the machine).'
     Write-Host ''
     Write-Host 'USE AT YOUR OWN RISK. The authors and contributors of'         -ForegroundColor Yellow
     Write-Host 'IIC-OSIC-TOOLS provide this script "AS IS", WITHOUT WARRANTY'
@@ -176,6 +178,20 @@ function Install-DockerDesktop {
     Invoke-Winget @('install','--id','Docker.DockerDesktop','-e','--source','winget',
                     '--accept-package-agreements','--accept-source-agreements')
     Write-Ok 'Docker Desktop installed. Launch it once from the Start menu after the reboot.'
+}
+
+function Install-Podman {
+    if (Test-Command podman) {
+        Write-Ok "$(podman --version) already installed."
+    } else {
+        Invoke-Winget @('install','--id','RedHat.Podman','-e','--source','winget',
+                        '--accept-package-agreements','--accept-source-agreements')
+        Write-Ok 'Podman installed.'
+    }
+    Write-Info 'Podman runs containers in a WSL2 VM (the Podman machine).'
+    Write-Info 'After the reboot, initialize and start it once from a new PowerShell:'
+    Write-Host '      podman machine init'
+    Write-Host '      podman machine start'
 }
 
 function Clone-Repo {
@@ -290,6 +306,9 @@ function Show-UsageHints {
     Write-Host '    (default: $env:USERPROFILE\eda\designs) and are mounted'
     Write-Host '    into the container at /foss/designs.'
     Write-Host ''
+    Write-Host ' The start scripts auto-detect Docker or Podman; if both are'
+    Write-Host ' installed, set CONTAINER_ENGINE=podman to override.'
+    Write-Host ''
     Write-Host ' The first launch will pull the ~4 GB image from Docker Hub.'
     Write-Host ' Reserve at least 20 GB of free disk space.'
     Write-Host '============================================================'
@@ -297,7 +316,7 @@ function Show-UsageHints {
 }
 
 function Invoke-Reboot {
-    Write-Warn2 'A reboot is strongly recommended to finalize WSL2 / Docker Desktop.'
+    Write-Warn2 'A reboot is strongly recommended to finalize WSL2 and the container engine.'
     if (-not (Ask 'Reboot now? (The system will restart in 60 seconds.)')) {
         Write-Warn2 'Please reboot manually before using iic-osic-tools.'
         return
@@ -335,9 +354,18 @@ function Main {
         throw 'Aborted by user.'
     }
 
+    Write-Info 'IIC-OSIC-TOOLS can be run with Docker Desktop (default) or Podman.'
+    Write-Info 'The start scripts auto-detect the installed engine.'
+    $script:Engine = if (Ask 'Use Podman instead of Docker Desktop as the container engine?') { 'podman' } else { 'docker' }
+    Write-Ok "Selected container engine: $($script:Engine)"
+
     Step 'Install Git for Windows'                          { Install-Git }
-    Step 'Install / enable WSL2 (required by Docker Desktop)' { Install-Wsl }
-    Step 'Install Docker Desktop'                           { Install-DockerDesktop }
+    Step 'Install / enable WSL2 (required by Docker Desktop and Podman)' { Install-Wsl }
+    if ($script:Engine -eq 'podman') {
+        Step 'Install Podman'                               { Install-Podman }
+    } else {
+        Step 'Install Docker Desktop'                       { Install-DockerDesktop }
+    }
     Step 'Clone iic-osic-tools repository'                  { Clone-Repo }
 
     Show-UsageHints
@@ -346,7 +374,7 @@ function Main {
 
     Write-Host ''
     Write-Ok 'All selected installation steps completed.'
-    Write-Host '       If you did not reboot, please do so before launching Docker Desktop.'
+    Write-Host '       If you did not reboot, please do so before launching the container engine.'
 }
 
 try {

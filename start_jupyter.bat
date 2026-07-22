@@ -36,9 +36,32 @@ if not exist "%DESIGNS%" %ECHO_IF_DRY_RUN% mkdir "%DESIGNS%"
 
 IF NOT DEFINED JUPYTER_PORT SET JUPYTER_PORT=8888
 
+:: Select the container engine (Docker or Podman), can be overridden by
+:: setting CONTAINER_ENGINE.
+IF NOT DEFINED CONTAINER_ENGINE (
+  where /q docker
+  IF NOT ERRORLEVEL 1 (
+    SET CONTAINER_ENGINE=docker
+  ) ELSE (
+    where /q podman
+    IF NOT ERRORLEVEL 1 (
+      SET CONTAINER_ENGINE=podman
+    ) ELSE (
+      ECHO ERROR: No container engine found, please install Docker or Podman!
+      EXIT /B 1
+    )
+  )
+)
+ECHO Using container engine %CONTAINER_ENGINE%
+
 IF NOT DEFINED DOCKER_USER SET DOCKER_USER=hpretl
 IF NOT DEFINED DOCKER_IMAGE SET DOCKER_IMAGE=iic-osic-tools
 IF NOT DEFINED DOCKER_TAG SET DOCKER_TAG=latest
+
+:: Fully qualify the image name (Podman does not resolve short names
+:: non-interactively).
+IF NOT DEFINED DOCKER_REGISTRY SET DOCKER_REGISTRY=docker.io
+SET IMAGE_NAME=%DOCKER_REGISTRY%/%DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
 
 IF NOT DEFINED CONTAINER_USER SET CONTAINER_USER=1000
 IF NOT DEFINED CONTAINER_GROUP SET CONTAINER_GROUP=1000
@@ -53,16 +76,16 @@ IF DEFINED JUPYTER_PORT SET PARAMS=%PARAMS% -p %JUPYTER_PORT%:8888
 IF DEFINED DOCKER_EXTRA_PARAMS SET PARAMS=%PARAMS% %DOCKER_EXTRA_PARAMS%
 
 @REM Check if the container exists and if it is running.
-docker container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "running"
+%CONTAINER_ENGINE% container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "running"
 IF NOT ERRORLEVEL 1 (
-    ECHO Container is running! Stop with \"docker stop %CONTAINER_NAME%\" and remove with \"docker rm %CONTAINER_NAME%\" if required.
+    ECHO Container is running! Stop with \"%CONTAINER_ENGINE% stop %CONTAINER_NAME%\" and remove with \"%CONTAINER_ENGINE% rm %CONTAINER_NAME%\" if required.
 ) ELSE (
-    docker container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "exited"
+    %CONTAINER_ENGINE% container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "exited"
     IF NOT ERRORLEVEL 1 (
-        echo Container %CONTAINER_NAME% exists. Restart with \"docker start %CONTAINER_NAME%\" or remove with \"docker rm %CONTAINER_NAME%\" if required.
+        echo Container %CONTAINER_NAME% exists. Restart with \"%CONTAINER_ENGINE% start %CONTAINER_NAME%\" or remove with \"%CONTAINER_ENGINE% rm %CONTAINER_NAME%\" if required.
     ) ELSE (
-        echo Container does not exist, pulling %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% and creating %CONTAINER_NAME% ...
-	%ECHO_IF_DRY_RUN% docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
-        %ECHO_IF_DRY_RUN% docker run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% %PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% -s jupyter lab --no-browser
+        echo Container does not exist, pulling %IMAGE_NAME% and creating %CONTAINER_NAME% ...
+	%ECHO_IF_DRY_RUN% %CONTAINER_ENGINE% pull %IMAGE_NAME%
+        %ECHO_IF_DRY_RUN% %CONTAINER_ENGINE% run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% %PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %IMAGE_NAME% -s jupyter lab --no-browser
     )
 )

@@ -19,6 +19,22 @@
 # SPDX-License-Identifier: Apache-2.0
 # ========================================================================
 
+# Select the container engine (Docker or Podman), can be overridden by
+# setting CONTAINER_ENGINE. Note that with Podman the "--restart always"
+# policy does not survive a host reboot unless podman-restart.service (or
+# systemd/Quadlet units) are enabled.
+if [ -z ${CONTAINER_ENGINE+z} ]; then
+    if command -v docker > /dev/null 2>&1; then
+        CONTAINER_ENGINE="docker"
+    elif command -v podman > /dev/null 2>&1; then
+        CONTAINER_ENGINE="podman"
+    else
+        echo "[ERROR] No container engine found, please install Docker or Podman!"
+        exit 1
+    fi
+fi
+export CONTAINER_ENGINE
+
 # general settings for all users
 export DOCKER_EXTRA_PARAMS="--cpus 4 --memory 8G --dns 8.8.8.8 --restart always"
 export VNC_PORT=0

@@ -49,8 +49,8 @@ It supports multiple *modes of operation*:
 
 If you just want to get going on a fresh machine, the repository ships with an
 interactive installer that takes care of the prerequisites (Git, Docker /
-Docker Desktop, WSL2 on Windows, XQuartz on macOS) and clones this repository
-for you. Every action is gated behind a `[y/N]` confirmation prompt.
+Docker Desktop or Podman, WSL2 on Windows, XQuartz on macOS) and clones this
+repository for you. Every action is gated behind a `[y/N]` confirmation prompt.
 
 **Linux and macOS** (Bash, `curl` required):
 
@@ -297,9 +297,11 @@ You can now access the Desktop Environment through your browser ([http://localho
 Both scripts will use default settings, which you can tweak by settings shell variables (`VARIABLE=default` is shown):
 
 - `DRY_RUN` (unset by default); if set to any value (also `0`, `false`, etc.), the start scripts print all executed commands instead of running. Useful for debugging/testing or just creating "template commands" for unique setups.
+- `CONTAINER_ENGINE` (auto-detected) selects the container engine CLI. By default, `docker` is used if installed, otherwise `podman`. Set it explicitly (e.g. `CONTAINER_ENGINE=podman`) if both engines are installed and you want to override the default.
 - `DESIGNS=$HOME/eda/designs` (`DESIGNS=%USERPROFILE%\eda\designs` for `.bat`) sets the directory that holds your design files. This directory is mounted into the container on `/foss/designs`.
-- `WEBSERVER_PORT=80` sets the port on which the Docker daemon will map the webserver port of the container to be reachable from localhost and the outside world. `0` disables the mapping.
+- `WEBSERVER_PORT=80` sets the port on which the Docker daemon will map the webserver port of the container to be reachable from localhost and the outside world. `0` disables the mapping. With rootless Podman (which cannot bind ports below 1024) the default is `8080`.
 - `VNC_PORT=5901` sets the port on which the Docker daemon will map the VNC server port of the container to be reachable from localhost and the outside world. This is only required to access the UI with a different VNC client. `0` disabled the mapping.
+- `DOCKER_REGISTRY="docker.io"` registry prefix used to fully qualify the image name (required for Podman, which does not resolve short names non-interactively). Set it to `""` to use unqualified names.
 - `DOCKER_USER="hpretl"` username for the Docker Hub repository from which the images are pulled. Usually, no change is required.
 - `DOCKER_IMAGE="iic-osic-tools"` Docker Hub image name to pull. Usually, no change is required.
 - `DOCKER_TAG="latest"` Docker Hub image tag. By default, it pulls the latest version; this might be handy to change if you want to match a specific version set.
@@ -336,7 +338,9 @@ or
 The following environment variables are used for configuration:
 
 - `DRY_RUN` (unset by default), if set to any value (also `0`, `false`, etc.), makes the start scripts print all executed commands instead of running. Useful for debugging/testing or just creating "template commands" for unique setups.
+- `CONTAINER_ENGINE` (auto-detected) selects the container engine CLI. By default, `docker` is used if installed, otherwise `podman`. Set it explicitly (e.g. `CONTAINER_ENGINE=podman`) if both engines are installed and you want to override the default.
 - `DESIGNS=$HOME/eda/designs` (`DESIGNS=%USERPROFILE%\eda\designs` for `.bat`) sets the directory that holds your design files. This directory is mounted into the container on `/foss/designs`.
+- `DOCKER_REGISTRY="docker.io"` registry prefix used to fully qualify the image name (required for Podman, which does not resolve short names non-interactively). Set it to `""` to use unqualified names.
 - `DOCKER_USER="hpretl"` username for the Docker Hub repository from which the images are pulled. Usually, no change is required.
 - `DOCKER_IMAGE="iic-osic-tools"` Docker Hub image name to pull. Usually, no change is required.
 - `DOCKER_TAG="latest"` Docker Hub image tag. By default, it pulls the latest version; this might be handy to change if you want to match a specific Version set.
@@ -432,15 +436,21 @@ For container experts, there is also support for other container engines and add
 
 ### 5.1 Podman
 
-[Podman](https://podman.io/) is a demonless, OCI compatible container engine, that supports rootless containers to contain privileges inside the container. Normal root containers are supported out of the box, the Docker-compatible CLI can be used with the start scripts without modification. Using rootless mode, we suggest using the user-namespace mode "keep-id". In this case, the host-user, launching the container, is copied to the container (same UID, GID, user and group name), preventing access issues between the container and mounted directories from the host. This can be achieved by using:
+[Podman](https://podman.io/) is a demonless, OCI compatible container engine, that supports rootless containers to contain privileges inside the container. Podman is supported as a co-equal runtime by all start scripts: they auto-detect the installed engine (preferring `docker` if both are present; override with `CONTAINER_ENGINE=podman`), so no `podman-docker` compatibility alias and no script modification is needed. The interactive installers (`install.sh`/`install.ps1`) can install Podman instead of Docker.
 
-`DOCKER_EXTRA_PARAMS="--userns=keep-id" ./start_<mode>.sh`
+The start scripts automatically handle the classic Podman pitfalls:
 
-It should be noted, that the rootless mode can't bind to ports below 1024. This means, for the VNC-mode, a different webserver port has to be selected, e.g.:
+- In rootless mode, they add `--userns=keep-id` (unless a `--userns` option is already given via `DOCKER_EXTRA_PARAMS`), so the host user launching the container is mapped to the same UID/GID inside the container, preventing access issues between the container and mounted directories from the host.
+- Since rootless mode cannot bind host ports below 1024, `start_vnc.sh` defaults the webserver port to `8080` instead of `80` (an explicitly set `WEBSERVER_PORT` below 1024 produces a warning).
+- `start_vnc.sh` passes `--sysctl net.ipv4.ip_unprivileged_port_start=0` to Podman (rootful and rootless). Docker sets this namespaced sysctl in every container by default, Podman does not — without it, the noVNC webserver (which runs as a non-root user) cannot bind port 80 *inside* the container and the VNC mode fails.
 
-`WEBSERVER_PORT=8080 DOCKER_EXTRA_PARAMS="--userns=keep-id" ./start_<mode>.sh`
+So in most cases, simply running `./start_<mode>.sh` works out of the box with Podman.
 
-The `start_x.sh` script automatically detects Podman rootless mode and prints the above suggestion if `--userns=keep-id` has not already been set.
+By default, the container uses [nss_wrapper](https://cwrap.org/nss_wrapper.html) to fake a passwd/group entry (`designer`) for the arbitrary UID/GID the container is started with. With Podman and `--userns=keep-id` a real passwd entry for the current user already exists inside the container, so the wrapper can optionally be disabled by setting the container environment variable `IIC_OSIC_TOOLS_DISABLE_NSSWRAPPER` (any non-empty value):
+
+`DOCKER_EXTRA_PARAMS="-e IIC_OSIC_TOOLS_DISABLE_NSSWRAPPER=1" ./start_<mode>.sh`
+
+As a safety net, the request is ignored (with a warning) if no passwd entry exists for the container UID, because the TigerVNC server refuses to start without one ("vncserver: I do not know who you are").
 
 > **Note on Docker Rootless Mode:** Docker in rootless mode has known limitations with X11/Wayland socket forwarding due to UID/GID mismatches between the host and container. There is no straightforward fix for Docker rootless mode, and we therefore recommend using Podman with `--userns=keep-id` as the preferred solution for rootless container operation.
 

@@ -33,9 +33,37 @@ IF "%DESIGNS%"=="" (
 echo Using/creating designs directory: %DESIGNS%
 if not exist "%DESIGNS%" %ECHO_IF_DRY_RUN% mkdir "%DESIGNS%" 
 
+:: Select the container engine (Docker or Podman), can be overridden by
+:: setting CONTAINER_ENGINE.
+IF NOT DEFINED CONTAINER_ENGINE (
+  where /q docker
+  IF NOT ERRORLEVEL 1 (
+    SET CONTAINER_ENGINE=docker
+  ) ELSE (
+    where /q podman
+    IF NOT ERRORLEVEL 1 (
+      SET CONTAINER_ENGINE=podman
+    ) ELSE (
+      ECHO ERROR: No container engine found, please install Docker or Podman!
+      EXIT /B 1
+    )
+  )
+)
+ECHO Using container engine %CONTAINER_ENGINE%
+
 IF "%DOCKER_USER%"=="" SET DOCKER_USER=hpretl
 IF "%DOCKER_IMAGE%"=="" SET DOCKER_IMAGE=iic-osic-tools
 IF "%DOCKER_TAG%"=="" SET DOCKER_TAG=latest
+
+:: Fully qualify the image name (Podman does not resolve short names
+:: non-interactively).
+IF "%DOCKER_REGISTRY%"=="" SET DOCKER_REGISTRY=docker.io
+SET IMAGE_NAME=%DOCKER_REGISTRY%/%DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
+
+:: Docker Desktop and Podman machine expose the host WSLg directory at
+:: different locations inside their WSL2 VMs.
+SET WSLG_ROOT=/run/desktop/mnt/host/wslg
+IF "%CONTAINER_ENGINE%"=="podman" SET WSLG_ROOT=/mnt/wslg
 
 IF "%CONTAINER_USER%"=="" SET CONTAINER_USER=1000
 IF "%CONTAINER_GROUP%"=="" SET CONTAINER_GROUP=1000
@@ -55,16 +83,16 @@ IF DEFINED DOCKER_EXTRA_PARAMS (
 )
 
 
-docker container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "running"
+%CONTAINER_ENGINE% container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "running"
 IF NOT ERRORLEVEL 1 (
-    ECHO Container is running! Stop with \"docker stop %CONTAINER_NAME%\" and remove with \"docker rm %CONTAINER_NAME%\" if required.
+    ECHO Container is running! Stop with \"%CONTAINER_ENGINE% stop %CONTAINER_NAME%\" and remove with \"%CONTAINER_ENGINE% rm %CONTAINER_NAME%\" if required.
 ) ELSE (
-    docker container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "exited"
+    %CONTAINER_ENGINE% container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "exited"
     IF NOT ERRORLEVEL 1 (
-        echo Container %CONTAINER_NAME% exists. Restart with \"docker start %CONTAINER_NAME%\" or remove with \"docker rm %CONTAINER_NAME%\" if required.
+        echo Container %CONTAINER_NAME% exists. Restart with \"%CONTAINER_ENGINE% start %CONTAINER_NAME%\" or remove with \"%CONTAINER_ENGINE% rm %CONTAINER_NAME%\" if required.
     ) ELSE (
-	echo Container does not exist, pulling %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG% and creating %CONTAINER_NAME% ...
-        %ECHO_IF_DRY_RUN% docker pull %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
-        %ECHO_IF_DRY_RUN% docker run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% -e DISPLAY=%DISP% -e WAYLAND_DISPLAY=%WAYLAND_DISP% -e XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir -e PULSE_SERVER=/mnt/wslg/PulseServer -v /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix -v /run/desktop/mnt/host/wslg:/mnt/wslg --device=/dev/dxg -v /usr/lib/wsl:/usr/lib/wsl %PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
+	echo Container does not exist, pulling %IMAGE_NAME% and creating %CONTAINER_NAME% ...
+        %ECHO_IF_DRY_RUN% %CONTAINER_ENGINE% pull %IMAGE_NAME%
+        %ECHO_IF_DRY_RUN% %CONTAINER_ENGINE% run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% -e DISPLAY=%DISP% -e WAYLAND_DISPLAY=%WAYLAND_DISP% -e XDG_RUNTIME_DIR=/mnt/wslg/runtime-dir -e PULSE_SERVER=/mnt/wslg/PulseServer -v %WSLG_ROOT%/.X11-unix:/tmp/.X11-unix -v %WSLG_ROOT%:/mnt/wslg --device=/dev/dxg -v /usr/lib/wsl:/usr/lib/wsl %PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %IMAGE_NAME%
     )
 )

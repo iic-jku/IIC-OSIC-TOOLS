@@ -33,9 +33,32 @@ IF "%DESIGNS%"=="" (
 echo Using/creating designs directory: %DESIGNS%
 if not exist "%DESIGNS%" %ECHO_IF_DRY_RUN% mkdir "%DESIGNS%" 
 
+:: Select the container engine (Docker or Podman), can be overridden by
+:: setting CONTAINER_ENGINE.
+IF NOT DEFINED CONTAINER_ENGINE (
+  where /q docker
+  IF NOT ERRORLEVEL 1 (
+    SET CONTAINER_ENGINE=docker
+  ) ELSE (
+    where /q podman
+    IF NOT ERRORLEVEL 1 (
+      SET CONTAINER_ENGINE=podman
+    ) ELSE (
+      ECHO ERROR: No container engine found, please install Docker or Podman!
+      EXIT /B 1
+    )
+  )
+)
+ECHO Using container engine %CONTAINER_ENGINE%
+
 IF "%DOCKER_USER%"=="" SET DOCKER_USER=hpretl
 IF "%DOCKER_IMAGE%"=="" SET DOCKER_IMAGE=iic-osic-tools
 IF "%DOCKER_TAG%"=="" SET DOCKER_TAG=latest
+
+:: Fully qualify the image name (Podman does not resolve short names
+:: non-interactively).
+IF "%DOCKER_REGISTRY%"=="" SET DOCKER_REGISTRY=docker.io
+SET IMAGE_NAME=%DOCKER_REGISTRY%/%DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
 
 IF "%CONTAINER_USER%"=="" SET CONTAINER_USER=1000
 IF "%CONTAINER_GROUP%"=="" SET CONTAINER_GROUP=1000
@@ -66,6 +89,11 @@ IF DEFINED IIC_SERVER_DEPLOYMENT (
   SET PARAMS=--security-opt seccomp=unconfined
 )
 
+:: Docker sets this namespaced sysctl to 0 in every container by default,
+:: Podman does not; it is required so noVNC (running as a non-root user) can
+:: bind port 80 inside the container.
+IF "%CONTAINER_ENGINE%"=="podman" SET PARAMS=%PARAMS% --sysctl net.ipv4.ip_unprivileged_port_start=0
+
 IF %WEBSERVER_PORT% GTR 0 (
   SET PARAMS=%PARAMS% -p %WEBSERVER_PORT%:80
 )
@@ -90,16 +118,16 @@ IF DEFINED DOCKER_EXTRA_PARAMS (
   SET PARAMS=%PARAMS% %DOCKER_EXTRA_PARAMS%
 )
 
-docker container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "running"
+%CONTAINER_ENGINE% container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "running"
 IF NOT ERRORLEVEL 1 (
-    ECHO Container is running! Stop with \"docker stop %CONTAINER_NAME%\" and remove with \"docker rm %CONTAINER_NAME%\" if required.
+    ECHO Container is running! Stop with \"%CONTAINER_ENGINE% stop %CONTAINER_NAME%\" and remove with \"%CONTAINER_ENGINE% rm %CONTAINER_NAME%\" if required.
 ) ELSE (
-    docker container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "exited"
+    %CONTAINER_ENGINE% container inspect %CONTAINER_NAME% 2>&1 | find "Status" | find /i "exited"
     IF NOT ERRORLEVEL 1 (
-        echo Container %CONTAINER_NAME% exists. Restart with \"docker start %CONTAINER_NAME%\" or remove with \"docker rm %CONTAINER_NAME%\" if required.
+        echo Container %CONTAINER_NAME% exists. Restart with \"%CONTAINER_ENGINE% start %CONTAINER_NAME%\" or remove with \"%CONTAINER_ENGINE% rm %CONTAINER_NAME%\" if required.
     ) ELSE (
         echo Container does not exist, creating %CONTAINER_NAME% ...
-        %ECHO_IF_DRY_RUN% docker run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% %PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %DOCKER_USER%/%DOCKER_IMAGE%:%DOCKER_TAG%
+        %ECHO_IF_DRY_RUN% %CONTAINER_ENGINE% run -d --user %CONTAINER_USER%:%CONTAINER_GROUP% %PARAMS% -v "%DESIGNS%":/foss/designs --name %CONTAINER_NAME% %IMAGE_NAME%
         IF %WEBSERVER_PORT% GTR 0 (
             IF DEFINED VNC_PW (
                 echo [INFO] To access the VNC session, open a browser and navigate to http://localhost:%WEBSERVER_PORT%/?password=%VNC_PW%

@@ -52,23 +52,47 @@ if [ -n "${DRY_RUN}" ]; then
 	ECHO_IF_DRY_RUN="echo $"
 fi
 
+# Select the container engine (Docker or Podman), can be overridden by
+# setting CONTAINER_ENGINE.
+if [ -z ${CONTAINER_ENGINE+z} ]; then
+	if command -v docker > /dev/null 2>&1; then
+		CONTAINER_ENGINE="docker"
+	elif command -v podman > /dev/null 2>&1; then
+		CONTAINER_ENGINE="podman"
+	else
+		echo "[ERROR] No container engine found, please install Docker or Podman!"
+		exit 1
+	fi
+	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container engine auto-set to ${CONTAINER_ENGINE}."
+fi
+
+# Detect Podman, and Podman rootless mode on Linux (the docker CLI can also
+# be the podman-docker alias, so check the version string).
+if ${CONTAINER_ENGINE} --version 2>/dev/null | grep -qi "podman"; then
+	ENGINE_IS_PODMAN=1
+	if [[ "$OSTYPE" == "linux"* ]] && ${CONTAINER_ENGINE} info --format '{{.Host.Security.Rootless}}' 2>/dev/null | grep -qi "true"; then
+		ENGINE_IS_ROOTLESS=1
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Podman rootless mode detected."
+	fi
+fi
+
 if [ -z ${CONTAINER_NAME+z} ]; then
 	CONTAINER_NAME="iic-osic-tools_xserver_uid_"$(id -u)
 fi
 
 # Check if the container exists and if it is running.
-if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
+if [ "$(${CONTAINER_ENGINE} ps -q -f name="${CONTAINER_NAME}")" ]; then
 	echo "[WARNING] Container is running!"
-	echo "[HINT] It can also be stopped with \"docker stop ${CONTAINER_NAME}\" and removed with \"docker rm ${CONTAINER_NAME}\" if required."
+	echo "[HINT] It can also be stopped with \"${CONTAINER_ENGINE} stop ${CONTAINER_NAME}\" and removed with \"${CONTAINER_ENGINE} rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to stop, and \"r\" to stop & remove: "
 	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
-		${ECHO_IF_DRY_RUN} docker stop "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" stop "${CONTAINER_NAME}"
 	elif [[ $k = r ]] ; then
-		${ECHO_IF_DRY_RUN} docker stop "${CONTAINER_NAME}"
-		${ECHO_IF_DRY_RUN} docker rm "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" stop "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" rm "${CONTAINER_NAME}"
 	fi
 fi
 
@@ -95,6 +119,17 @@ if [ -z ${DOCKER_TAG+z} ]; then
 	DOCKER_TAG="latest"
 fi
 
+# Fully qualify the image name (Podman does not resolve short names
+# non-interactively); set DOCKER_REGISTRY="" to use unqualified names.
+if [ -z ${DOCKER_REGISTRY+z} ]; then
+	DOCKER_REGISTRY="docker.io"
+fi
+if [ -n "${DOCKER_REGISTRY}" ]; then
+	IMAGE_NAME="${DOCKER_REGISTRY}/${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+else
+	IMAGE_NAME="${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+fi
+
 if [[ "$OSTYPE" == "linux"* ]]; then
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Auto detected Linux."
 	# Should also be a sensible default
@@ -113,20 +148,17 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 	fi
 	PARAMS="${PARAMS} -e XDG_RUNTIME_DIR=${CONTAINER_XDG_RUNTIME_DIR}"
 
-	# Detect if Podman is being used as the container runtime (docker CLI may be an alias for Podman)
-	if docker --version 2>/dev/null | grep -qi "podman" || docker info 2>/dev/null | grep -qi "podman"; then
-		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Podman detected as container runtime."
-		if podman info --format '{{.Host.Security.Rootless}}' 2>/dev/null | grep -qi "true"; then
-			[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Podman rootless mode detected."
-			if ! echo "${DOCKER_EXTRA_PARAMS}" | grep -q "userns"; then
-				echo "[INFO] For better X11/Wayland compatibility in Podman rootless mode, consider using:"
-				echo "       DOCKER_EXTRA_PARAMS=\"--userns=keep-id\" ./start_x.sh"
-			fi
+	# In Podman rootless mode, keep the host UID/GID inside the container for
+	# X11/Wayland socket access and bind-mount file ownership (see README 5.1).
+	if [ -n "${ENGINE_IS_ROOTLESS}" ] && [ "${CONTAINER_USER}" != "0" ]; then
+		if ! echo "${DOCKER_EXTRA_PARAMS}" | grep -q "userns"; then
+			[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Adding --userns=keep-id for Podman rootless mode."
+			DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} --userns=keep-id"
 		fi
 	fi
 
 	# Check if Docker is running on Docker Desktop or classic engine
-	docker_info=$(docker version --format '{{.Server.Version}} {{.Server.Os}} {{.Server.Platform.Name}}' 2>/dev/null)
+	docker_info=$(${CONTAINER_ENGINE} version --format '{{.Server.Version}} {{.Server.Os}} {{.Server.Platform.Name}}' 2>/dev/null)
 
 	if echo "$docker_info" | grep -iq "Docker Desktop"; then
 		# We are running on Docker Desktop, means no forwarded special files...
@@ -247,7 +279,12 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 	        CONTAINER_GROUP=1000
 	fi
 	if [ -z ${DISP+z} ]; then
-		DISP="host.docker.internal:0"
+		if [ -n "${ENGINE_IS_PODMAN}" ]; then
+			# Podman machine resolves the host as host.containers.internal.
+			DISP="host.containers.internal:0"
+		else
+			DISP="host.docker.internal:0"
+		fi
 		if [[ $(type -P "xhost") ]]; then
 			${ECHO_IF_DRY_RUN} xhost +localhost > /dev/null
 			# Note: do NOT reset xhost on script exit. The container is started
@@ -303,9 +340,9 @@ if [ -n "${DOCKER_EXTRA_PARAMS}" ]; then
 fi
 
 # If the container exists but is exited, it can be restarted.
-if [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
+if [ "$(${CONTAINER_ENGINE} ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	echo "[WARNING] Container ${CONTAINER_NAME} exists."
-	echo "[HINT] It can also be restarted with \"docker start ${CONTAINER_NAME}\" or removed with \"docker rm ${CONTAINER_NAME}\" if required."
+	echo "[HINT] It can also be restarted with \"${CONTAINER_ENGINE} start ${CONTAINER_NAME}\" or removed with \"${CONTAINER_ENGINE} rm ${CONTAINER_NAME}\" if required."
 	echo	
 	echo -n "Press \"s\" to start, and \"r\" to remove: "
 	read -r -n 1 k </dev/tty
@@ -319,7 +356,7 @@ if [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 		# the file /headless/.xauthority. Recreate the recorded source as a file
 		# (with the freshly generated cookie) before starting. See issue #300.
 		if [ -z "${ECHO_IF_DRY_RUN}" ]; then
-			XAUTH_SRC=$(docker inspect -f '{{range .Mounts}}{{if eq .Destination "/headless/.xauthority"}}{{.Source}}{{end}}{{end}}' "${CONTAINER_NAME}" 2>/dev/null)
+			XAUTH_SRC=$(${CONTAINER_ENGINE} inspect -f '{{range .Mounts}}{{if eq .Destination "/headless/.xauthority"}}{{.Source}}{{end}}{{end}}' "${CONTAINER_NAME}" 2>/dev/null)
 			if [ -n "${XAUTH_SRC}" ] && [ ! -f "${XAUTH_SRC}" ]; then
 				echo "[INFO] Recreating missing xauthority bind-mount source ${XAUTH_SRC} before restart."
 				# Remove a stale directory that a previous failed start may have created.
@@ -332,17 +369,17 @@ if [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
 				chmod 600 "${XAUTH_SRC}" 2>/dev/null || true
 			fi
 		fi
-		${ECHO_IF_DRY_RUN} docker start "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" start "${CONTAINER_NAME}"
 	elif [[ $k = r ]] ; then
-		${ECHO_IF_DRY_RUN} docker rm "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" rm "${CONTAINER_NAME}"
 	fi
 else
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container does not exist, creating ${CONTAINER_NAME}. Please be patient, this can take a few minutes ..."
 	# Finally, run the container, and set DISPLAY to the local display number
-	${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
+	${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" pull "${IMAGE_NAME}" > /dev/null
 	# Disable SC2086, $PARAMS must be globbed and splitted.
 	# shellcheck disable=SC2086
-	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" -e "DISPLAY=${DISP}" -v "${DESIGNS}":"/foss/designs":rw ${PARAMS} --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+	${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" -e "DISPLAY=${DISP}" -v "${DESIGNS}":"/foss/designs":rw ${PARAMS} --name "${CONTAINER_NAME}" "${IMAGE_NAME}"
 fi
 
 if [ -n "${SOCAT_PID}" ]; then
@@ -352,8 +389,8 @@ if [ -n "${SOCAT_PID}" ]; then
 	# Check if socat is still running and monitor the container status
 	while ps -p "${SOCAT_PID}" > /dev/null; do
 		# Check if the container is still running
-		if ! docker ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
-			echo "Docker container ${CONTAINER_NAME} is no longer running."
+		if ! ${CONTAINER_ENGINE} ps --filter "name=${CONTAINER_NAME}" --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+			echo "Container ${CONTAINER_NAME} is no longer running."
 			cleanup
 		fi
 

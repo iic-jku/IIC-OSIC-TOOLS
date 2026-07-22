@@ -59,18 +59,15 @@ As of image `2025.01` Surfer has been added. Surfer is known to crash on quite a
 
 ### Podman Compatibility
 
-The IIC-OSIC-Tools container can be run using Podman instead of Docker (with the Podman Docker compatible CLI), but it introduces some issues:
+The IIC-OSIC-Tools container can be run using Podman instead of Docker. The start scripts auto-detect the installed engine (override with `CONTAINER_ENGINE=podman`), and in rootless mode they automatically add `--userns=keep-id` and default the VNC webserver port to `8080`, see [Section 5.1 of the README](README.md#51-podman).
 
-- By default, Podman mounts all bind-mounts/volumes as root, even though the `UID` inside the container is != 0, which creates some problems when accessing files inside the container. To work around this issue, we suggest the following procedure:
-- Edit the desired start script and find/replace all occurrences of `:rw` with `:U,rw`. Then Podman will mount all listed directories with the given `UID` inside the container.
-
-For rootless Podman operation (which resolves X11/Wayland socket access issues), please refer to [Section 5.1 of the README](README.md#51-podman) and use `--userns=keep-id`.
+If you run *rootful* Podman with a non-root `CONTAINER_USER`, bind-mounts are mounted as root, which creates problems when accessing files inside the container. In this case, either switch to rootless Podman (recommended), or edit the desired start script and find/replace all occurrences of `:rw` with `:U,rw`, so Podman will chown the mounted directories to the given `UID` inside the container.
 
 ### Docker Rootless Mode
 
 Running Docker in rootless mode with X11/Wayland forwarding (`start_x.sh`) is not fully supported. The X11 and Wayland sockets are not accessible from the container due to UID/GID mismatches in the user namespace. There is no straightforward fix for Docker rootless mode.
 
-**Workaround:** Switch to [Podman](https://podman.io/) in rootless mode with `--userns=keep-id` (see [Section 5.1 of the README](README.md#51-podman)). The `start_x.sh` script automatically detects Podman rootless mode and prints the required command.
+**Workaround:** Switch to [Podman](https://podman.io/) in rootless mode (see [Section 5.1 of the README](README.md#51-podman)). The start scripts automatically detect Podman rootless mode and add `--userns=keep-id`.
 
 ### Palace EM-Setup
 

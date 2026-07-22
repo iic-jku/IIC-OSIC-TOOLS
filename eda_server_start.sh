@@ -142,17 +142,17 @@ _spin_up_server () {
 
     [ "$DEBUG" = 1 ] && echo "[INFO] Spinning up container $CONTAINER_NAME using data directory $DESIGNS, webserver port $WEBSERVER_PORT, VNC password $VNC_PW, group-ID $CONTAINER_GROUP, container tag $DOCKER_TAG."
 
-    if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
+    if [ "$(${CONTAINER_ENGINE} ps -q -f name="${CONTAINER_NAME}")" ]; then
         if [ "$DO_KILL" = 0 ]; then
             echo "[ERROR] Running container $CONTAINER_NAME detected without the -k option!"
             return 1
         fi
         [ "$DEBUG" = 1 ] && echo "[INFO] Container $CONTAINER_NAME running, will now stop and remove it!"
-        if ! docker stop "${CONTAINER_NAME}" > /dev/null; then
+        if ! ${CONTAINER_ENGINE} stop "${CONTAINER_NAME}" > /dev/null; then
             echo "[ERROR] Failed to stop container $CONTAINER_NAME"
             return 1
         fi
-        if ! docker rm "${CONTAINER_NAME}" > /dev/null; then
+        if ! ${CONTAINER_ENGINE} rm "${CONTAINER_NAME}" > /dev/null; then
             echo "[ERROR] Failed to remove container $CONTAINER_NAME"
             return 1
         fi
