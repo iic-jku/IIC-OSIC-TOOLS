@@ -26,7 +26,9 @@
 #
 # The script installs:
 #   * git
-#   * Docker (Docker Engine on Linux / Docker Desktop on macOS)
+#   * A container engine, user-selectable:
+#       - Docker (Docker Engine on Linux / Docker Desktop on macOS), or
+#       - Podman (distribution packages on Linux / Homebrew on macOS)
 #   * XQuartz (macOS only, required for X11 mode)
 #   * Clones the iic-osic-tools repository to a user-chosen directory
 #
@@ -147,6 +149,31 @@ pick_dnf() {
     fi
 }
 
+# ----------------------- container engine choice ---------------------------
+choose_engine() {
+    echo
+    log "IIC-OSIC-TOOLS can be run with Docker (default) or Podman."
+    log "The start scripts auto-detect the installed engine; pick Podman for"
+    log "daemonless, rootless containers (recommended on shared machines)."
+    if ask "Use Podman instead of Docker as the container engine?"; then
+        ENGINE="podman"
+    else
+        ENGINE="docker"
+    fi
+    ok "Selected container engine: $ENGINE"
+}
+
+# Rootless Podman needs subordinate UID/GID ranges for the current user.
+linux_ensure_subids() {
+    if grep -q "^${USER}:" /etc/subuid 2>/dev/null && grep -q "^${USER}:" /etc/subgid 2>/dev/null; then
+        ok "subuid/subgid ranges already configured for '$USER'."
+        return
+    fi
+    log "Rootless Podman needs subuid/subgid ranges for '$USER'."
+    sudo_run usermod --add-subuids 100000-165535 --add-subgids 100000-165535 "$USER"
+    ok "Added subuid/subgid ranges for '$USER'."
+}
+
 # ----------------------- Linux (APT) steps --------------------------------
 linux_apt_update() {
     sudo_run apt-get update
@@ -202,6 +229,19 @@ linux_install_docker() {
         sudo_run systemctl enable --now docker.service containerd.service || true
         ok "Docker service enabled & started."
     fi
+}
+
+linux_install_podman() {
+    if have podman; then
+        ok "Podman already installed ($(podman --version))."
+    else
+        sudo_run apt-get install -y podman uidmap slirp4netns
+        # 'passt' provides the modern rootless network backend (pasta); it is
+        # not packaged on older releases, so do not fail if unavailable.
+        sudo_run apt-get install -y passt || warn "Package 'passt' not available; Podman will fall back to slirp4netns."
+        ok "Podman installed."
+    fi
+    linux_ensure_subids
 }
 
 # ----------------------- Linux (DNF/YUM) steps ----------------------------
@@ -270,6 +310,17 @@ linux_dnf_install_docker() {
     fi
 }
 
+linux_dnf_install_podman() {
+    if have podman; then
+        ok "Podman already installed ($(podman --version))."
+    else
+        local pm; pm="$(pick_dnf)"
+        sudo_run "$pm" install -y podman
+        ok "Podman installed."
+    fi
+    linux_ensure_subids
+}
+
 # ----------------------- macOS (Homebrew) steps ---------------------------
 macos_install_brew() {
     if have brew; then
@@ -317,6 +368,30 @@ macos_install_docker() {
     fi
     brew install --cask docker
     ok "Docker Desktop installed. Please launch it once from /Applications to finish setup."
+}
+
+macos_install_podman() {
+    if have podman; then
+        ok "Podman already installed ($(podman --version))."
+    else
+        brew install podman
+        ok "Podman installed via Homebrew."
+    fi
+
+    # On macOS, Podman runs containers inside a Linux VM (the Podman machine).
+    if podman machine inspect >/dev/null 2>&1; then
+        ok "Podman machine already initialized."
+    else
+        log "Initializing the Podman machine (the extracted image needs ~20 GB, so a 60 GB disk is used)."
+        podman machine init --disk-size 60
+        ok "Podman machine initialized."
+    fi
+    if podman machine inspect --format '{{.State}}' 2>/dev/null | grep -q "running"; then
+        ok "Podman machine is running."
+    else
+        podman machine start
+        ok "Podman machine started."
+    fi
 }
 
 macos_install_xquartz() {
@@ -448,6 +523,9 @@ show_usage_hints() {
     echo " 3) Your design files live under \$DESIGNS (default: \$HOME/eda/designs)"
     echo "    and are mounted into the container at /foss/designs."
     echo
+    echo " The start scripts auto-detect Docker or Podman; if both are"
+    echo " installed, override with e.g. CONTAINER_ENGINE=podman ./start_vnc.sh"
+    echo
     echo " The first launch will pull the ~4 GB image from Docker Hub."
     echo " Reserve at least 20 GB of free disk space."
     echo "============================================================"
@@ -457,7 +535,7 @@ show_usage_hints() {
 # ----------------------- macOS reboot -------------------------------------
 macos_reboot() {
     echo
-    warn "macOS: a reboot is recommended to finalize Docker Desktop and XQuartz installation."
+    warn "macOS: a reboot is recommended to finalize the container engine and XQuartz installation."
     if ask "Reboot now? (The system will restart in ~1 minute; press Ctrl-C in that window to abort.)"; then
         # Schedule reboot 1 minute out so the user can recover from an accidental 'y'.
         sudo_run shutdown -r +1 "Rebooting to finalize IIC-OSIC-TOOLS prerequisites." \
@@ -513,31 +591,49 @@ main() {
         die "Aborted by user."
     fi
 
+    choose_engine
+
     case "$OS" in
         linux-apt)
             step "Update APT package lists"               linux_apt_update
             step "Install git and base utilities"         linux_install_git
-            step "Install Docker Engine (official repo)"  linux_install_docker
+            if [[ "$ENGINE" == "podman" ]]; then
+                step "Install Podman (distribution packages)" linux_install_podman
+            else
+                step "Install Docker Engine (official repo)"  linux_install_docker
+            fi
             step "Clone iic-osic-tools repository"        clone_repo
             echo
             ok "All selected Linux steps completed."
-            warn "If you were just added to the 'docker' group, log out and back in (or reboot) before using Docker."
+            if [[ "$ENGINE" == "docker" ]]; then
+                warn "If you were just added to the 'docker' group, log out and back in (or reboot) before using Docker."
+            fi
             show_usage_hints
             ;;
         linux-dnf)
             step "Refresh DNF/YUM metadata"               linux_dnf_update
             step "Install git and base utilities"         linux_dnf_install_git
-            step "Install Docker Engine (official repo)"  linux_dnf_install_docker
+            if [[ "$ENGINE" == "podman" ]]; then
+                step "Install Podman (distribution packages)" linux_dnf_install_podman
+            else
+                step "Install Docker Engine (official repo)"  linux_dnf_install_docker
+            fi
             step "Clone iic-osic-tools repository"        clone_repo
             echo
             ok "All selected Linux steps completed."
-            warn "If you were just added to the 'docker' group, log out and back in (or reboot) before using Docker."
+            if [[ "$ENGINE" == "docker" ]]; then
+                warn "If you were just added to the 'docker' group, log out and back in (or reboot) before using Docker."
+            fi
             show_usage_hints
             ;;
         macos)
             step "Install Homebrew"                       macos_install_brew
             step "Install git via Homebrew"               macos_install_git
-            step "Install Docker Desktop via Homebrew"    macos_install_docker
+            if [[ "$ENGINE" == "podman" ]]; then
+                step "Install Podman via Homebrew"        macos_install_podman
+            else
+                step "Install Docker Desktop via Homebrew" macos_install_docker
+            fi
             step "Install XQuartz via Homebrew"           macos_install_xquartz
             step "Clone iic-osic-tools repository"        clone_repo
             show_usage_hints

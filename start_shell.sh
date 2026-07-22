@@ -24,6 +24,29 @@ if [ -n "${DRY_RUN}" ]; then
 	ECHO_IF_DRY_RUN="echo $"
 fi
 
+# Select the container engine (Docker or Podman), can be overridden by
+# setting CONTAINER_ENGINE.
+if [ -z ${CONTAINER_ENGINE+z} ]; then
+	if command -v docker > /dev/null 2>&1; then
+		CONTAINER_ENGINE="docker"
+	elif command -v podman > /dev/null 2>&1; then
+		CONTAINER_ENGINE="podman"
+	else
+		echo "[ERROR] No container engine found, please install Docker or Podman!"
+		exit 1
+	fi
+	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container engine auto-set to ${CONTAINER_ENGINE}."
+fi
+
+# Detect Podman rootless mode on Linux (the docker CLI can also be the
+# podman-docker alias, so check the version string).
+if [[ "$OSTYPE" == "linux"* ]] && ${CONTAINER_ENGINE} --version 2>/dev/null | grep -qi "podman"; then
+	if ${CONTAINER_ENGINE} info --format '{{.Host.Security.Rootless}}' 2>/dev/null | grep -qi "true"; then
+		ENGINE_IS_ROOTLESS=1
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Podman rootless mode detected."
+	fi
+fi
+
 # SET YOUR DESIGN PATH RIGHT!
 if [ -z ${DESIGNS+z} ]; then
 	DESIGNS=$HOME/eda/designs
@@ -43,6 +66,17 @@ fi
 
 if [ -z ${DOCKER_TAG+z} ]; then
 	DOCKER_TAG="latest"
+fi
+
+# Fully qualify the image name (Podman does not resolve short names
+# non-interactively); set DOCKER_REGISTRY="" to use unqualified names.
+if [ -z ${DOCKER_REGISTRY+z} ]; then
+	DOCKER_REGISTRY="docker.io"
+fi
+if [ -n "${DOCKER_REGISTRY}" ]; then
+	IMAGE_NAME="${DOCKER_REGISTRY}/${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+else
+	IMAGE_NAME="${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
 fi
 
 # Shell starts as root per default.
@@ -84,42 +118,53 @@ fi
 # Fixed potential errors in the container due to reduced access to syscalls.
 DOCKER_EXTRA_PARAMS="--security-opt seccomp=unconfined ${DOCKER_EXTRA_PARAMS}"
 
+# In Podman rootless mode, keep the host UID/GID inside the container so
+# bind-mounted files keep their ownership (see README section 5.1). Not
+# needed for the default root shell, where container root maps to the host
+# user anyway.
+if [ -n "${ENGINE_IS_ROOTLESS}" ] && [ "${CONTAINER_USER}" != "0" ]; then
+	if ! echo "${DOCKER_EXTRA_PARAMS}" | grep -q "userns"; then
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Adding --userns=keep-id for Podman rootless mode."
+		DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} --userns=keep-id"
+	fi
+fi
+
 if [ -n "${IIC_OSIC_TOOLS_QUIET}" ]; then
 	DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e IIC_OSIC_TOOLS_QUIET=1"
 fi
 
 # Check if the container exists and if it is running.
-if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
+if [ "$(${CONTAINER_ENGINE} ps -q -f name="${CONTAINER_NAME}")" ]; then
 	echo "[WARNING] Container is running!"
-	echo "[HINT] It can also be stopped with \"docker stop ${CONTAINER_NAME}\" and removed with \"docker rm ${CONTAINER_NAME}\" if required."
+	echo "[HINT] It can also be stopped with \"${CONTAINER_ENGINE} stop ${CONTAINER_NAME}\" and removed with \"${CONTAINER_ENGINE} rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to stop, and \"r\" to stop & remove: "
 	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
-		${ECHO_IF_DRY_RUN} docker stop "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" stop "${CONTAINER_NAME}"
 	elif [[ $k = r ]] ; then
-		${ECHO_IF_DRY_RUN} docker stop "${CONTAINER_NAME}"
-		${ECHO_IF_DRY_RUN} docker rm "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" stop "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" rm "${CONTAINER_NAME}"
 	fi
 # If the container exists but is exited, it is restarted.
-elif [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
+elif [ "$(${CONTAINER_ENGINE} ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	echo "[WARNING] Container ${CONTAINER_NAME} exists."
-	echo "[HINT] It can also be restarted with \"docker start ${CONTAINER_NAME}\" or removed with \"docker rm ${CONTAINER_NAME}\" if required."
+	echo "[HINT] It can also be restarted with \"${CONTAINER_ENGINE} start ${CONTAINER_NAME}\" or removed with \"${CONTAINER_ENGINE} rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to start, and \"r\" to remove: "
 	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
-		${ECHO_IF_DRY_RUN} docker start -a -i "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" start -a -i "${CONTAINER_NAME}"
 	elif [[ $k = r ]] ; then
-		${ECHO_IF_DRY_RUN} docker rm "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" rm "${CONTAINER_NAME}"
 	fi
 else
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container does not exist, creating ${CONTAINER_NAME} ..."
 	# Finally, run the container, and set DISPLAY to the local display number
-	#${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+	#${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" pull "${IMAGE_NAME}"
 	# Disable SC2086, $PARAMS must be globbed and splitted.
 	# shellcheck disable=SC2086
-	${ECHO_IF_DRY_RUN} docker run -it --name "${CONTAINER_NAME}" --user "${CONTAINER_USER}:${CONTAINER_GROUP}" -e "DISPLAY=${DISP}" $DOCKER_EXTRA_PARAMS -v "${DESIGNS}":"/foss/designs":rw "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" -s /bin/bash
+	${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" run -it --name "${CONTAINER_NAME}" --user "${CONTAINER_USER}:${CONTAINER_GROUP}" -e "DISPLAY=${DISP}" $DOCKER_EXTRA_PARAMS -v "${DESIGNS}":"/foss/designs":rw "${IMAGE_NAME}" -s /bin/bash
 fi

@@ -24,6 +24,29 @@ if [ -n "${DRY_RUN}" ]; then
 	ECHO_IF_DRY_RUN="echo $"
 fi
 
+# Select the container engine (Docker or Podman), can be overridden by
+# setting CONTAINER_ENGINE.
+if [ -z ${CONTAINER_ENGINE+z} ]; then
+	if command -v docker > /dev/null 2>&1; then
+		CONTAINER_ENGINE="docker"
+	elif command -v podman > /dev/null 2>&1; then
+		CONTAINER_ENGINE="podman"
+	else
+		echo "[ERROR] No container engine found, please install Docker or Podman!"
+		exit 1
+	fi
+	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container engine auto-set to ${CONTAINER_ENGINE}."
+fi
+
+# Detect Podman rootless mode on Linux (the docker CLI can also be the
+# podman-docker alias, so check the version string).
+if [[ "$OSTYPE" == "linux"* ]] && ${CONTAINER_ENGINE} --version 2>/dev/null | grep -qi "podman"; then
+	if ${CONTAINER_ENGINE} info --format '{{.Host.Security.Rootless}}' 2>/dev/null | grep -qi "true"; then
+		ENGINE_IS_ROOTLESS=1
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Podman rootless mode detected."
+	fi
+fi
+
 # SET YOUR DESIGN PATH RIGHT!
 if [ -z ${DESIGNS+z} ]; then
 	DESIGNS=$HOME/eda/designs
@@ -35,7 +58,15 @@ fi
 
 # Set the host ports, and disable them with 0. Only used if not set as shell variables!
 if [ -z ${WEBSERVER_PORT+z} ]; then
-	WEBSERVER_PORT=80
+	if [ -n "${ENGINE_IS_ROOTLESS}" ]; then
+		# Rootless Podman cannot bind ports below 1024 by default.
+		WEBSERVER_PORT=8080
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Webserver port auto-set to ${WEBSERVER_PORT} (rootless Podman cannot bind ports below 1024)."
+	else
+		WEBSERVER_PORT=80
+	fi
+elif [ -n "${ENGINE_IS_ROOTLESS}" ] && [ "$WEBSERVER_PORT" -gt 0 ] && [ "$WEBSERVER_PORT" -lt 1024 ]; then
+	echo "[WARNING] Rootless Podman cannot bind port ${WEBSERVER_PORT} (below 1024) by default, the container will likely fail to start. Use e.g. WEBSERVER_PORT=8080."
 fi
 if [ -z ${VNC_PORT+z} ]; then
 	VNC_PORT=5901
@@ -51,6 +82,17 @@ fi
 
 if [ -z ${DOCKER_TAG+z} ]; then
 	DOCKER_TAG="latest"
+fi
+
+# Fully qualify the image name (Podman does not resolve short names
+# non-interactively); set DOCKER_REGISTRY="" to use unqualified names.
+if [ -z ${DOCKER_REGISTRY+z} ]; then
+	DOCKER_REGISTRY="docker.io"
+fi
+if [ -n "${DOCKER_REGISTRY}" ]; then
+	IMAGE_NAME="${DOCKER_REGISTRY}/${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+else
+	IMAGE_NAME="${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
 fi
 
 if [ -z ${CONTAINER_NAME+z} ]; then
@@ -94,6 +136,15 @@ if [[ ${CONTAINER_GROUP} -ne 0 ]]  && [[ ${CONTAINER_GROUP} -lt 1000 ]]; then
         echo
 fi
 
+# In Podman rootless mode, keep the host UID/GID inside the container so
+# bind-mounted files keep their ownership (see README section 5.1).
+if [ -n "${ENGINE_IS_ROOTLESS}" ] && [ "${CONTAINER_USER}" != "0" ]; then
+	if ! echo "${DOCKER_EXTRA_PARAMS}" | grep -q "userns"; then
+		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Adding --userns=keep-id for Podman rootless mode."
+		DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} --userns=keep-id"
+	fi
+fi
+
 # Processing ports and other parameters
 # Fixed potential errors in the container due to reduced access to syscalls.
 if [ -n "${IIC_SERVER_DEPLOYMENT}" ]; then
@@ -127,38 +178,38 @@ if [ -n "${DOCKER_EXTRA_PARAMS}" ]; then
 fi
 
 # Check if the container exists and if it is running.
-if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
+if [ "$(${CONTAINER_ENGINE} ps -q -f name="${CONTAINER_NAME}")" ]; then
 	echo "[WARNING] Container is running!"
-	echo "[HINT] It can also be stopped with \"docker stop ${CONTAINER_NAME}\" and removed with \"docker rm ${CONTAINER_NAME}\" if required."
+	echo "[HINT] It can also be stopped with \"${CONTAINER_ENGINE} stop ${CONTAINER_NAME}\" and removed with \"${CONTAINER_ENGINE} rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to stop, and \"r\" to stop & remove: "
 	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
-		${ECHO_IF_DRY_RUN} docker stop "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" stop "${CONTAINER_NAME}"
 	elif [[ $k = r ]] ; then
-		${ECHO_IF_DRY_RUN} docker stop "${CONTAINER_NAME}"
-		${ECHO_IF_DRY_RUN} docker rm "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" stop "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" rm "${CONTAINER_NAME}"
 	fi
 # If the container exists but is exited, it is restarted.
-elif [ "$(docker ps -aq -f name="${CONTAINER_NAME}")" ]; then
+elif [ "$(${CONTAINER_ENGINE} ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	echo "[WARNING] Container ${CONTAINER_NAME} exists."
-	echo "[HINT] It can also be restarted with \"docker start ${CONTAINER_NAME}\" or removed with \"docker rm ${CONTAINER_NAME}\" if required."
+	echo "[HINT] It can also be restarted with \"${CONTAINER_ENGINE} start ${CONTAINER_NAME}\" or removed with \"${CONTAINER_ENGINE} rm ${CONTAINER_NAME}\" if required."
 	echo
 	echo -n "Press \"s\" to start, and \"r\" to remove: "
 	read -r -n 1 k </dev/tty
 	echo
 	if [[ $k = s ]] ; then
-		${ECHO_IF_DRY_RUN} docker start "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" start "${CONTAINER_NAME}"
 	elif [[ $k = r ]] ; then
-		${ECHO_IF_DRY_RUN} docker rm "${CONTAINER_NAME}"
+		${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" rm "${CONTAINER_NAME}"
 	fi
 else
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container does not exist, creating ${CONTAINER_NAME} ..."
 	# Finally, run the container, and sets DISPLAY to the local display number
-	#${ECHO_IF_DRY_RUN} docker pull "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+	#${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" pull "${IMAGE_NAME}"
 	# Disable SC2086, $PARAMS must be globbed and splitted.
 	# shellcheck disable=SC2086
-	${ECHO_IF_DRY_RUN} docker run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" $PARAMS -v "$DESIGNS":"/foss/designs":rw --name "${CONTAINER_NAME}" "${DOCKER_USER}/${DOCKER_IMAGE}:${DOCKER_TAG}" > /dev/null
+	${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" $PARAMS -v "$DESIGNS":"/foss/designs":rw --name "${CONTAINER_NAME}" "${IMAGE_NAME}" > /dev/null
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && [ "$WEBSERVER_PORT" -gt 0 ] && echo "[INFO] To access the VNC session, open a browser and navigate to http://localhost:${WEBSERVER_PORT}/?password=${VNC_PW:-abc123}"
 fi

@@ -64,7 +64,7 @@ shift $((OPTIND-1))
 echo "[INFO] Stopping and removing EDA containers."
 NO_INSTANCES=0
 FAILED=0
-mapfile -t CONTAINER_IDS < <(docker ps -a -q -f name="$EDA_CONTAINER_PREFIX")
+mapfile -t CONTAINER_IDS < <(${CONTAINER_ENGINE} ps -a -q -f name="$EDA_CONTAINER_PREFIX")
 
 if [ "${#CONTAINER_IDS[@]}" -eq 0 ]; then
 	echo "[INFO] No matching containers found."
@@ -74,12 +74,12 @@ fi
 
 for CONTAINER_ID in "${CONTAINER_IDS[@]}"; do
 	[ "$DEBUG" = 1 ] && echo "[INFO] Container ID $CONTAINER_ID found, now stopping and removing!"
-	if ! docker stop "$CONTAINER_ID" > /dev/null; then
+	if ! ${CONTAINER_ENGINE} stop "$CONTAINER_ID" > /dev/null; then
 		echo "[ERROR] Failed to stop container $CONTAINER_ID, skipping."
 		FAILED=$((FAILED + 1))
 		continue
 	fi
-	if ! docker rm "$CONTAINER_ID" > /dev/null; then
+	if ! ${CONTAINER_ENGINE} rm "$CONTAINER_ID" > /dev/null; then
 		echo "[ERROR] Failed to remove container $CONTAINER_ID, skipping."
 		FAILED=$((FAILED + 1))
 		continue

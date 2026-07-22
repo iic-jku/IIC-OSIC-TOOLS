@@ -97,7 +97,7 @@ _spin_up_server () {
 
     [ "$DEBUG" = 1 ] && echo "[INFO] Spinning up container $CONTAINER_NAME using data directory $DESIGNS, webserver port $WEBSERVER_PORT, VNC password $VNC_PW, group-ID $CONTAINER_GROUP, container tag $DOCKER_TAG."
 
-    if [ "$(docker ps -q -f name="${CONTAINER_NAME}")" ]; then
+    if [ "$(${CONTAINER_ENGINE} ps -q -f name="${CONTAINER_NAME}")" ]; then
         echo "[WARNING] Container $CONTAINER_NAME is already running, skipping!"
         return 1
     fi
