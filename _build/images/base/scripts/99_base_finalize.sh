@@ -36,6 +36,11 @@ chmod 777 /tmp/runtime-default
 # Remove Ubuntu user in container to prevent conflicts with designer user
 userdel ubuntu
 
+# Remove Rust toolchains/caches that rustup auto-downloads when pip has to
+# build a package from source (no prebuilt wheel, e.g. on aarch64); a
+# toolchain is re-downloaded on first cargo use if a user needs Rust
+rm -rf "$HOME/.rustup" "$HOME/.cargo"
+
 # Set access rights for home dir and designs dir
 chown -R 1000:1000 "$HOME"
 chmod -R +rw "$HOME"

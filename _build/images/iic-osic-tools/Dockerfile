@@ -121,7 +121,9 @@ COPY --link --from=cvc_rv                       ${TOOLS}/cvc_rv                 
 COPY --link --from=fpga                         ${TOOLS}/fpga                   ${TOOLS}/fpga/
 COPY --link --from=gaw3-xschem                  ${TOOLS}/gaw3-xschem            ${TOOLS}/gaw3-xschem/
 COPY --link --from=gds3d                        ${TOOLS}/gds3d                  ${TOOLS}/gds3d/
-COPY --link --from=gds3d                        ${PDK_ROOT}/                    ${PDK_ROOT}/
+# Only copy the GDS3D techfile additions, not the whole PDK tree the gds3d
+# stage inherits from open_pdks (which is copied below and would be duplicated)
+COPY --link --from=gds3d                        ${PDK_ROOT}/sky130A/libs.tech/gds3d/ ${PDK_ROOT}/sky130A/libs.tech/gds3d/
 COPY --link --from=ghdl                         ${TOOLS}/ghdl                   ${TOOLS}/ghdl/
 COPY --link --from=ghdl-yosys-plugin            ${TOOLS}/ghdl-yosys-plugin/     ${TOOLS}/ghdl-yosys-plugin/
 COPY --link --from=gtkwave                      ${TOOLS}/gtkwave                ${TOOLS}/gtkwave/
