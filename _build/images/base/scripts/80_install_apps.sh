@@ -52,7 +52,6 @@ apt-get install -y \
 	net-tools \
 	nmap \
 	novnc \
-	openjdk-17-jdk \
 	parallel \
 	qalculate-gtk \
 	sbt \

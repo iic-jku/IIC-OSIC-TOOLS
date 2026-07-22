@@ -17,6 +17,13 @@ set -e
 echo "[INFO] Updating, upgrading and installing packages with APT"
 apt-get -y update
 apt-get -y upgrade
+
+# Java 17 is required (Chisel is incompatible with Java 21 due to the used
+# Scala version). Install it in its OWN transaction before the main list:
+# with 17 already present, ant resolves its java8-runtime-headless dependency
+# against it, instead of pulling in a second JDK via default-jre (Java 21)
+apt-get -y install openjdk-17-jdk
+
 apt-get -y install \
 	ant \
 	autoconf \
@@ -37,7 +44,6 @@ apt-get -y install \
 	curl \
 	cython3 \
 	debhelper \
-	default-jre \
 	desktop-file-utils \
 	device-tree-compiler \
 	devscripts \
