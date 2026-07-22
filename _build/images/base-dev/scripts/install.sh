@@ -115,3 +115,9 @@ apt-get -y install \
 	tk-dev \
 	uuid-dev \
 	zlib1g-dev
+
+# The base image deletes the LLVM static libraries (/usr/lib/llvm-18/lib/*.a)
+# for size, but dpkg still considers llvm-18-dev installed, so the plain
+# install above does not bring them back. Tool builds (openvaf links LLVM
+# statically) run on base-dev, so restore the files here.
+apt-get -y install --reinstall llvm-18-dev

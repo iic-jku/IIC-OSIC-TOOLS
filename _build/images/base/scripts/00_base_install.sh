@@ -124,7 +124,7 @@ apt-get -y install \
 	libncurses6 \
 	libngspice0 \
 	libnss-wrapper \
-	libomp5-17 \
+	libomp5-18 \
 	libopenblas0 \
 	libopenblas0-pthread \
 	libopenmpi3 \
@@ -245,6 +245,15 @@ apt-get -y install \
 git lfs install --system
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 0
+
+# Remove build-only LLVM parts not needed at runtime (~440 MB): the static
+# libraries from llvm-18-dev (their only consumer is the openvaf build, which
+# runs on base-dev where llvm-18-dev is re-installed), the llvm-exegesis
+# CPU-benchmarking tool, and the c-index-test libclang test harness.
+# clang/LLVM stay fully usable for users via the shared libLLVM.
+rm -f /usr/lib/llvm-18/lib/*.a
+rm -f /usr/lib/llvm-18/bin/llvm-exegesis /usr/bin/llvm-exegesis-18
+rm -f /usr/lib/llvm-18/bin/c-index-test /usr/bin/c-index-test-18
 
 cd /usr/lib/llvm-18/bin || exit 1
 for f in *; do
