@@ -183,6 +183,7 @@ COPY images/iic-osic-tools/skel /
 RUN bash /headless/scripts/install_eda.sh && \
     git clone --depth=1 https://github.com/mole99/ota-5t.git ${EXAMPLES}/cace/ota-5t && \
     git clone --depth=1 https://github.com/iic-jku/analog-circuit-design ${EXAMPLES}/analog-course && \
+    find ${EXAMPLES} -type d -name .git -prune -exec rm -rf {} + && \
     bash /headless/scripts/install_klayout.sh && \
     bash /headless/scripts/install_links.sh && \
     chmod 755 /tool_metadata.yml && \
