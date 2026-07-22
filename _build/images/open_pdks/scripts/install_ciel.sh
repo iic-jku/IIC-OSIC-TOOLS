@@ -195,6 +195,26 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	rm -rf "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
 	cp -a /tmp/glofo-mjk/cells/klayout/pymacros "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros"
 
+	# gdsfactory >= 9.29 no longer auto-activates its generic PDK (the CONF.pdk
+	# default changed from "generic" to None), but the pcell drawing code relies
+	# on an active PDK for layer-tuple resolution in Component.add_polygon().
+	# Activate it once at import if no PDK is active (no-op on older versions,
+	# and it never overrides a PDK the user has activated themselves).
+	cat >> "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros/cells/_patches.py" <<'PYEOF'
+
+
+def _activate_generic_pdk():
+    import gdsfactory as gf
+
+    try:
+        gf.get_active_pdk()
+    except ValueError:
+        gf.gpdk.PDK.activate()
+
+
+_activate_generic_pdk()
+PYEOF
+
     # Give universal write access to the macro directory, necessary for saving options
     # and creating the run directory.
     chmod -R 777 "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/macros"

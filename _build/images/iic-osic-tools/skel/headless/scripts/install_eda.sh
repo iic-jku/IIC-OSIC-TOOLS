@@ -98,12 +98,6 @@ gem install \
 	rggen-vhdl:0.13.0 \
 	rggen-veryl:0.8.0
 
-# Create dedicated gdsfactory venv for KLayout pcell compatibility.
-
-echo "[INFO] Creating gdsfactory9 venv for KLayout gf180mcuC/D pcell compatibility"
-python3 -m venv /foss/tools/klayout_gdsfactory9
-/foss/tools/klayout_gdsfactory9/bin/pip install --no-cache-dir "gdsfactory==9.20.6"
-
 echo "[INFO] EDA package installation completed"
 
 echo "[INFO] Removing build dependencies"
