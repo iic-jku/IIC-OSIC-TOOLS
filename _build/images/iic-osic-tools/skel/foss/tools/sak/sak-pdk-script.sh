@@ -83,14 +83,11 @@ else
 	fi
 
 	# sky130A/B pcell libraries require gdsfactory==8.0.0 (KLayout/kdb backend).
-	# gf180mcuC/D pcell libraries require gdsfactory==9.20.6.
 	# Point KLAYOUT_PYTHONPATH at the dedicated venv so KLayout uses it for pcells.
+	# gf180mcuC/D pcells work with the system gdsfactory (no venv needed).
 	case "$1" in
 		sky130A|sky130B)
 			_KLAYOUT_VENV="/foss/tools/klayout_gdsfactory8"
-			;;
-		gf180mcuC|gf180mcuD)
-			_KLAYOUT_VENV="/foss/tools/klayout_gdsfactory9"
 			;;
 		*)
 			_KLAYOUT_VENV=""

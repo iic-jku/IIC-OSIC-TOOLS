@@ -98,15 +98,13 @@ gem install \
 	rggen-vhdl:0.13.0 \
 	rggen-veryl:0.8.0
 
-# Create dedicated gdsfactory venvs for KLayout pcell compatibility.
+# Create dedicated gdsfactory venv for KLayout sky130A/B pcell compatibility.
+# The gf180mcuC/D pcells work with the system gdsfactory (the generic-PDK
+# activation they need is patched into their _patches.py in install_ciel.sh).
 
 echo "[INFO] Creating gdsfactory8 venv for KLayout sky130A/B pcell compatibility"
 python3 -m venv /foss/tools/klayout_gdsfactory8
 /foss/tools/klayout_gdsfactory8/bin/pip install --no-cache-dir "gdsfactory==8.0.0"
-
-echo "[INFO] Creating gdsfactory9 venv for KLayout gf180mcuC/D pcell compatibility"
-python3 -m venv /foss/tools/klayout_gdsfactory9
-/foss/tools/klayout_gdsfactory9/bin/pip install --no-cache-dir "gdsfactory==9.20.6"
 
 echo "[INFO] EDA package installation completed"
 
