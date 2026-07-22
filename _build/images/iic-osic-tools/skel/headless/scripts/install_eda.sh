@@ -5,7 +5,10 @@
 
 set -e
 
-PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages --ignore-installed"
+# Unlike the base install, no --ignore-installed here: it would re-install
+# every dependency already provided by the base image (scipy, pandas, ...)
+# as a shadow copy in this layer, growing the image by several 100 MB
+PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages"
 
 echo "[INFO] Install EDA packages via APT"
 apt-get update
@@ -18,8 +21,11 @@ apt-get install -y \
 	python3-gmsh
 
 echo "[INFO] Install EDA packages via PIP"
+# amaranth deliberately without [builtin-yosys]: that extra pulls in the
+# WASM-based amaranth-yosys + wasmtime (~75 MB); amaranth uses the native
+# yosys from PATH instead
 pip3 install $PIP_FLAGS \
-	"amaranth[builtin-yosys]==0.5.9" \
+	"amaranth==0.5.9" \
 	cace==2.11.0 \
 	chipify==0.2.1 \
 	ciel==2.6.1 \
@@ -73,13 +79,16 @@ cargo install \
 # Drop the Rust toolchain and registry cache so they don't bloat the image.
 rm -rf "$RUSTUP_HOME" "$CARGO_HOME"
 
+# The venvs use --system-site-packages so large dependencies already in the
+# system Python (numpy, scipy, pandas, ...) are not duplicated inside them;
+# only packages with conflicting pins get venv-local copies
 echo "[INFO] Installing CharLib"
-python3 -m venv /foss/tools/charlib
+python3 -m venv --system-site-packages /foss/tools/charlib
 /foss/tools/charlib/bin/pip install --no-cache-dir \
 	git+https://github.com/stineje/charlib
 
 echo "[INFO] Installing Hdl21/vlsirtools"
-python3 -m venv /foss/tools/vlsirtools
+python3 -m venv --system-site-packages /foss/tools/vlsirtools
 /foss/tools/vlsirtools/bin/pip install --no-cache-dir \
 	git+https://github.com/dan-fritchman/Hdl21
 
@@ -104,3 +113,8 @@ echo "[INFO] Removing build dependencies"
 apt-get purge -y libqhull-dev python3-dev
 apt-get autoremove -y
 rm -rf /var/lib/apt/lists/*
+
+echo "[INFO] Removing bundled Python package test suites"
+find /usr/local/lib/python3*/dist-packages \
+	/foss/tools/charlib/lib /foss/tools/vlsirtools/lib \
+	-type d \( -name tests -o -name test \) -prune -exec rm -rf {} +

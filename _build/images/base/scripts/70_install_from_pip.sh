@@ -62,6 +62,10 @@ pip3 install $PIP_FLAGS \
 	jupyterlab \
 	jupyterlab-night
 
+echo "[INFO] Removing bundled Python package test suites"
+find /usr/local/lib/python3*/dist-packages \
+	-type d \( -name tests -o -name test \) -prune -exec rm -rf {} +
+
 echo "[INFO] Cleaning up caches"
 rm -rf /tmp/*
 pip3 cache purge
