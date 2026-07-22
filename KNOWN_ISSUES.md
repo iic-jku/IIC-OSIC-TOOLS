@@ -33,11 +33,11 @@ export LIBGL_ALWAYS_INDIRECT=0
 Some pcell libraries were developed for older `gdsfactory` versions:
 
 - Skywater `sky130A`/`sky130B`: pcells require `gdsfactory==8.0.0` (the version that introduced the KLayout/kdb backend with kfactory 0.17.x APIs). System `gdsfactory9` is incompatible.
-- Global Foundries `gf180mcuC`/`gf180mcuD`: pcells work with `gdsfactory==9.20.6`. The image pins the system `gdsfactory` to this version.
+- Global Foundries `gf180mcuC`/`gf180mcuD`: pcells rely on the implicit generic-PDK activation that `gdsfactory` removed in 9.29.0.
 
 The image addresses these automatically (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162>):
 - A `gdsfactory==8.0.0` virtual environment is installed at `/foss/tools/klayout_gdsfactory8/`. When `sak-pdk sky130A` (or `sky130B`) is run, `KLAYOUT_PYTHONPATH` is set to this venv's `site-packages`. KLayout prepends `KLAYOUT_PYTHONPATH` to its embedded Python `sys.path`, so the sky130 pcell libraries load correctly.
-- A `gdsfactory==9.20.6` virtual environment is installed at `/foss/tools/klayout_gdsfactory9/`. When `sak-pdk gf180mcuC` (or `gf180mcuD`) is run, `KLAYOUT_PYTHONPATH` is set to this venv's `site-packages`. KLayout prepends `KLAYOUT_PYTHONPATH` to its embedded Python `sys.path`, so the sky130 pcell libraries load correctly.
+- The `gf180mcuC`/`gf180mcuD` pcells are patched at PDK-install time to explicitly activate the generic `gdsfactory` PDK, so they work with the current system `gdsfactory` and need no dedicated venv.
 
 ### The OpenROAD Flow Scripts (ORFS)
 
