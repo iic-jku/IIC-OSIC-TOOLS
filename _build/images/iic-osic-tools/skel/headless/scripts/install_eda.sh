@@ -24,6 +24,18 @@ apt-get install -y \
 	python3-gmsh
 
 echo "[INFO] Install EDA packages via PIP"
+
+# Without --ignore-installed, pip must UNINSTALL a package when an EDA
+# dependency needs a newer version than the visible one — and that fails for
+# Debian-installed packages ("RECORD file not found"). Shadow-install those
+# packages first: --ignore-installed puts a pip-managed copy into /usr/local
+# that hides the Debian one, and the main install below can then upgrade it
+# cleanly. Currently only blinker (Debian 1.7.0, Flask needs >=1.9); add
+# further packages here if a build fails with "Cannot uninstall X ...
+# installed by debian".
+pip3 install $PIP_FLAGS --ignore-installed \
+	blinker
+
 # amaranth deliberately without [builtin-yosys]: that extra pulls in the
 # WASM-based amaranth-yosys + wasmtime (~75 MB); amaranth uses the native
 # yosys from PATH instead
