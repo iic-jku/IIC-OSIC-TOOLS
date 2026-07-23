@@ -10,9 +10,9 @@ diff -ruN a/cells/__init__.py b/cells/__init__.py
 +from ._patches import patch_legacy_classes
 +patch_legacy_classes()
 diff -ruN a/cells/_patches.py b/cells/_patches.py
---- a/cells/_patches.py	2026-07-23 00:45:08.563084217 +0200
+--- a/cells/_patches.py	1970-01-01 01:00:00.000000000 +0100
 +++ b/cells/_patches.py	2026-07-23 00:45:08.575817010 +0200
-@@ -1,12 +1,215 @@
+@@ -0,0 +1,215 @@
 +# Copyright 2025 GlobalFoundries PDK Authors
 +#
 +# Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,12 +26,11 @@ diff -ruN a/cells/_patches.py b/cells/_patches.py
 +# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 +# See the License for the specific language governing permissions and
 +# limitations under the License.
- 
++
 +# ==============================================================================
 +# ---------------- Patches for compatibility with gdsfactory v9 ----------------
 +# ==============================================================================
- 
--def _activate_generic_pdk():
++
 +def _patch_class_attr(cls, name, attr, force=False):
 +    """
 +    Add or replace an attribute (method or property) on a class.
@@ -49,7 +48,7 @@ diff -ruN a/cells/_patches.py b/cells/_patches.py
 +
 +
 +def patch_legacy_classes():
-     import gdsfactory as gf
++    import gdsfactory as gf
 +    from importlib.util import find_spec
 +    from typing import Optional
 +
@@ -116,7 +115,7 @@ diff -ruN a/cells/_patches.py b/cells/_patches.py
 +        allow_duplicate: bool = True,
 +    ) -> kdb.Cell:
 +        return original_method(self, name, *args, allow_duplicate=allow_duplicate)
- 
++
 +    kfactory.layout.KCLayout.create_cell = __kfactory__layout__KCLayout_create_cell
 +
 +    #
@@ -225,13 +224,9 @@ diff -ruN a/cells/_patches.py b/cells/_patches.py
 +    # auto-activates the generic PDK, making this a no-op there. A PDK activated by
 +    # the user beforehand is never overridden.
 +    #
-     try:
-         gf.get_active_pdk()
-     except ValueError:
--        gf.gpdk.PDK.activate()
--
--
--_activate_generic_pdk()
++    try:
++        gf.get_active_pdk()
++    except ValueError:
 +        gf.gpdk.PDK.activate()
 \ No newline at end of file
 diff -ruN a/cells/cap_mim.py b/cells/cap_mim.py
