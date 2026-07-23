@@ -54,6 +54,11 @@ else
 		export PDKPATH="$PDK_ROOT/$PDK"
 		export SPICE_USERINIT_DIR="$PDK_ROOT/$PDK/libs.tech/ngspice"
 		export KLAYOUT_PATH="/headless/.klayout:$PDKPATH/libs.tech/klayout"
+		# gf180mcu needs GF_PDK_OPTION set, otherwise KLayout warns and assumes D
+		case "$PDK" in
+			gf180mcuC) export GF_PDK_OPTION="C" ;;
+			gf180mcuD) export GF_PDK_OPTION="D" ;;
+		esac
 	else
 		echo "[ERROR] PDK directory $PDK_ROOT/$1 not found!"
 		ERROR=1
@@ -90,5 +95,6 @@ else
 		echo "SPICE_USERINIT_DIR=$SPICE_USERINIT_DIR"
 		echo "KLAYOUT_PATH=$KLAYOUT_PATH"
 		[ -n "$KLAYOUT_PYTHONPATH" ] && echo "KLAYOUT_PYTHONPATH=$KLAYOUT_PYTHONPATH"
+		[ -n "$GF_PDK_OPTION" ] && echo "GF_PDK_OPTION=$GF_PDK_OPTION"
 	fi
 fi
