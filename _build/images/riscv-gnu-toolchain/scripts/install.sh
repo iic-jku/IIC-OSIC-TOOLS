@@ -9,6 +9,12 @@ cd /tmp || exit 1
 git clone --filter=blob:none "$RISCV_GNU_TOOLCHAIN_REPO_URL" "$RISCV_GNU_TOOLCHAIN_NAME"
 cd "$RISCV_GNU_TOOLCHAIN_NAME" || exit 1
 git checkout "$RISCV_GNU_TOOLCHAIN_REPO_COMMIT"
+
+# sourceware.org's git server is overloaded and often returns HTTP 502 while
+# make clones the binutils/gdb/newlib submodules; fetch them from actively
+# synced read-only GitHub mirrors instead
+git config --global url."https://github.com/gnutools/binutils-gdb.git".insteadOf "https://sourceware.org/git/binutils-gdb.git"
+git config --global url."https://github.com/RTEMS/sourceware-mirror-newlib-cygwin.git".insteadOf "https://sourceware.org/git/newlib-cygwin.git"
 mkdir build && cd build
 
 ../configure \
