@@ -13,4 +13,33 @@ git checkout "${XSCHEM_REPO_COMMIT}"
 make -j"$(nproc)"
 make install
 
+# Enable the "analyses" symbol library that ships with xschem, so VACASK and ngspice
+# simulations can be set up visually (op, ac, tran, sweep, command_block, ...) instead
+# of by hand-writing a control block. The library is PDK-independent, so it is enabled
+# in the system-wide xschemrc: that file is always sourced, and it is sourced before
+# any project, user, or PDK xschemrc. Both steps run in postinit_commands because the
+# PDK xschemrc files reset XSCHEM_LIBRARY_PATH to {} when they are sourced later during
+# startup, which would drop a path appended here. Sourcing lib_init.tcl is required as
+# well: it defines the procs that render the symbols and netlist the control block.
+# See https://codeberg.org/arpadbuermen/VACASK/src/branch/main/demo/xschem for details.
+cat >> "${TOOLS}/${XSCHEM_NAME}/share/xschem/xschemrc" <<'EOF'
+
+###########################################################################
+#### VISUAL ANALYSIS SETUP LIBRARY (VACASK AND NGSPICE)
+###########################################################################
+append postinit_commands {
+  set iic_analyses_dir [file normalize ${XSCHEM_SHAREDIR}/../doc/xschem/analyses]
+  if {[file isdirectory $iic_analyses_dir] && [lsearch -exact $pathlist $iic_analyses_dir] < 0} {
+    # Writing XSCHEM_LIBRARY_PATH refreshes pathlist through a variable trace.
+    append XSCHEM_LIBRARY_PATH :$iic_analyses_dir
+  }
+  unset iic_analyses_dir
+  foreach i $pathlist {
+    if {![catch {source $i/lib_init.tcl} retval]} {
+      puts "Sourced library init file $i/lib_init.tcl"
+    }
+  }
+}
+EOF
+
 echo "${XSCHEM_NAME} ${XSCHEM_REPO_COMMIT}" > "${TOOLS}/${XSCHEM_NAME}/SOURCES"
