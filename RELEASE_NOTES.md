@@ -2,6 +2,10 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2026.07
+
+* [Fix] `surfer` crash (`GLXBadFBConfig` panic) and blank window on macOS in X11 mode (XQuartz): a wrapper now forces the EGL rendering path and disables MIT-SHM presentation on TCP X connections; obsolete `surfer` alias removed.
+
 ## 2026.06
 
 * [Adding] interactive install scripts (`install.sh`, `install.bat`, `install.ps1`) that set up the prerequisites; installer logic moved to `install.ps1` and license header/disclaimer added.

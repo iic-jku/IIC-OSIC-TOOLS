@@ -21,4 +21,26 @@ cp target/release/surfer "${TOOLS}/${SURFER_NAME}/bin"
 cp target/release/surver "${TOOLS}/${SURFER_NAME}/bin"
 cp target/release/liblibsurfer.so "${TOOLS}/${SURFER_NAME}/bin"
 
+# LD_PRELOAD shim: disable SysV SHM so Mesa's software renderer presents
+# via core-protocol PutImage on remote X servers. XQuartz (macOS) advertises
+# MIT-SHM, but attaching container SHM segments across the VM boundary fails
+# on every frame and Mesa has no per-frame fallback -> blank window.
+mkdir -p "${TOOLS}/${SURFER_NAME}/lib/noglx"
+cat > /tmp/noshm.c << 'EOF'
+#include <errno.h>
+#include <sys/types.h>
+int shmget(key_t key, size_t size, int shmflg) {
+    (void)key; (void)size; (void)shmflg;
+    errno = ENOSYS;
+    return -1;
+}
+EOF
+gcc -shared -fPIC -o "${TOOLS}/${SURFER_NAME}/lib/libnoshm.so" /tmp/noshm.c
+
+# Empty libGL stubs: dlopen fails -> eframe/glutin falls back from GLX
+# (unusable against XQuartz) to EGL (llvmpipe, OpenGL 4.5). Used by the
+# surfer wrapper installed in install_links.sh.
+touch "${TOOLS}/${SURFER_NAME}/lib/noglx/libGL.so.1" \
+      "${TOOLS}/${SURFER_NAME}/lib/noglx/libGL.so"
+
 echo "${SURFER_NAME} ${SURFER_REPO_COMMIT}" > "${TOOLS}/${SURFER_NAME}/SOURCES"

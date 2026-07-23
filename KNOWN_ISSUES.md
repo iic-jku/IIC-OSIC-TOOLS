@@ -55,7 +55,11 @@ git checkout $(cat $TOOLS/openroad/ORFS_COMMIT)
 
 ### Surfer Crashing
 
-As of image `2025.01` Surfer has been added. Surfer is known to crash on quite a few platforms due to issues with OpenGL drivers. If Surfer works on your platform, great. If Surfer does crash then this is not good, but there is currently no solution available. Please do not file bug reports. As soon as we are aware of a solution for these crashes we will implement the fixes.
+As of image `2025.01` Surfer has been added. Surfer used to crash on various platforms due to issues with OpenGL drivers, most notably on macOS in X11 mode (`start_x.sh` with XQuartz), where it aborted with a `GLXBadFBConfig` panic.
+
+Since image `2026.07` Surfer is started through a wrapper that forces the EGL rendering path (GLX is unusable against XQuartz) and, on TCP X connections, disables MIT-SHM presentation (SHM cannot be shared between the container and the host X server, which previously resulted in a blank window). With this wrapper, Surfer works in both VNC and X11 mode.
+
+Note that in X11 mode Surfer is software-rendered inside the container and every frame is pushed uncompressed over the X connection, so the VNC mode feels snappier when working with Surfer. If Surfer still crashes on your platform, please file a bug report.
 
 ### Podman Compatibility
 
