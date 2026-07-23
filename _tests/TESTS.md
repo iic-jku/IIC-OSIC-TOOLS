@@ -39,3 +39,4 @@ IIC_TEST_RUNDIR=/mnt/scratch/osic-tests ./run_docker_tests.sh hpretl/iic-osic-to
 | 23       | Smoke/regression test of sak-lvs.sh (all PDKs, Magic+Netgen and KLayout)                                                        |
 | 24       | Smoke/regression test of sak-drc.sh (all PDKs, Magic and KLayout)                                                               |
 | 25       | Smoke/regression test of sak-pex.sh (all PDKs and PEX modes)                                                                    |
+| 26       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) (LVS, DRC, PEX) with ihp-sg13g2             |
