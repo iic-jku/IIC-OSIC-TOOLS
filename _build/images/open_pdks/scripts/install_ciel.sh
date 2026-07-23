@@ -117,9 +117,17 @@ def _gf9_compat():
     if not hasattr(gf.Component, "add_array"):
         gf.Component.add_array = _add_array
 
+    # The container always exports PDK=<klayout-pdk-name> (e.g. sky130A).
+    # gdsfactory maps $PDK into CONF.pdk, so get_active_pdk() does not take the
+    # clean "no active PDK -> ValueError" path; instead it tries to import a
+    # gdsfactory PDK plugin literally named "sky130A". No such plugin exists
+    # (these are KLayout-native pcells), so it raises ModuleNotFoundError and the
+    # tech aborts with "no PDK info found for tech". Fall back to the generic PDK
+    # (used only for layer-tuple resolution) on any failure, without overriding a
+    # real PDK the user may have activated beforehand.
     try:
         gf.get_active_pdk()
-    except ValueError:
+    except Exception:
         gf.gpdk.PDK.activate()
 
 

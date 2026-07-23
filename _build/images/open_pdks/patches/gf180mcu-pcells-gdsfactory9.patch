@@ -217,16 +217,16 @@ diff -ruN a/cells/_patches.py b/cells/_patches.py
 +    )
 +
 +    #
-+    # gdsfactory >= 9.29 no longer auto-activates the generic PDK (the CONF.pdk
-+    # default changed from "generic" to None). The drawing code relies on an active
-+    # PDK for layer-tuple resolution in gf.Component.add_polygon(), so activate the
-+    # generic PDK if none is active. On gdsfactory <= 9.28 get_active_pdk()
-+    # auto-activates the generic PDK, making this a no-op there. A PDK activated by
-+    # the user beforehand is never overridden.
++    # The container always exports PDK=<name> (e.g. gf180mcuD). gdsfactory maps
++    # $PDK into CONF.pdk, so get_active_pdk() skips the clean "no PDK -> ValueError"
++    # path and tries to import a gdsfactory PDK plugin named "gf180mcuD". No such
++    # plugin exists (KLayout-native pcells), so it raises ModuleNotFoundError and
++    # the tech aborts with "no PDK info found for tech". Fall back to the generic
++    # PDK on any failure; a real PDK the user activated beforehand is not overridden.
 +    #
 +    try:
 +        gf.get_active_pdk()
-+    except ValueError:
++    except Exception:
 +        gf.gpdk.PDK.activate()
 \ No newline at end of file
 diff -ruN a/cells/cap_mim.py b/cells/cap_mim.py

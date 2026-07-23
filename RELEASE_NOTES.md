@@ -72,7 +72,7 @@ This document summarizes the most important changes of the individual releases o
 * [Fix] KLayout netlist import for `ihp-sg13g2`: make `m=` optional and support `nf=` for MOSFET finger count.
 * [Fix] AppCSXCAD GLX context failure via wrapper script (issue #254).
 * [Fix] KLayout pcells for `sky130A` and `gf180mcuD` (gdsfactory version compatibility).
-* [Fix] KLayout `ERROR: no PDK info found for tech` by wrapping PDK env var unset for gdsfactory-based PDKs.
+* [Fix] KLayout `ERROR: no PDK info found for tech` for `sky130A` and `gf180mcuD`: the pcell activation shim now falls back to the generic gdsfactory PDK on any failure (the container's ever-present `PDK` env var poisons `CONF.pdk`, so `get_active_pdk()` raises `ModuleNotFoundError`, not the `ValueError` the shim previously caught).
 * [Fix] VACASK OSDI models using AVX-512 instructions (restrict to x86-64-v2).
 * [Fix] non-root/rootless setup: add Podman detection and `XDG_RUNTIME_DIR` fallback in `start_x.sh`.
 * [Fix] `gf180mcuD` transistor OP annotation in `xschem` symbol files.
