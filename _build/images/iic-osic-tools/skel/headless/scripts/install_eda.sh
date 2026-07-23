@@ -71,6 +71,16 @@ pip3 install $PIP_FLAGS \
 	spicelib==1.6.3 \
 	spyci==1.0.2
 
+# The four packages pulling in PySide6 (chipify, snp2le, gds2palace, setupEM)
+# only use QtWidgets/QtCore/QtGui/QtSvg, all of which live in
+# PySide6-Essentials. The PySide6-Addons half (~340 MB, dominated by a 254 MB
+# embedded Chromium in QtWebEngine, plus Qt3D/Quick3D/Designer/Multimedia) is
+# not imported by anything in the image, so remove it. Essentials stays, so
+# the GUIs keep working; pip check will note the PySide6 meta-package wants
+# Addons, which is harmless at runtime.
+echo "[INFO] Removing unused PySide6-Addons (QtWebEngine, Qt3D, ...)"
+pip3 uninstall -y --break-system-packages PySide6-Addons
+
 echo "[INFO] Install EDA packages via Cargo"
 
 export RUSTUP_HOME=/tmp/rustup
