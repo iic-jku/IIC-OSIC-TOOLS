@@ -48,8 +48,21 @@ source sak-pdk-script.sh ihp-sg13g2 > /dev/null
 # Run the simulation testbenches. The repository's runner wraps the individual
 # xschem/ngspice invocations in a throwaway virtual X server (xvfb-run) itself,
 # so no plot windows pop up in headless mode.
-[ "$DEBUG" = 1 ] && echo "[INFO] Running 'xschem/run_simulation_tests.sh' (output is logged to $LOG) ..."
-if ./xschem/run_simulation_tests.sh >> "$LOG" 2>&1; then
+#
+# Force the runner's internal job pool to 1 (JOBS=1). This whole test is already
+# launched by run_docker_tests.sh's GNU parallel pool (one job per core), so an
+# additional per-core pool inside the runner oversubscribes the CPU by nproc^2
+# and, worse, fires a burst of ~2*nproc^2 concurrent `xvfb-run -a` invocations.
+# `xvfb-run -a` auto-picks a free X display by scanning /tmp/.X*-lock, which is
+# a TOCTOU race: under that burst two invocations grab the same display, one
+# dies with "Server is already active for display N", the xschem/ngspice under
+# it exits non-zero, and the testbench is reported as a spurious FAIL that
+# vanishes on the next run. Serialising the runner removes the oversubscription
+# and collapses the concurrent xvfb-run burst that triggers the race. With
+# JOBS=1 the runner also hands each ngspice all cores (SPICE_THREADS=nproc), so
+# throughput does not collapse.
+[ "$DEBUG" = 1 ] && echo "[INFO] Running 'xschem/run_simulation_tests.sh' (JOBS=1, output is logged to $LOG) ..."
+if JOBS=1 ./xschem/run_simulation_tests.sh >> "$LOG" 2>&1; then
     echo "[INFO] Test <analog-circuit-design with ihp-sg13g2> passed."
     exit 0
 else
