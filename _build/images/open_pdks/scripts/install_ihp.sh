@@ -142,23 +142,11 @@ else
 	fi
 fi
 
-# The stdcell xschem symbols moved from libs.tech/xschem/sg13g2_stdcells to
-# libs.ref/sg13g2_stdcell/sym/xschem (IHP-Open-PDK PR #1031), but sg13g2tovc.py
-# still expects the old location, so provide it as a temporary symlink.
-if [ ! -e "$PDK_ROOT/$PDK/libs.tech/xschem/sg13g2_stdcells" ]; then
-	ln -s ../../libs.ref/sg13g2_stdcell/sym/xschem "$PDK_ROOT/$PDK/libs.tech/xschem/sg13g2_stdcells"
-	STDCELL_SYMLINK_CREATED=1
-fi
-
 OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
     python3 -m sg13g2tovc --openvaf-options --target_cpu generic
 cp /tmp/${VACASK_NAME}/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/vacask/.vacaskrc.toml"
 cd /tmp || exit 1
 rm -rf "${VACASK_NAME}"
-
-if [ -n "${STDCELL_SYMLINK_CREATED:-}" ]; then
-	rm "$PDK_ROOT/$PDK/libs.tech/xschem/sg13g2_stdcells"
-fi
 
 # Remove *.orig files created during PDK preparation
 find "$PDK_ROOT/$PDK/libs.tech/xschem" "$PDK_ROOT/$PDK/libs.ref/sg13g2_stdcell/sym" -name "*.orig" -delete

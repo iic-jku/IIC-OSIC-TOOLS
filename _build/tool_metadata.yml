@@ -132,7 +132,7 @@
   commit: 0.11.31
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: ae9533635e26187bb57435189c09499014de59dd
+  commit: 3062676ebfefafc0b400fef6abb2bfbe4e8603d8
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.050
