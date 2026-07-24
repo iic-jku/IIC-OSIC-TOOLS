@@ -16,8 +16,9 @@ This document summarizes the most important changes of the individual releases o
 * [Fix] `surfer` crash (`GLXBadFBConfig` panic) and blank window on macOS in X11 mode (XQuartz): a wrapper now forces the EGL rendering path and disables MIT-SHM presentation on TCP X connections; obsolete `surfer` alias removed.
 * [Fix] broken `ngspice` mixed-signal (VHDL co-simulation) support (issue #287).
 * [Fix] stale Xauth file in the VM; `libman` library loading (`capnp` libs and RPATH); moved IHP stdcell `xschem` symbols.
+* [Fix] KLayout pcell activation for `sky130A`/`gf180mcuD` when the container `PDK` variable would otherwise fail (fall back to the generic `gdsfactory` PDK); set `GF_PDK_OPTION` for `gf180mcuC`/`gf180mcuD` to suppress the ambiguous-PDK warning.
 * [Remove] the dedicated `gdsfactory` virtual environments for sky130/gf180mcu: both pcell libraries are now patched at PDK-install time to run on the current system `gdsfactory` (issue #162).
-* [Build] significant image size reductions: slim the runtime LLVM, strip static libraries from `xyce`/`palace`/`openroad`, deduplicate Python packages and the PDK copy, drop bundled test suites, remove the auto-downloaded Rust toolchain, and install only Java 17.
+* [Build] significant image size reductions: slim the runtime LLVM, strip static libraries from `xyce`/`palace`/`openroad`, remove the unused `PySide6-Addons` (QtWebEngine/Qt3D, ~410 MB), deduplicate Python packages and the PDK copy, drop bundled test suites, remove the auto-downloaded Rust toolchain, and install only Java 17.
 * [Build] use GitHub mirrors for RISC-V submodule fetches; rename `tool_pip.sh` to `tool_eda.sh` and add `check_eda_tool_version.py` (also handles Cargo/Gem tools).
 * [Docs] rewrite the Podman sections in `README.md`/`KNOWN_ISSUES.md` and add a macOS X11-vs-VNC performance note.
 
