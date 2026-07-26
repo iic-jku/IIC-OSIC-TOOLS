@@ -8,7 +8,7 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] `chipify` GUI/CLI wrapper for mismatch simulation, parameter sweeps, and yield analysis with `xschem`/`ngspice`.
 * [Adding] `snp2le` to convert Touchstone S-parameter files into lumped-element netlists for `ngspice` and `vacask`.
 * [Adding] VACASK setup for the IHP `SG13CMOS5L` PDK.
-* [Adding] regression/smoke tests for analog circuit design, SPARX, and the `sak-drc.sh`/`sak-lvs.sh`/`sak-pex.sh` scripts.
+* [Adding] regression/smoke tests for analog circuit design, SPARX, KLayout PCells, and the `sak-drc.sh`/`sak-lvs.sh`/`sak-pex.sh` scripts.
 * [Update] major rework of `sak-drc.sh`, `sak-lvs.sh`, and `sak-pex.sh`: KLayout DRC/LVS for all PDKs (`sky130A`, `gf180mcuD`, `ihp-sg13g2`, `ihp-sg13cmos5l`), new `gf180mcuD` DRC, gzipped and `.klay.gds` layout support, and robust workdir handling.
 * [Update] `gdsfill` switched to the Rust implementation; `gf180mcu` PDK now installed via `ciel`.
 * [Update] `yosys` and `slang-yosys-plugin` switched to the CMake build; `gmsh` now available on `arm64`.
