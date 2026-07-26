@@ -62,7 +62,8 @@ if [ -z "${FOSS_INIT_DONE+x}" ]; then
     export SAK=$TOOLS/sak
     export PATH=$TOOLS/bin:$SAK:/usr/local/sbin:$PATH
 
-    # OpenROAD in Ubuntu 22.04 does not find the PIP modules, so use PYTHONPATH
+    # Seed PYTHONPATH with the interpreter's default paths so the tool-specific
+    # entries appended below extend (rather than shadow) the system modules.
     PYTHONPATH=$(python3 -c "import sys; print(':'.join(x for x in sys.path if x))") && export PYTHONPATH
     _path_add_tool_python "ngspyce"
     _path_add_tool_python "openems"
