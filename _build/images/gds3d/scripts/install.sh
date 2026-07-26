@@ -9,7 +9,8 @@ cd /tmp || exit 1
 git clone --filter=blob:none "${GDS3D_REPO_URL}" "${GDS3D_NAME}"
 cd "${GDS3D_NAME}" || exit 1
 git checkout "${GDS3D_REPO_COMMIT}"
-#fix for GCC-11, see https://github.com/trilomix/GDS3D/pull/9
+# force C++11; newer g++ (e.g. 13) defaults to gnu++17, which breaks the build
+# see https://github.com/trilomix/GDS3D/pull/9 (unmerged upstream)
 sed -i -e '/CFLAGS=/ s/$/ -std=c++11/' linux/Makefile
 
 make -C linux -j"$(nproc)"
