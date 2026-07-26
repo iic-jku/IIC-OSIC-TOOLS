@@ -142,9 +142,23 @@ else
 	fi
 fi
 
+# sg13g2tovc.py expects the IO netlist as libs.ref/sg13g2_io/spice/sg13g2_io.spi,
+# but the IHP PDK ships it as sg13g2_io.spice. Provide the expected name via a
+# temporary symlink (analogous to the former stdcell-symbol workaround).
+IO_SPICE_DIR="$PDK_ROOT/$PDK/libs.ref/sg13g2_io/spice"
+if [ ! -e "$IO_SPICE_DIR/sg13g2_io.spi" ] && [ -e "$IO_SPICE_DIR/sg13g2_io.spice" ]; then
+	ln -s sg13g2_io.spice "$IO_SPICE_DIR/sg13g2_io.spi"
+	IO_SPI_SYMLINK_CREATED=1
+fi
+
 OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
     python3 -m sg13g2tovc --openvaf-options --target_cpu generic
 cp /tmp/${VACASK_NAME}/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/vacask/.vacaskrc.toml"
+
+if [ -n "${IO_SPI_SYMLINK_CREATED:-}" ]; then
+	rm "$IO_SPICE_DIR/sg13g2_io.spi"
+fi
+
 cd /tmp || exit 1
 rm -rf "${VACASK_NAME}"
 
