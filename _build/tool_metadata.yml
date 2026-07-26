@@ -51,7 +51,7 @@
   commit: 1.5.323
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: da46844ca67f0c5eca59351164a507fce504eaa2
+  commit: fb95bb8ea1949deba5e9b0e79daa9bba92b634b8
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-46
@@ -69,7 +69,7 @@
   commit: 3e57150aa7c22b6db7c96656d5e4fe014cf43f8d
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: b4bd96e827dde99571d6e4d0158c0d96b9ce47de
+  commit: 09a62d809f2a2dc599dc2ff87691c2c18cde7bcf
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 4a71967935e5b66026342c57456ac58e5d1804aa
+  commit: 01f5d9bd149f998e1322d62a118d9b82cce732ef
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -111,7 +111,7 @@
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 1557427229d81142929705a0ae110c7a22673437
+  commit: 520a5f185083ac3c97b751501dfac02a6c1f5970
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.86
@@ -144,7 +144,7 @@
   commit: 30032514f600e5c2901479cf455fcb2952f0278f
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: f53b1b5865051676e57e0355b125864332ad2758
+  commit: b69f793f83383d4e59cdb66aa431375b5a9966cc
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
@@ -153,7 +153,7 @@
   commit: Release-2.7.0
 - name: yices2
   repo: https://github.com/SRI-CSL/yices2.git
-  commit: 84efa9276793e33281cecaf3271215151b1947ac
+  commit: 05178c03ddf49c6bba63c5c7153774c11a5da12d
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
   commit: v0.67
