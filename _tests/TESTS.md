@@ -41,3 +41,4 @@ IIC_TEST_RUNDIR=/mnt/scratch/osic-tests ./run_docker_tests.sh hpretl/iic-osic-to
 | 25       | Smoke/regression test of sak-pex.sh (all PDKs and PEX modes)                                                                    |
 | 26       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) (LVS, DRC, PEX) with ihp-sg13g2             |
 | 27       | KLayout PCells smoke/regression test (instantiate all PCells of all PDKs, flag empty cells and errors)                          |
+| 28       | [TinyWhisper](https://github.com/iic-jku/TinyWhisper) multi-mode short-wave transmitter with ihp-sg13g2                         |
