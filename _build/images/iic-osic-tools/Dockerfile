@@ -54,7 +54,6 @@ ARG TOOL_IMAGE_VERYL="registry.iic.jku.at:5000/iic-osic-tools:tool-veryl-latest"
 ARG TOOL_IMAGE_XCIRCUIT="registry.iic.jku.at:5000/iic-osic-tools:tool-xcircuit-latest"
 ARG TOOL_IMAGE_XSCHEM="registry.iic.jku.at:5000/iic-osic-tools:tool-xschem-latest"
 ARG TOOL_IMAGE_XYCE="registry.iic.jku.at:5000/iic-osic-tools:tool-xyce-latest"
-#ARG TOOL_IMAGE_XYCE_XDM="registry.iic.jku.at:5000/iic-osic-tools:tool-xyce-xdm-latest"
 ARG TOOL_IMAGE_YOSYS="registry.iic.jku.at:5000/iic-osic-tools:tool-yosys-latest"
 
 FROM ${TOOL_IMAGE_COVERED} AS covered
@@ -105,7 +104,6 @@ FROM ${TOOL_IMAGE_VERYL} AS veryl
 FROM ${TOOL_IMAGE_XCIRCUIT} AS xcircuit
 FROM ${TOOL_IMAGE_XSCHEM} AS xschem
 FROM ${TOOL_IMAGE_XYCE} AS xyce
-#FROM ${TOOL_IMAGE_XYCE_XDM} AS xyce-xdm
 FROM ${TOOL_IMAGE_YOSYS} AS yosys
 
 #######################################################################
@@ -167,7 +165,6 @@ COPY --link --from=veryl                        ${TOOLS}/veryl                  
 COPY --link --from=xcircuit                     ${TOOLS}/xcircuit               ${TOOLS}/xcircuit/
 COPY --link --from=xschem                       ${TOOLS}/xschem                 ${TOOLS}/xschem/
 COPY --link --from=xyce                         ${TOOLS}/xyce                   ${TOOLS}/xyce/
-#FIXME COPY --link --from=xyce-xdm                     ${TOOLS}/xyce-xdm ${TOOLS}/bin ${TOOLS}/
 COPY --link --from=yosys                        ${TOOLS}/yosys                  ${TOOLS}/yosys/
 
 # Copy tool version file

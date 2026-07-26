@@ -251,7 +251,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [vlsirtools](https://github.com/Vlsir/Vlsir) interchange formats for chip design.
 - [xcircuit](https://github.com/RTimothyEdwards/XCircuit) schematic editor
 - [xschem](https://github.com/StefanSchippers/xschem) schematic editor
-- [xyce](https://github.com/Xyce/Xyce) fast parallel SPICE simulator (incl. `xdm` netlist conversion tool)
+- [xyce](https://github.com/Xyce/Xyce) fast parallel SPICE simulator
 - [yosys](https://github.com/YosysHQ/yosys) Verilog synthesis tool (with GHDL plugin for VHDL synthesis and Slang plugin for SystemVerilog synthesis), incl. `eqy` (equivalence checker), `sby` (formal verification), and `mcy` (mutation coverage)
 - RF toolkit with [FastHenry2](https://github.com/ediloren/FastHenry2), [FasterCap](https://github.com/ediloren/FasterCap), [openEMS](https://github.com/thliebig/openEMS), and [scikit-rf](https://github.com/scikit-rf/scikit-rf).
 

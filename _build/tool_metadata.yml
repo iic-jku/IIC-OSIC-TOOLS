@@ -148,9 +148,6 @@
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
-- name: xyce-xdm
-  repo: https://github.com/Xyce/XDM.git
-  commit: Release-2.7.0
 - name: yices2
   repo: https://github.com/SRI-CSL/yices2.git
   commit: 05178c03ddf49c6bba63c5c7153774c11a5da12d

@@ -341,14 +341,6 @@ target "rftoolkit" {
   cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-rftoolkit-latest"]
 }
 
-# Individual tool targets for tools-level-2
-target "xyce-xdm" {
-  inherits = ["base-tool"]
-  dockerfile = "images/xyce-xdm/Dockerfile"
-  tags = ["registry.iic.jku.at:5000/iic-osic-tools:tool-xyce-xdm-latest"]
-  cache-from = ["type=registry,ref=registry.iic.jku.at:5000/iic-osic-tools:tool-xyce-xdm-latest"]
-}
-
 target "open_pdks" {
   inherits = ["base-tool"]
   dockerfile = "images/open_pdks/Dockerfile"
@@ -418,7 +410,6 @@ group "tools-level-2" {
   targets = [
     "open_pdks", "ghdl-yosys-plugin", "slang-yosys-plugin", "spike"
   ]
-  # "xyce-xdm" disabled
 }
 
 # Group targets for tools-level-3
