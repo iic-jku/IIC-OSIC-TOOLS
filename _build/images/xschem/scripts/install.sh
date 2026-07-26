@@ -10,6 +10,15 @@ git clone --filter=blob:none "${XSCHEM_REPO_URL}" "${XSCHEM_NAME}"
 cd "${XSCHEM_NAME}" || exit 1
 git checkout "${XSCHEM_REPO_COMMIT}"
 ./configure --prefix="${TOOLS}/${XSCHEM_NAME}"
+
+# xschem's src/Makefile declares "expandlabel.c expandlabel.h: expandlabel.y" as a
+# multi-target rule with a single bison recipe. Under "make -j" GNU make treats this
+# as two independent rules and can launch bison twice concurrently (once for the .c
+# needed by expandlabel.o, once for the .h needed by parselabel.o). One invocation
+# then truncates expandlabel.c while gcc is compiling it, failing the build with a
+# bogus "unterminated comment" error. Generate the bison/flex sources serially first,
+# then compile everything in parallel.
+make -C src expandlabel.c expandlabel.h eval_expr.c parselabel.c
 make -j"$(nproc)"
 make install
 
