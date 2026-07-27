@@ -45,10 +45,16 @@ FAIL=0
 # PCELL_TEST_VERBOSE=1 to get them on the console while debugging a regression.
 VERBOSE=${PCELL_TEST_VERBOSE:-0}
 
-# Address-space ceiling for one klayout run, in KiB (see check_pdk below).
-# 4 GiB is ample for every well-behaved PCell of all four PDKs and cuts the
-# known runaways off early.
-MEM_LIMIT_KB=${PCELL_TEST_MEM_LIMIT_KB:-4194304}
+# Resident-memory ceiling for one klayout run, in KiB (see check_pdk below).
+# 8 GiB is far above what any well-behaved PCell of the four PDKs needs.
+#
+# Note this is deliberately *not* `ulimit -v`: that caps the virtual address
+# space, and OpenBLAS (pulled in via numpy by the gdsfactory-based sky130A and
+# gf180mcuD PCells) reserves large per-thread arenas up front. On a machine with
+# many cores those reservations alone exceed any sane limit and KLayout dies
+# with "OpenBLAS error: Memory allocation still failed after 10 retries" before
+# instantiating a single PCell.
+RSS_LIMIT_KB=${PCELL_TEST_RSS_LIMIT_KB:-8388608}
 
 report() {
     local line=$1
@@ -75,18 +81,33 @@ check_pdk() {
 
     (
         cd "$pdk_work" || exit 1
-        # Cap the address space of the harness. A PCell whose default parameters
-        # make its generator explode would otherwise grow until the kernel
-        # OOM-kills klayout: gf180mcuD's gf180mcu_klayoutapi/diode_dw2ps and
-        # /diode_pw2dw do exactly that (Cell.flatten in draw_diode.py), and they
-        # were seen past 15 GB before being killed with SIGKILL. That loses the
-        # verdict for the whole PDK and starves whatever runs next to this test
-        # in the suite. With the cap the runaway PCell fails on its own with
-        # std::bad_alloc, is reported as ERROR, and the other PCells still run.
-        ulimit -v "$MEM_LIMIT_KB" 2> /dev/null
         # shellcheck source=/dev/null
         source sak-pdk-script.sh "$pdk" > /dev/null 2>&1
-        klayout -zz -r "$HARNESS"
+
+        # Watch the resident memory of the harness and kill it if it runs away.
+        # The PCells known to do so are skipped by check_pcells.py itself (see
+        # its "runaway" lists); this is the backstop for a new one. Without it,
+        # such a PCell grows until the *kernel* OOM-kills klayout -- observed
+        # past 15 GB with gf180mcuD -- which loses the verdict for the whole PDK
+        # and starves the tests running next to this one in the suite.
+        klayout -zz -r "$HARNESS" &
+        klayout_pid=$!
+        (
+            while kill -0 "$klayout_pid" 2> /dev/null; do
+                rss=$(ps -o rss= -p "$klayout_pid" 2> /dev/null | tr -d ' ')
+                if [ -n "$rss" ] && [ "$rss" -gt "$RSS_LIMIT_KB" ]; then
+                    echo "[HARNESS] killing klayout: resident memory ${rss} KiB exceeds ${RSS_LIMIT_KB} KiB"
+                    kill -9 "$klayout_pid" 2> /dev/null
+                    break
+                fi
+                sleep 2
+            done
+        ) &
+        watchdog_pid=$!
+        wait "$klayout_pid"
+        klayout_rc=$?
+        kill "$watchdog_pid" 2> /dev/null
+        exit $klayout_rc
     ) >> "$LOG" 2>&1
     local rc=$?
 

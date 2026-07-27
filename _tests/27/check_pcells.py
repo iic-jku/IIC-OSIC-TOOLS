@@ -54,18 +54,19 @@ EXPECTED = {
         # the KLayout-API device generators; the classic gf180mcu library still
         # ships the same devices and produces them correctly.
         #
-        # diode_dw2ps, diode_pw2dw: their generator recurses in Cell.flatten
-        #   (libs.tech/klayout/tech/pymacros/klayout_api_cells/draw_diode.py)
-        #   and allocates until it dies with std::bad_alloc -- 95 s and >6 GB
-        #   for diode_dw2ps alone. Without the address-space cap that
-        #   test_klayout_pcells.sh puts around KLayout, it grows past 15 GB and
-        #   the kernel OOM-kills the whole run.
         # efuse: draw_efuse() is called without its required device_name
         #   argument and raises TypeError.
-        "known_bad": {
-            "gf180mcu_klayoutapi/diode_dw2ps": "empty",
-            "gf180mcu_klayoutapi/diode_pw2dw": "empty",
-            "gf180mcu_klayoutapi/efuse": "empty",
+        "known_bad": {"gf180mcu_klayoutapi/efuse": "empty"},
+        # These two are not instantiated at all: their generator recurses in
+        # Cell.flatten (libs.tech/klayout/tech/pymacros/klayout_api_cells/
+        # draw_diode.py) and allocates without bound -- 95 s and >6 GB for
+        # diode_dw2ps alone, growing past 15 GB until the kernel OOM-kills
+        # KLayout and the verdict for the whole PDK is lost. Skipping them keeps
+        # the remaining PCells checkable; the RSS watchdog in
+        # test_klayout_pcells.sh is the backstop for *unknown* runaways.
+        "runaway": {
+            "gf180mcu_klayoutapi/diode_dw2ps": "unbounded allocation in Cell.flatten",
+            "gf180mcu_klayoutapi/diode_pw2dw": "unbounded allocation in Cell.flatten",
         },
     },
     "ihp-sg13g2": {
@@ -143,19 +144,27 @@ def main():
 
     baseline = EXPECTED[pdk]
     known_bad = dict(baseline["known_bad"])
+    runaway = dict(baseline.get("runaway", {}))
 
     results = []  # (lib_name, pcell_name, status, detail)
     for lib_name, tech, lib in pdk_libraries():
         for pcell_name in lib.layout().pcell_names():
+            qualified = "%s/%s" % (lib_name, pcell_name)
+            if qualified in runaway:
+                # instantiating this one would take the whole run down with it
+                results.append((lib_name, pcell_name, "skipped",
+                                runaway.pop(qualified)))
+                continue
             status, detail = classify_pcell(lib_name, tech, lib, pcell_name)
             results.append((lib_name, pcell_name, status, detail))
 
     n_ok = sum(1 for r in results if r[2] == "ok")
     n_empty = sum(1 for r in results if r[2] == "empty")
     n_error = sum(1 for r in results if r[2] == "error")
+    n_skipped = sum(1 for r in results if r[2] == "skipped")
 
-    print("[HARNESS] PDK %s: %d PCells (ok=%d empty=%d error=%d)"
-          % (pdk, len(results), n_ok, n_empty, n_error))
+    print("[HARNESS] PDK %s: %d PCells (ok=%d empty=%d error=%d skipped=%d)"
+          % (pdk, len(results), n_ok, n_empty, n_error, n_skipped))
     for lib_name, pcell_name, status, detail in results:
         print("  %-6s %s/%s (%s)" % (status.upper(), lib_name, pcell_name, detail))
 
@@ -169,6 +178,8 @@ def main():
         )
 
     for lib_name, pcell_name, status, detail in results:
+        if status == "skipped":
+            continue
         expected = known_bad.pop("%s/%s" % (lib_name, pcell_name), "ok")
         if status != expected:
             if expected == "ok":
@@ -188,6 +199,13 @@ def main():
         deviations.append(
             "MISSING known-bad PCell %r (baseline pins it as %s) was not found"
             % (qualified_name, expected.upper())
+        )
+
+    # same for the skip list: if it is fixed or renamed upstream we want to know
+    for qualified_name, reason in runaway.items():
+        deviations.append(
+            "MISSING skipped PCell %r (skipped because of: %s) was not found "
+            "- if fixed upstream, drop it from runaway" % (qualified_name, reason)
         )
 
     if deviations:

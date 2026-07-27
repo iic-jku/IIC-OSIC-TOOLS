@@ -49,11 +49,6 @@ test is green on the current image while still failing on any regression. If a
 PDK update changes one of these verdicts, the test flags it so the baseline can
 be reviewed (relaxed, tightened, or removed once fixed upstream):
 
-- **gf180mcuD `gf180mcu_klayoutapi/diode_dw2ps`, `.../diode_pw2dw`**: the
-  generator recurses in `Cell.flatten` (`draw_diode.py`) and allocates until it
-  dies with `std::bad_alloc` — 95 s and >6 GB for `diode_dw2ps` alone. Without
-  the address-space cap the test puts around KLayout it grows past 15 GB and the
-  kernel OOM-kills the run.
 - **gf180mcuD `gf180mcu_klayoutapi/efuse`**: `draw_efuse()` is called without its
   required `device_name` argument and raises `TypeError`.
 
@@ -61,13 +56,30 @@ The classic `gf180mcu` library produces the same devices correctly, and the IHP
 PDKs (`ihp-sg13g2`, `ihp-sg13cmos5l`) as well as sky130A instantiate all their
 PCells cleanly.
 
-## Memory cap
+## Runaway PCells
 
-Each KLayout run is bounded with `ulimit -v` (4 GiB, override with
-`PCELL_TEST_MEM_LIMIT_KB`). A PCell whose generator runs away then fails on its
-own with `std::bad_alloc` and is reported, instead of being OOM-killed by the
-kernel — which would lose the verdict of the whole PDK and starve the tests
-running next to it.
+Some PCells cannot be instantiated at all: their generator allocates without
+bound until the kernel OOM-kills KLayout, which loses the verdict for the whole
+PDK and starves whatever runs next to this test in the suite. They are listed
+per PDK in `check_pcells.py` (`runaway`), reported as **SKIPPED**, and still
+counted in the inventory, so a rename or an upstream fix is flagged:
+
+- **gf180mcuD `gf180mcu_klayoutapi/diode_dw2ps`, `.../diode_pw2dw`**: the
+  generator recurses in `Cell.flatten` (`draw_diode.py`) — 95 s and >6 GB for
+  `diode_dw2ps` before `std::bad_alloc`, past 15 GB when left unbounded. The
+  same devices from the classic `gf180mcu` library are produced correctly.
+
+As a backstop for a *new* runaway, the wrapper watches the resident memory of
+each KLayout run and kills it above `PCELL_TEST_RSS_LIMIT_KB` (default 8 GiB;
+a healthy run peaks around 550 MB). The PDK is then reported as failed with the
+measured RSS in the log, instead of dying to the kernel OOM killer.
+
+This is deliberately not `ulimit -v`: that caps the virtual address space, and
+OpenBLAS — pulled in via numpy by the gdsfactory-based sky130A and gf180mcuD
+PCells — reserves large per-thread arenas up front. On a machine with many cores
+those reservations alone blow any sane limit and KLayout dies with
+`OpenBLAS error: Memory allocation still failed after 10 retries` before
+instantiating a single PCell.
 
 ## What makes the test fail
 
