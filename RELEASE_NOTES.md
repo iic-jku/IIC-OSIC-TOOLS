@@ -2,6 +2,10 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2026.08
+
+* [Update] `xschem` bumped past the upstream fix for the headless `tcleval` focus call ([xschem issue #494](https://github.com/StefanSchippers/xschem/issues/494)); the local patch guarding that call is removed again.
+
 ## 2026.07
 
 * [Adding] full [Podman](https://podman.io/) support across all start and install scripts: the container engine is auto-detected (`CONTAINER_ENGINE`), rootless mode adds `--userns=keep-id` and defaults the VNC webserver to port `8080`, and a `DOCKER_REGISTRY` variable qualifies the image name. No `podman-docker` alias or script edits are needed anymore.
