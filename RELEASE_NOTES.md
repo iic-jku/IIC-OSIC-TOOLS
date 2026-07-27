@@ -8,7 +8,8 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] `chipify` GUI/CLI wrapper for mismatch simulation, parameter sweeps, and yield analysis with `xschem`/`ngspice`.
 * [Adding] `snp2le` to convert Touchstone S-parameter files into lumped-element netlists for `ngspice` and `vacask`.
 * [Adding] VACASK setup for the IHP `SG13CMOS5L` PDK.
-* [Adding] regression/smoke tests for analog circuit design, SPARX, KLayout PCells, and the `sak-drc.sh`/`sak-lvs.sh`/`sak-pex.sh` scripts.
+* [Adding] regression/smoke tests for analog circuit design, SPARX, KLayout PCells, TinyWhisper (`ihp-sg13g2`), and the `sak-drc.sh`/`sak-lvs.sh`/`sak-pex.sh` scripts.
+* [Adding] `sak-pin-reorder.py` to reorder (X)SPICE `.subckt` pins to match an Xschem symbol.
 * [Update] major rework of `sak-drc.sh`, `sak-lvs.sh`, and `sak-pex.sh`: KLayout DRC/LVS for all PDKs (`sky130A`, `gf180mcuD`, `ihp-sg13g2`, `ihp-sg13cmos5l`), new `gf180mcuD` DRC, gzipped and `.klay.gds` layout support, and robust workdir handling.
 * [Update] `gdsfill` switched to the Rust implementation; `gf180mcu` PDK now installed via `ciel`.
 * [Update] `yosys` and `slang-yosys-plugin` switched to the CMake build; `gmsh` now available on `arm64`.
@@ -16,10 +17,14 @@ This document summarizes the most important changes of the individual releases o
 * [Fix] `surfer` crash (`GLXBadFBConfig` panic) and blank window on macOS in X11 mode (XQuartz): a wrapper now forces the EGL rendering path and disables MIT-SHM presentation on TCP X connections; obsolete `surfer` alias removed.
 * [Fix] broken `ngspice` mixed-signal (VHDL co-simulation) support (issue #287).
 * [Fix] stale Xauth file in the VM; `libman` library loading (`capnp` libs and RPATH); moved IHP stdcell `xschem` symbols.
+* [Fix] IHP `sg13g2_io` SPICE netlist name for `sg13g2tovc` (provide a `sg13g2_io.spi` compatibility symlink).
+* [Fix] `xschem` parallel build race in the Makefile and headless `tcleval` focus call.
 * [Fix] KLayout pcell activation for `sky130A`/`gf180mcuD` when the container `PDK` variable would otherwise fail (fall back to the generic `gdsfactory` PDK); set `GF_PDK_OPTION` for `gf180mcuC`/`gf180mcuD` to suppress the ambiguous-PDK warning.
 * [Remove] the dedicated `gdsfactory` virtual environments for sky130/gf180mcu: both pcell libraries are now patched at PDK-install time to run on the current system `gdsfactory` (issue #162).
 * [Build] significant image size reductions: slim the runtime LLVM, strip static libraries from `xyce`/`palace`/`openroad`, remove the unused `PySide6-Addons` (QtWebEngine/Qt3D, ~410 MB), deduplicate Python packages and the PDK copy, drop bundled test suites, remove the auto-downloaded Rust toolchain, and install only Java 17.
-* [Build] use GitHub mirrors for RISC-V submodule fetches; rename `tool_pip.sh` to `tool_eda.sh` and add `check_eda_tool_version.py` (also handles Cargo/Gem tools).
+* [Build] use GitHub mirrors for RISC-V submodule fetches; rename `tool_pip.sh` to `tool_eda.sh` and add `check_eda_tool_version.py` (also handles Cargo/Gem tools, and now prerelease versions).
+* [Build] switch `buildx bake` to a DAG-based `all` target and remove the obsolete disabled `xyce-xdm` image.
+* [Build] harden and speed up the regression test harness: smarter test scheduling, improved Docker test output and failure handling, and colored pass/fail output.
 * [Docs] rewrite the Podman sections in `README.md`/`KNOWN_ISSUES.md` and add a macOS X11-vs-VNC performance note.
 
 ## 2026.06
