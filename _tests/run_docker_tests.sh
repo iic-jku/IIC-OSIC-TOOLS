@@ -5,8 +5,21 @@
 #
 # Run all tests (checks) in the subdirectories using a specified Docker image.
 
+# Only emit ANSI colors when writing to a terminal, so redirected output and CI
+# logs stay clean. The container runs without a TTY, hence the decision has to
+# be made here and baked into the generated test runner script below.
+if [ -t 1 ]; then
+    USE_COLOR=1
+    RED=$'\033[1;31m'
+    NC=$'\033[0m'
+else
+    USE_COLOR=0
+    RED=""
+    NC=""
+fi
+
 if [ $# -ne 1 ]; then
-    echo "[ERROR] Please specify the full image tag to test! (e.g.: hpretl/iic-osic-tools:latest)"
+    echo "${RED}[ERROR] Please specify the full image tag to test! (e.g.: hpretl/iic-osic-tools:latest)${NC}"
     exit 1
 fi
 
@@ -31,12 +44,26 @@ docker pull --quiet "$FULL_TAG" > /dev/null
 # Create the test runner script
 cat <<EOL > "$CMD"
 #!/bin/bash
-find "$WORKDIR" -type f -name "test*.sh" \
-    -not -path "*/runs/*" | parallel --will-cite --halt soon,fail=1
+if [ ${USE_COLOR} -eq 1 ]; then
+    RED=\$'\033[1;31m'
+    NC=\$'\033[0m'
+else
+    RED=""
+    NC=""
+fi
+
+# No --halt: it made GNU parallel announce every failed job and the shutdown of
+# its job pool, and it silently left the remaining tests unreported. Without it
+# parallel stays quiet and exits with the number of failed jobs. Test output is
+# piped through sed to paint the [ERROR] lines red.
+set -o pipefail
+find "$WORKDIR" -type f -name "test*.sh" \\
+    -not -path "*/runs/*" | parallel --will-cite 2>&1 \\
+    | sed -u "s/^\\(\\[ERROR\\].*\\)\$/\${RED}\\1\${NC}/"
 if [ \$? -ne 0 ]; then
-    echo "------------------------------------"
-    echo "[ERROR] AT LEAST ONE TEST FAILED :-("
-    echo "------------------------------------"
+    echo "\${RED}------------------------------------\${NC}"
+    echo "\${RED}[ERROR] AT LEAST ONE TEST FAILED :-(\${NC}"
+    echo "\${RED}------------------------------------\${NC}"
     exit 1
 else
     echo "----------------------------------------"
