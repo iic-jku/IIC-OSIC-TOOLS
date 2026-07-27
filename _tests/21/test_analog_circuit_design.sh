@@ -29,7 +29,7 @@ cd "$TMP" || exit 1
 
 # Clone the main branch of the analog circuit design repository
 [ "$DEBUG" = 1 ] && echo "[INFO] Cloning $REPO (main branch) ..."
-if ! git clone --branch main \
+if ! git clone --depth 1 --branch main \
         https://github.com/iic-jku/"$REPO".git "$REPO" > "$LOG" 2>&1; then
     echo "[ERROR] Test <analog-circuit-design with ihp-sg13g2> FAILED! Could not clone the repository. Check the log file $LOG for details."
     exit 1

@@ -38,29 +38,42 @@ BUILTIN_LIBS = {"Basic", "DEFAULT"}
 # Per-PDK baseline. "count" is the total number of PCells the PDK is expected
 # to register across all its libraries. "known_bad" pins PCells that do NOT
 # produce geometry with their default parameters, so the test stays green on
-# the current image while still catching regressions. See README.md for why
+# the current image while still catching regressions. Keys are "<library>/
+# <pcell>" because the same PCell name can appear in several libraries of one
+# PDK with different verdicts (gf180mcuD ships diode_dw2ps in both gf180mcu and
+# gf180mcu_klayoutapi, and only the latter is broken). See README.md for why
 # each entry is here. Tighten this list once the upstream PDK is fixed.
 EXPECTED = {
     "sky130A": {
         "count": 18,
-        # p_diode: the gdsfactory PCell code calls an unsupported boolean
-        # operation ("A-B"); KLayout swallows the error and returns an empty
-        # cell.
-        "known_bad": {"p_diode": "empty"},
+        "known_bad": {},
     },
     "gf180mcuD": {
-        "count": 29,
-        # pfet: draws nothing with the default parameter set (nfet, with the
-        #       identical defaults, is fine -> device-specific issue).
-        # via_dev: base_layer/metal_level default to None, so no via is drawn.
-        "known_bad": {"pfet": "empty", "via_dev": "empty"},
+        "count": 61,
+        # The gf180mcu_klayoutapi library (and gf180mcu_sealring) came in with
+        # the KLayout-API device generators; the classic gf180mcu library still
+        # ships the same devices and produces them correctly.
+        #
+        # diode_dw2ps, diode_pw2dw: their generator recurses in Cell.flatten
+        #   (libs.tech/klayout/tech/pymacros/klayout_api_cells/draw_diode.py)
+        #   and allocates until it dies with std::bad_alloc -- 95 s and >6 GB
+        #   for diode_dw2ps alone. Without the address-space cap that
+        #   test_klayout_pcells.sh puts around KLayout, it grows past 15 GB and
+        #   the kernel OOM-kills the whole run.
+        # efuse: draw_efuse() is called without its required device_name
+        #   argument and raises TypeError.
+        "known_bad": {
+            "gf180mcu_klayoutapi/diode_dw2ps": "empty",
+            "gf180mcu_klayoutapi/diode_pw2dw": "empty",
+            "gf180mcu_klayoutapi/efuse": "empty",
+        },
     },
     "ihp-sg13g2": {
         "count": 34,
         "known_bad": {},
     },
     "ihp-sg13cmos5l": {
-        "count": 23,
+        "count": 24,
         "known_bad": {},
     },
 }
@@ -156,7 +169,7 @@ def main():
         )
 
     for lib_name, pcell_name, status, detail in results:
-        expected = known_bad.pop(pcell_name, "ok")
+        expected = known_bad.pop("%s/%s" % (lib_name, pcell_name), "ok")
         if status != expected:
             if expected == "ok":
                 deviations.append(
@@ -171,10 +184,10 @@ def main():
                 )
 
     # any known-bad PCell we never saw has disappeared or been renamed
-    for pcell_name, expected in known_bad.items():
+    for qualified_name, expected in known_bad.items():
         deviations.append(
             "MISSING known-bad PCell %r (baseline pins it as %s) was not found"
-            % (pcell_name, expected.upper())
+            % (qualified_name, expected.upper())
         )
 
     if deviations:

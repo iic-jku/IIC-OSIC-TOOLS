@@ -43,9 +43,19 @@ mkdir -p "$HOST_RUNDIR"
 # long runners first (longest-processing-time-first scheduling) and let the
 # quick tests fill the pool as slots free up. This is a hint, not a contract:
 # tests missing from the list simply run afterwards in directory order, so an
-# outdated entry costs some wall clock but never breaks the run. Update it when
-# runtimes change noticeably.
-SLOW_TESTS="10 26 20 28 24 18 01 04 07 19 21"
+# outdated entry costs some wall clock but never breaks the run.
+#
+# Order taken from a full run of hpretl/iic-osic-tools:next on 9 cores (the
+# per-test runtimes of every run are in the joblog, see below):
+#
+#   28: 4356 s   26: 1465 s   24:  932 s   20:  756 s   21:  555 s
+#   01:  382 s   10:  377 s   07:  366 s   18:  305 s   22:  286 s
+#   19:  270 s   04:  269 s   15:  188 s   ... rest below 150 s
+#
+# Test 28 alone defines the wall clock of the whole suite, so it must start
+# first. Note these are runtimes *under full contention*; standalone they are
+# considerably shorter (21: 108 s, 27: 78 s).
+SLOW_TESTS="28 26 24 20 21 01 10 07 18 22 19 04 15"
 
 # The current directory is bind-mounted at $WORKDIR in the container, so the
 # test list can be assembled here and the paths just re-based. Matching the
@@ -66,8 +76,14 @@ if [ -z "$TEST_LIST" ]; then
     exit 1
 fi
 
-# Check if newer image is available and pull if needed
-docker pull --quiet "$FULL_TAG" > /dev/null
+# Check if newer image is available and pull if needed. Set IIC_TEST_NO_PULL=1
+# when testing a locally built image: the pull would replace it with the one
+# from the registry that carries the same tag.
+if [ "${IIC_TEST_NO_PULL:-0}" = 1 ]; then
+    echo "[INFO] IIC_TEST_NO_PULL=1, testing the local image $FULL_TAG without pulling."
+else
+    docker pull --quiet "$FULL_TAG" > /dev/null
+fi
 
 # Create the test runner script
 cat <<EOL > "$CMD"
@@ -91,13 +107,29 @@ fi
 # parallel stays quiet and exits with the number of failed jobs. Test output is
 # piped through sed to paint the [ERROR] lines red and the "passed" verdicts
 # green; the remaining [INFO] lines (startup banners, skipped tests) stay plain.
+#
+# --joblog records start time, runtime and exit status of every test, which is
+# what the per-test timings at the end of the run (and the SLOW_TESTS order in
+# run_docker_tests.sh) are based on.
+JOBLOG=$RUNDIR/$RAND/joblog.tsv
+mkdir -p "\$(dirname "\$JOBLOG")"
 set -o pipefail
-parallel --will-cite 2>&1 << 'TESTS' \\
+parallel --will-cite --joblog "\$JOBLOG" 2>&1 << 'TESTS' \\
     | sed -u -e "s/^\\(\\[ERROR\\].*\\)\$/\${RED}\\1\${NC}/" \\
              -e "s/^\\(\\[INFO\\] Test .*passed.*\\)\$/\${GRN}\\1\${NC}/"
 $TEST_LIST
 TESTS
-if [ \$? -ne 0 ]; then
+RESULT=\$?
+
+# Runtime of the five slowest tests, so the SLOW_TESTS order can be kept honest
+# (the full table is in \$JOBLOG).
+if [ -s "\$JOBLOG" ]; then
+    echo "[INFO] Slowest tests of this run (see \$JOBLOG for all of them):"
+    tail -n +2 "\$JOBLOG" | sort -t\$'\t' -k4,4 -rn | head -5 \\
+        | awk -F'\t' '{ n = split(\$NF, p, "/"); printf "[INFO]   %6.0f s  %s/%s\n", \$4, p[n-1], p[n] }'
+fi
+
+if [ \$RESULT -ne 0 ]; then
     echo "\${RED}------------------------------------\${NC}"
     echo "\${RED}[ERROR] AT LEAST ONE TEST FAILED :-(\${NC}"
     echo "\${RED}------------------------------------\${NC}"

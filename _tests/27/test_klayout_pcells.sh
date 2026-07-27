@@ -45,6 +45,11 @@ FAIL=0
 # PCELL_TEST_VERBOSE=1 to get them on the console while debugging a regression.
 VERBOSE=${PCELL_TEST_VERBOSE:-0}
 
+# Address-space ceiling for one klayout run, in KiB (see check_pdk below).
+# 4 GiB is ample for every well-behaved PCell of all four PDKs and cuts the
+# known runaways off early.
+MEM_LIMIT_KB=${PCELL_TEST_MEM_LIMIT_KB:-4194304}
+
 report() {
     local line=$1
     local failed=$2
@@ -70,6 +75,15 @@ check_pdk() {
 
     (
         cd "$pdk_work" || exit 1
+        # Cap the address space of the harness. A PCell whose default parameters
+        # make its generator explode would otherwise grow until the kernel
+        # OOM-kills klayout: gf180mcuD's gf180mcu_klayoutapi/diode_dw2ps and
+        # /diode_pw2dw do exactly that (Cell.flatten in draw_diode.py), and they
+        # were seen past 15 GB before being killed with SIGKILL. That loses the
+        # verdict for the whole PDK and starves whatever runs next to this test
+        # in the suite. With the cap the runaway PCell fails on its own with
+        # std::bad_alloc, is reported as ERROR, and the other PCells still run.
+        ulimit -v "$MEM_LIMIT_KB" 2> /dev/null
         # shellcheck source=/dev/null
         source sak-pdk-script.sh "$pdk" > /dev/null 2>&1
         klayout -zz -r "$HARNESS"

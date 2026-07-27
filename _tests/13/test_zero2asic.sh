@@ -22,7 +22,7 @@ LOG=${RUNS_DIR}/${RAND}/13/z2a.log
 mkdir -p "$TMP"
 cd "$TMP" || exit 1
 
-git clone --recursive https://github.com/mattvenn/z2a-course-regressions.git > "$LOG" 2>&1
+git clone --depth 1 --recursive --shallow-submodules https://github.com/mattvenn/z2a-course-regressions.git > "$LOG" 2>&1
 cd z2a-course-regressions || exit 1
 
 # unset DISPLAY otherwise ngspice will fail with an error

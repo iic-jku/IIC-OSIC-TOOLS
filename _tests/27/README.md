@@ -34,30 +34,40 @@ debugging a regression.
 
 ## PCell inventory (baseline)
 
-| PDK              | Library / libraries                     | PCells |
-| ---------------- | --------------------------------------- | ------ |
-| sky130A          | `skywater130`                           | 18     |
-| gf180mcuD        | `gf180mcu`                              | 29     |
-| ihp-sg13g2       | `SG13_dev` + `SG13_native_pcell_lib`    | 34     |
-| ihp-sg13cmos5l   | `SG13_dev`                              | 23     |
+| PDK              | Library / libraries                                          | PCells |
+| ---------------- | ------------------------------------------------------------ | ------ |
+| sky130A          | `skywater130`                                                 | 18     |
+| gf180mcuD        | `gf180mcu` + `gf180mcu_klayoutapi` + `gf180mcu_sealring`      | 61     |
+| ihp-sg13g2       | `SG13_dev` + `SG13_native_pcell_lib`                          | 34     |
+| ihp-sg13cmos5l   | `SG13_dev`                                                    | 24     |
 
 ## Expected-dirty baselines
 
 A few PCells produce an **empty** cell with their default parameters. They are
-pinned in `check_pcells.py` (`known_bad`) so the test is green on the current
-image while still failing on any regression. If a PDK update changes one of
-these verdicts, the test flags it so the baseline can be reviewed (relaxed,
-tightened, or removed once fixed upstream):
+pinned in `check_pcells.py` (`known_bad`, keyed by `<library>/<pcell>`) so the
+test is green on the current image while still failing on any regression. If a
+PDK update changes one of these verdicts, the test flags it so the baseline can
+be reviewed (relaxed, tightened, or removed once fixed upstream):
 
-- **sky130A `p_diode`**: the PCell code calls an unsupported gdsfactory boolean
-  operation (`"A-B"`); KLayout logs the `ValueError` and returns an empty cell.
-- **gf180mcuD `pfet`**: draws nothing with the default parameter set, even
-  though `nfet` — which has the identical defaults — is fine.
-- **gf180mcuD `via_dev`**: `base_layer`/`metal_level` default to `None`, so no
-  via is drawn.
+- **gf180mcuD `gf180mcu_klayoutapi/diode_dw2ps`, `.../diode_pw2dw`**: the
+  generator recurses in `Cell.flatten` (`draw_diode.py`) and allocates until it
+  dies with `std::bad_alloc` — 95 s and >6 GB for `diode_dw2ps` alone. Without
+  the address-space cap the test puts around KLayout it grows past 15 GB and the
+  kernel OOM-kills the run.
+- **gf180mcuD `gf180mcu_klayoutapi/efuse`**: `draw_efuse()` is called without its
+  required `device_name` argument and raises `TypeError`.
 
-The IHP PDKs (`ihp-sg13g2`, `ihp-sg13cmos5l`) instantiate all their PCells
-cleanly.
+The classic `gf180mcu` library produces the same devices correctly, and the IHP
+PDKs (`ihp-sg13g2`, `ihp-sg13cmos5l`) as well as sky130A instantiate all their
+PCells cleanly.
+
+## Memory cap
+
+Each KLayout run is bounded with `ulimit -v` (4 GiB, override with
+`PCELL_TEST_MEM_LIMIT_KB`). A PCell whose generator runs away then fails on its
+own with `std::bad_alloc` and is reported, instead of being OOM-killed by the
+kernel — which would lose the verdict of the whole PDK and starve the tests
+running next to it.
 
 ## What makes the test fail
 

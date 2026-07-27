@@ -22,7 +22,7 @@ cd "$TMP" || exit 1
 
 # Clone the main branch of the AMS chip template (incl. submodules)
 [ "$DEBUG" = 1 ] && echo "[INFO] Cloning $REPO (main branch, incl. submodules) ..."
-if ! git clone --recursive --branch main \
+if ! git clone --depth 1 --recursive --shallow-submodules --branch main \
         https://github.com/iic-jku/"$REPO".git "$REPO" > "$LOG" 2>&1; then
     echo "[ERROR] Test <AMS chip template with ihp-sg13g2> FAILED! Could not clone the repository. Check the log file $LOG for details."
     exit 1
