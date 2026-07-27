@@ -10,6 +10,12 @@ Set `IIC_TEST_RUNDIR=<path>` to collect the output somewhere else, for example o
 IIC_TEST_RUNDIR=/mnt/scratch/osic-tests ./run_docker_tests.sh hpretl/iic-osic-tools:latest
 ```
 
+## Scheduling
+
+All tests run concurrently in a GNU parallel pool (one job per core). Since parallel starts the jobs in input order, the wall clock of a run is set by the longest test that starts last, so `run_docker_tests.sh` feeds the known long runners first via its `SLOW_TESTS` list. Keep that list roughly ordered by runtime; entries that are stale only cost wall clock, they never break a run.
+
+Test 21 additionally runs its own (small) inner pool of simulation jobs; use `ACD_JOBS=<n>` to change its size.
+
 ## Test list
 
 | Test No. | Description                                                                                                                     |

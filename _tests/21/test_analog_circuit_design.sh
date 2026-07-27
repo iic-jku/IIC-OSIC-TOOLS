@@ -45,24 +45,33 @@ git config --global --add safe.directory "$TMP/$REPO"
 # shellcheck source=/dev/null
 source sak-pdk-script.sh ihp-sg13g2 > /dev/null
 
-# Run the simulation testbenches. The repository's runner wraps the individual
-# xschem/ngspice invocations in a throwaway virtual X server (xvfb-run) itself,
-# so no plot windows pop up in headless mode.
+# Run the simulation testbenches. The runner takes care of the headless setup
+# itself: it starts one shared Xvfb for the whole run and points every
+# xschem/ngspice job at it (iic-jku/analog-circuit-design#78), so no plot
+# windows pop up and nothing here has to provide a display. $DISPLAY is empty in
+# the test container (see run_docker_tests.sh), which is what makes the runner
+# set up its own server.
 #
-# Force the runner's internal job pool to 1 (JOBS=1). This whole test is already
-# launched by run_docker_tests.sh's GNU parallel pool (one job per core), so an
-# additional per-core pool inside the runner oversubscribes the CPU by nproc^2
-# and, worse, fires a burst of ~2*nproc^2 concurrent `xvfb-run -a` invocations.
-# `xvfb-run -a` auto-picks a free X display by scanning /tmp/.X*-lock, which is
-# a TOCTOU race: under that burst two invocations grab the same display, one
-# dies with "Server is already active for display N", the xschem/ngspice under
-# it exits non-zero, and the testbench is reported as a spurious FAIL that
-# vanishes on the next run. Serialising the runner removes the oversubscription
-# and collapses the concurrent xvfb-run burst that triggers the race. With
-# JOBS=1 the runner also hands each ngspice all cores (SPICE_THREADS=nproc), so
-# throughput does not collapse.
-[ "$DEBUG" = 1 ] && echo "[INFO] Running 'xschem/run_simulation_tests.sh' (JOBS=1, output is logged to $LOG) ..."
-if JOBS=1 ./xschem/run_simulation_tests.sh >> "$LOG" 2>&1; then
+# JOBS: run a small pool of testbenches concurrently. This whole test is already
+# one job of run_docker_tests.sh's GNU parallel pool (one job per core), so a
+# per-core pool in here would oversubscribe the CPU by nproc^2; a pool of 4
+# keeps the oversubscription bounded while dropping the wall clock from the sum
+# of all testbench runtimes to roughly the longest one.
+#
+# SPICE_THREADS=1: ngspice threading does not pay off for these testbenches and
+# badly hurts the two that dominate the runtime -- techsweep_sg13g2_lv_{n,p}mos
+# sweep L x Vg x Vd x Vb and thus issue ~119k separate `run` commands on a
+# single transistor each, where per-run OpenMP fork/join overhead is all that
+# extra threads add (measured: 23 s with 1 thread vs 164 s with 9). Passed
+# explicitly so the test does not depend on the age of the clone;
+# iic-jku/analog-circuit-design#79 makes it the runner's default.
+NPROC=$(nproc 2> /dev/null || echo 4)
+JOBS=${ACD_JOBS:-4}
+case $JOBS in '' | *[!0-9]* | 0) JOBS=4 ;; esac
+[ "$JOBS" -gt "$NPROC" ] && JOBS=$NPROC
+
+[ "$DEBUG" = 1 ] && echo "[INFO] Running 'xschem/run_simulation_tests.sh' (JOBS=$JOBS, output is logged to $LOG) ..."
+if JOBS=$JOBS SPICE_THREADS=1 ./xschem/run_simulation_tests.sh >> "$LOG" 2>&1; then
     echo "[INFO] Test <analog-circuit-design with ihp-sg13g2> passed."
     exit 0
 else
