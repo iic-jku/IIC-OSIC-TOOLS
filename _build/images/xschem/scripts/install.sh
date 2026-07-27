@@ -9,6 +9,35 @@ cd /tmp || exit 1
 git clone --filter=blob:none "${XSCHEM_REPO_URL}" "${XSCHEM_NAME}"
 cd "${XSCHEM_NAME}" || exit 1
 git checkout "${XSCHEM_REPO_COMMIT}"
+
+# Upstream commit 36d710d2 ("Ask user before allowing execution of embedded schematic
+# scripts") added an unguarded Tk `focus` call to `proc tclpropeval2` in src/xschem.tcl.
+# tclpropeval2 evaluates `tcleval(...)` properties, which the IHP PDK uses for its
+# annotate_fet_params/annotate_bip_params symbols. When xschem runs headless (--no_x)
+# Tk is not loaded, so `focus` does not exist and every tcleval() property aborts with
+#   tclvareval(): error executing tclpropeval2 {tcleval([display_fet_params M2A ])}:
+#   invalid command name "focus"
+# which breaks batch netlisting of any schematic carrying such an annotation.
+# The `ask` branch right above it is already guarded by `has_x`; guard `focus` the same
+# way. Drop this patch once xschem fixes it upstream.
+python3 - src/xschem.tcl << 'PYEOF'
+import sys
+fname = sys.argv[1]
+old = '    focus [xschem get top_path].drw\n'
+new = '    if {[info exists has_x]} { focus [xschem get top_path].drw }\n'
+with open(fname) as f:
+    content = f.read()
+if new in content:
+    print("[INFO] xschem tclpropeval2 focus guard already present, nothing to do.")
+elif content.count(old) == 1:
+    with open(fname, 'w') as f:
+        f.write(content.replace(old, new))
+    print(f"[INFO] Guarded the headless-unsafe focus call in {fname}.")
+else:
+    print(f"[WARN] Unguarded focus call not found in {fname} "
+          f"({content.count(old)} matches) - patch may be obsolete, please re-check.")
+PYEOF
+
 ./configure --prefix="${TOOLS}/${XSCHEM_NAME}"
 
 # xschem's src/Makefile declares "expandlabel.c expandlabel.h: expandlabel.y" as a
