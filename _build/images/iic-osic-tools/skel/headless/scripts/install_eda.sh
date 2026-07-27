@@ -75,11 +75,27 @@ pip3 install $PIP_FLAGS \
 # only use QtWidgets/QtCore/QtGui/QtSvg, all of which live in
 # PySide6-Essentials. The PySide6-Addons half (~340 MB, dominated by a 254 MB
 # embedded Chromium in QtWebEngine, plus Qt3D/Quick3D/Designer/Multimedia) is
-# not imported by anything in the image, so remove it. Essentials stays, so
-# the GUIs keep working; pip check will note the PySide6 meta-package wants
-# Addons, which is harmless at runtime.
+# not imported by anything in the image, so remove it.
+#
+# Catch: the Essentials and Addons wheels BOTH ship the shared top-level PySide6
+# files (PySide6/__init__.py, _config.py, __feature__.py, _git_pyside_version.py),
+# and pip does no cross-package refcounting -- so "pip uninstall PySide6-Addons"
+# also deletes the PySide6/__init__.py that Essentials still needs. That leaves
+# PySide6 importable only as a namespace package with no __version__, which breaks
+# matplotlib's Qt backend ("cannot import name '__version__' from 'PySide6'") and
+# every GUI built on it. So force-reinstall Essentials afterwards to rewrite the
+# shared files (--no-deps stops Addons from being pulled back in).
+#
+# The PySide6 meta-package is kept on purpose: gds2palace and setupEM depend on it
+# by name, so removing it would leave their dependency unsatisfied. pip check will
+# note the meta-package wants Addons, which is harmless at runtime.
 echo "[INFO] Removing unused PySide6-Addons (QtWebEngine, Qt3D, ...)"
+# Pin the reinstall to the version already resolved above, so it cannot pull a
+# newer PySide6-Essentials that mismatches the installed shiboken6.
+PYSIDE6_VER=$(pip3 show PySide6-Essentials | awk '/^Version:/{print $2}')
+[ -n "$PYSIDE6_VER" ] || { echo "[ERROR] PySide6-Essentials not installed"; exit 1; }
 pip3 uninstall -y --break-system-packages PySide6-Addons
+pip3 install $PIP_FLAGS --no-deps --force-reinstall "PySide6-Essentials==${PYSIDE6_VER}"
 
 echo "[INFO] Install EDA packages via Cargo"
 
