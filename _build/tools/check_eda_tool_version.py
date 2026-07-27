@@ -35,8 +35,17 @@ USER_AGENT = ("iic-osic-tools-version-check "
               "(+https://github.com/iic-jku/IIC-OSIC-TOOLS)")
 HEADERS = {'User-Agent': USER_AGENT}
 
-# A version is a sequence of dot-separated numbers (e.g. 1, 1.2, 0.1.7).
-VERSION_RE = r'\d+(?:\.\d+)*'
+# A version is a sequence of dot-separated numbers (e.g. 1, 1.2, 0.1.7),
+# optionally followed by pre-/post-release markers (e.g. 3.1.0.dev1, 1.0rc2,
+# 2.0.post1, 1.2.3-alpha.1).
+VERSION_RE = (r'\d+(?:\.\d+)*'
+              r'(?:[.\-_]?(?:alpha|beta|preview|pre|post|rev|dev|rc|a|b|c)'
+              r'[.\-_]?\d*)*')
+
+# Markers that denote a pre-release (used when packaging cannot parse the
+# version, e.g. semver-style "1.2.3-rc1").
+PRERELEASE_RE = re.compile(
+    r'[.\-_]?(?:alpha|beta|preview|pre|dev|rc|a|b|c)[.\-_]?\d*$', re.IGNORECASE)
 
 
 def _logical_lines(content):
@@ -142,17 +151,48 @@ def get_installed_packages(shell_script):
     return _parse_pip(content) + _parse_cargo(content) + _parse_gem(content)
 
 
-def _latest_pypi(package):
+def _is_prerelease(ver):
+    """Return True if the version string denotes a pre-release (rc/alpha/dev)."""
+    if not ver:
+        return False
+    try:
+        return version.parse(ver).is_prerelease
+    except version.InvalidVersion:
+        # Non-PEP440 spellings, e.g. semver "1.2.3-rc1".
+        return bool(PRERELEASE_RE.search(ver))
+
+
+def _max_version(versions):
+    """Return the highest parseable version from an iterable, or None."""
+    parsed = []
+    for ver in versions:
+        try:
+            parsed.append((version.parse(ver), ver))
+        except version.InvalidVersion:
+            continue
+    return max(parsed)[1] if parsed else None
+
+
+def _latest_pypi(package, allow_prerelease=False):
     response = requests.get(
         f'https://pypi.org/pypi/{package}/json', headers=HEADERS, timeout=15)
     if response.status_code != 200:
         print(f"[ERROR] Could not fetch {package} from PyPI "
               f"(HTTP {response.status_code}).")
         return None
-    return response.json()['info']['version']
+    data = response.json()
+    if allow_prerelease:
+        # `info.version` reports the newest *stable* release, so scan the full
+        # release list to also see pre-releases (e.g. 3.1.0.dev2).
+        latest = _max_version(
+            ver for ver, files in data.get('releases', {}).items()
+            if files and not all(f.get('yanked') for f in files))
+        if latest:
+            return latest
+    return data['info']['version']
 
 
-def _latest_crates(package):
+def _latest_crates(package, allow_prerelease=False):
     response = requests.get(
         f'https://crates.io/api/v1/crates/{package}', headers=HEADERS, timeout=15)
     if response.status_code != 200:
@@ -160,11 +200,24 @@ def _latest_crates(package):
               f"(HTTP {response.status_code}).")
         return None
     crate = response.json()['crate']
+    if allow_prerelease:
+        return crate.get('newest_version') or crate.get('max_stable_version')
     # Prefer the newest stable release, fall back to the newest overall.
     return crate.get('max_stable_version') or crate.get('newest_version')
 
 
-def _latest_rubygems(package):
+def _latest_rubygems(package, allow_prerelease=False):
+    if allow_prerelease:
+        # latest.json only reports stable releases; the full list has all of
+        # them. Fall back to latest.json if that request fails.
+        response = requests.get(
+            f'https://rubygems.org/api/v1/versions/{package}.json',
+            headers=HEADERS, timeout=15)
+        if response.status_code == 200:
+            latest = _max_version(entry['number'] for entry in response.json())
+            if latest:
+                return latest
+
     response = requests.get(
         f'https://rubygems.org/api/v1/versions/{package}/latest.json',
         headers=HEADERS, timeout=15)
@@ -184,13 +237,17 @@ _FETCHERS = {
 }
 
 
-def get_latest_version(ecosystem, package):
+def get_latest_version(ecosystem, package, current_version=None):
     """Query the relevant registry for the latest version of a package.
+
+    Pre-releases are only considered when the pinned version is itself a
+    pre-release (e.g. "3.1.0.dev1"), so stable pins never get bumped to a
+    development release.
 
     Returns the latest version string, or None on error.
     """
     try:
-        return _FETCHERS[ecosystem](package)
+        return _FETCHERS[ecosystem](package, _is_prerelease(current_version))
     except requests.RequestException as e:
         print(f"[ERROR] Network error for {package}: {e}")
         return None
@@ -203,7 +260,7 @@ def is_newer(latest_version, current_version):
     """Return True if latest_version is strictly newer than current_version."""
     try:
         return version.parse(latest_version) > version.parse(current_version)
-    except Exception:
+    except version.InvalidVersion:
         # Fallback to string comparison
         return current_version != latest_version
 
@@ -211,7 +268,7 @@ def is_newer(latest_version, current_version):
 def check_newer_versions(packages):
     """Query each registry and report newer (or, for unpinned gems, available) versions."""
     for ecosystem, package, current_version in packages:
-        latest_version = get_latest_version(ecosystem, package)
+        latest_version = get_latest_version(ecosystem, package, current_version)
         if latest_version is None:
             continue
 
@@ -297,7 +354,7 @@ def update_versions(shell_script, packages, tool_filter=None, dry_run=False):
         if current_version is None:
             continue
 
-        latest_version = get_latest_version(ecosystem, package)
+        latest_version = get_latest_version(ecosystem, package, current_version)
         if latest_version is None:
             errors += 1
             continue
