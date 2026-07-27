@@ -16,6 +16,14 @@ else
     echo "[INFO] Test <Loading Python-packages> passed."
 fi
 
+if ! python "$DIR/pyside6_files.py"
+then
+    echo "[ERROR] Test <PySide6 installation complete> FAILED."
+    ERR=1
+else
+    echo "[INFO] Test <PySide6 installation complete> passed."
+fi
+
 if ! /foss/tools/charlib/bin/python -c "import charlib"
 then
     echo "[ERROR] Test <Loading charlib> FAILED."
