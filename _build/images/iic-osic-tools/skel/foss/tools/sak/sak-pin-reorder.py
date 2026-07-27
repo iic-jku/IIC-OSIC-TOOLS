@@ -148,16 +148,24 @@ def parse_sym_pins(sym_path: str) -> list[tuple[str, str | None]]:
     return pins
 
 
-def parse_subckt_from_lines(lines: list[str]) -> tuple[str, list[str], int, int]:
+def parse_subckt_from_lines(
+    lines: list[str],
+) -> tuple[str, list[str], int, int, str]:
     """Extract the subcircuit name and pin list from the first .subckt in lines.
 
+    SPICE cards are case-insensitive and netlisters disagree: xschem and
+    Magic write ``.subckt``, KLayout-PEX writes ``.SUBCKT``. The card is
+    therefore matched case-insensitively and its original spelling is
+    returned so the rewritten header keeps the file's own style.
+
     Handles continuation lines starting with '+'.
-    Returns (subckt_name, pin_list, first_line_index, last_line_index).
+    Returns (subckt_name, pin_list, first_line_index, last_line_index, keyword).
     """
     for i, line in enumerate(lines):
         stripped = line.strip()
-        if stripped.startswith('.subckt'):
+        if stripped[:7].lower() == '.subckt':
             parts = stripped.split()
+            keyword = parts[0]
             subckt_name = parts[1]
             pins = parts[2:]
             last = i
@@ -168,7 +176,7 @@ def parse_subckt_from_lines(lines: list[str]) -> tuple[str, list[str], int, int]
                     last = j
                 else:
                     break
-            return subckt_name, pins, i, last
+            return subckt_name, pins, i, last, keyword
     raise ValueError("No .subckt line found in the netlist file")
 
 
@@ -294,7 +302,7 @@ def reconcile_scalar_buses(
         token_pattern.sub(lambda m: rename[m.group(1)], ln)
         for ln in lines
     ]
-    _, new_netlist_pins, _, _ = parse_subckt_from_lines(new_lines)
+    _, new_netlist_pins, _, _, _ = parse_subckt_from_lines(new_lines)
     return new_lines, new_netlist_pins, sorted(rename.items())
 
 
@@ -330,11 +338,15 @@ def rewrite_subckt_header(
     ordered_pins: list[str],
     first_idx: int,
     last_idx: int,
+    keyword: str = '.subckt',
 ) -> list[str]:
     """Return a copy of ``lines`` with the .subckt header replaced by one
-    listing ``ordered_pins``, wrapped to ~80 columns with '+' continuations."""
+    listing ``ordered_pins``, wrapped to ~80 columns with '+' continuations.
+
+    ``keyword`` is the card as spelled in the source file, so a netlist
+    written with ``.SUBCKT`` keeps its case."""
     max_width = 80
-    header = f".subckt {subckt_name}"
+    header = f"{keyword} {subckt_name}"
     subckt_lines = []
     current = header
     for pin in ordered_pins:
@@ -366,7 +378,7 @@ def main():
     sym_pins = parse_sym_pins(args.sym_file)
     with open(args.netlist_file, 'r') as f:
         lines = f.readlines()
-    subckt_name, netlist_pins, _, _ = parse_subckt_from_lines(lines)
+    subckt_name, netlist_pins, _, _, _ = parse_subckt_from_lines(lines)
 
     fmt = args.format
     if fmt == "auto":
@@ -418,9 +430,9 @@ def main():
         print(f"  {sp:25s} -> {np:25s}{marker}")
 
     # 4. Reorder subckt header and write back
-    _, _, first_idx, last_idx = parse_subckt_from_lines(lines)
+    _, _, first_idx, last_idx, keyword = parse_subckt_from_lines(lines)
     lines = rewrite_subckt_header(lines, subckt_name, ordered_netlist,
-                                  first_idx, last_idx)
+                                  first_idx, last_idx, keyword)
     with open(output_path, 'w') as f:
         f.writelines(lines)
 
