@@ -60,6 +60,12 @@ for i in "${P_TAGS[@]}"; do
     done
 done
 
-# First, build the images, pushing them to the local registry. The Tag in this case is used for the environment variable inside the container.
+# Build the images, pushing them to the local registry. The Tag in this case is used for the environment variable inside the container.
+#
+# The final image declares its tool images as named build contexts bound to bake
+# targets, so this also (re)builds any tool that is not up to date. To assemble
+# the final image purely from the tool images already present in the registry --
+# e.g. to re-tag or re-push without touching the tools -- run this script with
+# DEPS_FROM_TARGETS=0.
 #shellcheck disable=SC2086
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --set *.args.CONTAINER_TAG="${CONTAINER_TAG}" ${SET_TAGS_CMD} --push images
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --set image-full.args.CONTAINER_TAG="${CONTAINER_TAG}" ${SET_TAGS_CMD} --push images

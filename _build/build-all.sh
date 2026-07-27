@@ -60,16 +60,14 @@ for i in "${P_TAGS[@]}"; do
     done
 done
 
+# Build everything in a single bake run. The dependencies between the base,
+# tool, and final images are declared as named build contexts in
+# docker-bake.hcl, so BuildKit resolves the full DAG itself: every target starts
+# as soon as its own dependencies are ready, instead of waiting for a whole
+# dependency level to complete. The CONTAINER_TAG is used for the environment
+# variable inside the container.
 #shellcheck disable=SC2086
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push base
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push base-dev
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-level-1
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-level-2
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --push tools-level-3
-
-# Finally, build the images, pushing them to the local registry. The Tag in this case is used for the environment variable inside the container.
-#shellcheck disable=SC2086
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --set *.args.CONTAINER_TAG="${CONTAINER_TAG}" ${SET_TAGS_CMD} --push images
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --set image-full.args.CONTAINER_TAG="${CONTAINER_TAG}" ${SET_TAGS_CMD} --push all
 
 # Build and push the devcontainer image
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)

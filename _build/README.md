@@ -34,31 +34,55 @@ To use a local image from a registry without HTTPS, the following entry has to b
 }
 ```
 
-#### Step 2: Build the `base` image
+#### Step 2: Build everything
 
 ```bash
-./build-base.sh
+./build-all.sh
 ```
 
-#### Step 3: Build the tools
+`docker-bake.hcl` declares every inter-image dependency as a named build context
+bound to a bake target, so this is a single `docker buildx bake all` run: BuildKit
+knows the complete dependency graph and starts each image as soon as *its own*
+dependencies are ready, rather than waiting for a whole dependency level to
+finish. Ordering is derived from the graph and cannot go stale.
+
+The individual steps below still work and can be used to build only a part of the
+tree. They no longer have to run in a particular order — each one pulls in
+whatever it needs.
 
 ```bash
-./build-tools.sh
-```
-
-In case only a few specific tool images shall be rebuilt, the corresponding build commands can be identified by using
-
-```bash
-DRY_RUN=1 ./build-tools.sh
-```
-
-which will show the individual build steps.
-
-#### Step 4: Build the final image and push to Docker Hub
-
-```bash
+./build-base.sh                       # base only
+./build-base-dev.sh                   # base-dev only
+./build-tools.sh                      # all tool images
+./build-target.sh xschem              # a single target and its dependencies
 DOCKER_PREFIXES="hpretl,registry.iic.jku.at:5000" DOCKER_TAGS="latest" ./build-images.sh
 ```
+
+Use `DRY_RUN=1` on any of them to print the commands without executing them.
+
+##### Build variables
+
+These are read from the environment by `docker buildx bake`:
+
+| Variable | Default | Effect |
+| --- | --- | --- |
+| `DEPS_FROM_TARGETS` | `1` | Resolve inter-image dependencies to bake targets (one DAG). Set to `0` to resolve them to the images already pushed to the registry, e.g. to re-tag and re-push the final image without rebuilding or re-checking any tool. |
+| `CACHE_EXPORT` | `1` | Export a dedicated `mode=max` registry cache per target. Set to `0` when building without write access to the cache registry. |
+| `REGISTRY` | `registry.iic.jku.at:5000` | Registry used for the intermediate and cache images. |
+| `IMAGE` | `iic-osic-tools` | Repository name used for the intermediate and cache images. |
+| `PLATFORMS` | `linux/amd64,linux/arm64` | Target platforms. |
+
+##### Build cache
+
+Every target imports from a dedicated cache manifest (`<registry>/<image>:cache-<target>`)
+and falls back to the inline cache embedded in its own published image. Cache is
+exported to both, with `mode=max` on the registry manifest so that intermediate
+stages and `RUN --mount=type=cache` mounts are preserved as well. The cache
+export uses `ignore-error=true`, so a read-only or unreachable registry degrades
+to a slower build instead of a failed one.
+
+The `cache-*` tags can be dropped at any time to reclaim registry space; the next
+build then falls back to the inline caches.
 
 To test locally stored images, the following command can be used:
 

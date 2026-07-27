@@ -19,18 +19,26 @@ The build uses **docker buildx** with multi-architecture support across distribu
 2. **Tool images**: Each tool has a Dockerfile in `_build/images/<tool>/` (e.g., `magic`, `yosys`, `klayout`)
 3. **Final image**: `_build/images/iic-osic-tools/` combines all tools with PDKs
 
-**Build orchestration** (sequential execution required):
+**Build orchestration:**
 ```bash
 ./builder-create.sh   # Creates buildx builder with remote SSH contexts
-./build-base.sh       # Builds base and base-dev images
-./build-tools.sh      # Builds tool images in 3 levels (handles dependencies)
-./build-images.sh     # Assembles final image and pushes to registry
+./build-all.sh        # Builds base, all tools and the final image as one DAG
 ```
+
+The individual steps are still available (`./build-base.sh`, `./build-tools.sh`,
+`./build-images.sh`), but they are no longer required to run in a fixed order:
+each one pulls in whatever it depends on.
 
 **Critical conventions:**
 - `tool_metadata.yml`: Single source of truth for tool versions (git commit hashes)
 - `docker-bake.hcl`: Docker Bake configuration defining targets, platforms, and cache strategies
-- Tools are organized in dependency levels (`tools-level-1`, `tools-level-2`, `tools-level-3`)
+- Inter-image dependencies are declared as named build contexts bound to bake
+  targets (`contexts = { "ctx-yosys" = tooldep("yosys") }`), so BuildKit derives
+  the dependency graph itself and schedules the build with maximum parallelism.
+  When a tool gains or loses a `FROM`/`COPY --from` on another tool image, the
+  corresponding `contexts`/`args` entry in `docker-bake.hcl` must be updated.
+- The `tools-level-*` groups are kept for staged builds only; they no longer
+  determine ordering.
 - Each tool Dockerfile uses multi-stage builds to minimize final image size
 
 ### Builder Configuration

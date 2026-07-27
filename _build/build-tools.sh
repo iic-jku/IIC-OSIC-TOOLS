@@ -36,7 +36,8 @@ else
 	load_or_push="--load"
 fi
 
+# All tool images in a single bake run. Ordering is derived from the named
+# build contexts in docker-bake.hcl, so there is no need to build in levels;
+# a tool starts as soon as the tools it depends on are done.
 #shellcheck disable=SC2086
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} ${load_or_push} tools-level-1
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} ${load_or_push} tools-level-2
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} ${load_or_push} tools-level-3
+${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} ${load_or_push} tools
