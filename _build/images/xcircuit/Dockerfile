@@ -7,7 +7,7 @@
 ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS xcircuit
 ARG XCIRCUIT_REPO_URL="https://github.com/RTimothyEdwards/XCircuit.git"
-ARG XCIRCUIT_REPO_COMMIT="30032514f600e5c2901479cf455fcb2952f0278f"
+ARG XCIRCUIT_REPO_COMMIT="9051f4804fe8f6386272085f604c9238e5ac0b05"
 ARG XCIRCUIT_NAME="xcircuit"
 RUN --mount=type=bind,source=images/xcircuit,target=/images/xcircuit \
     bash /images/xcircuit/scripts/install.sh

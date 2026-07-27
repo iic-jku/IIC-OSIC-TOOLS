@@ -49,7 +49,7 @@ pip3 install $PIP_FLAGS \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.6 \
-	gds2palace==0.2.0 \
+	gds2palace==0.3.0 \
 	gdsfactory==9.46.0 \
 	gdsfill==0.1.8 \
 	gdspy==1.6.13 \
@@ -57,7 +57,7 @@ pip3 install $PIP_FLAGS \
 	klayout-pex==0.3.12 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
-	librelane==3.1.0.dev1 \
+	librelane==3.1.0.dev2 \
 	najaeda==0.7.17 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.2 \

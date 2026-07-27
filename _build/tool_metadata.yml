@@ -30,13 +30,13 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: a4989d023d4d9dedf05a95ed544ee501c69faa81
+  commit: eda9fdcd13d7566b9aab29a8a098e2f4189ea3f3
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.1
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: 6c2af237760317480f07f584a166ba00b5b49cf3
+  commit: 84c6c22cbe121045c5cc95322b3b3eec82c61dd5
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.9
@@ -45,13 +45,13 @@
   commit: 40593af1fb99f24bdf7a105d72a8ed6f29b31b65
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.677
+  commit: 8.3.678
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.323
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: fb95bb8ea1949deba5e9b0e79daa9bba92b634b8
+  commit: bf63271fe75f59e0fecd1b5220e78034597027a1
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-46
@@ -69,7 +69,7 @@
   commit: 3e57150aa7c22b6db7c96656d5e4fe014cf43f8d
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 09a62d809f2a2dc599dc2ff87691c2c18cde7bcf
+  commit: c74892e7b314c6d7932ca56c76942ee81103715a
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 01f5d9bd149f998e1322d62a118d9b82cce732ef
+  commit: c531cf3e57932ee7118a816a820bd7a33bbdea4a
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -132,7 +132,7 @@
   commit: 0.11.32
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 5d9085d7d68f8c5aa1449785d3f99253f57c80c9
+  commit: 764f69317d840cbe99d0cf93164f0e7b5ee38515
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.050
@@ -141,7 +141,7 @@
   commit: v0.0-4084-gf3e4d98b
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
-  commit: 30032514f600e5c2901479cf455fcb2952f0278f
+  commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
   commit: b69f793f83383d4e59cdb66aa431375b5a9966cc
