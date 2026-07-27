@@ -46,29 +46,33 @@ cat <<EOL > "$CMD"
 #!/bin/bash
 if [ ${USE_COLOR} -eq 1 ]; then
     RED=\$'\033[1;31m'
+    GRN=\$'\033[1;32m'
     NC=\$'\033[0m'
 else
     RED=""
+    GRN=""
     NC=""
 fi
 
 # No --halt: it made GNU parallel announce every failed job and the shutdown of
 # its job pool, and it silently left the remaining tests unreported. Without it
 # parallel stays quiet and exits with the number of failed jobs. Test output is
-# piped through sed to paint the [ERROR] lines red.
+# piped through sed to paint the [ERROR] lines red and the "passed" verdicts
+# green; the remaining [INFO] lines (startup banners, skipped tests) stay plain.
 set -o pipefail
 find "$WORKDIR" -type f -name "test*.sh" \\
     -not -path "*/runs/*" | parallel --will-cite 2>&1 \\
-    | sed -u "s/^\\(\\[ERROR\\].*\\)\$/\${RED}\\1\${NC}/"
+    | sed -u -e "s/^\\(\\[ERROR\\].*\\)\$/\${RED}\\1\${NC}/" \\
+             -e "s/^\\(\\[INFO\\] Test .*passed.*\\)\$/\${GRN}\\1\${NC}/"
 if [ \$? -ne 0 ]; then
     echo "\${RED}------------------------------------\${NC}"
     echo "\${RED}[ERROR] AT LEAST ONE TEST FAILED :-(\${NC}"
     echo "\${RED}------------------------------------\${NC}"
     exit 1
 else
-    echo "----------------------------------------"
-    echo "[INFO] All tests passed successfully :-)"
-    echo "----------------------------------------"
+    echo "\${GRN}----------------------------------------\${NC}"
+    echo "\${GRN}[INFO] All tests passed successfully :-)\${NC}"
+    echo "\${GRN}----------------------------------------\${NC}"
     exit 0
 fi
 EOL
