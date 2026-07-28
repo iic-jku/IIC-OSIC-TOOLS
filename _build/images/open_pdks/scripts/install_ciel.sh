@@ -6,6 +6,7 @@
 set -e
 set -o pipefail
 export SCRIPT_DIR=$TOOLS/osic-multitool
+PDK_SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 if [ ! -d "$PDK_ROOT" ]; then
     mkdir -p "$PDK_ROOT"
@@ -32,9 +33,8 @@ if [ ! -d "$PDK_ROOT/sky130A" ]; then
 fi
 
 if [ -d "$PDK_ROOT/sky130A" ]; then
-	#FIXME gzip Liberty (.lib) files
-	#FIXME cd "$PDK_ROOT/sky130A/libs.ref"
-	#FIXME find . -name "*.lib" -exec gzip {} \;
+	# gzip Liberty (.lib) files
+	bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/sky130A"
 
 	# Add custom bindkeys for Magic
     echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
@@ -137,9 +137,8 @@ PYEOF
 fi
 
 if [ -d "$PDK_ROOT/sky130B" ]; then
-	#FIXME gzip Liberty (.lib) files
-	#FIXME cd "$PDK_ROOT/sky130B/libs.ref"
-	#FIXME find . -name "*.lib" -exec gzip {} \;
+	# gzip Liberty (.lib) files
+	bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/sky130B"
 
     echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/sky130B/libs.tech/magic/sky130B.magicrc"
     echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/sky130B/libs.tech/magic/sky130B.magicrc"
@@ -172,9 +171,8 @@ if [ ! -d "$PDK_ROOT/gf180mcuD" ]; then
 fi
 
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
-	#FIXME gzip Liberty (.lib) files
-	#FIXME cd "$PDK_ROOT/gf180mcuD/libs.ref"
-	#FIXME find . -name "*.lib" -exec gzip {} \;
+	# gzip Liberty (.lib) files
+	bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/gf180mcuD"
 
 	cd "$PDK_ROOT/gf180mcuD/libs.tech/ngspice" || exit 1
 	
