@@ -50,6 +50,9 @@ Notes:
   - ``-H`` switches KLayout to deep (hierarchical) mode, which is much
     faster and needs far less memory on large, hierarchical layouts. The
     resulting difference geometry is written out flat in either case.
+    Deep mode splits the geometry along the cell hierarchy, so it reports
+    a higher polygon count than flat mode; the differing area, which is
+    the meaningful number, is identical.
 
 Usage:
     sak-gds-xor.py [-d] [-H] [-o <output>] [-c <cellname>]
@@ -118,8 +121,11 @@ def resolve_top_cell(layout: pya.Layout, path: str, name: str | None):
     if not tops:
         die(f"No top cell found in {path}!")
     if len(tops) > 1:
-        names = ", ".join(c.name for c in tops)
-        die(f"{path} has {len(tops)} top cells ({names}); "
+        # A library GDS can have dozens of top cells, so only list a few.
+        shown = [c.name for c in tops[:8]]
+        if len(tops) > len(shown):
+            shown.append("...")
+        die(f"{path} has {len(tops)} top cells ({', '.join(shown)}); "
             f"select one with -c!")
     return tops[0]
 
