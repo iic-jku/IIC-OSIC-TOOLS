@@ -13,6 +13,20 @@ set -e
 # Linux-aarch64 wheel, so a forced PyPI reinstall would fail on arm64
 PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages"
 
+# Nothing below reads PIP_NO_CACHE_DIR -- pip itself does: every pip option has
+# a PIP_<OPTION> environment variable equivalent, so this is the same as adding
+# --no-cache-dir to every pip run, including ones this script never spells out.
+#
+# That is the point, because the flag in PIP_FLAGS only covers the outer pip.
+# It is not always handed down to the nested pip that PEP 517 build isolation
+# runs to fetch a package's build dependencies. The venvs below are the clearest
+# case: "python3 -m venv" bootstraps the pip bundled with CPython (24.0), which
+# does not forward the flag, so building the git+ packages pulls setuptools,
+# virtualenv, distlib, dulwich, numpy, ... straight into $HOME/.cache/pip. With
+# HOME=/headless during the build that left ~55 MB of download residue in the
+# image. An environment variable IS inherited by those nested invocations.
+export PIP_NO_CACHE_DIR=1
+
 echo "[INFO] Install EDA packages via APT"
 apt-get update
 apt-get install -y \
@@ -150,3 +164,10 @@ echo "[INFO] Removing bundled Python package test suites"
 find /usr/local/lib/python3*/dist-packages \
 	/foss/tools/charlib/lib /foss/tools/vlsirtools/lib \
 	-type d \( -name tests -o -name test \) -prune -exec rm -rf {} +
+
+# Belt and braces: PIP_NO_CACHE_DIR above should keep this empty, but a tool
+# invoking pip with its own environment could still populate it, and the cache
+# is pure build residue that must not reach the image. HOME is /headless for
+# the whole build, so that is the only cache pip can write.
+echo "[INFO] Removing pip download cache"
+rm -rf "${HOME:-/headless}/.cache/pip"
