@@ -5,6 +5,7 @@ This document summarizes the most important changes of the individual releases o
 ## 2026.08
 
 * [Update] `xschem` bumped past the upstream fix for the headless `tcleval` focus call ([xschem issue #494](https://github.com/StefanSchippers/xschem/issues/494)); the local patch guarding that call is removed again.
+* [Build] moved the build-only compiler toolchains (`clang`/LLVM, `gnat`, `gfortran`) from the runtime image to `base-dev`, and dropped the unused `ant` and `binutils-gold`; the runtime image keeps GCC, `mold`, and only the matching shared libraries (`libllvm18`, `libgnat-13`), which reduces the image by about 300 MB.
 
 ## 2026.07
 
