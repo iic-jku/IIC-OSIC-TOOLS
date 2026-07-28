@@ -10,8 +10,22 @@ set -e
 echo "[INFO] Updating, upgrading and installing packages with APT"
 apt-get -y update
 apt-get -y upgrade
+# The build-only compiler toolchains live here, not in the runtime base
+# image: clang/LLVM (openvaf links LLVM statically, ghdl configures with
+# llvm-config), gnat (ghdl is written in Ada) and gfortran (Xyce/Trilinos).
+# The base image ships GCC plus only the matching runtime libraries
+# (libllvm18, libgnat-13).
+#
+# python3-pyqt5 is build-only as well: the PyOPUS sdist does not build on
+# aarch64 without it, but the installed sources are ported to PySide6 right
+# after (see images/pyopus/scripts/install.sh), so the runtime image needs no
+# PyQt at all.
 apt-get -y install \
 	autotools-dev \
+	clang-18 \
+	clang-tools-18 \
+	gfortran \
+	gnat \
 	libasound2-dev \
 	libblas-dev \
 	libboost-dev \
@@ -68,7 +82,6 @@ apt-get -y install \
 	libqhull-dev \
 	libqt5charts5-dev \
 	libqt5svg5-dev \
-	libqt5xmlpatterns5-dev \
 	libre2-dev \
 	libreadline-dev \
 	libsm-dev \
@@ -98,14 +111,17 @@ apt-get -y install \
 	libz3-dev \
 	libzip-dev \
 	libzstd-dev \
+	lld-18 \
+	llvm-18 \
 	llvm-18-dev \
+	llvm-18-tools \
 	python3-dev \
+	python3-pyqt5 \
 	qt5-qmake \
 	qtbase5-dev \
 	qtbase5-dev-tools \
 	qt6-base-dev \
 	qt6-base-dev-tools \
-	qt6-charts-dev \
 	qt6-tools-dev \
 	qt6-multimedia-dev \
 	qt6-svg-dev \
@@ -116,8 +132,11 @@ apt-get -y install \
 	uuid-dev \
 	zlib1g-dev
 
-# The base image deletes the LLVM static libraries (/usr/lib/llvm-18/lib/*.a)
-# for size, but dpkg still considers llvm-18-dev installed, so the plain
-# install above does not bring them back. Tool builds (openvaf links LLVM
-# statically) run on base-dev, so restore the files here.
-apt-get -y install --reinstall llvm-18-dev
+# Provide the unversioned LLVM/clang tool names (clang, llvm-config, ...):
+# tool builds use them (e.g. ghdl configures with plain llvm-config)
+cd /usr/lib/llvm-18/bin || exit 1
+for f in *; do
+    [ -e "$f" ] || continue
+    rm -f /usr/bin/"$f"
+    ln -s ../lib/llvm-18/bin/"$f" /usr/bin/"$f"
+done

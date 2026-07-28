@@ -12,6 +12,12 @@ import sys
 from importlib.metadata import distributions
 from pathlib import Path
 
+# install_eda.sh additionally prunes two directories that PySide6-Essentials
+# owns but nothing in the image uses: the Qt UI translations and the QML module
+# plugins. Those deletions are deliberate, so their RECORD entries are expected
+# to be gone -- anything else missing is not.
+PRUNED = ("PySide6/Qt/translations/", "PySide6/Qt/qml/")
+
 missing = {}
 
 for dist in distributions():
@@ -26,7 +32,9 @@ for dist in distributions():
     gone = [
         row[0]
         for row in csv.reader(record.splitlines())
-        if row and not (root / row[0]).exists()
+        if row
+        and not row[0].startswith(PRUNED)
+        and not (root / row[0]).exists()
     ]
     if gone:
         missing[f"{name} {dist.version}"] = gone
