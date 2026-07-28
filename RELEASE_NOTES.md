@@ -6,6 +6,8 @@ This document summarizes the most important changes of the individual releases o
 
 * [Update] `xschem` bumped past the upstream fix for the headless `tcleval` focus call ([xschem issue #494](https://github.com/StefanSchippers/xschem/issues/494)); the local patch guarding that call is removed again.
 * [Build] moved the build-only compiler toolchains (`clang`/LLVM, `gnat`, `gfortran`) from the runtime image to `base-dev`, and dropped the unused `ant` and `binutils-gold`; the runtime image keeps GCC, `mold`, and only the matching shared libraries (`libllvm18`, `libgnat-13`), which reduces the image by about 300 MB.
+* [Build] consolidated the Python Qt bindings on `PySide6`, saving about 115 MB. `python3-pyqt5` and `python3-pyqt6` are gone from the runtime image (PyQt5 stays in `base-dev`, where the PyOPUS build needs it), the Qt libraries they used to drag in are now requested explicitly, and the unused `libqt5xmlpatterns5`, `libqt5multimedia5`, `libqt6charts6` and `linguist-qt6` are dropped. `PySide6` additionally loses its Qt translations and QML modules. The Qt5 and Qt6 runtimes themselves both stay, because OpenROAD's GUI is Qt5-only while KLayout, Kactus2 and Qucs-S are Qt6.
+* [Changing] `PyOPUS` is ported from PyQt5 to PySide6. Its threaded plotting (`pyopus.plotter`, used by the plotting demos) works unchanged; the `pyog` project GUI is removed, as its table models rely on PyQt5-specific virtual dispatch.
 
 ## 2026.07
 

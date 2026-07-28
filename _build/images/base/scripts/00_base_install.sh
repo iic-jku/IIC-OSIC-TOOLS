@@ -147,19 +147,19 @@ apt-get -y install \
 	libpcre3 \
 	libqhull-r8.0 \
 	libqt5charts5 \
-	libqt5multimedia5 \
-	libqt5multimediawidgets5 \
 	libqt5sql5t64 \
 	libqt5svg5 \
 	libqt5xml5t64 \
-	libqt5xmlpatterns5 \
-	libqt6charts6 \
 	libqt6core5compat6 \
 	libqt6core6t64 \
 	libqt6help6 \
 	libqt6multimedia6 \
+	libqt6openglwidgets6t64 \
+	libqt6printsupport6t64 \
 	libqt6svg6 \
 	libqt6svgwidgets6 \
+	libqt6uitools6 \
+	libqt6xml6t64 \
 	libre2-10 \
 	libreadline8 \
 	libsm6 \
@@ -190,7 +190,6 @@ apt-get -y install \
 	libz3-4 \
 	libzip4 \
 	libzstd1 \
-	linguist-qt6 \
 	lsof \
 	make \
 	mesa-utils \
@@ -213,8 +212,6 @@ apt-get -y install \
 	python3-cvxopt \
 	python3-pip \
 	python3-pygments \
-	python3-pyqt5 \
-	python3-pyqt6 \
 	python3-setuptools \
 	python3-systemd \
 	python3-tk \

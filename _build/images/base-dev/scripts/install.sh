@@ -82,7 +82,6 @@ apt-get -y install \
 	libqhull-dev \
 	libqt5charts5-dev \
 	libqt5svg5-dev \
-	libqt5xmlpatterns5-dev \
 	libre2-dev \
 	libreadline-dev \
 	libsm-dev \
@@ -117,12 +116,12 @@ apt-get -y install \
 	llvm-18-dev \
 	llvm-18-tools \
 	python3-dev \
+	python3-pyqt5 \
 	qt5-qmake \
 	qtbase5-dev \
 	qtbase5-dev-tools \
 	qt6-base-dev \
 	qt6-base-dev-tools \
-	qt6-charts-dev \
 	qt6-tools-dev \
 	qt6-multimedia-dev \
 	qt6-svg-dev \

@@ -111,6 +111,18 @@ PYSIDE6_VER=$(pip3 show PySide6-Essentials | awk '/^Version:/{print $2}')
 pip3 uninstall -y --break-system-packages PySide6-Addons
 pip3 install $PIP_FLAGS --no-deps --force-reinstall "PySide6-Essentials==${PYSIDE6_VER}"
 
+# What is left of PySide6 is still the largest Qt stack in the image, several
+# times the size of the system Qt6 that the C++ tools share. Two directories of
+# it are dead weight here:
+#   Qt/translations (~59 MB) -- Qt's own UI translations, loaded only when an
+#     application installs a QTranslator from that path; the image is English.
+#   Qt/qml (~35 MB) -- QML module plugins for QtQuick. Every Qt GUI in the
+#     image is widget-based, nothing loads a QML engine.
+# The .so libraries are untouched, so imports keep working.
+echo "[INFO] Pruning PySide6 translations and QML modules"
+PYSIDE6_DIR=$(python3 -c 'import os, PySide6; print(os.path.dirname(PySide6.__file__))')
+rm -rf "${PYSIDE6_DIR}/Qt/translations" "${PYSIDE6_DIR}/Qt/qml"
+
 echo "[INFO] Install EDA packages via Cargo"
 
 export RUSTUP_HOME=/tmp/rustup
