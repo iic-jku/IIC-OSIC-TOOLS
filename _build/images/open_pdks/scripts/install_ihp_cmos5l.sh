@@ -5,6 +5,7 @@
 set -e
 set -o pipefail
 export SCRIPT_DIR=$TOOLS/osic-multitool
+PDK_SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd /tmp || exit 1
 
 if [ ! -d "$PDK_ROOT" ]; then
@@ -153,5 +154,9 @@ module_path_prefix = [ "\$(PDK_ROOT)/ihp-sg13g2/libs.tech/vacask/osdi" ]
 EOF
 
 rm -rf "/tmp/${VACASK_NAME}"
+
+# gzip Liberty (.lib) files. The SRAM Liberty files are symlinks into the
+# SG13G2 PDK and are already compressed by install_ihp.sh.
+bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/$PDK"
 
 echo "[INFO] IHP SG13CMOS5L PDK installation complete."
