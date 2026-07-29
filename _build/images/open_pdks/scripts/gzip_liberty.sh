@@ -11,6 +11,12 @@
 # Only libs.ref holds Liberty files. libs.tech/{ngspice,xyce,vacask,qucs-s}
 # uses the same .lib extension for SPICE model libraries, which the simulators
 # read uncompressed, so those directories are left untouched.
+#
+# TRANSITION: the uncompressed .lib files are deliberately kept next to the
+# .lib.gz files, so that user flows and scripts which reference the .lib paths
+# directly keep working. This costs the disk space the compression would
+# otherwise save. Drop the -k flag from the gzip call below (and announce it in
+# the release notes) once the deprecation period of a few releases is over.
 
 set -e
 set -o pipefail
@@ -22,12 +28,13 @@ if [ -z "$PDK_DIR" ] || [ ! -d "$PDK_DIR/libs.ref" ]; then
 	exit 0
 fi
 
-echo "[INFO] Compressing Liberty files in $PDK_DIR/libs.ref."
-find "$PDK_DIR/libs.ref" -name "*.lib" -type f -exec gzip -f {} +
+echo "[INFO] Compressing Liberty files in $PDK_DIR/libs.ref (keeping the uncompressed files)."
+find "$PDK_DIR/libs.ref" -name "*.lib" -type f -exec gzip -k -f {} +
 
 # Point the tool configurations to the compressed files. All tools in the image
 # that read Liberty (yosys/ABC, OpenROAD, OpenSTA, librelane, kepler-formal)
-# decompress .lib.gz transparently.
+# decompress .lib.gz transparently. Configurations outside of the PDK that still
+# name the .lib files keep working, as those files are kept (see above).
 #
 # The expression only rewrites ".lib" when it is not followed by another
 # extension, which keeps ".lib.json" references intact and makes a repeated run
