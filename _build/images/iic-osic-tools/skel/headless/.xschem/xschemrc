@@ -1,2 +1,6 @@
 # Source the PDK xschemrc file
 source $env(PDK_ROOT)/$env(PDK)/libs.tech/xschem/xschemrc
+
+# Allow execution of Tcl scripts embedded in schematics/symbols without asking
+# (required for PDK launcher symbols and tcleval() attributes to work silently)
+set xschem_execute_scripts yes
