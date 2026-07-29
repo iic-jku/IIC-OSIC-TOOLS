@@ -431,7 +431,7 @@ Either way, the great thing is that you can now commit the file to repository an
 
 ## 5. Using the Container with
 
-The IIC-OSIC-Tools are meant to be beginner friendly. If you have limited knowledge of the tools involved (Docker, Podman, etc..), we suggest you follow [4. Quick Launch for Designers](#4-quick-launch-for-designers).
+The IIC-OSIC-TOOLS are meant to be beginner friendly. If you have limited knowledge of the tools involved (Docker, Podman, etc..), we suggest you follow [4. Quick Launch for Designers](#4-quick-launch-for-designers).
 For container experts, there is also support for other container engines and additional tools, see the subsections below.
 
 ### 5.1 Podman
@@ -459,9 +459,9 @@ As a safety net, the request is ignored (with a warning) if no passwd entry exis
 [Distrobox](https://distrobox.it) is a *fancy wrapper around Podman or Docker to create and start containers highly integrated with the hosts*. Like the `start_x` scripts, Distrobox manages the forwarding of X11/Wayland to the container, but allows for even more tight integration, by also forwarding the users home directory, and seamlessly integration other services like the systemd journal, D-Bus etc...
 Distrobox specifically mentions that its main focus lies on integration, and not on sandboxing and security.
 
-The IIC-OSIC-Tools support the usage of Distrobox, even though the usage is slightly different, compared to the start scripts. Noteably, the /headless is not the in-container-user's home directory, and /foss/designs will not be mounted. But `/home/<username>` will have full access to the users home directory.
+The IIC-OSIC-TOOLS support the usage of Distrobox, even though the usage is slightly different, compared to the start scripts. Noteably, the /headless is not the in-container-user's home directory, and /foss/designs will not be mounted. But `/home/<username>` will have full access to the users home directory.
 
-A IIC-OSIC-Tools Distrobox can be started and accessed with:
+A IIC-OSIC-TOOLS Distrobox can be started and accessed with:
 
 `distrobox create -n iic-osic-tools -i hpretl/iic-osic-tools:latest`
 `distrobox enter iic-osic-tools`
