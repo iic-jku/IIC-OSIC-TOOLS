@@ -4,6 +4,7 @@ This document summarizes the most important changes of the individual releases o
 
 ## 2026.08
 
+* [Adding] `sak-gds-xor.py` to XOR two layouts (GDS2/OASIS) with KLayout and write the differing geometry to an output layout, for comparing two revisions of a layout or a signoff database against its source.
 * [Update] `xschem` bumped past the upstream fix for the headless `tcleval` focus call ([xschem issue #494](https://github.com/StefanSchippers/xschem/issues/494)); the local patch guarding that call is removed again.
 * [Build] moved the build-only compiler toolchains (`clang`/LLVM, `gnat`, `gfortran`) from the runtime image to `base-dev`, and dropped the unused `ant` and `binutils-gold`; the runtime image keeps GCC, `mold`, and only the matching shared libraries (`libllvm18`, `libgnat-13`), which reduces the image by about 300 MB.
 * [Build] consolidated the Python Qt bindings on `PySide6`, saving about 115 MB. `python3-pyqt5` and `python3-pyqt6` are gone from the runtime image (PyQt5 stays in `base-dev`, where the PyOPUS build needs it), the Qt libraries they used to drag in are now requested explicitly, and the unused `libqt5xmlpatterns5`, `libqt5multimedia5`, `libqt6charts6` and `linguist-qt6` are dropped. `PySide6` additionally loses its Qt translations and QML modules. The Qt5 and Qt6 runtimes themselves both stay, because OpenROAD's GUI is Qt5-only while KLayout, Kactus2 and Qucs-S are Qt6.
