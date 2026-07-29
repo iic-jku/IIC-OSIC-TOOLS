@@ -16,7 +16,7 @@ setlocal
 
 if not exist "%~dp0install.ps1" (
     echo [FAIL] install.ps1 not found next to install.bat ^(expected at "%~dp0install.ps1"^).
-    echo        Please re-download the iic-osic-tools repository.
+    echo        Please re-download the IIC-OSIC-TOOLS repository.
     endlocal
     exit /b 1
 )

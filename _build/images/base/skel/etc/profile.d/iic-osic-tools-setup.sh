@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # shellcheck shell=bash
 #
-# Single source of truth for the IIC-OSIC-Tools shell environment.
+# Single source of truth for the IIC-OSIC-TOOLS shell environment.
 # This file is sourced from /etc/profile (login shells) and from
 # /headless/.bashrc (interactive shells); a guard prevents double init.
 

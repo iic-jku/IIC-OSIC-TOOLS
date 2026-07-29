@@ -30,7 +30,7 @@
 #       - Docker (Docker Engine on Linux / Docker Desktop on macOS), or
 #       - Podman (distribution packages on Linux / Homebrew on macOS)
 #   * XQuartz (macOS only, required for X11 mode)
-#   * Clones the iic-osic-tools repository to a user-chosen directory
+#   * Clones the IIC-OSIC-TOOLS repository to a user-chosen directory
 #
 # Before every step the user is asked for explicit permission. The script
 # is designed to be safe (strict mode, no piping curl-to-shell, integrity
@@ -418,7 +418,7 @@ macos_install_xquartz() {
 # ----------------------- clone repository ---------------------------------
 clone_repo() {
     local default_dir="$HOME/iic-osic-tools" target_dir parent_dir parent_abs
-    read -u 3 -r -p "$(printf "%s[?]%s Directory to clone iic-osic-tools into [%s]: " "$C_YEL" "$C_RST" "$default_dir")" target_dir
+    read -u 3 -r -p "$(printf "%s[?]%s Directory to clone IIC-OSIC-TOOLS into [%s]: " "$C_YEL" "$C_RST" "$default_dir")" target_dir
     target_dir="${target_dir:-$default_dir}"
 
     # Expand a leading tilde manually (we won't run with `set -f` off-shell quirks).
@@ -471,11 +471,11 @@ clone_repo() {
     fi
 
     git clone --depth=1 https://github.com/iic-jku/iic-osic-tools.git "$target_dir"
-    ok "Cloned iic-osic-tools to '$target_dir'."
+    ok "Cloned IIC-OSIC-TOOLS to '$target_dir'."
     TARGET_DIR="$target_dir"
 }
 
-# Try to find an existing iic-osic-tools checkout if the clone step was skipped.
+# Try to find an existing IIC-OSIC-TOOLS checkout if the clone step was skipped.
 find_existing_repo() {
     local candidates=(
         "$PWD"
@@ -542,7 +542,7 @@ macos_reboot() {
             || die "Failed to schedule reboot."
         warn "Reboot scheduled in 1 minute. Run 'sudo killall shutdown' to cancel."
     else
-        warn "Please reboot manually before using iic-osic-tools."
+        warn "Please reboot manually before using IIC-OSIC-TOOLS."
     fi
 }
 
@@ -602,7 +602,7 @@ main() {
             else
                 step "Install Docker Engine (official repo)"  linux_install_docker
             fi
-            step "Clone iic-osic-tools repository"        clone_repo
+            step "Clone IIC-OSIC-TOOLS repository"        clone_repo
             echo
             ok "All selected Linux steps completed."
             if [[ "$ENGINE" == "docker" ]]; then
@@ -618,7 +618,7 @@ main() {
             else
                 step "Install Docker Engine (official repo)"  linux_dnf_install_docker
             fi
-            step "Clone iic-osic-tools repository"        clone_repo
+            step "Clone IIC-OSIC-TOOLS repository"        clone_repo
             echo
             ok "All selected Linux steps completed."
             if [[ "$ENGINE" == "docker" ]]; then
@@ -635,7 +635,7 @@ main() {
                 step "Install Docker Desktop via Homebrew" macos_install_docker
             fi
             step "Install XQuartz via Homebrew"           macos_install_xquartz
-            step "Clone iic-osic-tools repository"        clone_repo
+            step "Clone IIC-OSIC-TOOLS repository"        clone_repo
             show_usage_hints
             step "Reboot macOS (recommended final step)"  macos_reboot
             ok "macOS installation steps completed."

@@ -134,7 +134,7 @@ Furthermore, the following variables can be set:
 
 #### Entrypoint script
 
-The entry point for this container is the [ui_startup.sh](https://github.com/hpretl/iic-osic-tools/blob/main/images/iic-osic-tools/scripts/ui_startup.sh) script. It controls which kind of UI (Xvnc or connecting to local X11 server) is used. The control logic for the automatic mode is simple. If the environment variable `DISPLAY` is set, an existing X11 server is assumed, and the startup script runs an XFCE4 terminal. If the `DISPLAY` is not set, it starts Xvnc and the noVNC web interface. This behavior can be overwritten with command-line arguments.
+The entry point for this container is the [ui_startup.sh](https://github.com/iic-jku/iic-osic-tools/blob/main/_build/images/base/skel/dockerstartup/scripts/ui_startup.sh) script. It controls which kind of UI (Xvnc or connecting to local X11 server) is used. The control logic for the automatic mode is simple. If the environment variable `DISPLAY` is set, an existing X11 server is assumed, and the startup script runs an XFCE4 terminal. If the `DISPLAY` is not set, it starts Xvnc and the noVNC web interface. This behavior can be overwritten with command-line arguments.
 
 The following command-line arguments are supported:
 
@@ -155,7 +155,7 @@ docker run -it hpretl/iic-osic-tools:latest --wait --vnc
 * Each tool has a separate directory in the `images` directory with the build script and additional required files.
 * The tool versions (typically the commit hash) have defaulted in the Dockerfile. It can be overwritten via environment variables.
 * Only the final image is tagged; the sub-tools are not. It is still possible to build only to a certain stage (stages are defined in the Dockerfile by `FROM base_image as stage_name`).
-* The final image is called `iic-osic-tool` by default.
+* The final image is called `iic-osic-tools` by default.
 * Docker on Windows suffers from bad memory management due to WSL2, especially for systems with less than 16 GB RAM. As a workaround, a memory limit to WSL can be set. See [Advanced settings configuration in WSL](https://learn.microsoft.com/en-us/windows/wsl/wsl-config) (look for the key “memory” in the `wsl2` tag).
 
 ## Todo

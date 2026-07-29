@@ -63,7 +63,7 @@ Note that in X11 mode Surfer is software-rendered inside the container and every
 
 ### Podman Compatibility
 
-The IIC-OSIC-Tools container can be run using Podman instead of Docker. The start scripts auto-detect the installed engine (override with `CONTAINER_ENGINE=podman`), and in rootless mode they automatically add `--userns=keep-id` and default the VNC webserver port to `8080`, see [Section 5.1 of the README](README.md#51-podman).
+The IIC-OSIC-TOOLS container can be run using Podman instead of Docker. The start scripts auto-detect the installed engine (override with `CONTAINER_ENGINE=podman`), and in rootless mode they automatically add `--userns=keep-id` and default the VNC webserver port to `8080`, see [Section 5.1 of the README](README.md#51-podman).
 
 If you run *rootful* Podman with a non-root `CONTAINER_USER`, bind-mounts are mounted as root, which creates problems when accessing files inside the container. In this case, either switch to rootless Podman (recommended), or edit the desired start script and find/replace all occurrences of `:rw` with `:U,rw`, so Podman will chown the mounted directories to the given `UID` inside the container.
 

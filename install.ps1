@@ -34,7 +34,7 @@
 #   * A container engine, user-selectable:
 #       - Docker Desktop                       (Docker.DockerDesktop), or
 #       - Podman                               (RedHat.Podman)
-#   * Clones the iic-osic-tools repository to a user-chosen directory
+#   * Clones the IIC-OSIC-TOOLS repository to a user-chosen directory
 #   * Reboots the machine (recommended after WSL / engine install)
 #
 # Safety:
@@ -196,7 +196,7 @@ function Install-Podman {
 
 function Clone-Repo {
     $default = Join-Path $env:USERPROFILE 'iic-osic-tools'
-    $entered = Read-Host -Prompt "[?] Directory to clone iic-osic-tools into [$default]"
+    $entered = Read-Host -Prompt "[?] Directory to clone IIC-OSIC-TOOLS into [$default]"
     if ([string]::IsNullOrWhiteSpace($entered)) { $entered = $default }
 
     # Resolve parent to absolute path before validating, to prevent traversal
@@ -258,7 +258,7 @@ function Clone-Repo {
     if ($LASTEXITCODE -ne 0) {
         throw 'git clone failed.'
     }
-    Write-Ok "Cloned iic-osic-tools to '$target'."
+    Write-Ok "Cloned IIC-OSIC-TOOLS to '$target'."
     $script:TargetDir = $target
 }
 
@@ -318,7 +318,7 @@ function Show-UsageHints {
 function Invoke-Reboot {
     Write-Warn2 'A reboot is strongly recommended to finalize WSL2 and the container engine.'
     if (-not (Ask 'Reboot now? (The system will restart in 60 seconds.)')) {
-        Write-Warn2 'Please reboot manually before using iic-osic-tools.'
+        Write-Warn2 'Please reboot manually before using IIC-OSIC-TOOLS.'
         return
     }
     & shutdown /r /t 60 /c 'Rebooting to finalize IIC-OSIC-TOOLS prerequisites. Run ''shutdown /a'' within 60s to abort.'
@@ -366,7 +366,7 @@ function Main {
     } else {
         Step 'Install Docker Desktop'                       { Install-DockerDesktop }
     }
-    Step 'Clone iic-osic-tools repository'                  { Clone-Repo }
+    Step 'Clone IIC-OSIC-TOOLS repository'                  { Clone-Repo }
 
     Show-UsageHints
 
