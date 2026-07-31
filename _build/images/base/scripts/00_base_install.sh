@@ -68,6 +68,7 @@ apt-get -y install \
 	expat \
 	flex \
 	fonts-dejavu-extra \
+	unifont \
 	g++ \
 	gawk \
 	gcc \
