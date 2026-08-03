@@ -171,6 +171,11 @@ wait_for_x() {
 # their own errors.
 wait_for_x || true
 
+if [ "$start_vnc" = true ]; then
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Starting VNC clipboard synchronization..."
+    vncconfig -nowin 2>&1 | tag "[VNCCLIP]" &
+fi
+
 # Only set the keyboard layout for VNC sessions; in X11-forwarding mode
 # this would alter the host X server's keyboard configuration.
 if [ "$start_vnc" = true ]; then
