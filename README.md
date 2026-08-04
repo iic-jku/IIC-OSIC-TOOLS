@@ -163,6 +163,11 @@ or to switch to sky130A enter
 sak-pdk sky130A
 ```
 
+or with this command
+```bash
+iic-pdk sky130A
+```
+
 More options for selecting digital standard cell libraries are available; please check the PDK directories.
 
 ## 3. Installed Tools
