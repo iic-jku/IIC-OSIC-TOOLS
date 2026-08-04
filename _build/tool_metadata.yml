@@ -30,13 +30,13 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: b1635c21cc506a2e3062c38daf53957cd2755762
+  commit: 591d2c2473148777bc516694e3e6f15f4c75ca20
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.1
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: 5ba90151ba037b561134ee9f41973df501721f43
+  commit: 9dd032c6ffb885c232801bc20f39cd5c80dc05fe
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.10
@@ -51,7 +51,7 @@
   commit: 1.5.323
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 8945407874c3031f13a5453598e9923268259698
+  commit: 2fb1d1982f91561e5731d9eb9dcae919444948b1
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-46
@@ -69,7 +69,7 @@
   commit: 5b423bdfe0c84064cf9028167bb759007c33b182
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 8a1321b45dab7e583ecbf4544fd84206a6e8a8c2
+  commit: b076432014b5a8f2044b31877fad9e18fe5c9f98
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: ed3959024649978df233f583b9d1acfc28ce9294
+  commit: b22f654ab36fe01f1f3176349c60626efed1a6a2
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -102,10 +102,10 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 99197ea10f8d7a476af46718eaacf1b5e93b5e74
+  commit: 1ffd741812189b1207f019a5aa338c60b662991f
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 99900f9185abc5375400da4a72b1ed689290d014
+  commit: e2829839afc62961d704123f30ed46e75477f33c
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: a63974c81391c10c0700244c32c0b7733ae711b1
@@ -132,7 +132,7 @@
   commit: 0.12.1
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 764f69317d840cbe99d0cf93164f0e7b5ee38515
+  commit: 1d4f3999e5ff2775a529d0ef0767b5805f8c3fae
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.050
