@@ -1,6 +1,6 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
-  commit: bb5f891c2ffff099be03d3862f94f2516f432c18
+  commit: 214049a3c01c8a8fc505c156430afe7ed4205970
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 161288cab41cf68b3b3e94479f6c49c8497938cd
+  commit: f424e3b12ec4c2e8cbf5d9c89f567d496d502750
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: a45a8fbf19827cd9c4780b00cec9781ef9961293
@@ -30,13 +30,13 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 591d2c2473148777bc516694e3e6f15f4c75ca20
+  commit: 8e420f56ff2900afb8dd7c68c89fdc6b0aac3252
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.1
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: 9dd032c6ffb885c232801bc20f39cd5c80dc05fe
+  commit: 21abcf8c8a093503eca96c4ef7d138ef26cc6aa6
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.10
@@ -51,7 +51,7 @@
   commit: 1.5.323
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 2fb1d1982f91561e5731d9eb9dcae919444948b1
+  commit: 8d8053e0c5ec1c15e22d5d88ffd53034f4b92de5
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-46
@@ -69,7 +69,7 @@
   commit: 5b423bdfe0c84064cf9028167bb759007c33b182
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: b076432014b5a8f2044b31877fad9e18fe5c9f98
+  commit: 90a043081abaf1529296dbd88406f539cc0a8b40
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -153,13 +153,13 @@
   commit: 05178c03ddf49c6bba63c5c7153774c11a5da12d
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: v0.67
-- name: yosys_eqy
+  commit: v0.68
+- name: yosys-eqy
   repo: https://github.com/YosysHQ/eqy.git
-  commit: v0.67
-- name: yosys_mcy
+  commit: v0.68
+- name: yosys-mcy
   repo: https://github.com/YosysHQ/mcy.git
-  commit: v0.67
-- name: yosys_sby
+  commit: v0.68
+- name: yosys-sby
   repo: https://github.com/YosysHQ/sby.git
-  commit: v0.67
+  commit: v0.68
