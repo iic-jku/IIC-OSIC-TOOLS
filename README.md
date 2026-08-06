@@ -440,8 +440,8 @@ For container experts, there is also support for other container engines and add
 
 The start scripts automatically handle the classic Podman pitfalls:
 
-- In rootless mode, they add `--userns=keep-id` (unless a `--userns` option is already given via `DOCKER_EXTRA_PARAMS`), so the host user launching the container is mapped to the same UID/GID inside the container, preventing access issues between the container and mounted directories from the host.
-- Since rootless mode cannot bind host ports below 1024, `start_vnc.sh` defaults the webserver port to `8080` instead of `80` (an explicitly set `WEBSERVER_PORT` below 1024 produces a warning).
+- In rootless mode on Linux, they add `--userns=keep-id` (unless a `--userns` option is already given via `DOCKER_EXTRA_PARAMS`), so the host user launching the container is mapped to the same UID/GID inside the container, preventing access issues between the container and mounted directories from the host. On macOS and Windows the bind mount passes through the Podman machine VM, which does the ID mapping itself, so `keep-id` is not added there.
+- Since rootless mode cannot bind host ports below 1024, `start_vnc.sh` defaults the webserver port to `8080` instead of `80` (an explicitly set `WEBSERVER_PORT` below 1024 produces a warning). This also applies on macOS and Windows, where the Podman machine VM runs rootless by default and its `rootlessport` helper enforces the same limit.
 - `start_vnc.sh` passes `--sysctl net.ipv4.ip_unprivileged_port_start=0` to Podman (rootful and rootless). Docker sets this namespaced sysctl in every container by default, Podman does not — without it, the noVNC webserver (which runs as a non-root user) cannot bind port 80 *inside* the container and the VNC mode fails.
 
 So in most cases, simply running `./start_<mode>.sh` works out of the box with Podman.
