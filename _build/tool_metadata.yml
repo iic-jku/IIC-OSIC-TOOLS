@@ -144,7 +144,7 @@
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: f583f47049b783906f49047cbf704c3dbb670fa4
+  commit: 361eeeccebad0e59f34af28fcec2c8d8e7f1db98
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
