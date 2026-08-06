@@ -17,9 +17,9 @@ TEMP=${RUNS_DIR}/${RAND}/17
 mkdir -p "$TEMP"
 cd "$TEMP" || exit 1
 
-# Install Veryl if not already installed
+# The veryl/veryl-ls proxies and the default toolchain are preinstalled in
+# the image by verylup setup at build time; install on demand as a fallback.
 if ! command -v veryl >/dev/null 2>&1; then
-    export PATH="$PATH:$XDG_DATA_HOME/veryl/toolchains/latest"
     verylup --quiet install latest
 fi
 

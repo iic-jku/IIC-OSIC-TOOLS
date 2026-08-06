@@ -135,13 +135,9 @@ if [ -n "${WAYLAND_DISPLAY:-}" ] && [ -S "/tmp/host-wayland/${WAYLAND_DISPLAY}" 
     ln -s "/tmp/host-wayland/${WAYLAND_DISPLAY}" "${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}"
 fi
 
-# This is needed for Veryl to store its data
-if [ -z "${XDG_DATA_HOME+x}" ]; then
-    export XDG_DATA_HOME=/headless/.data-default
-fi
-if [ ! -d "$XDG_DATA_HOME" ]; then
-    mkdir -p "$XDG_DATA_HOME"
-fi
+# XDG_DATA_HOME is intentionally left at its spec default ($HOME/.local/share).
+# It was once forced to a custom directory for a pre-installed Veryl toolchain;
+# since only verylup is shipped, tools create the default directory on demand.
 
 #----------------------------------------
 # Source user configs from $DESIGNS
