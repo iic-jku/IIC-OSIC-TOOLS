@@ -33,7 +33,11 @@ ENV HOME=/headless \
     VNC_RESOLUTION=1680x1050 \
     VNC_PW=abc123 \
     VNC_VIEW_ONLY=false
-#FIXME workaround for OpenMPI throwing errors when run inside a container without Capability "SYS_PTRACE".
+# OpenMPI (used by palace and Xyce) defaults to CMA for shared-memory transfers,
+# which needs the SYS_PTRACE capability the container does not have; without
+# this it prints errors on every run. Not a defect, a permanent container
+# constraint. Note: the "vader" BTL is OpenMPI 4.x (noble ships 4.1.6); with
+# OpenMPI >= 5 the knob is called OMPI_MCA_btl_sm_single_copy_mechanism.
 ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
 
 # Copy base skeleton into image

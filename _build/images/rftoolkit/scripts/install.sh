@@ -33,8 +33,11 @@ cp -R examples "${TOOLS}/${RFTK_NAME}"
 cd /tmp || exit 1
 git clone --filter=blob:none "${RFTK_FASTERCAP_REPO_URL}" "${RFTK_NAME}_fc"
 # get additional libs (LinAlgebra and Geometry)
-# FIXME check if lib versions fit to FasterCap version (last done 2023-05-20)
-git clone https://github.com/ediloren/LinAlgebra.git
+# The two libs are pinned to the commits that match the pinned FasterCap
+# revision. Last checked 2026-08-06: all three upstream repos are dormant and
+# their HEAD is exactly the commit pinned here, so nothing to update. Re-check
+# when bumping RFTK_FASTERCAP_REPO_COMMIT.
+git clone --filter=blob:none https://github.com/ediloren/LinAlgebra.git
 cd LinAlgebra || exit 1
 git checkout 627132d70bfd7eadd727f930286938a5a01d9914
 cd ..

@@ -5,9 +5,16 @@
 
 set -e
 
-# FIXME there is a nasty bug in 24.04 LTS gobject-introspection
-# see https://gitlab.gnome.org/GNOME/gobject-introspection/-/commit/a2139dba59eac283a7f543ed737f038deebddc19
-# until this is available upstream, we patch it here
+# giscanner in Ubuntu 24.04 LTS (gobject-introspection 1.80.1-1) still imports
+# distutils.msvccompiler, which no longer exists: on Python 3.12 "distutils"
+# comes from setuptools, and setuptools dropped the MSVC compiler modules. Any
+# g-ir-scanner run therefore dies with ModuleNotFoundError.
+# Fixed upstream in
+# https://gitlab.gnome.org/GNOME/gobject-introspection/-/commit/a2139dba59eac283a7f543ed737f038deebddc19
+# but not in the noble package (re-checked 2026-08-06), so we patch it here.
+# Drop this script once the base image ships a gobject-introspection that
+# contains the fix; the patch below then fails to apply and fails the build,
+# which is the intended signal.
 
 cat << EOF > /tmp/p1.patch
 29d28
@@ -57,6 +64,5 @@ EOF
 patch "/usr/lib/$(arch)-linux-gnu/gobject-introspection/giscanner/ccompiler.py" /tmp/p1.patch
 patch "/usr/lib/$(arch)-linux-gnu/gobject-introspection/giscanner/msvccompiler.py" /tmp/p2.patch
 
-# clean up
-echo "[INFO] Cleaning up caches"
-rm -rf /tmp/*
+# clean up (only our own files; /tmp is shared with the other build scripts)
+rm -f /tmp/p1.patch /tmp/p2.patch
