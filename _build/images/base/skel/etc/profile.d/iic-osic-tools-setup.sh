@@ -113,14 +113,26 @@ fi
 # /etc/passwd entry, the shell may not populate USER automatically.
 [ -z "${USER}" ] && USER=$(id -un 2>/dev/null || echo designer) && export USER
 
-# First, check if XDG_RUNTIME_DIR is set, if not, set to default.
-if [ -z "${XDG_RUNTIME_DIR+x}" ]; then
-    export XDG_RUNTIME_DIR=/tmp/runtime-default
+# First, check if XDG_RUNTIME_DIR is set. If not (or if it still points at
+# the legacy shared /tmp/runtime-default), use a per-user directory: the XDG
+# spec requires the directory to be owned by the current user with mode
+# 0700, and programs like dbus-daemon verify this before using it.
+if [ -z "${XDG_RUNTIME_DIR+x}" ] || [ "$XDG_RUNTIME_DIR" = "/tmp/runtime-default" ]; then
+    XDG_RUNTIME_DIR="/tmp/runtime-$(id -u)"
+    export XDG_RUNTIME_DIR
 fi
 # Second, verify if the actual directory exists, if not, create it.
 if [ ! -d "$XDG_RUNTIME_DIR" ]; then
     mkdir -p "$XDG_RUNTIME_DIR"
     chmod 700 "$XDG_RUNTIME_DIR"
+fi
+
+# A Wayland socket forwarded by start_x.sh is bind-mounted at a neutral path
+# (mounting it directly into the per-user XDG_RUNTIME_DIR would re-create
+# that directory root-owned); link it into place.
+if [ -n "${WAYLAND_DISPLAY:-}" ] && [ -S "/tmp/host-wayland/${WAYLAND_DISPLAY}" ] \
+    && [ ! -e "${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}" ]; then
+    ln -s "/tmp/host-wayland/${WAYLAND_DISPLAY}" "${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}"
 fi
 
 # This is needed for Veryl to store its data

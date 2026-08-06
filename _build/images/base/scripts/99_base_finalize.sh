@@ -28,10 +28,10 @@ update-alternatives --set python /usr/bin/python3
 update-mime-database /usr/share/mime
 update-desktop-database /usr/share/applications
 
-# Create default XDG_RUNTIME_DIR
-# FIXME: Do not create an all-world readable directory, but one that fits the exact user of the container.
-mkdir -p /tmp/runtime-default
-chmod 777 /tmp/runtime-default
+# Note: XDG_RUNTIME_DIR is NOT created here. The XDG spec requires it to be
+# owned by the current user with mode 0700, and the UID is only known at
+# container startup; /etc/profile.d/iic-osic-tools-setup.sh creates a
+# per-user /tmp/runtime-<uid> instead.
 
 # Remove Ubuntu user in container to prevent conflicts with designer user
 userdel ubuntu

@@ -141,12 +141,13 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 	        CONTAINER_GROUP=$(id -g)
 	fi
 
-	# On Linux, we force the container-side XDG_RUNTIME_DIR to /tmp/runtime-default, if not overwritten
-	# Note, this would be the default, also set in env.sh, if not set. As it is required for mounting, it is still defined here
-	if [ -z ${CONTAINER_XDG_RUNTIME_DIR+z} ]; then
-		CONTAINER_XDG_RUNTIME_DIR="/tmp/runtime-default"
+	# The container creates a per-user XDG_RUNTIME_DIR (/tmp/runtime-<uid>,
+	# owned by the container user with mode 0700 as the XDG spec requires)
+	# at startup itself; only pass one when explicitly overridden via
+	# CONTAINER_XDG_RUNTIME_DIR.
+	if [ -n "${CONTAINER_XDG_RUNTIME_DIR}" ]; then
+		PARAMS="${PARAMS} -e XDG_RUNTIME_DIR=${CONTAINER_XDG_RUNTIME_DIR}"
 	fi
-	PARAMS="${PARAMS} -e XDG_RUNTIME_DIR=${CONTAINER_XDG_RUNTIME_DIR}"
 
 	# In Podman rootless mode, keep the host UID/GID inside the container for
 	# X11/Wayland socket access and bind-mount file ownership (see README 5.1).
@@ -230,7 +231,15 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 
 		if [ -S "$WAYLAND_SOCK" ]; then
 			[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Wayland Socket exists, forwarding..."
-			PARAMS="${PARAMS} -v ${WAYLAND_SOCK}:${CONTAINER_XDG_RUNTIME_DIR}/${WAYLAND_DISP}:rw -e WAYLAND_DISPLAY=${WAYLAND_DISP}"
+			# Mount the socket at a neutral path; the in-container profile
+			# script links it into the per-user XDG_RUNTIME_DIR (bind-mounting
+			# it there directly would re-create that directory root-owned).
+			if [ -n "${CONTAINER_XDG_RUNTIME_DIR}" ]; then
+				WAYLAND_MOUNT_DIR="${CONTAINER_XDG_RUNTIME_DIR}"
+			else
+				WAYLAND_MOUNT_DIR="/tmp/host-wayland"
+			fi
+			PARAMS="${PARAMS} -v ${WAYLAND_SOCK}:${WAYLAND_MOUNT_DIR}/${WAYLAND_DISP}:rw -e WAYLAND_DISPLAY=${WAYLAND_DISP}"
 		else
 			[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[WARNING] Wayland socket could not be found. Falling back to X11."
 		fi
