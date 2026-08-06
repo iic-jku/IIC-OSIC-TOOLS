@@ -38,11 +38,13 @@ if [ -z ${CONTAINER_ENGINE+z} ]; then
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container engine auto-set to ${CONTAINER_ENGINE}."
 fi
 
-# Detect Podman, and Podman rootless mode on Linux (the docker CLI can also
-# be the podman-docker alias, so check the version string).
+# Detect Podman, and Podman rootless mode (the docker CLI can also be the
+# podman-docker alias, so check the version string). On macOS and Windows the
+# Podman machine VM is rootless by default as well, and its rootlessport
+# helper has the same restriction on publishing privileged ports.
 if ${CONTAINER_ENGINE} --version 2>/dev/null | grep -qi "podman"; then
 	ENGINE_IS_PODMAN=1
-	if [[ "$OSTYPE" == "linux"* ]] && ${CONTAINER_ENGINE} info --format '{{.Host.Security.Rootless}}' 2>/dev/null | grep -qi "true"; then
+	if ${CONTAINER_ENGINE} info --format '{{.Host.Security.Rootless}}' 2>/dev/null | grep -qi "true"; then
 		ENGINE_IS_ROOTLESS=1
 		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Podman rootless mode detected."
 	fi
@@ -137,9 +139,11 @@ if [[ ${CONTAINER_GROUP} -ne 0 ]]  && [[ ${CONTAINER_GROUP} -lt 1000 ]]; then
         echo
 fi
 
-# In Podman rootless mode, keep the host UID/GID inside the container so
-# bind-mounted files keep their ownership (see README section 5.1).
-if [ -n "${ENGINE_IS_ROOTLESS}" ] && [ "${CONTAINER_USER}" != "0" ]; then
+# In Podman rootless mode on Linux, keep the host UID/GID inside the container
+# so bind-mounted files keep their ownership (see README section 5.1). On
+# macOS/Windows the mount goes through the Podman machine VM, which handles the
+# ID mapping itself, so keep-id is not applied there.
+if [ -n "${ENGINE_IS_ROOTLESS}" ] && [[ "$OSTYPE" == "linux"* ]] && [ "${CONTAINER_USER}" != "0" ]; then
 	if ! echo "${DOCKER_EXTRA_PARAMS}" | grep -q "userns"; then
 		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Adding --userns=keep-id for Podman rootless mode."
 		DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} --userns=keep-id"
@@ -217,6 +221,13 @@ else
 	#${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" pull "${IMAGE_NAME}"
 	# Disable SC2086, $PARAMS must be globbed and splitted.
 	# shellcheck disable=SC2086
-	${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" $PARAMS -v "$DESIGNS":"/foss/designs":rw --name "${CONTAINER_NAME}" "${IMAGE_NAME}" > /dev/null
+	if ! ${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" run -d --user "${CONTAINER_USER}:${CONTAINER_GROUP}" $PARAMS -v "$DESIGNS":"/foss/designs":rw --name "${CONTAINER_NAME}" "${IMAGE_NAME}" > /dev/null; then
+		echo "[ERROR] Could not start the container ${CONTAINER_NAME}!"
+		echo "[HINT] A leftover container can be removed with \"${CONTAINER_ENGINE} rm ${CONTAINER_NAME}\"."
+		if [ -n "${ENGINE_IS_ROOTLESS}" ] && [ "$WEBSERVER_PORT" -gt 0 ] && [ "$WEBSERVER_PORT" -lt 1024 ]; then
+			echo "[HINT] Rootless Podman cannot publish host ports below 1024, retry with e.g. WEBSERVER_PORT=8080."
+		fi
+		exit 1
+	fi
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && [ "$WEBSERVER_PORT" -gt 0 ] && echo "[INFO] To access the VNC session, open a browser and navigate to http://localhost:${WEBSERVER_PORT}/?password=${VNC_PW:-abc123}"
 fi
