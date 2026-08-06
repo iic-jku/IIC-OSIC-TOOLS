@@ -1,0 +1,8 @@
+[Desktop Entry]
+# SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+# SPDX-License-Identifier: Apache-2.0
+# Mask the system-wide /etc/xdg/autostart/xiccd.desktop entry: there is no
+# color-management hardware inside the container, the daemon is dead weight.
+Type=Application
+Name=xiccd
+Hidden=true

@@ -38,10 +38,11 @@ if [ -z ${CONTAINER_ENGINE+z} ]; then
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container engine auto-set to ${CONTAINER_ENGINE}."
 fi
 
-# Detect Podman rootless mode on Linux (the docker CLI can also be the
-# podman-docker alias, so check the version string).
-if [[ "$OSTYPE" == "linux"* ]] && ${CONTAINER_ENGINE} --version 2>/dev/null | grep -qi "podman"; then
-	if ${CONTAINER_ENGINE} info --format '{{.Host.Security.Rootless}}' 2>/dev/null | grep -qi "true"; then
+# Detect Podman, and Podman rootless mode on Linux (the docker CLI can also
+# be the podman-docker alias, so check the version string).
+if ${CONTAINER_ENGINE} --version 2>/dev/null | grep -qi "podman"; then
+	ENGINE_IS_PODMAN=1
+	if [[ "$OSTYPE" == "linux"* ]] && ${CONTAINER_ENGINE} info --format '{{.Host.Security.Rootless}}' 2>/dev/null | grep -qi "true"; then
 		ENGINE_IS_ROOTLESS=1
 		[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Podman rootless mode detected."
 	fi
@@ -92,8 +93,22 @@ if [ -z ${CONTAINER_NAME+z} ]; then
 	CONTAINER_NAME="iic-osic-tools_shell_uid_"$(id -u)
 fi
 
+# Default DISPLAY for GUI tools started from the shell. The X11 socket is not
+# mounted in shell mode, so a plain ":0" can never work on macOS; there the
+# X server (XQuartz) is reached over TCP via the host gateway, as in
+# start_x.sh. On Linux, fall back to the host's DISPLAY (GUI output
+# additionally requires forwarding the X socket, e.g. via
+# DOCKER_EXTRA_PARAMS="-v /tmp/.X11-unix:/tmp/.X11-unix").
 if [ -z ${DISP+z} ]; then
-	DISP=":0"
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		if [ -n "${ENGINE_IS_PODMAN}" ]; then
+			DISP="host.containers.internal:0"
+		else
+			DISP="host.docker.internal:0"
+		fi
+	else
+		DISP="${DISPLAY:-:0}"
+	fi
 fi
 
 # Check for UIDs and GIDs below 1000, except 0 (root)

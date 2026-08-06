@@ -36,6 +36,16 @@ chmod 777 /tmp/runtime-default
 # Remove Ubuntu user in container to prevent conflicts with designer user
 userdel ubuntu
 
+# Trim XFCE session daemons that are useless inside a container: the udisks2
+# GVfs volume monitor (there is no udisks daemon/system D-Bus in the
+# container) and the tumbler thumbnailer. Removing the GVfs/D-Bus activation
+# files keeps Thunar & friends from spawning them.
+rm -f /usr/share/gvfs/remote-volume-monitors/udisks2.monitor \
+      /usr/share/dbus-1/services/org.gtk.vfs.UDisks2VolumeMonitor.service \
+      /usr/share/dbus-1/services/org.xfce.Tumbler.Cache1.service \
+      /usr/share/dbus-1/services/org.xfce.Tumbler.Manager1.service \
+      /usr/share/dbus-1/services/org.xfce.Tumbler.Thumbnailer1.service
+
 # Remove Rust toolchains/caches that rustup auto-downloads when pip has to
 # build a package from source (no prebuilt wheel, e.g. on aarch64); a
 # toolchain is re-downloaded on first cargo use if a user needs Rust

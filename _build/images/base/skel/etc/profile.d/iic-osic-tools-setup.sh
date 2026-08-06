@@ -60,7 +60,9 @@ if [ -z "${FOSS_INIT_DONE+x}" ]; then
     _path_add_tool_custom   "osic-multitool"
 
     export SAK=$TOOLS/sak
-    export PATH=$TOOLS/bin:$SAK:/usr/local/sbin:$PATH
+    # /usr/local/sbin is already part of the image's default PATH, so do not
+    # prepend it again here (it would show up twice).
+    export PATH=$TOOLS/bin:$SAK:$PATH
 
     # Seed PYTHONPATH with the interpreter's default paths so the tool-specific
     # entries appended below extend (rather than shadow) the system modules.

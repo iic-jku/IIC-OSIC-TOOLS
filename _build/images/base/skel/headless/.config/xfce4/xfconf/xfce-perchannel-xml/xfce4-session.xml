@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
+  ~ Johannes Kepler University, Department for Integrated Circuits
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~
+  ~ ssh-agent/gpg-agent are of little use inside the container session and
+  ~ only cost RAM and startup time; users can still start them manually.
+  -->
+
+<channel name="xfce4-session" version="1.0">
+  <property name="startup" type="empty">
+    <property name="ssh-agent" type="empty">
+      <property name="enabled" type="bool" value="false"/>
+    </property>
+    <property name="gpg-agent" type="empty">
+      <property name="enabled" type="bool" value="false"/>
+    </property>
+  </property>
+</channel>

@@ -134,9 +134,6 @@ cargo install \
 	gdsfill --version 0.1.8 \
 	--root "${TOOLS}"
 
-# Drop the Rust toolchain and registry cache so they don't bloat the image.
-rm -rf "$RUSTUP_HOME" "$CARGO_HOME"
-
 # The venvs use --system-site-packages so large dependencies already in the
 # system Python (numpy, scipy, pandas, ...) are not duplicated inside them;
 # only packages with conflicting pins get venv-local copies
@@ -164,6 +161,12 @@ gem install \
 	rggen-verilog:0.14.0 \
 	rggen-vhdl:0.13.0 \
 	rggen-veryl:0.8.0
+
+# Drop the Rust toolchain and registry cache so they don't bloat the image.
+# This must stay at the END of this script: RUSTUP_HOME/CARGO_HOME remain
+# exported above, and any later build step that merely probes cargo/rustc
+# (Ubuntu's rustup proxies) re-creates $RUSTUP_HOME/settings.toml.
+rm -rf "$RUSTUP_HOME" "$CARGO_HOME"
 
 echo "[INFO] EDA package installation completed"
 
