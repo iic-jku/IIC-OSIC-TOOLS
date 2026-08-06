@@ -1,6 +1,6 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
-  commit: 214049a3c01c8a8fc505c156430afe7ed4205970
+  commit: 97b599b2d3cb433d204cf71b8583f6ec2825d509
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -63,13 +63,13 @@
   commit: r1.22.1
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
-  commit: f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7
+  commit: 026824c7969ce6f4fc9678e6ca04b0a06a596c4b
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
   commit: 5b423bdfe0c84064cf9028167bb759007c33b182
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 90a043081abaf1529296dbd88406f539cc0a8b40
+  commit: 274797adbf5fd0555dcd35fe1606d8d0e642c0a0
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 1ffd741812189b1207f019a5aa338c60b662991f
+  commit: d69e89069834a07e0fe9518bd33e343b514e7007
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: e2829839afc62961d704123f30ed46e75477f33c
