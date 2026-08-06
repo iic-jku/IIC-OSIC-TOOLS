@@ -75,6 +75,14 @@ update-java-alternatives --set "$(update-java-alternatives --list | grep 1.17 | 
 
 # remove light-locker and other power management stuff, otherwise VNC session locks up
 apt-get purge -y light-locker pm-utils *screensaver*
+
+# gnome-terminal is never requested here; it is only dragged in as an `x-terminal-emulator`
+# alternative for xorg/xinit. It is unreliable in this container (the D-Bus-activated
+# factory often fails to map a window, which surfaces as the XFCE dialog "Failed to execute
+# default Terminal Emulator / Input/output error"). xfce4-terminal and xterm both provide
+# x-terminal-emulator, so that dependency stays satisfied without it.
+apt-get purge -y gnome-terminal
+
 apt-get autoremove -y
 
 /bin/dbus-uuidgen > /etc/machine-id
