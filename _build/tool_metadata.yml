@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 8e420f56ff2900afb8dd7c68c89fdc6b0aac3252
+  commit: f493076882c6b0ee33fb1ca67c7562f96c2242ca
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.1
@@ -45,13 +45,13 @@
   commit: 40593af1fb99f24bdf7a105d72a8ed6f29b31b65
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.679
+  commit: 8.3.680
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.323
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 8d8053e0c5ec1c15e22d5d88ffd53034f4b92de5
+  commit: 8f6cab0fc8a02283f97be44ddf6694ed9a6c1386
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-46
@@ -69,7 +69,7 @@
   commit: 5b423bdfe0c84064cf9028167bb759007c33b182
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 274797adbf5fd0555dcd35fe1606d8d0e642c0a0
+  commit: b9a38929e3421ae8e9db83750d11d2194e2e4e5d
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: b22f654ab36fe01f1f3176349c60626efed1a6a2
+  commit: 8bd70a487db0dbcfe6de4ca2cb7236e797a75176
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -129,7 +129,7 @@
   commit: trilinos-release-12-12-1
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.12.1
+  commit: 0.12.2
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
   commit: 1d4f3999e5ff2775a529d0ef0767b5805f8c3fae
@@ -138,7 +138,7 @@
   commit: v5.050
 - name: verible
   repo: https://github.com/chipsalliance/verible.git
-  commit: v0.0-4117-gdd17e7fe
+  commit: v0.0-4121-gc2ec3416
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
