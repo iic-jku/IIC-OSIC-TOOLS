@@ -151,7 +151,10 @@ if [ "$start_vnc" = true ]; then
     # log connect options
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] VNC environment started."
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] VNCSERVER started on DISPLAY= $DISPLAY \n\t=> connect via VNC viewer with $VNC_IP:$VNC_PORT."
-    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] noVNC HTML client started:\n\t=> connect via http://localhost/?password=$VNC_PW\n"
+    # This is the container-internal address; the port reachable from the host is
+    # whatever the start scripts published for it (see WEBSERVER_PORT), which is not
+    # visible from in here.
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] noVNC HTML client started:\n\t=> connect via http://$VNC_IP:$NO_VNC_PORT/?password=$VNC_PW\n\t   (container-internal; from the host use the port published via WEBSERVER_PORT)\n"
 fi
 
 wait_for_x() {

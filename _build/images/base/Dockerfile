@@ -18,7 +18,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 # Connection ports for controlling the UI:
 # VNC port:5901
-# noVNC webport, connect via http://IP:80/?password=start
+# noVNC webport, connect via http://IP:80/?password=abc123 (the password is VNC_PW below)
 ENV VNC_PORT=5901 \
     NO_VNC_PORT=80 \
     JUPYTER_PORT=8888
@@ -66,9 +66,11 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 # Rebrand the noVNC web assets. This MUST stay after the RUN above: the `novnc` apt package
 # installs into /usr/share/novnc and would overwrite anything placed there by the
 # `COPY images/base/skel /` near the top of this file.
-# index.html is a symlink to vnc_lite.html, which declares no icons at all, so the root URL
-# falls back to /favicon.ico. vnc.html declares 13 sized PNGs plus an SVG icon that browsers
-# prefer over all of them, so all of those are replaced too.
+# index.html is the redirect page written by 80_install_apps.sh; it declares no icons at all,
+# so the root URL falls back to /favicon.ico (it also carries its own branded <title>, and so
+# is not part of the title substitution below). vnc.html, which it redirects to, declares 13
+# sized PNGs plus an SVG icon that browsers prefer over all of them, so all of those are
+# replaced too.
 # No --chmod here: it would also apply to the directories and make them non-traversable.
 COPY images/base/branding/novnc/ /usr/share/novnc/
 

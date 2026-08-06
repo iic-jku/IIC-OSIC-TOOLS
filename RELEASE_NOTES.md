@@ -4,6 +4,8 @@ This document summarizes the most important changes of the individual releases o
 
 ## 2026.08
 
+* [Changing] the browser (noVNC) session now uses the full noVNC client instead of the stripped-down `vnc_lite.html` demo page that had been served from `/` since the container's ConSol ancestry. The control bar this adds provides clipboard transfer in both directions, fullscreen, ctrl-alt-del, and connection settings — none of which the lite client has. The advertised URL is unchanged (`http://localhost:<WEBSERVER_PORT>/?password=<pw>` still connects straight through), and the container desktop now resizes to the browser window by default; the "Scaling Mode" setting overrides that and is remembered.
+* [Fix] the `[INFO] noVNC HTML client started` line printed by the container omitted the web server port, which is misleading whenever `WEBSERVER_PORT` is not `80` — that is, by default under rootless Podman, including on macOS and Windows. The `README` instructions had the same omission.
 * [Adding] `sak-gds-xor.py` to XOR two layouts (GDS2/OASIS) with KLayout and write the differing geometry to an output layout, for comparing two revisions of a layout or a signoff database against its source.
 * [Update] `xschem` bumped past the upstream fix for the headless `tcleval` focus call ([xschem issue #494](https://github.com/StefanSchippers/xschem/issues/494)); the local patch guarding that call is removed again.
 * [Build] `xschem` is now built from its new home at [Codeberg](https://codeberg.org/stef_xschem/xschem), which upstream has made the primary repository; GitHub is only kept for a transitional period. Note that the Codeberg import rewrote the commit hashes, so revisions pinned here no longer match the IDs used up to `2026.07`.
