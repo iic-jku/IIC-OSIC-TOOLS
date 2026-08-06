@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: f424e3b12ec4c2e8cbf5d9c89f567d496d502750
+  commit: ea079441cff01f054727e9de583ec441b2cabb19
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: a45a8fbf19827cd9c4780b00cec9781ef9961293
@@ -51,7 +51,7 @@
   commit: 1.5.323
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 8f6cab0fc8a02283f97be44ddf6694ed9a6c1386
+  commit: de8cd9782f8ee8f07b3fd1691ae61661b1d9528e
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-46
@@ -66,10 +66,10 @@
   commit: 026824c7969ce6f4fc9678e6ca04b0a06a596c4b
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: 5b423bdfe0c84064cf9028167bb759007c33b182
+  commit: 84703e254dafe84ed2f06056e5f105067b8f1910
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: b9a38929e3421ae8e9db83750d11d2194e2e4e5d
+  commit: ab6fd26351dc449e69059684dc6aa9ae9046eb36
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 8bd70a487db0dbcfe6de4ca2cb7236e797a75176
+  commit: f25b78b209aed79a5805e02363683dbc7a3a3e6c
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
@@ -102,7 +102,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: d69e89069834a07e0fe9518bd33e343b514e7007
+  commit: a3d50cfc2f6dd18eb26cc3ad5c8d996d9275b97d
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: e2829839afc62961d704123f30ed46e75477f33c
@@ -144,7 +144,7 @@
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 361eeeccebad0e59f34af28fcec2c8d8e7f1db98
+  commit: 482e5d23c1e12f78675cd793825f1e68169fdfee
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
