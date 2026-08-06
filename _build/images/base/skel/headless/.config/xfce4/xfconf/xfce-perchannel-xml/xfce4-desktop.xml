@@ -2,43 +2,83 @@
 
 <channel name="xfce4-desktop" version="1.0">
   <property name="backdrop" type="empty">
+    <!-- xfdesktop 4.18 defaults single-workspace-mode to true; set it explicitly so the
+         backdrop is deterministic and workspace0 below is authoritative. -->
+    <property name="single-workspace-mode" type="bool" value="true"/>
+    <property name="single-workspace-number" type="int" value="0"/>
     <property name="screen0" type="empty">
+      <!-- image-style 4 = Scaled (fit inside, keep aspect). The wallpaper PNG is a
+           transparent 3360x2100 canvas with the logo centred in it, so the logo scales
+           proportionally at any VNC_RESOLUTION and is never cropped, while the backdrop
+           colour shows through the transparent padding.
+           The colour property is "rgba1" (array of 4 doubles, 0.0-1.0), NOT the xfdesktop
+           4.10-era "color1" (array of uint16) that used to be here; 4.18 ignores color1
+           outright, which is why the backdrop always fell back to xfdesktop's default blue.
+           These values are #22272E, a dark slate in the same lightness band as
+           mainstream dark UIs, so the step to a bright tool window is softer on the
+           eyes than a near-black backdrop. -->
       <property name="monitor0" type="empty">
         <property name="workspace0" type="empty">
           <property name="color-style" type="int" value="0"/>
-          <property name="image-style" type="int" value="1"/>
-          <property name="last-image" type="string" value="/headless/.config/IICQC_JKU_Logo.png"/>
-          <property name="color1" type="array">
-            <value type="uint" value="8836"/>
-            <value type="uint" value="8836"/>
-            <value type="uint" value="8836"/>
-            <value type="uint" value="65535"/>
+          <property name="image-style" type="int" value="4"/>
+          <property name="last-image" type="string" value="/headless/.config/IIC-OSIC-TOOLS_Logo.png"/>
+          <property name="rgba1" type="array">
+            <value type="double" value="0.133333333333333331"/>
+            <value type="double" value="0.152941176470588236"/>
+            <value type="double" value="0.180392156862745096"/>
+            <value type="double" value="1.000000000000000000"/>
           </property>
         </property>
         <property name="workspace1" type="empty">
           <property name="color-style" type="int" value="0"/>
-          <property name="image-style" type="int" value="1"/>
-          <property name="last-image" type="string" value="/headless/.config/IICQC_JKU_Logo.png"/>
+          <property name="image-style" type="int" value="4"/>
+          <property name="last-image" type="string" value="/headless/.config/IIC-OSIC-TOOLS_Logo.png"/>
+          <property name="rgba1" type="array">
+            <value type="double" value="0.133333333333333331"/>
+            <value type="double" value="0.152941176470588236"/>
+            <value type="double" value="0.180392156862745096"/>
+            <value type="double" value="1.000000000000000000"/>
+          </property>
         </property>
         <property name="workspace2" type="empty">
           <property name="color-style" type="int" value="0"/>
-          <property name="image-style" type="int" value="1"/>
-          <property name="last-image" type="string" value="/headless/.config/IICQC_JKU_Logo.png"/>
+          <property name="image-style" type="int" value="4"/>
+          <property name="last-image" type="string" value="/headless/.config/IIC-OSIC-TOOLS_Logo.png"/>
+          <property name="rgba1" type="array">
+            <value type="double" value="0.133333333333333331"/>
+            <value type="double" value="0.152941176470588236"/>
+            <value type="double" value="0.180392156862745096"/>
+            <value type="double" value="1.000000000000000000"/>
+          </property>
         </property>
         <property name="workspace3" type="empty">
           <property name="color-style" type="int" value="0"/>
-          <property name="image-style" type="int" value="1"/>
-          <property name="last-image" type="string" value="/headless/.config/IICQC_JKU_Logo.png"/>
+          <property name="image-style" type="int" value="4"/>
+          <property name="last-image" type="string" value="/headless/.config/IIC-OSIC-TOOLS_Logo.png"/>
+          <property name="rgba1" type="array">
+            <value type="double" value="0.133333333333333331"/>
+            <value type="double" value="0.152941176470588236"/>
+            <value type="double" value="0.180392156862745096"/>
+            <value type="double" value="1.000000000000000000"/>
+          </property>
         </property>
-        <property name="image-path" type="string" value="/headless/.config/IICQC_JKU_Logo.png"/>
+        <property name="image-path" type="string" value="/headless/.config/IIC-OSIC-TOOLS_Logo.png"/>
         <property name="image-show" type="bool" value="true"/>
         <property name="image-style" type="int" value="0"/>
       </property>
+      <!-- TigerVNC names its RandR output VNC-0, so this is the key that is actually live
+           in the container; monitor0 above is only the fallback. Keep the two in sync. -->
       <property name="monitorVNC-0" type="empty">
         <property name="workspace0" type="empty">
           <property name="color-style" type="int" value="0"/>
-          <property name="image-style" type="int" value="1"/>
-          <property name="last-image" type="string" value="/headless/.config/IICQC_JKU_Logo.png"/>
+          <property name="image-style" type="int" value="4"/>
+          <property name="last-image" type="string" value="/headless/.config/IIC-OSIC-TOOLS_Logo.png"/>
+          <property name="rgba1" type="array">
+            <value type="double" value="0.133333333333333331"/>
+            <value type="double" value="0.152941176470588236"/>
+            <value type="double" value="0.180392156862745096"/>
+            <value type="double" value="1.000000000000000000"/>
+          </property>
         </property>
       </property>
     </property>

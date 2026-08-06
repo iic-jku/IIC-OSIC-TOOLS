@@ -59,6 +59,31 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
     chmod -R 777 /headless && \
     find /headless -type f -not -name "*.sh" -exec chmod 666 {} \;
 
+# Rebrand the noVNC web assets. This MUST stay after the RUN above: the `novnc` apt package
+# installs into /usr/share/novnc and would overwrite anything placed there by the
+# `COPY images/base/skel /` near the top of this file.
+# index.html is a symlink to vnc_lite.html, which declares no icons at all, so the root URL
+# falls back to /favicon.ico. vnc.html declares 13 sized PNGs plus an SVG icon that browsers
+# prefer over all of them, so all of those are replaced too.
+# No --chmod here: it would also apply to the directories and make them non-traversable.
+COPY images/base/branding/novnc/ /usr/share/novnc/
+
+# Rebrand the noVNC browser-tab title. There are three independent sources: the static
+# <title> in each entry page, plus PAGE_TITLE in app/ui.js, which vnc.html's JS uses to
+# rewrite document.title once connected ("<desktop name> - <PAGE_TITLE>"). Patching only
+# the <title> tags would leave "noVNC" in the tab as soon as the session connects.
+# Each substitution is guarded so that an upstream noVNC change fails the build loudly
+# instead of silently shipping the stock branding.
+RUN set -eu; \
+    for f in /usr/share/novnc/vnc.html /usr/share/novnc/vnc_lite.html; do \
+        grep -q '<title>noVNC</title>' "$f" || \
+            { echo "ERROR: <title>noVNC</title> not found in $f - did noVNC change?" >&2; exit 1; }; \
+        sed -i 's|<title>noVNC</title>|<title>IIC-OSIC-TOOLS</title>|' "$f"; \
+    done; \
+    grep -q 'const PAGE_TITLE = "noVNC";' /usr/share/novnc/app/ui.js || \
+        { echo "ERROR: PAGE_TITLE not found in app/ui.js - did noVNC change?" >&2; exit 1; }; \
+    sed -i 's|const PAGE_TITLE = "noVNC";|const PAGE_TITLE = "IIC-OSIC-TOOLS";|' /usr/share/novnc/app/ui.js
+
 # Finalize setup/install
 WORKDIR ${DESIGNS}
 ENTRYPOINT ["/dockerstartup/scripts/ui_startup.sh"]
