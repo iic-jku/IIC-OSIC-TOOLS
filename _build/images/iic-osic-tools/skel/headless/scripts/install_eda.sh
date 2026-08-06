@@ -155,6 +155,16 @@ python3 "$PDK_ROOT"/ihp-sg13g2/libs.tech/qucs-s/install.py --no-model-compile --
 echo "[INFO] Setting up VacasK for IHP SG13G2"
 cp "$PDK_ROOT"/ihp-sg13g2/libs.tech/vacask/.vacaskrc.toml /headless
 
+echo "[INFO] Setting up Veryl toolchain"
+# Run verylup setup at build time: it creates the veryl/veryl-ls proxy
+# hardlinks next to verylup in $TOOLS/veryl/bin (a normal user cannot create
+# them at runtime since that directory is root-owned) and installs the
+# default toolchain into the XDG data dir (/headless/.local/share/veryl).
+# install_links.sh later picks the proxies up into $TOOLS/bin, and the
+# Dockerfile chmods the toolchain tree writable so users can update/pin
+# toolchains with verylup themselves.
+"${TOOLS}/veryl/bin/verylup" setup
+
 echo "[INFO] Install EDA packages via GEM"
 gem install \
 	rggen:0.36.1 \
