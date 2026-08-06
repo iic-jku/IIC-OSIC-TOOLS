@@ -84,6 +84,22 @@ RUN set -eu; \
         { echo "ERROR: PAGE_TITLE not found in app/ui.js - did noVNC change?" >&2; exit 1; }; \
     sed -i 's|const PAGE_TITLE = "noVNC";|const PAGE_TITLE = "IIC-OSIC-TOOLS";|' /usr/share/novnc/app/ui.js
 
+# Rebrand the JupyterLab favicons. Like the noVNC block above this must stay after the RUN,
+# since jupyter_server is pip-installed there. JupyterLab's page references
+# `static/favicons/favicon.ico` (idle) and `.../favicon-busy-1.ico` (busy), both served out
+# of jupyter_server's package directory. The busy icons keep an inverted tile so the
+# "kernel is working" cue survives the rebrand.
+# The destination is resolved from the installed package rather than hardcoding the Python
+# version, and the build fails if the upstream layout moves.
+COPY images/base/branding/jupyter/ /usr/share/iic-osic-tools/branding/jupyter/
+RUN set -eu; \
+    JUPYTER_STATIC="$(python3 -c 'import jupyter_server, os; print(os.path.join(os.path.dirname(jupyter_server.__file__), "static"))')"; \
+    [ -f "$JUPYTER_STATIC/favicons/favicon.ico" ] || \
+        { echo "ERROR: $JUPYTER_STATIC/favicons/favicon.ico not found - jupyter_server layout changed?" >&2; exit 1; }; \
+    cp -f /usr/share/iic-osic-tools/branding/jupyter/favicon.ico "$JUPYTER_STATIC/favicon.ico"; \
+    cp -f /usr/share/iic-osic-tools/branding/jupyter/favicons/*.ico "$JUPYTER_STATIC/favicons/"; \
+    chmod -R a+rX "$JUPYTER_STATIC"
+
 # Finalize setup/install
 WORKDIR ${DESIGNS}
 ENTRYPOINT ["/dockerstartup/scripts/ui_startup.sh"]
