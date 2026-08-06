@@ -143,8 +143,8 @@
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
-  repo: https://github.com/StefanSchippers/xschem.git
-  commit: ff2f4824c1a24e158d218f44db11cc682b4881c8
+  repo: https://codeberg.org/stef_xschem/xschem.git
+  commit: d3dd742043236aab8e8ec72f966ef241e4e7ad6f
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
