@@ -52,4 +52,22 @@ append postinit_commands {
 }
 EOF
 
+# Require the Ctrl key for zoom/pan inside graph (waveform) widgets, so plain mouse
+# wheel scrolling keeps zooming the schematic when the pointer happens to be over a
+# graph. This is a PDK-independent UI preference, so it goes into the system-wide
+# xschemrc. It is set from postinit_commands for the same reason as above: the user
+# xschemrc sources the PDK xschemrc, so PDK files are evaluated after this one and a
+# plain "set" here could be overridden. The value is read at event time, so setting it
+# in postinit_commands takes effect for the whole session; the Options menu toggle
+# still works for anyone who wants the default behavior back.
+cat >> "${TOOLS}/${XSCHEM_NAME}/share/xschem/xschemrc" <<'EOF'
+
+###########################################################################
+#### USE CTRL KEY FOR ZOOM/PAN IN GRAPHS
+###########################################################################
+append postinit_commands {
+  set graph_use_ctrl_key 1
+}
+EOF
+
 echo "${XSCHEM_NAME} ${XSCHEM_REPO_COMMIT}" > "${TOOLS}/${XSCHEM_NAME}/SOURCES"
