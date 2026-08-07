@@ -114,6 +114,82 @@ if [ ! -e "$IO_SPICE_DIR/sg13g2_io.spi" ] && [ -e "$IO_SPICE_DIR/sg13g2_io.spice
 	ln -s sg13g2_io.spice "$IO_SPICE_DIR/sg13g2_io.spi"
 fi
 
+# The moscap_n/moscap_p callback entry in the KLayout PCell library is missing
+# the "usePcellParameterAsArgument" key that cni/dlo.py indexes unconditionally
+# in PCellDeclaration.coerce_parameters. The resulting KeyError is swallowed by
+# KLayout, produce() never runs and both PCells come out empty. CbMoscap_wl is
+# declared as `proc CbMoscap_wl {param}`, so the value has to be "true".
+# Remove this once https://github.com/IHP-GmbH/IHP-Open-PDK/issues/1083 is fixed.
+echo "[INFO] Fixing the moscap PCell callback definition."
+CALLBACKS_FILE="$PDK_ROOT/$PDK/libs.tech/klayout/python/sg13g2_pycell_lib/callbacks/callbacks.json"
+if [ -f "$CALLBACKS_FILE" ]; then
+    # Patched textually, not via a JSON round-trip: the file uses repeated "_"
+    # keys to carry its license header, and those collapse when re-serialized.
+    python3 - "$CALLBACKS_FILE" << 'PYEOF'
+import re
+import sys
+
+fname = sys.argv[1]
+with open(fname, 'r') as f:
+    content = f.read()
+
+# Match the pcellParameters line of the CbMoscap_wl callback, unless the key is
+# already there (upstream fix landed), and append it with the same indentation.
+pattern = re.compile(
+    r'("callback":\s*"CbMoscap_wl",\s*\n)'
+    r'(\s*)("pcellParameters":\s*\[[^\]]*\])'
+    r'(?!\s*,\s*\n\s*"usePcellParameterAsArgument")'
+)
+content, count = pattern.subn(
+    lambda m: '%s%s%s,\n%s"usePcellParameterAsArgument": "true"'
+              % (m.group(1), m.group(2), m.group(3), m.group(2)),
+    content
+)
+
+if count:
+    with open(fname, 'w') as f:
+        f.write(content)
+    print("[INFO] Added usePcellParameterAsArgument to the moscap callback in %s" % fname)
+else:
+    print("[WARN] moscap callback not patched in %s (already fixed upstream?)" % fname)
+PYEOF
+else
+    echo "[WARN] KLayout PCell callback definition not found at $CALLBACKS_FILE"
+fi
+
+# KLayout 0.30.10 no longer merges the first input of a two-layer DRC check.
+# The NBL rules pass the net-annotated nBuLay region unmerged, so edges that are
+# interior to the nBuLay area become visible to the check and get measured
+# against the second layer, which reports separations that do not exist. A
+# DRC-clean sg13_dnwell_inv (from iic-jku/open-pdks-regression-tests) fails with
+# 2x NBL.e and 1x NBL.f under 0.30.10 and is clean again with the merge back.
+# All three nbl_nets checks are the same construct; NBL.d is patched along with
+# the two that are known to misfire, since it is exposed in exactly the same way.
+# Remove this once https://github.com/KLayout/klayout/issues/2416 is resolved.
+echo "[INFO] Fixing the nBuLay DRC rules for KLayout >= 0.30.10."
+NBULAY_DRC="$PDK_ROOT/$PDK/libs.tech/klayout/tech/drc/rule_decks/feol/5_3_nbulay.drc"
+if [ -f "$NBULAY_DRC" ]; then
+    python3 - "$NBULAY_DRC" << 'PYEOF'
+import sys
+
+fname = sys.argv[1]
+with open(fname, 'r') as f:
+    content = f.read()
+
+# Naturally idempotent: the patched call no longer contains the searched text.
+count = content.count('nbl_nets.sep(')
+if count:
+    content = content.replace('nbl_nets.sep(', 'nbl_nets.merged.sep(')
+    with open(fname, 'w') as f:
+        f.write(content)
+    print("[INFO] Merged the first input of %d nBuLay check(s) in %s" % (count, fname))
+else:
+    print("[WARN] nBuLay checks not patched in %s (already fixed upstream?)" % fname)
+PYEOF
+else
+    echo "[WARN] nBuLay DRC rule deck not found at $NBULAY_DRC"
+fi
+
 # Remove testing folders to save space
 echo "[INFO] Removing unnecessary files to save space."
 cd "$PDK_ROOT/$PDK"
