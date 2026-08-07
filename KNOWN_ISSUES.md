@@ -61,6 +61,30 @@ Since image `2026.07` Surfer is started through a wrapper that forces the EGL re
 
 Note that in X11 mode Surfer is software-rendered inside the container and every frame is pushed uncompressed over the X connection, so the VNC mode feels snappier when working with Surfer. If Surfer still crashes on your platform, please file a bug report.
 
+### Illegal Instruction (SIGILL) on Apple Silicon
+
+On Apple Silicon the Linux VM that backs the container engine advertises the CPU
+feature `SVE2` in `HWCAP2` while the base `SVE` bit in `HWCAP` stays clear — a
+combination that cannot occur on real hardware, since SVE2 implies SVE. SVE
+instructions then trap. The CPU probe of AWS-LC/OpenSSL trusts the SVE2 bit and
+executes one (`cntb`, in `_armv8_sve_get_vl_bytes`) at library load time, so any
+binary using that dispatch dies with `Illegal instruction (core dumped)`.
+
+Observed on an Apple M4 with Podman 6.0.2 (Fedora CoreOS 41, kernel 6.12.13),
+where it broke `import cryptography` (and therefore `siliconcompiler`) as well as
+every `cocotb` simulation, which reports `Simulation failed: -4` because the
+simulator embeds Python and loads the same extension. The same image and library
+versions run fine on native `arm64` Linux, so this is a property of the VM, not
+of the `arm64` image. It is not specific to Podman either: the incoherent feature
+pair comes from the guest kernel on Apple's hypervisor, so Docker Desktop can be
+affected in the same way, depending on the kernel its VM ships.
+
+Since image `2026.08` the `start_*.sh` scripts detect Apple Silicon and pass
+`OPENSSL_armcap=0` into the container, which makes the probe use that mask
+instead of detecting capabilities and avoids the crash. The only cost is ARM
+crypto acceleration inside the container. Export `OPENSSL_armcap` yourself to
+pin a different mask, or export it empty to switch the workaround off.
+
 ### Podman Compatibility
 
 The IIC-OSIC-TOOLS container can be run using Podman instead of Docker. The start scripts auto-detect the installed engine (override with `CONTAINER_ENGINE=podman`), and in rootless mode they automatically add `--userns=keep-id` and default the VNC webserver port to `8080`, see [Section 5.1 of the README](README.md#51-podman).

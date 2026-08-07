@@ -144,6 +144,22 @@ if [ -n "${ENGINE_IS_ROOTLESS}" ] && [ "${CONTAINER_USER}" != "0" ]; then
 	fi
 fi
 
+# On Apple Silicon the Linux VM behind the container engine advertises SVE2 in
+# HWCAP2 while base SVE is missing from HWCAP, which cannot happen on real
+# hardware, and SVE instructions trap. The AWS-LC/OpenSSL CPU probe trusts the
+# SVE2 bit and runs one at library load time, so anything using that dispatch
+# (cryptography, and hence cocotb simulations) dies with SIGILL. Pinning
+# OPENSSL_armcap makes the probe use the given mask instead of detecting the
+# capabilities; 0 is the safe choice and only costs ARM crypto acceleration.
+# See KNOWN_ISSUES.md. Export OPENSSL_armcap to pin another mask, or export it
+# empty to switch this off.
+if [[ "$OSTYPE" == "darwin"* ]] && [ "$(uname -m)" = "arm64" ]; then
+	ARMCAP="${OPENSSL_armcap-0}"
+	if [ -n "${ARMCAP}" ]; then
+		DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e OPENSSL_armcap=${ARMCAP}"
+	fi
+fi
+
 if [ -n "${IIC_OSIC_TOOLS_QUIET}" ]; then
 	DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} -e IIC_OSIC_TOOLS_QUIET=1"
 fi
