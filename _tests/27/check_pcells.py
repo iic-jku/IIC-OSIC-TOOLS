@@ -70,7 +70,8 @@ EXPECTED = {
         },
     },
     "ihp-sg13g2": {
-        "count": 34,
+        # 34 until the PDK bump of 2026-08 added cmomi, moscap_n and moscap_p.
+        "count": 37,
         "known_bad": {},
     },
     "ihp-sg13cmos5l": {

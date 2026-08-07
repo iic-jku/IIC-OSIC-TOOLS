@@ -38,7 +38,7 @@ debugging a regression.
 | ---------------- | ------------------------------------------------------------ | ------ |
 | sky130A          | `skywater130`                                                 | 18     |
 | gf180mcuD        | `gf180mcu` + `gf180mcu_klayoutapi` + `gf180mcu_sealring`      | 61     |
-| ihp-sg13g2       | `SG13_dev` + `SG13_native_pcell_lib`                          | 34     |
+| ihp-sg13g2       | `SG13_dev` + `SG13_native_pcell_lib`                          | 37     |
 | ihp-sg13cmos5l   | `SG13_dev`                                                    | 24     |
 
 ## Expected-dirty baselines
