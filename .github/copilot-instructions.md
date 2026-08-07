@@ -82,7 +82,7 @@ Scripts in repository root (`.sh` for Linux/macOS, `.bat` for Windows):
 
 ### Testing Strategy
 
-Run tests inside container with `_tests/run_docker_tests.sh` or individually:
+Run tests inside container with `_tests/run_integration_tests.sh` or individually:
 ```bash
 cd _tests/01 && ./test_librelane_sky130a.sh
 ```

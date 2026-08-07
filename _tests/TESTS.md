@@ -1,18 +1,33 @@
 # Regression tests
 
+## Container engine
+
+`run_integration_tests.sh` runs on Podman as well as Docker and picks the engine
+itself: Podman first when both are installed, since a test run needs no daemon
+and is happy rootless. Override the choice with `CONTAINER_ENGINE`:
+
+```bash
+CONTAINER_ENGINE=docker ./run_integration_tests.sh hpretl/iic-osic-tools:latest
+```
+
+Under *rootless* Podman on Linux the runner adds `--userns=keep-id` by itself,
+so the bind-mounted source tree and the run dir stay writable for the container
+user (same reasoning as [Section 5.1 of the README](../README.md#51-podman)). On
+macOS the podman machine already maps the host user, so nothing is added there.
+
 ## Test output
 
-Logs, work dirs and cloned repositories of a full run add up to several GB, so they are *not* written into this source tree (which is bind-mounted into the container) but into `/tmp/iic-osic-tools-tests/<run-id>`. `run_docker_tests.sh` prints the exact location at the start of the run and keeps it afterwards for post-mortem analysis, so remove old run dirs manually when you no longer need them.
+Logs, work dirs and cloned repositories of a full run add up to several GB, so they are *not* written into this source tree (which is bind-mounted into the container) but into `/tmp/iic-osic-tools-tests/<run-id>`. `run_integration_tests.sh` prints the exact location at the start of the run and keeps it afterwards for post-mortem analysis, so remove old run dirs manually when you no longer need them.
 
 Set `IIC_TEST_RUNDIR=<path>` to collect the output somewhere else, for example on a larger volume:
 
 ```bash
-IIC_TEST_RUNDIR=/mnt/scratch/osic-tests ./run_docker_tests.sh hpretl/iic-osic-tools:latest
+IIC_TEST_RUNDIR=/mnt/scratch/osic-tests ./run_integration_tests.sh hpretl/iic-osic-tools:latest
 ```
 
 ## Scheduling
 
-All tests run concurrently in a GNU parallel pool (one job per core). Since parallel starts the jobs in input order, the wall clock of a run is set by the longest test that starts last, so `run_docker_tests.sh` feeds the known long runners first via its `SLOW_TESTS` list. Keep that list roughly ordered by runtime; entries that are stale only cost wall clock, they never break a run.
+All tests run concurrently in a GNU parallel pool (one job per core). Since parallel starts the jobs in input order, the wall clock of a run is set by the longest test that starts last, so `run_integration_tests.sh` feeds the known long runners first via its `SLOW_TESTS` list. Keep that list roughly ordered by runtime; entries that are stale only cost wall clock, they never break a run.
 
 Test 21 additionally runs its own (small) inner pool of simulation jobs; use `ACD_JOBS=<n>` to change its size.
 

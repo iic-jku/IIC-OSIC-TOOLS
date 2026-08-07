@@ -15,7 +15,7 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
-# test output is kept out of the bind-mounted source tree (see run_docker_tests.sh)
+# test output is kept out of the bind-mounted source tree (see run_integration_tests.sh)
 RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
 
 DEBUG=${DEBUG:-0}
@@ -49,11 +49,11 @@ source sak-pdk-script.sh ihp-sg13g2 > /dev/null
 # itself: it starts one shared Xvfb for the whole run and points every
 # xschem/ngspice job at it (iic-jku/analog-circuit-design#78), so no plot
 # windows pop up and nothing here has to provide a display. $DISPLAY is empty in
-# the test container (see run_docker_tests.sh), which is what makes the runner
+# the test container (see run_integration_tests.sh), which is what makes the runner
 # set up its own server.
 #
 # JOBS: run a small pool of testbenches concurrently. This whole test is already
-# one job of run_docker_tests.sh's GNU parallel pool (one job per core), so a
+# one job of run_integration_tests.sh's GNU parallel pool (one job per core), so a
 # per-core pool in here would oversubscribe the CPU by nproc^2; a pool of 4
 # keeps the oversubscription bounded while dropping the wall clock from the sum
 # of all testbench runtimes to roughly the longest one.

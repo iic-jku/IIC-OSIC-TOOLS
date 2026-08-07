@@ -13,7 +13,7 @@ if [ -z "${RAND}" ]; then
     RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
-# test output is kept out of the bind-mounted source tree (see run_docker_tests.sh)
+# test output is kept out of the bind-mounted source tree (see run_integration_tests.sh)
 RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
 
 if command -v librelane >/dev/null 2>&1; then
