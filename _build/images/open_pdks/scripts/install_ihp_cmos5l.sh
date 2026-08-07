@@ -377,9 +377,8 @@ rm -rf "/tmp/${VACASK_NAME}"
 bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/$PDK"
 
 # CMOS5L is largely symlinks into SG13G2, so a rename on the SG13G2 side silently
-# leaves a broken link behind (this is how libs.tech/xyce/models/resistors.lib
-# went stale). Report them instead of failing the build, since a dangling link is
-# a PDK-side fix and not every one of them blocks the tools.
+# leaves a broken link behind. Report them instead of failing the build, 
+# since a dangling link is a PDK-side fix and not every one of them blocks the tools.
 echo "[INFO] Checking for broken symlinks into SG13G2."
 BROKEN_LINKS=$(find "$PDK_ROOT/$PDK" -xtype l || true)
 if [ -n "$BROKEN_LINKS" ]; then
