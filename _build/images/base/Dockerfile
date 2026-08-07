@@ -72,6 +72,12 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
 # sized PNGs plus an SVG icon that browsers prefer over all of them, so all of those are
 # replaced too.
 # No --chmod here: it would also apply to the directories and make them non-traversable.
+# The modes are normalized in the RUN below instead -- COPY carries the modes of the build
+# context, so with a umask of 027 on the build host the copied files land unreadable for the
+# container user, and the directories COPY touches on the way (`app`, `app/images`) lose
+# their o+x as well, which takes the whole upstream `app/` tree (ui.js, styles, locale) with
+# them. websockify answers those with a 404, so vnc.html would come up unstyled and never
+# connect.
 COPY images/base/branding/novnc/ /usr/share/novnc/
 
 # Rebrand the noVNC browser-tab title. There are three independent sources: the static
@@ -88,7 +94,8 @@ RUN set -eu; \
     done; \
     grep -q 'const PAGE_TITLE = "noVNC";' /usr/share/novnc/app/ui.js || \
         { echo "ERROR: PAGE_TITLE not found in app/ui.js - did noVNC change?" >&2; exit 1; }; \
-    sed -i 's|const PAGE_TITLE = "noVNC";|const PAGE_TITLE = "IIC-OSIC-TOOLS";|' /usr/share/novnc/app/ui.js
+    sed -i 's|const PAGE_TITLE = "noVNC";|const PAGE_TITLE = "IIC-OSIC-TOOLS";|' /usr/share/novnc/app/ui.js; \
+    chmod -R a+rX /usr/share/novnc
 
 # Rebrand the JupyterLab favicons. Like the noVNC block above this must stay after the RUN,
 # since jupyter_server is pip-installed there. JupyterLab's page references
