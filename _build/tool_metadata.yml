@@ -153,13 +153,13 @@
   commit: 05178c03ddf49c6bba63c5c7153774c11a5da12d
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: v0.68
+  commit: v0.67
 - name: yosys-eqy
   repo: https://github.com/YosysHQ/eqy.git
-  commit: v0.68
+  commit: v0.67
 - name: yosys-mcy
   repo: https://github.com/YosysHQ/mcy.git
-  commit: v0.68
+  commit: v0.67
 - name: yosys-sby
   repo: https://github.com/YosysHQ/sby.git
-  commit: v0.68
+  commit: v0.67
