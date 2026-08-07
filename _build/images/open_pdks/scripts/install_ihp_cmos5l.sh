@@ -73,9 +73,12 @@ done
 
 # Perform required preparation of IHP CMOS5L PDK for use with VACASK.
 # CMOS5L reuses SG13G2's converted models/OSDI (installed by install_ihp.sh)
-# for everything it symlinks; only the CMOS5L-own ngspice model files below
-# need converting to VACASK format. None of them require Verilog-A/OSDI
-# compilation (diodes, pnpMPA BJT, cap_mfringe are plain SPICE subckts/models).
+# for everything it symlinks; only the CMOS5L-own ngspice model files need
+# converting to VACASK format. Those are discovered at build time as the
+# regular files (as opposed to symlinks into ihp-sg13g2) in the ngspice model
+# directory -- do NOT hardcode the list, upstream renames devices (cap_mfringe
+# -> cap_mom -> cap_cmomi) and a stale list breaks the image build.
+# CMOS5L-own Verilog-A sources, if any, are compiled to OSDI for VACASK below.
 echo "[INFO] Preparing IHP CMOS5L PDK for VACASK."
 cd /tmp || exit 1
 rm -rf "${VACASK_NAME}"
@@ -110,32 +113,73 @@ from ng2vclib import dfl
 
 pdkroot, pdk = sys.argv[1], sys.argv[2]
 
-# CMOS5L-own ngspice model files (everything else in this dir is a symlink
-# into ihp-sg13g2, already converted by sg13g2tovc.py during install_ihp.sh)
-own_files = [
-    "diodes.lib",
-    "sg13cmos5l_pnpMPA_mod.lib",
-    "sg13cmos5l_pnpMPA_stat.lib",
-    "cap_mfringe.lib",
-]
-
 tech_src = os.path.join(pdkroot, pdk, "libs.tech", "ngspice", "models")
 sg13g2_tech_src = os.path.join(pdkroot, "ihp-sg13g2", "libs.tech", "ngspice", "models")
+dest_dir = os.path.join(pdkroot, pdk, "libs.tech", "vacask", "models")
 
-cfg = dfl.default_config()
-cfg["sourcepath"] = [tech_src, sg13g2_tech_src]
-cfg["read_depth"] = 1
-cfg["process_depth"] = 1
-cfg["output_depth"] = None
-cfg["default_model_prefix"] = "sg13cmos5l_default_mod_"
-cfg["signature"] = "// Converted from IHP SG13CMOS5L PDK for Ngspice\n"
+# CMOS5L-own ngspice model files: every regular *.lib in the model directory.
+# The rest are symlinks into ihp-sg13g2 and were already converted by
+# sg13g2tovc.py during install_ihp.sh. Discovering them keeps this working
+# across upstream device renames instead of failing the build on a stale name.
+own_files = sorted(
+    e.name for e in os.scandir(tech_src)
+    if e.name.endswith(".lib") and not e.is_symlink() and e.is_file()
+)
+
+if not own_files:
+    print("[ERROR] No CMOS5L-own ngspice model files found in " + tech_src)
+    sys.exit(1)
+
+os.makedirs(dest_dir, exist_ok=True)
 
 for fname in own_files:
+    # corner*.lib only wire up .include chains -- convert them like
+    # sg13g2tovc.py does, i.e. keep the includes instead of inlining them
+    corner = fname.startswith("corner")
+
+    cfg = dfl.default_config()
+    cfg["sourcepath"] = [tech_src, sg13g2_tech_src]
+    cfg["read_depth"] = 0 if corner else 1
+    cfg["process_depth"] = 0 if corner else 1
+    cfg["output_depth"] = 0 if corner else None
+    cfg["default_model_prefix"] = "sg13cmos5l_default_mod_"
+    cfg["signature"] = "// Converted from IHP SG13CMOS5L PDK for Ngspice\n"
+
     src = os.path.join(tech_src, fname)
-    dst = os.path.join(pdkroot, pdk, "libs.tech", "vacask", "models", fname)
+    dst = os.path.join(dest_dir, fname)
     print(f"Converting {src} -> {dst}")
     Converter(cfg).convert(src, dst)
 PYEOF
+
+# Compile the CMOS5L-own Verilog-A models to OSDI for VACASK. The .osdi objects
+# shipped in libs.tech/ngspice/osdi are built for ngspice with stock OpenVAF and
+# are not reused here, exactly as install_ihp.sh rebuilds the SG13G2 ones with
+# openvaf-r. No -D__NGSPICE__: the CMOS5L sources only branch on __XYCE__, and
+# the default branch is the $mfactor one that VACASK expects.
+OPENVAF_BIN="${TOOLS}/openvaf/bin/openvaf-r"
+VA_SRC_DIR="$PDK_ROOT/$PDK/libs.tech/verilog-a"
+VACASK_OSDI_DIR="$PDK_ROOT/$PDK/libs.tech/vacask/osdi"
+VACASK_COMMON="$PDK_ROOT/$PDK/libs.tech/vacask/models/sg13cmos5l_vacask_common.lib"
+
+# Common include: pulls in the SG13G2 loads/default models (most CMOS5L devices
+# are symlinks into SG13G2) and adds the CMOS5L-own OSDI loads on top.
+echo '// Converted from IHP SG13CMOS5L PDK for Ngspice' >  "$VACASK_COMMON"
+echo 'include "sg13g2_vacask_common.lib"'               >> "$VACASK_COMMON"
+
+if [ -d "$VA_SRC_DIR" ]; then
+	if [ ! -x "$OPENVAF_BIN" ]; then
+		echo "[ERROR] OpenVAF not found at $OPENVAF_BIN, cannot build CMOS5L OSDI models."
+		exit 1
+	fi
+
+	mkdir -p "$VACASK_OSDI_DIR"
+	while IFS= read -r -d '' va_file; do
+		osdi_name="$(basename "${va_file%.va}").osdi"
+		echo "[INFO] Compiling $(basename "$va_file") -> $osdi_name for VACASK."
+		"$OPENVAF_BIN" --target_cpu generic -o "$VACASK_OSDI_DIR/$osdi_name" "$va_file"
+		echo "load \"$osdi_name\"" >> "$VACASK_COMMON"
+	done < <(find "$VA_SRC_DIR" -name "*.va" -print0 | sort -z)
+fi
 
 # Create .vacaskrc.toml. CMOS5L's own converted models plus SG13G2's
 # converted models/stdcell/io/OSDI are all needed since most CMOS5L devices
@@ -150,7 +194,10 @@ include_path_prefix = [
   "\$(PDK_ROOT)/ihp-sg13g2/libs.ref/sg13g2_stdcell/vacask",
   "\$(PDK_ROOT)/ihp-sg13g2/libs.ref/sg13g2_io/vacask"
 ]
-module_path_prefix = [ "\$(PDK_ROOT)/ihp-sg13g2/libs.tech/vacask/osdi" ]
+module_path_prefix = [
+  "\$(PDK_ROOT)/\$(PDK)/libs.tech/vacask/osdi",
+  "\$(PDK_ROOT)/ihp-sg13g2/libs.tech/vacask/osdi"
+]
 EOF
 
 rm -rf "/tmp/${VACASK_NAME}"
