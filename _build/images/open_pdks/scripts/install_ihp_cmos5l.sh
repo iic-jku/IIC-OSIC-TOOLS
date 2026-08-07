@@ -200,6 +200,97 @@ module_path_prefix = [
 ]
 EOF
 
+# ---------------------------------------------------------------------------
+# TEMPORARY: xschem/VACASK glue for CMOS5L.
+#
+# sg13g2tovc.py patches xschem symbols and xschemrc only for ihp-sg13g2, so the
+# CMOS5L-own symbols get no spectre_format= line and cap_cmomi cannot be
+# netlisted for VACASK from xschem at all. This reuses the upstream patchers
+# (xschem2vc + sg13g2tovc.patch_analog/patch_dig) rather than reimplementing
+# them, so it can be dropped as one block once VACASK ships ihp-sg13cmos5l
+# support. Symbols that are symlinks into ihp-sg13g2 are skipped -- they were
+# already patched in place in the SG13G2 tree by install_ihp.sh.
+# ---------------------------------------------------------------------------
+echo "[INFO] Adding xschem VACASK support for CMOS5L."
+PYTHONPATH="/tmp/${VACASK_NAME}/python" python3 - "$PDK_ROOT" "$PDK" "/tmp/${VACASK_NAME}" << 'PYEOF'
+import os
+import shutil
+import sys
+
+import xschem2vc
+import sg13g2tovc
+
+pdkroot, pdk, vacask_dir = sys.argv[1], sys.argv[2], sys.argv[3]
+xschem_dir = os.path.join(pdkroot, pdk, "libs.tech", "xschem")
+
+# (symbol directory, format= patcher)
+sym_dirs = [
+    ("sg13cmos5l_pr", sg13g2tovc.patch_analog),
+    ("sg13cmos5l_stdcells", sg13g2tovc.patch_dig),
+]
+
+for subdir, patcher in sym_dirs:
+    d = os.path.join(xschem_dir, subdir)
+    if not os.path.isdir(d):
+        print(f"[INFO] No {subdir} symbol directory, skipping.")
+        continue
+    own_syms = sorted(
+        e.path for e in os.scandir(d)
+        if e.name.endswith(".sym") and not e.is_symlink() and e.is_file()
+    )
+    print(f"Patching {len(own_syms)} CMOS5L-own symbols in {subdir}")
+    for symfile in own_syms:
+        xschem2vc.convert(symfile, patcher)
+
+# xschemrc extension. The upstream Tcl is PDK-agnostic apart from the
+# "Add VACASK models symbol" menu entry, which names the SG13G2 common include
+# and a corner set CMOS5L does not have (no HBT).
+tcl = open(os.path.join(vacask_dir, "python", "sg13g2xschem.tcl")).read()
+tcl = tcl.replace('include \\"sg13g2_vacask_common.lib\\"',
+                  'include \\"sg13cmos5l_vacask_common.lib\\"')
+tcl = tcl.replace('include \\"cornerHBT.lib\\" section=hbt_typ\n',
+                  'include \\"cornerDIO.lib\\" section=dio_tt\n'
+                  'include \\"cornerPNP.lib\\" section=typ\n')
+
+with open(os.path.join(xschem_dir, "xschem-vacask"), "w") as f:
+    f.write(tcl)
+
+# Append the VACASK block to xschemrc, keeping a pristine .orig so a rebuild
+# does not stack the block twice.
+xschemrc = os.path.join(xschem_dir, "xschemrc")
+xschemrc_orig = xschemrc + ".vacask-orig"
+if not os.path.isfile(xschemrc_orig):
+    shutil.copy(xschemrc, xschemrc_orig)
+
+with open(xschemrc_orig) as f:
+    base = f.read()
+
+with open(xschemrc, "w") as f:
+    f.write(base)
+    f.write("""
+# VACASK support
+if {[info exists PDK_ROOT]} {
+  if {[info exists PDK]} {
+    if {[file exists $PDK_ROOT/$PDK/libs.tech/xschem/xschem-vacask]} {
+      source $PDK_ROOT/$PDK/libs.tech/xschem/xschem-vacask
+    }
+  }
+}
+
+# Netlist type
+if {[info exists env(XSCHEM_NETLIST_TYPE)]} {
+  puts "Netlist mode: $::env(XSCHEM_NETLIST_TYPE)"
+  set netlist_type $::env(XSCHEM_NETLIST_TYPE)
+} else {
+  puts "Netlist mode: <default>"
+}
+""")
+PYEOF
+
+# Drop the symbol backups xschem2vc leaves behind. Its patcher is idempotent
+# without them (an existing spectre_format= line is recomputed and replaced).
+find "$PDK_ROOT/$PDK/libs.tech/xschem" -name "*.sym.orig" -delete
+
 rm -rf "/tmp/${VACASK_NAME}"
 
 # gzip Liberty (.lib) files. The SRAM Liberty files are symlinks into the
