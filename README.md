@@ -1,3 +1,11 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="_logo/svg/logo-horizontal-reversed.svg">
+    <source media="(prefers-color-scheme: light)" srcset="_logo/svg/logo-horizontal.svg">
+    <img src="_logo/svg/logo-horizontal.svg" alt="IIC-OSIC-TOOLS" width="480">
+  </picture>
+</p>
+
 # IIC-OSIC-TOOLS
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14387234.svg)](https://doi.org/10.5281/zenodo.14387234)
@@ -290,7 +298,9 @@ On Windows, you can use the equivalent batch script (if the defaults are accepta
 .\start_vnc.bat
 ```
 
-You can now access the Desktop Environment through your browser ([http://localhost](http://localhost)). The default password is `abc123`.
+You can now access the Desktop Environment through your browser at `http://localhost:<WEBSERVER_PORT>/?password=abc123`, where `abc123` is the default password. `WEBSERVER_PORT` defaults to `80` (so plain [http://localhost](http://localhost) works), except with rootless Podman — including on macOS and Windows — where it defaults to `8080`; the start scripts print the exact URL. Omit the `?password=` part to be prompted for it instead.
+
+The browser session uses the full noVNC client, whose control bar (the small tab on the left edge) provides clipboard transfer to and from the container, fullscreen, ctrl-alt-del, and connection settings. By default the container desktop resizes to match the browser window; change "Scaling Mode" in the settings panel if you prefer a fixed resolution, and your choice is remembered.
 
 #### 4.2.1 Variables for VNC
 

@@ -106,9 +106,8 @@ find . -name "*.mdm" -print0 | xargs -0 rm -rf
 # Remove measurement folder to save space
 rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
 
-#FIXME gzip Liberty (.lib) files
-#FIXME cd "$PDK_ROOT/$PDK/libs.ref"
-#FIXME find . -name "*.lib" -exec gzip {} \;
+# gzip Liberty (.lib) files
+bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/$PDK"
 
 # Perform required preparation of IHP PDK for use with VACASK
 echo "[INFO] Preparing IHP PDK for VACASK."

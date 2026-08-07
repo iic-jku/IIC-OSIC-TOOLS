@@ -6,6 +6,7 @@
 set -e
 set -o pipefail
 export SCRIPT_DIR=$TOOLS/osic-multitool
+PDK_SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 if [ ! -d "$PDK_ROOT" ]; then
     mkdir -p "$PDK_ROOT"
@@ -32,20 +33,28 @@ if [ ! -d "$PDK_ROOT/sky130A" ]; then
 fi
 
 if [ -d "$PDK_ROOT/sky130A" ]; then
-	#FIXME gzip Liberty (.lib) files
-	#FIXME cd "$PDK_ROOT/sky130A/libs.ref"
-	#FIXME find . -name "*.lib" -exec gzip {} \;
+	# gzip Liberty (.lib) files
+	bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/sky130A"
 
 	# Add custom bindkeys for Magic
     echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
     echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
 
-	# FIXME: Repair klayout tech file
-	sed -i 's/>sky130</>sky130A</g' "$PDK_ROOT/sky130A/libs.tech/klayout/tech/sky130A.lyt"
-	sed -i 's/sky130.lyp/sky130A.lyp/g' "$PDK_ROOT/sky130A/libs.tech/klayout/tech/sky130A.lyt"
-	sed -i '/<base-path>/c\ <base-path/>' "$PDK_ROOT/sky130A/libs.tech/klayout/tech/sky130A.lyt"
-	# shellcheck disable=SC2016
-	sed -i '/<original-base-path>/c\ <original-base-path>$PDK_ROOT/$PDK/libs.tech/klayout</original-base-path>' "$PDK_ROOT/sky130A/libs.tech/klayout/tech/sky130A.lyt"
+	# Repair the KLayout tech file shipped by open_pdks: it still carries the
+	# generic "sky130" tech/layer-property naming and the absolute base paths of
+	# the machine the PDK was built on. All four edits are idempotent; the guard
+	# only exists so we notice when the workaround becomes unnecessary (still
+	# needed as of 2026-08-06).
+	SKY130A_LYT="$PDK_ROOT/sky130A/libs.tech/klayout/tech/sky130A.lyt"
+	if grep -q -e '>sky130<' -e 'sky130\.lyp' -e '<base-path>' "$SKY130A_LYT"; then
+		sed -i 's/>sky130</>sky130A</g' "$SKY130A_LYT"
+		sed -i 's/sky130.lyp/sky130A.lyp/g' "$SKY130A_LYT"
+		sed -i '/<base-path>/c\ <base-path/>' "$SKY130A_LYT"
+		# shellcheck disable=SC2016
+		sed -i '/<original-base-path>/c\ <original-base-path>$PDK_ROOT/$PDK/libs.tech/klayout</original-base-path>' "$SKY130A_LYT"
+	else
+		echo "[INFO] sky130A.lyt needs no repair anymore, this patch can be dropped"
+	fi
 
 	# Patch the pcells for compatibility with gdsfactory >= 8.x / kfactory >= 1.x
 	# so they work with the current system gdsfactory (no dedicated venv needed).
@@ -137,9 +146,8 @@ PYEOF
 fi
 
 if [ -d "$PDK_ROOT/sky130B" ]; then
-	#FIXME gzip Liberty (.lib) files
-	#FIXME cd "$PDK_ROOT/sky130B/libs.ref"
-	#FIXME find . -name "*.lib" -exec gzip {} \;
+	# gzip Liberty (.lib) files
+	bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/sky130B"
 
     echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/sky130B/libs.tech/magic/sky130B.magicrc"
     echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/sky130B/libs.tech/magic/sky130B.magicrc"
@@ -172,9 +180,8 @@ if [ ! -d "$PDK_ROOT/gf180mcuD" ]; then
 fi
 
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
-	#FIXME gzip Liberty (.lib) files
-	#FIXME cd "$PDK_ROOT/gf180mcuD/libs.ref"
-	#FIXME find . -name "*.lib" -exec gzip {} \;
+	# gzip Liberty (.lib) files
+	bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/gf180mcuD"
 
 	cd "$PDK_ROOT/gf180mcuD/libs.tech/ngspice" || exit 1
 	

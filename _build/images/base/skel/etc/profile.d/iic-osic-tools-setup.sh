@@ -60,7 +60,9 @@ if [ -z "${FOSS_INIT_DONE+x}" ]; then
     _path_add_tool_custom   "osic-multitool"
 
     export SAK=$TOOLS/sak
-    export PATH=$TOOLS/bin:$SAK:/usr/local/sbin:$PATH
+    # /usr/local/sbin is already part of the image's default PATH, so do not
+    # prepend it again here (it would show up twice).
+    export PATH=$TOOLS/bin:$SAK:$PATH
 
     # Seed PYTHONPATH with the interpreter's default paths so the tool-specific
     # entries appended below extend (rather than shadow) the system modules.
@@ -111,9 +113,13 @@ fi
 # /etc/passwd entry, the shell may not populate USER automatically.
 [ -z "${USER}" ] && USER=$(id -un 2>/dev/null || echo designer) && export USER
 
-# First, check if XDG_RUNTIME_DIR is set, if not, set to default.
-if [ -z "${XDG_RUNTIME_DIR+x}" ]; then
-    export XDG_RUNTIME_DIR=/tmp/runtime-default
+# First, check if XDG_RUNTIME_DIR is set. If not (or if it still points at
+# the legacy shared /tmp/runtime-default), use a per-user directory: the XDG
+# spec requires the directory to be owned by the current user with mode
+# 0700, and programs like dbus-daemon verify this before using it.
+if [ -z "${XDG_RUNTIME_DIR+x}" ] || [ "$XDG_RUNTIME_DIR" = "/tmp/runtime-default" ]; then
+    XDG_RUNTIME_DIR="/tmp/runtime-$(id -u)"
+    export XDG_RUNTIME_DIR
 fi
 # Second, verify if the actual directory exists, if not, create it.
 if [ ! -d "$XDG_RUNTIME_DIR" ]; then
@@ -121,13 +127,17 @@ if [ ! -d "$XDG_RUNTIME_DIR" ]; then
     chmod 700 "$XDG_RUNTIME_DIR"
 fi
 
-# This is needed for Veryl to store its data
-if [ -z "${XDG_DATA_HOME+x}" ]; then
-    export XDG_DATA_HOME=/headless/.data-default
+# A Wayland socket forwarded by start_x.sh is bind-mounted at a neutral path
+# (mounting it directly into the per-user XDG_RUNTIME_DIR would re-create
+# that directory root-owned); link it into place.
+if [ -n "${WAYLAND_DISPLAY:-}" ] && [ -S "/tmp/host-wayland/${WAYLAND_DISPLAY}" ] \
+    && [ ! -e "${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}" ]; then
+    ln -s "/tmp/host-wayland/${WAYLAND_DISPLAY}" "${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}"
 fi
-if [ ! -d "$XDG_DATA_HOME" ]; then
-    mkdir -p "$XDG_DATA_HOME"
-fi
+
+# XDG_DATA_HOME is intentionally left at its spec default ($HOME/.local/share).
+# It was once forced to a custom directory for a pre-installed Veryl toolchain;
+# since only verylup is shipped, tools create the default directory on demand.
 
 #----------------------------------------
 # Source user configs from $DESIGNS

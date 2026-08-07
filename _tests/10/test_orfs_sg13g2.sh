@@ -31,9 +31,6 @@ export OPENROAD_EXE=$TOOLS/openroad/bin/openroad
 export OPENSTA_EXE=$TOOLS/openroad/bin/sta
 export FLOW_HOME
 
-# FIXME this is needed to run flow w/o errors
-export GDS_ALLOW_EMPTY=spi_DEF_FILL
-
 # run ORFS with IHP130 SG13G2
 export DESIGN_CONFIG=./designs/ihp-sg13g2/spi/config.mk
 # stderr goes into its own log: ORFS reports the per-step runtime there, which

@@ -13,6 +13,20 @@ set -e
 # Linux-aarch64 wheel, so a forced PyPI reinstall would fail on arm64
 PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages"
 
+# Nothing below reads PIP_NO_CACHE_DIR -- pip itself does: every pip option has
+# a PIP_<OPTION> environment variable equivalent, so this is the same as adding
+# --no-cache-dir to every pip run, including ones this script never spells out.
+#
+# That is the point, because the flag in PIP_FLAGS only covers the outer pip.
+# It is not always handed down to the nested pip that PEP 517 build isolation
+# runs to fetch a package's build dependencies. The venvs below are the clearest
+# case: "python3 -m venv" bootstraps the pip bundled with CPython (24.0), which
+# does not forward the flag, so building the git+ packages pulls setuptools,
+# virtualenv, distlib, dulwich, numpy, ... straight into $HOME/.cache/pip. With
+# HOME=/headless during the build that left ~55 MB of download residue in the
+# image. An environment variable IS inherited by those nested invocations.
+export PIP_NO_CACHE_DIR=1
+
 echo "[INFO] Install EDA packages via APT"
 apt-get update
 apt-get install -y \
@@ -49,8 +63,8 @@ pip3 install $PIP_FLAGS \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.6 \
-	gds2palace==0.3.0 \
-	gdsfactory==9.46.0 \
+	gds2palace==0.3.2 \
+	gdsfactory==9.47.0 \
 	gdsfill==0.1.8 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
@@ -58,16 +72,16 @@ pip3 install $PIP_FLAGS \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev2 \
-	najaeda==0.7.17 \
+	najaeda==0.7.20 \
 	pygmid==1.2.12 \
-	pyrtl==1.0.2 \
+	pyrtl==1.0.3 \
 	pyuvm==4.0.1 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.0.1 \
-	setupEM==0.1.22 \
+	setupEM==0.2.2 \
 	siliconcompiler==0.38.2 \
-	snp2le==0.1.5 \
+	snp2le==0.1.7 \
 	spicelib==1.6.3 \
 	spyci==1.0.2
 
@@ -97,6 +111,18 @@ PYSIDE6_VER=$(pip3 show PySide6-Essentials | awk '/^Version:/{print $2}')
 pip3 uninstall -y --break-system-packages PySide6-Addons
 pip3 install $PIP_FLAGS --no-deps --force-reinstall "PySide6-Essentials==${PYSIDE6_VER}"
 
+# What is left of PySide6 is still the largest Qt stack in the image, several
+# times the size of the system Qt6 that the C++ tools share. Two directories of
+# it are dead weight here:
+#   Qt/translations (~59 MB) -- Qt's own UI translations, loaded only when an
+#     application installs a QTranslator from that path; the image is English.
+#   Qt/qml (~35 MB) -- QML module plugins for QtQuick. Every Qt GUI in the
+#     image is widget-based, nothing loads a QML engine.
+# The .so libraries are untouched, so imports keep working.
+echo "[INFO] Pruning PySide6 translations and QML modules"
+PYSIDE6_DIR=$(python3 -c 'import os, PySide6; print(os.path.dirname(PySide6.__file__))')
+rm -rf "${PYSIDE6_DIR}/Qt/translations" "${PYSIDE6_DIR}/Qt/qml"
+
 echo "[INFO] Install EDA packages via Cargo"
 
 export RUSTUP_HOME=/tmp/rustup
@@ -107,9 +133,6 @@ rustup default stable
 cargo install \
 	gdsfill --version 0.1.8 \
 	--root "${TOOLS}"
-
-# Drop the Rust toolchain and registry cache so they don't bloat the image.
-rm -rf "$RUSTUP_HOME" "$CARGO_HOME"
 
 # The venvs use --system-site-packages so large dependencies already in the
 # system Python (numpy, scipy, pandas, ...) are not duplicated inside them;
@@ -132,12 +155,28 @@ python3 "$PDK_ROOT"/ihp-sg13g2/libs.tech/qucs-s/install.py --no-model-compile --
 echo "[INFO] Setting up VacasK for IHP SG13G2"
 cp "$PDK_ROOT"/ihp-sg13g2/libs.tech/vacask/.vacaskrc.toml /headless
 
+echo "[INFO] Setting up Veryl toolchain"
+# Run verylup setup at build time: it creates the veryl/veryl-ls proxy
+# hardlinks next to verylup in $TOOLS/veryl/bin (a normal user cannot create
+# them at runtime since that directory is root-owned) and installs the
+# default toolchain into the XDG data dir (/headless/.local/share/veryl).
+# install_links.sh later picks the proxies up into $TOOLS/bin, and the
+# Dockerfile chmods the toolchain tree writable so users can update/pin
+# toolchains with verylup themselves.
+"${TOOLS}/veryl/bin/verylup" setup
+
 echo "[INFO] Install EDA packages via GEM"
 gem install \
 	rggen:0.36.1 \
 	rggen-verilog:0.14.0 \
 	rggen-vhdl:0.13.0 \
 	rggen-veryl:0.8.0
+
+# Drop the Rust toolchain and registry cache so they don't bloat the image.
+# This must stay at the END of this script: RUSTUP_HOME/CARGO_HOME remain
+# exported above, and any later build step that merely probes cargo/rustc
+# (Ubuntu's rustup proxies) re-creates $RUSTUP_HOME/settings.toml.
+rm -rf "$RUSTUP_HOME" "$CARGO_HOME"
 
 echo "[INFO] EDA package installation completed"
 
@@ -150,3 +189,10 @@ echo "[INFO] Removing bundled Python package test suites"
 find /usr/local/lib/python3*/dist-packages \
 	/foss/tools/charlib/lib /foss/tools/vlsirtools/lib \
 	-type d \( -name tests -o -name test \) -prune -exec rm -rf {} +
+
+# Belt and braces: PIP_NO_CACHE_DIR above should keep this empty, but a tool
+# invoking pip with its own environment could still populate it, and the cache
+# is pure build residue that must not reach the image. HOME is /headless for
+# the whole build, so that is the only cache pip can write.
+echo "[INFO] Removing pip download cache"
+rm -rf "${HOME:-/headless}/.cache/pip"

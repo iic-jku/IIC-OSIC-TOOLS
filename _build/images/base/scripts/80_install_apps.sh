@@ -75,12 +75,71 @@ update-java-alternatives --set "$(update-java-alternatives --list | grep 1.17 | 
 
 # remove light-locker and other power management stuff, otherwise VNC session locks up
 apt-get purge -y light-locker pm-utils *screensaver*
+
+# gnome-terminal is never requested here; it is only dragged in as an `x-terminal-emulator`
+# alternative for xorg/xinit. It is unreliable in this container (the D-Bus-activated
+# factory often fails to map a window, which surfaces as the XFCE dialog "Failed to execute
+# default Terminal Emulator / Input/output error"). xfce4-terminal and xterm both provide
+# x-terminal-emulator, so that dependency stays satisfied without it.
+apt-get purge -y gnome-terminal
+
 apt-get autoremove -y
 
 /bin/dbus-uuidgen > /etc/machine-id
 
-# create index.html to forward automatically to `vnc_lite.html`
-ln -s "$NO_VNC_HOME"/vnc_lite.html "$NO_VNC_HOME"/index.html
+# noVNC ships two clients: the stripped-down `vnc_lite.html` demo page (no control
+# bar, hence no clipboard, no fullscreen, no scaling mode) and the full `vnc.html`.
+# Serve the full one from `/`, via a redirect rather than a symlink, so that the
+# short URL `http://<host>:<port>/?password=<pw>` keeps working: `vnc.html` ignores
+# `password` unless `autoconnect` is set too, and would otherwise stop at its
+# connect screen.
+#
+# `host`/`port` are pinned from the current location on every load. The full client
+# persists its settings in localStorage and prefers a stored value over its built-in
+# default, so a port left over from an earlier session (e.g. after changing
+# WEBSERVER_PORT) would otherwise win over the port actually in use.
+#
+# `resize=remote` (the desktop follows the browser window) is only injected while the
+# user has no stored preference; noVNC writes that key only when "Scaling Mode" is
+# changed in the settings panel, so an explicit choice there persists and is not
+# overridden on the next load.
+rm -f "$NO_VNC_HOME"/index.html
+cat > "$NO_VNC_HOME"/index.html <<'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>IIC-OSIC-TOOLS</title>
+<script type="text/javascript">
+    (function () {
+        "use strict";
+        var params = new URLSearchParams(window.location.search);
+        params.set("host", window.location.hostname);
+        params.set("port", window.location.port ||
+                           (window.location.protocol === "https:" ? "443" : "80"));
+        if (!params.has("autoconnect")) {
+            params.set("autoconnect", "1");
+        }
+        if (!params.has("resize")) {
+            var stored = null;
+            try {
+                stored = window.localStorage.getItem("resize");
+            } catch (e) {
+                /* storage blocked by the browser, fall back to the default */
+            }
+            if (stored === null) {
+                params.set("resize", "remote");
+            }
+        }
+        window.location.replace("vnc.html?" + params.toString() + window.location.hash);
+    })();
+</script>
+</head>
+<body>
+<p><a href="vnc.html">Continue to the noVNC client</a></p>
+</body>
+</html>
+EOF
 
 # clean up afterwards
 echo "[INFO] Cleaning up caches"

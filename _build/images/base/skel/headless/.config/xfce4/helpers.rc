@@ -1,0 +1,14 @@
+#
+# XFCE "Preferred Applications" overrides for IIC-OSIC-TOOLS.
+#
+# Everything that opens a terminal from the desktop goes through
+# `exo-open --launch TerminalEmulator`: the xfdesktop right-click menu, the panel
+# launcher, the Ctrl+Alt+T shortcut and Thunar's "Open Terminal Here".
+#
+# Without this file that resolves via /etc/xdg/xfce4/helpers.rc to
+# `debian-x-terminal-emulator` -> /usr/bin/x-terminal-emulator -> gnome-terminal, which is
+# not dependable in this container. Pin it to xfce4-terminal instead.
+#
+# Keys not listed here still fall back to /etc/xdg/xfce4/helpers.rc.
+#
+TerminalEmulator=xfce4-terminal

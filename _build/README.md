@@ -1,3 +1,11 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="../_logo/svg/logo-horizontal-reversed.svg">
+    <source media="(prefers-color-scheme: light)" srcset="../_logo/svg/logo-horizontal.svg">
+    <img src="../_logo/svg/logo-horizontal.svg" alt="IIC-OSIC-TOOLS" width="480">
+  </picture>
+</p>
+
 # IIC-OSIC-TOOLS (Build Instructions)
 
 **ATTENTION:** Building such a large SW stack with many, *many* dependencies for multiple architectures is time-consuming and nerve-wracking! Please only attempt this with experience in Linux and SW builds (`./configure && make && make install` should not be a mystery, as a minimum).

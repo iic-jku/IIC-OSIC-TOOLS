@@ -123,13 +123,19 @@ if [ "$start_vnc" = true ]; then
     # start vncserver and noVNC webclient
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Start noVNC..."
 
-    "$NO_VNC_HOME"/utils/novnc_proxy --vnc localhost:"$VNC_PORT" --listen "$NO_VNC_PORT" 2>&1 | tag "[NOVNC]" &
+    # No SSL certificate is shipped on purpose (noVNC is served over plain
+    # HTTP), so drop the harmless "could not find self.pem" warning.
+    "$NO_VNC_HOME"/utils/novnc_proxy --vnc localhost:"$VNC_PORT" --listen "$NO_VNC_PORT" 2>&1 | grep -v --line-buffered "could not find self.pem" | tag "[NOVNC]" &
 
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] Starting vncserver and window manager with param: VNC_COL_DEPTH=$VNC_COL_DEPTH, VNC_RESOLUTION=$VNC_RESOLUTION."
 
     # workaround, lock files are not removed if the container is re-run otherwise which makes vncserver unaccessible
     rm -rf /tmp/.X1-lock
     rm -rf /tmp/.X11-unix/X1
+
+    # Pre-create the Xauthority file so the first vncserver run does not log
+    # "xauth: file /headless/.Xauthority does not exist".
+    touch "$HOME/.Xauthority"
 
     if [ "$(arch)" == "aarch64" ]; then
         OLD_LD_PRELOAD=$LD_PRELOAD
@@ -145,7 +151,10 @@ if [ "$start_vnc" = true ]; then
     # log connect options
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] VNC environment started."
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] VNCSERVER started on DISPLAY= $DISPLAY \n\t=> connect via VNC viewer with $VNC_IP:$VNC_PORT."
-    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] noVNC HTML client started:\n\t=> connect via http://localhost/?password=$VNC_PW\n"
+    # This is the container-internal address; the port reachable from the host is
+    # whatever the start scripts published for it (see WEBSERVER_PORT), which is not
+    # visible from in here.
+    [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo -e "[INFO] noVNC HTML client started:\n\t=> connect via http://$VNC_IP:$NO_VNC_PORT/?password=$VNC_PW\n\t   (container-internal; from the host use the port published via WEBSERVER_PORT)\n"
 fi
 
 wait_for_x() {
@@ -183,7 +192,19 @@ if [ "$start_vnc" = true ]; then
 fi
 
 if [ "$start_x" = true ]; then
-    xfce4-terminal | tag "[TERM]" &
+    # Run the terminal with its own D-Bus session bus so xfconfd can be
+    # activated on demand (settings work, and no "Failed to initialize
+    # Xfconf" warning); apps started from this terminal inherit the bus.
+    # Filter known-harmless log noise: there is no session manager in X11
+    # mode (GTK warning), and dbus-daemon chats about service activation and
+    # the shared XDG_RUNTIME_DIR on stderr.
+    dbus-run-session -- xfce4-terminal 2>&1 \
+        | grep -v --line-buffered \
+            -e "Failed to connect to.*session manager" \
+            -e "^dbus-daemon\[" \
+            -e "^dbus\[" \
+            -e "^$" \
+        | tag "[TERM]" &
     # add an empty newline so one can see that this script is done.
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo
 fi
