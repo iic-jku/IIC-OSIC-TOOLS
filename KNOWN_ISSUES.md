@@ -39,7 +39,7 @@ The image addresses these automatically (issue <https://github.com/iic-jku/IIC-O
 
 Three further pcell defects are patched at PDK-install time as well, and the patches are removed once they are fixed upstream:
 
-- IHP `ihp-sg13g2`/`ihp-sg13cmos5l`: the pcell libraries preprocess every pcell module into `$TMPDIR/<module>_pre.py` and delete it again, using the bare module name. Both PDKs use the same module names, so two KLayout processes sharing `/tmp` deleted each other's file and the loser registered no pcell at all. The temp file now carries the process ID.
+- IHP `ihp-sg13g2`/`ihp-sg13cmos5l`: the pcell libraries preprocess every pcell module into `$TMPDIR/<module>_pre.py` and delete it again, using the bare module name. Both PDKs use the same module names, so two KLayout processes sharing `/tmp` deleted each other's file and the loser registered no pcell at all. The temp file now carries the process ID (issue <https://github.com/IHP-GmbH/IHP-Open-PDK/issues/1087>).
 - IHP `ihp-sg13g2`: `sealring` obtained the PDK version by running `git` inside the PDK tree, which is installed without its `.git` — it now reads the `COMMIT` file next to the PDK. `isolbox` defaulted its length and width below the minimum its own callback enforces, warning on every default instantiation.
 - Global Foundries `gf180mcuD`: the `efuse` pcell came out empty, because `draw_efuse()` was called without its required `device_name` argument and looked for its GDS in `~/.klayout/pymacros`, where nothing installs it.
 

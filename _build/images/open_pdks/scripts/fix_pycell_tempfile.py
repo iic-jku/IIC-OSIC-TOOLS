@@ -34,7 +34,8 @@ pycell4klayout-api and pypreprocessor, which SG13CMOS5L symlinks into SG13G2),
 so both installers run this helper on their own file.
 
 The rewrite is idempotent, so re-running it on an already patched file is a
-no-op. Remove this once the fix has landed upstream.
+no-op. Reported as https://github.com/IHP-GmbH/IHP-Open-PDK/issues/1087; remove
+this once the fix has landed upstream.
 """
 
 import re
