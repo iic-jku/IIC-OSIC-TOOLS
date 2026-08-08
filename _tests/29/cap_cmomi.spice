@@ -1,0 +1,32 @@
+* cap_cmomi (ihp-sg13cmos5l) low-frequency capacitance check.
+* Exercises the OSDI compact model loaded via the PDK .spiceinit, i.e. it also
+* verifies that SPICE_USERINIT_DIR points at the cmos5l PDK.
+.lib cornerCAP.lib cap_typ
+
+* w=5u l=5u, Metal1..Metal4 (N=4), feed=double -> 16.2977 fF
+V1 a 0 dc 0 ac 1
+X1 a 0 cap_cmomi w=5e-6 l=5e-6 mmin=1 mmax=4 feed=double
+
+* same geometry with the single-side feed -> 21.6737 fF (adds the feed cap)
+V2 b 0 dc 0 ac 1
+X2 b 0 cap_cmomi w=5e-6 l=5e-6 mmin=1 mmax=4 feed=same
+
+.control
+ac lin 1 1e6 1e6
+let f = real(frequency)
+let c_double = imag(-i(v1))/(2*pi*f)
+let c_same   = imag(-i(v2))/(2*pi*f)
+* The expected values are the PCell's own C-label formula, so a drift here means
+* layout and model no longer agree.
+if abs(c_double[0] - 16.2977e-15) > 1e-17
+  echo "FAIL cap_cmomi feed=double"
+else
+  echo "PASS cap_cmomi feed=double"
+end
+if abs(c_same[0] - 21.6737e-15) > 1e-17
+  echo "FAIL cap_cmomi feed=same"
+else
+  echo "PASS cap_cmomi feed=same"
+end
+.endc
+.end

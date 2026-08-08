@@ -186,11 +186,83 @@ cd /tmp || exit 1
 
 PYTHONPATH="/tmp/${VACASK_NAME}/python" python3 - "$PDK_ROOT" "$PDK" << 'PYEOF'
 import os
+import re
 import sys
 from ng2vclib.converter import Converter
 from ng2vclib import dfl
 
 pdkroot, pdk = sys.argv[1], sys.argv[2]
+
+PARAM_ASSIGN = re.compile(r'([A-Za-z_]\w*)\s*=\s*(\S+)')
+NUMBER = re.compile(r'[-+]?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?[a-zA-Z]*$')
+
+
+def literalize_subckt_defaults(path):
+    """Resolve symbolic subckt parameter defaults into plain literals.
+
+    VACASK treats a subckt parameter whose DEFAULT references another
+    parameter as derived, and then refuses to let an instance override it
+    ("Parameter 'feed' not found."). ngspice has no such rule, so the IHP
+    model files legitimately write cap_cmomi's feed default symbolically
+    (".param none=0 same=1 double=2" plus "feed=double") and the converter
+    carries that over verbatim. The result silently locks feed to 'double'
+    for every VACASK user, and breaks the xschem VACASK flow outright: the
+    spectre_format= line on cap_cmomi.sym always emits feed=<token>.
+
+    Substituting the file-level constants back in keeps the same defaults
+    while making the parameter a literal, hence overridable again. Written
+    against the shape the converter emits ("parameters <name>=<value>",
+    one or more per line, subckt bodies delimited by subckt/ends) rather
+    than against a device name, so a renamed or added device is covered too.
+    """
+    with open(path) as f:
+        lines = f.readlines()
+
+    # Pass 1: collect the file-level (outside any subckt) numeric constants.
+    consts = {}
+    depth = 0
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith('subckt'):
+            depth += 1
+        elif stripped.startswith('ends'):
+            depth = max(0, depth - 1)
+        elif depth == 0 and stripped.startswith('parameters'):
+            for name, value in PARAM_ASSIGN.findall(stripped[len('parameters'):]):
+                if NUMBER.match(value):
+                    consts[name] = value
+
+    if not consts:
+        return 0
+
+    # Pass 2: inside subckt bodies, replace a default that is exactly one of
+    # those constants. Anything more involved (a real expression) is left
+    # alone -- it is not something this fixup can safely rewrite.
+    substituted = 0
+    depth = 0
+    for idx, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped.startswith('subckt'):
+            depth += 1
+        elif stripped.startswith('ends'):
+            depth = max(0, depth - 1)
+        elif depth > 0 and stripped.startswith('parameters'):
+            head, tail = stripped[:len('parameters')], stripped[len('parameters'):]
+            for name, value in PARAM_ASSIGN.findall(tail):
+                if value in consts:
+                    tail = re.sub(r'\b%s\s*=\s*%s\b' % (re.escape(name), re.escape(value)),
+                                  '%s=%s' % (name, consts[value]), tail, count=1)
+                    substituted += 1
+                    print(f"[INFO]   {os.path.basename(path)}: subckt parameter "
+                          f"{name} default {value} -> {consts[value]}")
+            if tail != stripped[len('parameters'):]:
+                indent = line[:len(line) - len(line.lstrip())]
+                lines[idx] = indent + head + tail + '\n'
+
+    if substituted:
+        with open(path, 'w') as f:
+            f.writelines(lines)
+    return substituted
 
 tech_src = os.path.join(pdkroot, pdk, "libs.tech", "ngspice", "models")
 sg13g2_tech_src = os.path.join(pdkroot, "ihp-sg13g2", "libs.tech", "ngspice", "models")
@@ -228,6 +300,7 @@ for fname in own_files:
     dst = os.path.join(dest_dir, fname)
     print(f"Converting {src} -> {dst}")
     Converter(cfg).convert(src, dst)
+    literalize_subckt_defaults(dst)
 PYEOF
 
 # Compile the CMOS5L-own Verilog-A models to OSDI for VACASK. The .osdi objects

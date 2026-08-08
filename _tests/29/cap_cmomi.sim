@@ -1,0 +1,38 @@
+cap_cmomi VACASK check (ihp-sg13cmos5l)
+
+// Guards the VACASK model conversion in install_ihp_cmos5l.sh: the subckt's
+// 'feed' default has to stay a literal, otherwise VACASK treats the parameter
+// as derived and rejects every override with "Parameter 'feed' not found."
+// (which is also what the xschem spectre_format= line emits).
+
+include "sg13cmos5l_vacask_common.lib"
+include "cornerCAP.lib" section=cap_typ
+
+model v vsource
+v1 (a 0) v dc=0 mag=1
+v2 (b 0) v dc=0 mag=1
+
+x1 (a 0) cap_cmomi w=5e-6 l=5e-6 mmin=1 mmax=4 feed=double
+x2 (b 0) cap_cmomi w=5e-6 l=5e-6 mmin=1 mmax=4 feed=same
+
+control
+  analysis ac1 ac from=1M to=1M mode="lin" points=1
+  postprocess(PYTHON, "check.py")
+endc
+
+embed "check.py" <<<FILE
+import sys
+import numpy as np
+from rawfile import rawread
+
+plot = rawread("ac1.raw").get()
+f = np.abs(plot["frequency"])[0]
+
+# Same reference values as cap_cmomi.spice, i.e. the PCell C-label formula.
+expected = {"double": 16.2977e-15, "same": 21.6737e-15}
+for idx, (feed, want) in enumerate(expected.items(), start=1):
+    y = -plot["v%d:flow(br)" % idx][0]
+    got = np.imag(y) / (2 * np.pi * f)
+    ok = abs(got - want) < 1e-17
+    print("%s cap_cmomi feed=%s (%.4f fF)" % ("PASS" if ok else "FAIL", feed, got * 1e15))
+>>>FILE
