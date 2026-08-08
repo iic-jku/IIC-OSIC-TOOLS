@@ -107,6 +107,16 @@ if [ "$start_x" != true ] && [ "$start_vnc" != true ]; then
     fi
 fi
 
+# `-V`/`--vnc` skips the auto-detection above, which is the only place that would otherwise
+# set DISPLAY. Left empty, `vncserver ""` still picks a display number of its own while the
+# rest of this script keeps talking to an empty DISPLAY, so `setxkbmap` fails with "Cannot
+# open display" and `set -e` tears the container down just after the session came up. A
+# DISPLAY provided by the caller is kept, so the session can still be put on another display
+# number.
+if [ "$start_vnc" = true ] && [ -z "${DISPLAY:-}" ]; then
+    export DISPLAY=:1
+fi
+
 if [ "$start_vnc" = true ]; then
     # resolve_vnc_connection (best-effort; only used for the info log below)
     VNC_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
