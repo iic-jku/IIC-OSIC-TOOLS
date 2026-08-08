@@ -40,6 +40,8 @@ gcc -shared -fPIC -o "${TOOLS}/${SURFER_NAME}/lib/libnoshm.so" /tmp/noshm.c
 # Empty libGL stubs: dlopen fails -> eframe/glutin falls back from GLX
 # (unusable against XQuartz) to EGL (llvmpipe, OpenGL 4.5). Used by the
 # surfer wrapper installed in install_links.sh.
+# GLX half reported as https://gitlab.com/surfer-project/surfer/-/issues/211;
+# the MIT-SHM half above is a Mesa/X limitation, not a Surfer defect.
 touch "${TOOLS}/${SURFER_NAME}/lib/noglx/libGL.so.1" \
       "${TOOLS}/${SURFER_NAME}/lib/noglx/libGL.so"
 
