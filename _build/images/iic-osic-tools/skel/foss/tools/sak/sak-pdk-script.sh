@@ -67,6 +67,9 @@ else
 	if [ $# = 2 ]; then
 		export STD_CELL_LIBRARY="$2"
 	else
+		# Same mapping as the container profile script
+		# (/etc/profile.d/iic-osic-tools-setup.sh), which applies it to the PDK
+		# selected at container start; keep the two in sync.
 		case "$1" in
 			sky130A|sky130B)
 				export STD_CELL_LIBRARY="sky130_fd_sc_hd"

@@ -94,9 +94,34 @@ if [ -z "${FOSS_INIT_DONE+x}" ]; then
     # Default PDK — only set when not already provided by the user/sub-shell.
     export PDK=${PDK:-ihp-sg13g2}
     export PDKPATH=${PDKPATH:-$PDK_ROOT/$PDK}
-    export STD_CELL_LIBRARY=${STD_CELL_LIBRARY:-sg13g2_stdcell}
     export SPICE_USERINIT_DIR=${SPICE_USERINIT_DIR:-$PDK_ROOT/$PDK/libs.tech/ngspice}
     export KLAYOUT_PATH=${KLAYOUT_PATH:-"/headless/.klayout:$PDKPATH/libs.tech/klayout:$PDKPATH/libs.tech/klayout/tech"}
+
+    # Everything above follows $PDK, so the per-PDK settings below have to as
+    # well: starting the container with `-e PDK=<other>` used to leave these at
+    # their ihp-sg13g2 values, which pointed the standard cell library at the
+    # wrong PDK. Same mapping as sak-pdk-script.sh, which switches the PDK of a
+    # running session; keep the two in sync. An explicit value still wins, so a
+    # custom or unpackaged library can be selected as before.
+    if [ -z "${STD_CELL_LIBRARY}" ]; then
+        case "$PDK" in
+            sky130A|sky130B)      STD_CELL_LIBRARY="sky130_fd_sc_hd" ;;
+            ihp-sg13g2)           STD_CELL_LIBRARY="sg13g2_stdcell" ;;
+            ihp-sg13cmos5l)       STD_CELL_LIBRARY="sg13cmos5l_stdcell" ;;
+            gf180mcuC|gf180mcuD)  STD_CELL_LIBRARY="gf180mcu_fd_sc_mcu7t5v0" ;;
+            *)
+                [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && \
+                    echo "[WARN] No standard cell library known for PDK '$PDK', leaving STD_CELL_LIBRARY unset."
+                ;;
+        esac
+    fi
+    export STD_CELL_LIBRARY
+
+    # gf180mcu needs GF_PDK_OPTION set, otherwise KLayout warns and assumes D.
+    case "$PDK" in
+        gf180mcuC) export GF_PDK_OPTION="${GF_PDK_OPTION:-C}" ;;
+        gf180mcuD) export GF_PDK_OPTION="${GF_PDK_OPTION:-D}" ;;
+    esac
 
     # This gets rid of the DBUS warning
     # https://unix.stackexchange.com/questions/230238/x-applications-warn-couldnt-connect-to-accessibility-bus-on-stderr/230442#230442
