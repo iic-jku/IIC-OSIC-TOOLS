@@ -7,7 +7,7 @@
 ARG TOOL_IMAGE_RISCV_GNU_TOOLCHAIN="registry.iic.jku.at:5000/iic-osic-tools:tool-riscv-gnu-toolchain-latest"
 FROM ${TOOL_IMAGE_RISCV_GNU_TOOLCHAIN} AS spike
 ARG SPIKE_REPO_URL="https://github.com/riscv-software-src/riscv-isa-sim.git"
-ARG SPIKE_REPO_COMMIT="3ab575645442aa0ebb58c2d07ab98f1b546ac0bb"
+ARG SPIKE_REPO_COMMIT="16c0b60119f65a648643cf5d41e4e38e871f0bad"
 ARG SPIKE_NAME="spike"
 ARG RISCV_PK_REPO_URL="https://github.com/riscv-software-src/riscv-pk.git"
 ARG RISCV_PK_REPO_COMMIT="9c61d29846d8521d9487a57739330f9682d5b542"
