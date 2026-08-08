@@ -72,7 +72,7 @@ report() {
 check_pdk() {
     local pdk=$1
     local pdk_work=$WORKDIR/$pdk
-    mkdir -p "$pdk_work"
+    mkdir -p "$pdk_work/tmp"
 
     {
         echo "===================================================================="
@@ -81,6 +81,15 @@ check_pdk() {
 
     (
         cd "$pdk_work" || exit 1
+        # Own temp dir per PDK run. The IHP PCell libraries preprocess every
+        # PCell module into $TMPDIR/<module>_pre.py and delete it again, using
+        # the bare module name -- and SG13G2 and SG13CMOS5L use the same module
+        # names. On a shared /tmp any other test of the suite that loads an IHP
+        # technology (18, 19, 20, 22, 23, 24, 26, 28) can delete the file this
+        # run is about to import, and the PDK then registers no PCell at all.
+        # The image fixes this in the PDK (see install_ihp.sh), this keeps the
+        # test meaningful on images that predate the fix.
+        export TMPDIR=$pdk_work/tmp
         # shellcheck source=/dev/null
         source sak-pdk-script.sh "$pdk" > /dev/null 2>&1
 

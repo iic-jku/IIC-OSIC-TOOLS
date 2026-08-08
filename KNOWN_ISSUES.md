@@ -37,6 +37,14 @@ Some pcell libraries were developed for older `gdsfactory` versions:
 
 The image addresses these automatically (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162>): both pcell libraries are patched at PDK-install time so they work with the current system `gdsfactory` and need no dedicated virtual environment.
 
+Three further pcell defects are patched at PDK-install time as well, and the patches are removed once they are fixed upstream:
+
+- IHP `ihp-sg13g2`/`ihp-sg13cmos5l`: the pcell libraries preprocess every pcell module into `$TMPDIR/<module>_pre.py` and delete it again, using the bare module name. Both PDKs use the same module names, so two KLayout processes sharing `/tmp` deleted each other's file and the loser registered no pcell at all. The temp file now carries the process ID.
+- IHP `ihp-sg13g2`: `sealring` obtained the PDK version by running `git` inside the PDK tree, which is installed without its `.git` — it now reads the `COMMIT` file next to the PDK. `isolbox` defaulted its length and width below the minimum its own callback enforces, warning on every default instantiation.
+- Global Foundries `gf180mcuD`: the `efuse` pcell came out empty, because `draw_efuse()` was called without its required `device_name` argument and looked for its GDS in `~/.klayout/pymacros`, where nothing installs it.
+
+Regression test 27 (`_tests/27`) instantiates every pcell of every packaged PDK with its default parameters and pins the outcome, so a regression or an upstream fix is reported.
+
 ### The OpenROAD Flow Scripts (ORFS)
 
 The ORFS require a recent version of `openroad`. Since image tag `2024.12` a recent version is installed alongside the OpenROAD version required by `librelane`. In tag `2025.10` and beyond the `openroad` and `sta` version that is found is a recent version that can be used with the ORFS.In order to use the ORFS, **before** calling the `make` script make sure to set the following env vars:

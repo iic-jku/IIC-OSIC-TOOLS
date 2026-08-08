@@ -82,6 +82,20 @@ else
     echo "[WARN] KLayout netlist import templates not found at $TEMPLATES_FILE"
 fi
 
+# The PCell library preprocesses every PCell module into /tmp/<module>_pre.py and
+# deletes it again. The name carries no process identity and both IHP PDKs use
+# the same module names, so two KLayout processes clobber each other's file and
+# the loser fails to register the library at all (0 PCells). CMOS5L ships its own
+# copy of __init__.py, so the fix lives in a shared helper that
+# install_ihp_cmos5l.sh runs as well.
+echo "[INFO] Making the PCell preprocessor temp file per-process."
+PYCELL_INIT="$PDK_ROOT/$PDK/libs.tech/klayout/python/sg13g2_pycell_lib/__init__.py"
+if [ -f "$PYCELL_INIT" ]; then
+    python3 "$PDK_SCRIPT_DIR/fix_pycell_tempfile.py" "$PYCELL_INIT"
+else
+    echo "[WARN] KLayout PCell library not found at $PYCELL_INIT"
+fi
+
 # The IHP PDK renamed the IO netlist to libs.ref/sg13g2_io/spice/sg13g2_io.spice,
 # but several consumers still expect the old name sg13g2_io.spi:
 #   - libs.tech/librelane/config.tcl (PAD_SPICE_MODELS)
@@ -135,6 +149,118 @@ else:
 PYEOF
 else
     echo "[WARN] KLayout PCell callback definition not found at $CALLBACKS_FILE"
+fi
+
+# The sealring PCell stamps the PDK version into a label and obtains it by
+# shelling out to `git rev-parse` inside the PDK tree. There is no .git there
+# (SG13G2 is moved out of the clone above, CMOS5L deletes its own), so git prints
+# "fatal: not a git repository" to stderr on every sealring instantiation and the
+# label ends up as "Unknown (Not a Git repo or Git not installed)". Use
+# the COMMIT file both IHP installers write next to the PDK instead, keep git as
+# the fallback with its stderr muted, and catch more than CalledProcessError --
+# a missing git binary raises an uncaught FileNotFoundError today. CMOS5L
+# symlinks this file into SG13G2, so patching it here covers both PDKs.
+echo "[INFO] Fixing the sealring PDK version lookup."
+UTILITY_FUNCTIONS="$PDK_ROOT/$PDK/libs.tech/klayout/python/sg13g2_pycell_lib/ihp/utility_functions.py"
+if [ -f "$UTILITY_FUNCTIONS" ]; then
+    python3 - "$UTILITY_FUNCTIONS" << 'PYEOF'
+import re
+import sys
+
+fname = sys.argv[1]
+with open(fname, 'r') as f:
+    content = f.read()
+
+if 'commit_file' in content:
+    print("[INFO] Sealring PDK version lookup already patched in %s" % fname)
+    sys.exit(0)
+
+# 1. Prefer the COMMIT file written by the installer. Walk up from the module
+#    towards the PDK root rather than hardcoding a depth, so this keeps working
+#    for the CMOS5L symlink and if the tree is ever rearranged.
+anchor = "        script_dir = os.path.dirname(script_path)\n"
+lookup = anchor + """
+        # The PDK is installed without its .git, so prefer the COMMIT file the
+        # installer writes next to it (see install_ihp.sh).
+        probe = script_dir
+        for _ in range(8):
+            probe = os.path.dirname(probe)
+            commit_file = os.path.join(probe, "COMMIT")
+            if os.path.isfile(commit_file):
+                with open(commit_file) as f:
+                    return f.read().strip()
+"""
+n_lookup = content.count(anchor)
+content = content.replace(anchor, lookup)
+
+# 2. Keep git as the fallback, but do not let it write to the console.
+content, n_stderr = re.subn(
+    r"(\['git', '-C', \w+, 'rev-parse', [^\]]+\])\n(\s*)\)",
+    r"\1, stderr=subprocess.DEVNULL\n\2)",
+    content,
+)
+
+# 3. A missing git binary raises FileNotFoundError, which is not caught today.
+content, n_except = re.subn(
+    r'except subprocess\.CalledProcessError:',
+    'except Exception:',
+    content,
+)
+
+if n_lookup and n_stderr == 2 and n_except:
+    with open(fname, 'w') as f:
+        f.write(content)
+    print("[INFO] Fixed the sealring PDK version lookup in %s" % fname)
+else:
+    print("[WARN] Sealring PDK version lookup not patched in %s "
+          "(already fixed upstream?)" % fname)
+PYEOF
+else
+    echo "[WARN] KLayout PCell utility functions not found at $UTILITY_FUNCTIONS"
+fi
+
+# isolbox defaults its length and width to techparams['isolbox_defLW'] = 3u,
+# while its own callback clamps both to 3.6u for the default wellwidth of 1.05u
+# (callbacks/isolbox_cb.tcl). Every instantiation with default parameters
+# therefore prints "WARNING: wrong width/length: using minimum ... 3.6u!!". The
+# neighbouring defaults in isolbox_code.py already assume 3.6u (defA = 12.96p =
+# 3.6 x 3.6, defP = 14.4u = 2 x (3.6 + 3.6)), so the tech parameter is simply
+# stale. SG13G2 only: CMOS5L ships no isolbox.
+echo "[INFO] Fixing the isolbox default length/width."
+for tech_json in sg13g2_tech.json sg13g2_tech_mod.json; do
+    TECH_JSON="$PDK_ROOT/$PDK/libs.tech/klayout/python/sg13g2_pycell_lib/$tech_json"
+    if [ ! -f "$TECH_JSON" ]; then
+        echo "[WARN] KLayout PCell tech parameters not found at $TECH_JSON"
+    elif grep -q '"isolbox_defLW": *"3u"' "$TECH_JSON"; then
+        sed -i 's/"isolbox_defLW": *"3u"/"isolbox_defLW": "3.6u"/' "$TECH_JSON"
+        echo "[INFO] Set isolbox_defLW to 3.6u in $TECH_JSON"
+    else
+        echo "[WARN] isolbox_defLW not patched in $TECH_JSON (already fixed upstream?)"
+    fi
+done
+
+# The CNI foreground booleans (dbLayerXor and friends, see ihp/geometry.py)
+# consume their operands, and several PCells destroy those operands again right
+# afterwards. The second destroy() is a no-op on correct geometry, but it logs a
+# warning, and the ~35 lines of "Box.destroy: already destroyed!" per run bury
+# the messages that matter. Demote them from Logger.warn to Logger.log, the only
+# one of the three that is verbosity-gated (Logger.info still prints at the
+# default verbosity of 0), so the message stays available with `klayout -d`.
+# Dropping the redundant destroy() calls scattered over the PCell sources is
+# upstream's to make.
+# CMOS5L symlinks the whole pycell4klayout-api tree, so this covers both PDKs.
+echo "[INFO] Demoting the CNI double-destroy warnings."
+CNI_DIR="$PDK_ROOT/$PDK/libs.tech/klayout/python/pycell4klayout-api/source/python/cni"
+if [ -d "$CNI_DIR" ]; then
+    for cni_file in box ellipse path polygon text; do
+        CNI_FILE="$CNI_DIR/$cni_file.py"
+        if [ -f "$CNI_FILE" ] && grep -q 'pya.Logger.warn(f".*already destroyed!")' "$CNI_FILE"; then
+            sed -i 's/pya\.Logger\.warn(\(f".*already destroyed!"\))/pya.Logger.log(\1)/' "$CNI_FILE"
+            echo "[INFO] Demoted the double-destroy warning in $CNI_FILE"
+        fi
+    done
+else
+    echo "[WARN] CNI shape classes not found at $CNI_DIR"
 fi
 
 # KLayout 0.30.10 no longer merges the first input of a two-layer DRC check.

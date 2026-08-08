@@ -54,9 +54,9 @@ EXPECTED = {
         # the KLayout-API device generators; the classic gf180mcu library still
         # ships the same devices and produces them correctly.
         #
-        # efuse: draw_efuse() is called without its required device_name
-        #   argument and raises TypeError.
-        "known_bad": {"gf180mcu_klayoutapi/efuse": "empty"},
+        # efuse was pinned here until patches/gf180mcu-efuse.patch (applied by
+        # install_ciel.sh) fixed its draw_efuse() call and its GDS path.
+        "known_bad": {},
         # These two are not instantiated at all: their generator recurses in
         # Cell.flatten (libs.tech/klayout/tech/pymacros/klayout_api_cells/
         # draw_diode.py) and allocates without bound -- 95 s and >6 GB for
@@ -172,7 +172,15 @@ def main():
     # ---- compare against the baseline -------------------------------------
     deviations = []
 
-    if len(results) != baseline["count"]:
+    if not results:
+        # Not an inventory drift but an infrastructure failure: the PDK's
+        # autorun macro raised and no library got registered at all. Say so,
+        # otherwise the verdict reads like every PCell was deleted upstream.
+        deviations.append(
+            "PDK registered no PCell library at all -- it failed to load, see "
+            "the KLayout output above (expected %d PCells)" % baseline["count"]
+        )
+    elif len(results) != baseline["count"]:
         deviations.append(
             "PCell inventory changed: found %d, expected %d "
             "(a PCell was added or removed)" % (len(results), baseline["count"])

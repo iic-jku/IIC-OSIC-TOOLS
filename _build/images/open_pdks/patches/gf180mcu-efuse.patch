@@ -1,0 +1,66 @@
+diff --git a/cells/draw_efuse.py b/cells/draw_efuse.py
+index 61e781b..5f79bed 100644
+--- a/cells/draw_efuse.py
++++ b/cells/draw_efuse.py
+@@ -15,11 +15,12 @@
+ import pya
+ import os
+ 
+-USER = os.environ["USER"]
+-gds_path = f"/home/{USER}/.klayout/pymacros/cells/efuse"
++# The GDS ships next to this module; the upstream path pointed into the
++# user's ~/.klayout, where nothing ever installs it.
++gds_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "efuse")
+ 
+ 
+-def draw_efuse(layout, device_name):
++def draw_efuse(layout, device_name="efuse"):
+ 
+     layout.read(f"{gds_path}/efuse.gds")
+     cell_name = "efuse_cell"
+diff --git a/cells/efuse.py b/cells/efuse.py
+index 25f5c73..1c75fb7 100644
+--- a/cells/efuse.py
++++ b/cells/efuse.py
+@@ -80,7 +80,7 @@ class efuse(pya.PCellDeclarationHelper):
+         # This is the main part of the implementation: create the layout
+ 
+         self.percision = 1 / self.layout.dbu
+-        efuse_instance = draw_efuse(layout=self.layout)
++        efuse_instance = draw_efuse(layout=self.layout, device_name="efuse")
+         write_cells = pya.CellInstArray(
+             efuse_instance.cell_index(),
+             pya.Trans(pya.Point(0, 0)),
+diff --git a/klayout_api_cells/draw_efuse.py b/klayout_api_cells/draw_efuse.py
+index 61e781b..5f79bed 100644
+--- a/klayout_api_cells/draw_efuse.py
++++ b/klayout_api_cells/draw_efuse.py
+@@ -15,11 +15,12 @@
+ import pya
+ import os
+ 
+-USER = os.environ["USER"]
+-gds_path = f"/home/{USER}/.klayout/pymacros/cells/efuse"
++# The GDS ships next to this module; the upstream path pointed into the
++# user's ~/.klayout, where nothing ever installs it.
++gds_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "efuse")
+ 
+ 
+-def draw_efuse(layout, device_name):
++def draw_efuse(layout, device_name="efuse"):
+ 
+     layout.read(f"{gds_path}/efuse.gds")
+     cell_name = "efuse_cell"
+diff --git a/klayout_api_cells/efuse.py b/klayout_api_cells/efuse.py
+index 1de5099..b869569 100644
+--- a/klayout_api_cells/efuse.py
++++ b/klayout_api_cells/efuse.py
+@@ -80,7 +80,7 @@ class efuse(pya.PCellDeclarationHelper):
+         # This is the main part of the implementation: create the layout
+ 
+         self.percision = 1 / self.layout.dbu
+-        efuse_instance = draw_efuse(layout=self.layout)
++        efuse_instance = draw_efuse(layout=self.layout, device_name="efuse")
+         write_cells = pya.CellInstArray(
+             efuse_instance.cell_index(),
+             pya.Trans(pya.Point(0, 0)),

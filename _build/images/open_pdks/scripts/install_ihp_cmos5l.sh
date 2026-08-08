@@ -108,6 +108,20 @@ else
 	echo "[WARN] KLayout netlist import templates not found at $TEMPLATES_FILE"
 fi
 
+# Make the PCell preprocessor temp file per-process. CMOS5L ships its own copy of
+# the PCell library __init__.py (it only symlinks pycell4klayout-api and
+# pypreprocessor into SG13G2), so install_ihp.sh's patch does not reach it.
+# Both PDKs use the same PCell module names, so without this two concurrent
+# KLayout processes delete each other's /tmp/<module>_pre.py and the loser
+# registers no PCells at all. Shared helper, same fix for both PDKs.
+echo "[INFO] Making the PCell preprocessor temp file per-process."
+PYCELL_INIT="$PDK_ROOT/$PDK/libs.tech/klayout/python/sg13cmos5l_pycell_lib/__init__.py"
+if [ -f "$PYCELL_INIT" ]; then
+	python3 "$PDK_SCRIPT_DIR/fix_pycell_tempfile.py" "$PYCELL_INIT"
+else
+	echo "[WARN] KLayout PCell library not found at $PYCELL_INIT"
+fi
+
 # Remove testing folders to save space
 echo "[INFO] Removing unnecessary files to save space."
 cd "$PDK_ROOT/$PDK"

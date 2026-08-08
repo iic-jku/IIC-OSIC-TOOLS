@@ -218,6 +218,17 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 		git apply /images/open_pdks/patches/gf180mcu-pcells-gdsfactory9.patch
 	)
 
+	# Fix the efuse pcell, which comes out empty in both cell libraries:
+	#  - draw_efuse() is called without its required device_name argument
+	#    (unused in the body, so the patch also gives it a default).
+	#  - it reads efuse.gds from /home/$USER/.klayout/pymacros/cells/efuse,
+	#    where nothing ever installs it -- the GDS ships next to the module.
+	# See patches/gf180mcu-efuse.patch for the full change.
+	(
+		cd "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros" || exit 1
+		git apply /images/open_pdks/patches/gf180mcu-efuse.patch
+	)
+
     # Give universal write access to the macro directory, necessary for saving options
     # and creating the run directory.
     chmod -R 777 "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/macros"
