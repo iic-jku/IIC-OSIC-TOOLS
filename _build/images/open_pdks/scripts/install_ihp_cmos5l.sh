@@ -374,7 +374,8 @@ EOF
 # netlisted for VACASK from xschem at all. This reuses the upstream patchers
 # (xschem2vc + sg13g2tovc.patch_analog/patch_dig) rather than reimplementing
 # them, so it can be dropped as one block once VACASK ships ihp-sg13cmos5l
-# support. Symbols that are symlinks into ihp-sg13g2 are skipped -- they were
+# support (requested as https://codeberg.org/arpadbuermen/VACASK/issues/94).
+# Symbols that are symlinks into ihp-sg13g2 are skipped -- they were
 # already patched in place in the SG13G2 tree by install_ihp.sh.
 # ---------------------------------------------------------------------------
 echo "[INFO] Adding xschem VACASK support for CMOS5L."
