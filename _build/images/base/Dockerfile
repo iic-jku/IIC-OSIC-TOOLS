@@ -63,14 +63,15 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
     chmod -R 777 /headless && \
     find /headless -type f -not -name "*.sh" -exec chmod 666 {} \;
 
-# Rebrand the noVNC web assets. This MUST stay after the RUN above: the `novnc` apt package
-# installs into /usr/share/novnc and would overwrite anything placed there by the
-# `COPY images/base/skel /` near the top of this file.
+# Rebrand the noVNC web assets. This MUST stay after the RUN above: 80_install_apps.sh wipes
+# and repopulates /usr/share/novnc from the upstream release, and would overwrite anything
+# placed there by the `COPY images/base/skel /` near the top of this file.
 # index.html is the redirect page written by 80_install_apps.sh; it declares no icons at all,
 # so the root URL falls back to /favicon.ico (it also carries its own branded <title>, and so
-# is not part of the title substitution below). vnc.html, which it redirects to, declares 13
-# sized PNGs plus an SVG icon that browsers prefer over all of them, so all of those are
-# replaced too.
+# is not part of the title substitution below). vnc.html, which it redirects to, declares a
+# multi-size .ico plus nine apple-touch-icon PNGs, so all of those are replaced too. The
+# three source SVGs are carried along as well: they are what the PNGs and the .ico are
+# rasterized from (see app/images/icons/Makefile upstream), not runtime assets.
 # No --chmod here: it would also apply to the directories and make them non-traversable.
 # The modes are normalized in the RUN below instead -- COPY carries the modes of the build
 # context, so with a umask of 027 on the build host the copied files land unreadable for the
