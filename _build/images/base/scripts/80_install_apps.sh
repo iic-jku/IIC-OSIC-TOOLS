@@ -159,6 +159,9 @@ EOF
 # `novnc_proxy` resolves websockify through `type -P`, so a wrapper earlier in PATH is picked
 # up without patching either package. The wrapper drives the library directly, so it cannot
 # recurse into itself.
+#
+# The missing headers are tracked upstream as https://github.com/novnc/websockify/issues/626;
+# drop this wrapper once websockify sends `Cache-Control` itself.
 cat > /usr/local/bin/websockify <<'EOF'
 #!/usr/bin/python3
 """websockify, with Cache-Control: no-cache added to every response.
