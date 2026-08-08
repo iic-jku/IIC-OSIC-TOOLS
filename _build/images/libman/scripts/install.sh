@@ -11,7 +11,9 @@ cd "${LIBMAN_NAME}" || exit 1
 git checkout "${LIBMAN_REPO_COMMIT}"
 # Qt6 removed QString::SkipEmptyParts; Qt::SkipEmptyParts works on Qt5.14+ and
 # Qt6, so this is a pure compatibility patch (still needed as of 2026-08-06,
-# upstream HEAD == LIBMAN_REPO_COMMIT). Fail loudly instead of silently doing
+# upstream HEAD == LIBMAN_REPO_COMMIT).
+# Reported as https://github.com/IHP-GmbH/LibMan/issues/5; drop this once it is fixed.
+# Fail loudly instead of silently doing
 # nothing if a future commit no longer contains the old spelling: the patch can
 # then be dropped.
 if ! grep -q 'QString::SkipEmptyParts' src/mainwindow.cpp; then
