@@ -25,6 +25,10 @@ git checkout "${OPENROAD_LIBRELANE_REPO_COMMIT}"
 git submodule update --init --recursive
 # Fix Tcl_Size compatibility: SWIG 4.2 generates Tcl_Size (Tcl 9.0) but we have Tcl 8.6.
 # Patch system tcl.h so ALL compilation units see it (including SWIG-generated wrappers).
+# OpenROAD ships the fallback typedef itself since b59f6331 (PR #10061, 2026-04-06), but
+# the LibreLane-pinned revision predates that, so the patch is still needed here. Drop it
+# when OPENROAD_LIBRELANE_REPO_COMMIT is bumped past b59f6331 (the openroad image already
+# has, and carries no shim).
 if ! grep -q 'Tcl_Size' /usr/include/tcl/tcl.h; then
     sed -i '/#define TCL_VERSION/a \\n#ifndef Tcl_Size\ntypedef int Tcl_Size;\n#endif' /usr/include/tcl/tcl.h
 fi
