@@ -42,12 +42,71 @@ fi
 # Store git hash
 echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
 
+# Reconcile the repo-level versions.txt used by the KLayout DRC/LVS version check.
+# run_drc.py resolves it as <PDK_ROOT>/versions.txt (Path(__file__).parents[5]),
+# so one file has to serve both PDKs. install_ihp.sh already installed SG13G2's
+# copy, which carries entries for every tool; CMOS5L ships its own declaring only
+# a KLayout minimum. Keep SG13G2's file and raise just the klayout line to the
+# stricter of the two, so neither PDK's gate is silently weakened when they drift.
+SHARED_VERSIONS="$PDK_ROOT/versions.txt"
+CMOS5L_VERSIONS="$PDK_ROOT/$PDK/versions.txt"
+if [ -f "$SHARED_VERSIONS" ] && [ -f "$CMOS5L_VERSIONS" ]; then
+	python3 - "$SHARED_VERSIONS" "$CMOS5L_VERSIONS" << 'PYEOF'
+import re
+import sys
+
+def klayout_version(path):
+    with open(path, 'r') as f:
+        for line in f:
+            match = re.match(r'\s*klayout\s+(\S+)', line)
+            if match:
+                return match.group(1)
+    return None
+
+def sort_key(version):
+    return tuple(int(part) for part in re.findall(r'\d+', version))
+
+shared_path, own_path = sys.argv[1], sys.argv[2]
+shared, own = klayout_version(shared_path), klayout_version(own_path)
+
+if shared is None or own is None:
+    print(f"[WARN] klayout entry missing (shared={shared}, cmos5l={own}), "
+          f"leaving {shared_path} untouched")
+    sys.exit(0)
+if sort_key(own) <= sort_key(shared):
+    print(f"[INFO] {shared_path} already requires klayout {shared} >= {own}")
+    sys.exit(0)
+
+with open(shared_path, 'r') as f:
+    content = f.read()
+content = re.sub(r'(?m)^(\s*klayout\s+)\S+', lambda m: m.group(1) + own, content, count=1)
+with open(shared_path, 'w') as f:
+    f.write(content)
+print(f"[INFO] Raised klayout requirement in {shared_path} from {shared} to {own}")
+PYEOF
+else
+	echo "[WARN] versions.txt not found (shared: $SHARED_VERSIONS, CMOS5L: $CMOS5L_VERSIONS)."
+	echo "[WARN] The KLayout DRC/LVS version check may use the wrong minimum."
+fi
+
 # Remove .git directory to save space
 rm -rf "$PDK_ROOT/$PDK/.git"
 
 # Add custom bindkeys for Magic
 echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
 echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
+
+# Fix KLayout netlist import templates (make m= optional, accept nf= for ng=).
+# CMOS5L ships its own copy of ihp130_pcell_templates.py rather than a symlink
+# into SG13G2, so install_ihp.sh's patch does not reach it and it has to be
+# applied here too. Shared helper, same fix for both PDKs.
+echo "[INFO] Fixing KLayout netlist import templates."
+TEMPLATES_FILE="$PDK_ROOT/$PDK/libs.tech/klayout/python/import_netlist/ihp130_pcell_templates.py"
+if [ -f "$TEMPLATES_FILE" ]; then
+	python3 "$PDK_SCRIPT_DIR/fix_netlist_templates.py" "$TEMPLATES_FILE"
+else
+	echo "[WARN] KLayout netlist import templates not found at $TEMPLATES_FILE"
+fi
 
 # Remove testing folders to save space
 echo "[INFO] Removing unnecessary files to save space."
@@ -70,6 +129,26 @@ for pyfile in device_base_code.py guard_ring_code.py; do
     fi
 done
 
+# Rebuild the CMOS5L-own Verilog-A models for ngspice, the same way
+# install_ihp.sh does for SG13G2: in-image and with --compile-model-generic, so
+# the resulting OSDI runs on any host CPU. The PDK repo ships a prebuilt
+# cap_cmomi.osdi, but it comes from whoever committed it (unknown OpenVAF version
+# and target CPU), so it is not trustworthy for the image. psp103 and r3_cmc are
+# symlinks into SG13G2 and are already compiled by install_ihp.sh.
+# NOTE: this is the ngspice copy in libs.tech/ngspice/osdi. The VACASK copies in
+# libs.tech/vacask/osdi are built separately further down.
+echo "[INFO] Compiling Verilog-A models."
+export PATH="$TOOLS/openvaf/bin:$PATH"
+# Drop the prebuilt object first: openvaf-compile-va.sh does not set -e, so
+# without this the check below would happily pass on the stale shipped file.
+rm -f "$PDK_ROOT/$PDK/libs.tech/ngspice/osdi/cap_cmomi.osdi"
+cd "$PDK_ROOT/$PDK/libs.tech/verilog-a" || exit 1
+chmod +x openvaf-compile-va.sh
+./openvaf-compile-va.sh --compile-model-generic
+if [ ! -f "$PDK_ROOT/$PDK/libs.tech/ngspice/osdi/cap_cmomi.osdi" ]; then
+	echo "[ERROR] OpenVAF model compilation for ngspice failed!"
+	exit 1
+fi
 
 # Perform required preparation of IHP CMOS5L PDK for use with VACASK.
 # CMOS5L reuses SG13G2's converted models/OSDI (installed by install_ihp.sh)
@@ -296,5 +375,17 @@ rm -rf "/tmp/${VACASK_NAME}"
 # gzip Liberty (.lib) files. The SRAM Liberty files are symlinks into the
 # SG13G2 PDK and are already compressed by install_ihp.sh.
 bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/$PDK"
+
+# CMOS5L is largely symlinks into SG13G2, so a rename on the SG13G2 side silently
+# leaves a broken link behind. Report them instead of failing the build, 
+# since a dangling link is a PDK-side fix and not every one of them blocks the tools.
+echo "[INFO] Checking for broken symlinks into SG13G2."
+BROKEN_LINKS=$(find "$PDK_ROOT/$PDK" -xtype l || true)
+if [ -n "$BROKEN_LINKS" ]; then
+	echo "[WARN] Broken symlinks found in $PDK:"
+	echo "$BROKEN_LINKS" | sed 's/^/[WARN]   /'
+else
+	echo "[INFO] No broken symlinks found."
+fi
 
 echo "[INFO] IHP SG13CMOS5L PDK installation complete."

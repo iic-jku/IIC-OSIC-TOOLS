@@ -72,32 +72,12 @@ echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/$PDK/libs.tech/magic
 # Fix KLayout netlist import templates: make m= optional for all devices
 # (xschem omits m=1 when multiplicity equals the default value of 1)
 # Also accept nf= as alternative to ng= for MOSFET finger count.
+# CMOS5L ships its own copy of this file, so the fix lives in a shared helper
+# that install_ihp_cmos5l.sh runs as well.
 echo "[INFO] Fixing KLayout netlist import templates."
 TEMPLATES_FILE="$PDK_ROOT/$PDK/libs.tech/klayout/python/import_netlist/ihp130_pcell_templates.py"
 if [ -f "$TEMPLATES_FILE" ]; then
-    python3 - "$TEMPLATES_FILE" << 'PYEOF'
-import sys
-fname = sys.argv[1]
-with open(fname, 'r') as f:
-    content = f.read()
-# 1. Make m= optional in all regex patterns that currently require it.
-#    Use a placeholder to protect patterns that are already optional.
-old = r'(?=.*m=(?P<m>\d+))'
-new = r'(?:(?=.*m=(?P<m>\d+))|)'
-placeholder = '___OPTIONAL_M___'
-content = content.replace(new, placeholder)
-content = content.replace(old, new)
-content = content.replace(placeholder, new)
-# 2. Accept both ng= and nf= for MOSFET finger count
-#    (xschem may generate nf= in some symbol versions instead of ng=)
-content = content.replace(
-    r'(?=.*ng=(?P<ng>\d+))',
-    r'(?=.*(?:ng|nf)=(?P<ng>\d+))'
-)
-with open(fname, 'w') as f:
-    f.write(content)
-print(f"[INFO] Fixed KLayout netlist import templates in {fname}")
-PYEOF
+    python3 "$PDK_SCRIPT_DIR/fix_netlist_templates.py" "$TEMPLATES_FILE"
 else
     echo "[WARN] KLayout netlist import templates not found at $TEMPLATES_FILE"
 fi
