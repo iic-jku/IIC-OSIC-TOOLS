@@ -25,7 +25,25 @@ cd build || exit 1
 qmake6 CONFIG+=no_core ../libman.pro
 export CAPNP_SKIP_CHECK=1
 make -j1 capnp_install
-make -j1 lstream_schemas
+# This target clones the LStream schemas from codeberg.org, which is markedly
+# less reliable than GitHub (seen in the wild: HTTP 504 after a 30s hang). The
+# upstream script is idempotent -- it skips the clone once .deps/lstream/.git
+# exists and re-checks the target revision -- so retrying is safe.
+lstream_done=0
+for attempt in 1 2 3; do
+    if make -j1 lstream_schemas; then
+        lstream_done=1
+        break
+    fi
+    if [ "$attempt" -lt 3 ]; then
+        echo "[WARN] lstream_schemas failed (attempt ${attempt}/3), retrying" >&2
+        sleep $((attempt * 15))
+    fi
+done
+if [ "$lstream_done" -ne 1 ]; then
+    echo "[ERROR] lstream_schemas failed after 3 attempts" >&2
+    exit 1
+fi
 unset CAPNP_SKIP_CHECK
 make -j"$(nproc)"
 mkdir -p "${TOOLS}/${LIBMAN_NAME}/bin"
