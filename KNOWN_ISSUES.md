@@ -28,6 +28,14 @@ A few applications are using OpenGL graphics, which can lead to issues on some c
 export LIBGL_ALWAYS_INDIRECT=0
 ```
 
+### Mouse Gestures Break the Right-Button Drag in the Browser (noVNC) Session
+
+Some browsers reserve *hold the right mouse button and move* for their own mouse gestures and consume it before the page sees it. In the browser session this silently swallows every right-button drag: the press and the release still arrive, the motion in between does not. In KLayout the visible effect is that the right-drag zoom box never appears and the context menu opens instead; the same applies to any other right-button drag in any tool.
+
+`Vivaldi` ships this enabled — switch it off under `Settings > Mouse > Gestures` by unticking `Allow Gestures`. If left/right button combinations misbehave as well, `Rocker Gestures` on the same page does the same thing to those. Other browsers with a gesture feature (`Opera`, or a gesture extension in `Chrome`/`Firefox`) can intercept the drag in the same way; look for a "mouse gestures" option and turn it off. `Safari`, `Chrome` and `Firefox` have no such feature by default and are unaffected, as is the plain VNC mode, where no browser sits in the path.
+
+Note that up to image `2026.07` this was partly masked by a defect in the shipped noVNC `1.3.0`: a lost button release left the button held down at the X server, which made the zoom box follow the pointer anyway. Fixing that in `2026.08` (noVNC `1.7.0`) removed the accidental workaround, so the gesture conflict now shows up plainly.
+
 ### Issues with KLayout PCell Libraries
 
 Some pcell libraries were developed for older `gdsfactory` versions:
