@@ -213,6 +213,9 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	#    passes None otherwise, yielding silently empty pfet/via_dev devices).
 	#  - fix the draw_via_dev() call in vias_gen.py (stray v7-era arguments).
 	# See patches/gf180mcu-pcells-gdsfactory9.patch for the full change.
+	# Tracked upstream as
+	# https://github.com/fossi-foundation/globalfoundries-pdk-libs-gf180mcu_fd_pr/issues/2
+	# (PR #3 is the WIP port); drop this once that lands and open_pdks ships it.
 	(
 		cd "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros" || exit 1
 		git apply /images/open_pdks/patches/gf180mcu-pcells-gdsfactory9.patch
