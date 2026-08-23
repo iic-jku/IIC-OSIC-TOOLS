@@ -66,3 +66,4 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 29       | cap_cmomi MoM capacitor with ihp-sg13cmos5l (ngspice OSDI and VACASK model conversion)                                          |
 | 30       | xdg-mime defaults (every design file type resolves to its intended application, and covers all of sak-open.py)                  |
 | 31       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) (DRC, LVS, PEX) with ihp-sg13cmos5l         |
+| 32       | FPGA place-and-route flows (iCE40, ECP5 and Gowin to a bitstream, Xilinx 7-series to synthesis plus a tool inventory)           |

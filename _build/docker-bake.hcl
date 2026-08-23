@@ -173,6 +173,20 @@ target "fpga" {
   cache-to   = cache_to("fpga")
 }
 
+target "fpga-xilinx" {
+  inherits   = ["base-tool"]
+  dockerfile = "images/fpga-xilinx/Dockerfile"
+  tags       = [img("tool-fpga-xilinx-latest")]
+  contexts = {
+    "ctx-base-dev"  = basedep("base-dev")
+  }
+  args = {
+    BASE_IMAGE_BUILD = "ctx-base-dev"
+  }
+  cache-from = tool_cache_from("fpga-xilinx")
+  cache-to   = cache_to("fpga-xilinx")
+}
+
 target "gaw3-xschem" {
   inherits   = ["base-tool"]
   dockerfile = "images/gaw3-xschem/Dockerfile"
@@ -842,6 +856,7 @@ target "image-full" {
     "ctx-covered"              = tooldep("covered")
     "ctx-cvc_rv"               = tooldep("cvc_rv")
     "ctx-fpga"                 = tooldep("fpga")
+    "ctx-fpga-xilinx"          = tooldep("fpga-xilinx")
     "ctx-gaw3-xschem"          = tooldep("gaw3-xschem")
     "ctx-gds3d"                = tooldep("gds3d")
     "ctx-ghdl"                 = tooldep("ghdl")
@@ -894,6 +909,7 @@ target "image-full" {
     TOOL_IMAGE_COVERED             = "ctx-covered"
     TOOL_IMAGE_CVC_RV              = "ctx-cvc_rv"
     TOOL_IMAGE_FPGA                = "ctx-fpga"
+    TOOL_IMAGE_FPGA_XILINX         = "ctx-fpga-xilinx"
     TOOL_IMAGE_GAW3_XSCHEM         = "ctx-gaw3-xschem"
     TOOL_IMAGE_GDS3D               = "ctx-gds3d"
     TOOL_IMAGE_GHDL                = "ctx-ghdl"
@@ -963,6 +979,7 @@ group "tools" {
     "covered",
     "cvc_rv",
     "fpga",
+    "fpga-xilinx",
     "gaw3-xschem",
     "gds3d",
     "ghdl",
@@ -1022,6 +1039,7 @@ group "tools-level-1" {
     "covered",
     "cvc_rv",
     "fpga",
+    "fpga-xilinx",
     "gaw3-xschem",
     "ghdl",
     "gtkwave",

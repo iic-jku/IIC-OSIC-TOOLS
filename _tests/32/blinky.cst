@@ -1,0 +1,9 @@
+// SPDX-FileCopyrightText: 2026 Harald Pretl
+// Johannes Kepler University, Department for Integrated Circuits
+// SPDX-License-Identifier: Apache-2.0
+//
+// Gowin GW1NR-9C, pins taken from the Tang Nano 9K board.
+
+IO_LOC "clk" 52;
+IO_PORT "clk" PULL_MODE=UP;
+IO_LOC "led" 39;

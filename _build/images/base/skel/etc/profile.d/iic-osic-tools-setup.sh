@@ -67,12 +67,19 @@ if [ -z "${FOSS_INIT_DONE+x}" ]; then
     # Seed PYTHONPATH with the interpreter's default paths so the tool-specific
     # entries appended below extend (rather than shadow) the system modules.
     PYTHONPATH=$(python3 -c "import sys; print(':'.join(x for x in sys.path if x))") && export PYTHONPATH
+    _path_add_tool_python "fpga"
+    _path_add_tool_python "fpga-xilinx"
     _path_add_tool_python "ngspyce"
     _path_add_tool_python "openems"
     _path_add_tool_python "pyopus"
     export PYTHONPATH=$PYTHONPATH:$TOOLS/yosys/share/yosys/python3
     export PYTHONPATH=$PYTHONPATH:$TOOLS/klayout/pymod
     export PYTHONPATH=$PYTHONPATH:$TOOLS/vacask/lib/vacask/python
+
+    # openXC7 (Xilinx 7-series) expects the chipdb exporter and the bitstream
+    # database through these two, the same names its nix shell exports.
+    export NEXTPNR_XILINX_PYTHON_DIR=${NEXTPNR_XILINX_PYTHON_DIR:-$TOOLS/fpga-xilinx/share/nextpnr/python}
+    export PRJXRAY_DB_DIR=${PRJXRAY_DB_DIR:-$TOOLS/fpga-xilinx/share/nextpnr/external/prjxray-db}
 
     # Add local directories in $HOME so the user can upgrade PIP packages.
     PYTHON_VERSION=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")

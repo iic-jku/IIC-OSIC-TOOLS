@@ -205,6 +205,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [gmsh](https://gmsh.info/) three-dimensional finite element mesh generator
 - [gtkwave](https://github.com/gtkwave/gtkwave) waveform plot tool for digital simulation
 - [hdl21](https://github.com/dan-fritchman/Hdl21) analog hardware description library
+- [icestorm](https://github.com/YosysHQ/icestorm) bitstream tools for Lattice iCE40 FPGAs, providing `icepack` and `iceprog`
 - [ihp-sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130 nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
 - [ihp-sg13cmos5l](https://github.com/IHP-GmbH/ihp-sg13cmos5l) IHP Microelectronics 130 nm CMOS PDK (M1-M4-TM1 metal stack)
 - [irsim](https://github.com/rtimothyedwards/irsim) switch-level digital simulator
@@ -218,6 +219,8 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [magic](https://github.com/rtimothyedwards/magic) layout editor with DRC and PEX
 - [najaeda](https://github.com/najaeda/naja) data structures and APIs for the development of post logic synthesis EDA algorithms
 - [netgen](https://github.com/rtimothyedwards/netgen) netlist comparison (LVS)
+- [nextpnr](https://github.com/YosysHQ/nextpnr) FPGA place-and-route for Lattice iCE40 (`nextpnr-ice40`), Lattice ECP5 (`nextpnr-ecp5`) and Gowin (`nextpnr-himbaechel`)
+- [nextpnr-xilinx](https://github.com/openXC7/nextpnr-xilinx) the openXC7 fork of `nextpnr` for Xilinx 7-series FPGAs, with `prjxray` for the bitstream step
 - [ngspice](http://ngspice.sourceforge.net) SPICE analog and mixed-signal simulator, with OSDI support
 - [ngspyce](https://github.com/ignamv/ngspyce) Python bindings for `ngspice`
 - [nvc](https://github.com/nickg/nvc) VHDL simulator and compiler
@@ -230,6 +233,8 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [osic-multitool](https://github.com/iic-jku/osic-multitool) collection of useful scripts and documentation
 - [padring](https://github.com/donn/padring) padring generation tool
 - [palace](https://github.com/awslabs/palace) 3D finite element solver for computational electromagnetics
+- [prjtrellis](https://github.com/YosysHQ/prjtrellis) bitstream tools and database for Lattice ECP5 FPGAs, providing `ecppack`
+- [prjxray](https://github.com/f4pga/prjxray) bitstream tools and database for Xilinx 7-series FPGAs, providing `fasm2frames` and `xc7frames2bit`
 - [pulp-tools](https://github.com/pulp-platform/pulp) PULP platform tools consisting of [bender](https://github.com/pulp-platform/bender), [verible](https://github.com/chipsalliance/verible), and [sv2v](https://github.com/zachjs/sv2v)
 - [pygmid](https://github.com/dreoilin/pygmid) Python version of the gm/Id starter kit from Boris Murmann
 - [pyopus](https://codeberg.org/arpadbuermen/PyOPUS) simulation runner and optimization tool for analog circuits

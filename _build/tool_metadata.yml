@@ -1,3 +1,6 @@
+- name: apycula
+  repo: https://pypi.org/project/apycula
+  commit: '0.32'
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
   commit: 97b599b2d3cb433d204cf71b8583f6ec2825d509
@@ -52,6 +55,9 @@
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
   commit: 7c0c1c40196fcca091320d06422a08749b106e53
+- name: nextpnr-xilinx
+  repo: https://github.com/openXC7/nextpnr-xilinx.git
+  commit: 68aeeb39f92e39bfb239c7e4a44dd93451fc1889
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -85,6 +91,12 @@
 - name: palace
   repo: https://github.com/awslabs/palace.git
   commit: 86810b1909f3e05e0bf1fd78f485e59d55582b6d
+- name: prjtrellis
+  repo: https://github.com/YosysHQ/prjtrellis.git
+  commit: 3afe7b52b30f4b4417ee98f03016767a502006e3
+- name: prjxray
+  repo: https://github.com/f4pga/prjxray.git
+  commit: c9f02d8576042325425824647ab5555b1bc77833
 - name: pyopus
   repo: https://fides.fe.uni-lj.si/pyopus/download
   commit: '0.12'
