@@ -18,12 +18,14 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-drc.sh [-d] [-m|-k|-b] [-c] [-l <level>] [-f <pattern>] [-w <workdir>] <cellname>
+# Usage: sak-drc.sh [-d] [-m|-k|-b|-g] [-c] [-l <level>] [-s <suite>] [-f <pattern>] [-w <workdir>] <cellname>
 #        -m  Run Magic DRC (default)
 #        -k  Run KLayout DRC
 #        -b  Run Magic and KLayout DRC
+#        -g  Run gdscheck DRC
 #        -c  Clean output files before running
-#        -l  KLayout DRC level: precheck|macro|regular (default: macro)
+#        -l  KLayout/gdscheck DRC level: precheck|macro|regular (default: macro)
+#        -s  gdscheck suite: precheck|core|main|density|antenna (default: derived from -l)
 #        -f  Set GDS flatglob pattern for Magic (e.g. '*' to flatten all)
 #        -w  Use <workdir> to store result files (default: current dir)
 #        -d  Enable debug information
@@ -40,18 +42,21 @@ ERR_NO_VAR=8
 
 if [ $# -eq 0 ]; then
 	echo
-	echo "DRC script for Magic and KLayout (ICD@JKU)"
+	echo "DRC script for Magic, KLayout, and gdscheck (ICD@JKU)"
 	echo
-	echo "Usage: $0 [-d] [-m|-k|-b] [-c] [-l <level>] [-f <pattern>] [-w <workdir>] <cellname>"
+	echo "Usage: $0 [-d] [-m|-k|-b|-g] [-c] [-l <level>] [-s <suite>] [-f <pattern>] [-w <workdir>] <cellname>"
 	echo
 	echo "       -m Run Magic DRC (default)"
 	echo "       -k Run KLayout DRC"
 	echo "       -b Run Magic and KLayout DRC"
+	echo "       -g Run gdscheck DRC"
 	echo "       -c Clean output files before running"
-	echo "       -l KLayout DRC level: precheck|macro|regular (default: macro)"
+	echo "       -l KLayout/gdscheck DRC level: precheck|macro|regular (default: macro)"
 	echo "          precheck: core FEOL and BEOL rules only"
 	echo "          macro: adds off-grid, pin, and zero-area checks, skips chip-level density and antenna"
 	echo "          regular: all checks"
+	echo "       -s gdscheck suite, overrides the -l mapping (precheck|core|main|density|antenna)"
+	echo "          precheck maps to precheck, macro to core, regular to main"
 	echo "       -f Set GDS flatglob pattern for Magic (e.g. '*' to flatten all)"
 	echo "       -w Use <workdir> to store result files (default current dir)"
 	echo "       -d Enable debug information"
@@ -66,29 +71,40 @@ DEBUG=0
 RESDIR=$PWD
 RUN_MAGIC=1
 RUN_KLAYOUT=0
+RUN_GDSCHECK=0
 RUN_CLEAN=0
 FLATGLOB=""
 DRC_LEVEL="macro"
+GDSCHECK_SUITE=""
 
 # check flags
 # -----------
 
-while getopts "mkbcl:f:w:d" flag; do
+while getopts "mkbgcl:s:f:w:d" flag; do
 	case $flag in
 		m)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -m is set."
 			RUN_MAGIC=1
 			RUN_KLAYOUT=0
+			RUN_GDSCHECK=0
 			;;
 		k)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -k is set."
 			RUN_MAGIC=0
 			RUN_KLAYOUT=1
+			RUN_GDSCHECK=0
 			;;
 		b)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -b is set."
 			RUN_MAGIC=1
 			RUN_KLAYOUT=1
+			RUN_GDSCHECK=0
+			;;
+		g)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -g is set."
+			RUN_MAGIC=0
+			RUN_KLAYOUT=0
+			RUN_GDSCHECK=1
 			;;
 		c)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -c is set."
@@ -97,6 +113,10 @@ while getopts "mkbcl:f:w:d" flag; do
 		l)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -l is set to <$OPTARG>."
 			DRC_LEVEL="$OPTARG"
+			;;
+		s)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -s is set to <$OPTARG>."
+			GDSCHECK_SUITE="$OPTARG"
 			;;
 		f)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -f is set to <$OPTARG>."
@@ -117,13 +137,23 @@ while getopts "mkbcl:f:w:d" flag; do
 done
 shift $((OPTIND-1))
 
-# check that the KLayout DRC level is valid
-# -----------------------------------------
+# check that the KLayout/gdscheck DRC level is valid
+# --------------------------------------------------
 
 case "$DRC_LEVEL" in
 	precheck|macro|regular) ;;
 	*)
-		echo "[ERROR] Unknown KLayout DRC level <$DRC_LEVEL> (expected precheck, macro, or regular)!"
+		echo "[ERROR] Unknown KLayout/gdscheck DRC level <$DRC_LEVEL> (expected precheck, macro, or regular)!"
+		exit $ERR_NO_PARAM ;;
+esac
+
+# check that the gdscheck suite is valid (empty means derive it from the DRC level)
+# ---------------------------------------------------------------------------------
+
+case "$GDSCHECK_SUITE" in
+	""|precheck|core|main|density|antenna) ;;
+	*)
+		echo "[ERROR] Unknown gdscheck suite <$GDSCHECK_SUITE> (expected precheck, core, main, density, or antenna)!"
 		exit $ERR_NO_PARAM ;;
 esac
 
@@ -216,6 +246,13 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	done
 fi
 
+if [ "$RUN_GDSCHECK" -eq 1 ]; then
+	if [ ! -x "$(command -v gdscheck)" ]; then
+		echo "[ERROR] gdscheck could not be found!"
+		exit $ERR_CMD_NOT_FOUND
+	fi
+fi
+
 # KLayout DRC is implemented for sky130/gf180mcu/ihp-sg13g2/ihp-sg13cmos5l and needs a GDS layout. In each unmet case skip KLayout: warn and continue if Magic DRC also runs, otherwise error out.
 # ----------------------------------------------------------------------------------------------
 
@@ -242,6 +279,22 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	esac
 fi
 
+# gdscheck DRC (-g) carries its own built-in rule decks for ihp-sg13g2/ihp-sg13cmos5l and needs a GDS layout. -g runs gdscheck alone, so both unmet cases error out.
+# ----------------------------------------------------------------------------------------------
+
+if [ "$RUN_GDSCHECK" -eq 1 ] && ! echo "$PDK" | grep -q -i -E "ihp-sg13g2|ihp-sg13cmos5l"; then
+	echo "[ERROR] gdscheck DRC for $PDK not yet supported!"
+	exit $ERR_PDK_NOT_SUPPORTED
+fi
+if [ "$RUN_GDSCHECK" -eq 1 ]; then
+	case "$CELL_LAY" in
+		*.mag|*.mag.gz)
+			echo "[ERROR] gdscheck DRC needs a GDS layout (got <$CELL_LAY>)!"
+			exit $ERR_UNKNOWN_FILE
+			;;
+	esac
+fi
+
 # define useful variables
 # -----------------------
 
@@ -260,6 +313,8 @@ MAGIC_RUNDIR="$RESDIR/${CELL_NAME}.magic.drc"
 EXT_SCRIPT="$MAGIC_RUNDIR/drc_$CELL_NAME.tcl"
 # run dir holding the gf180mcu/ihp KLayout DRC report(s) (.lyrdb) and log, sky130 writes its reports directly into $RESDIR
 KLAYOUT_RUNDIR="$RESDIR/${CELL_NAME}.klayout.drc"
+# run dir holding the gdscheck DRC report (.lyrdb) and log
+GDSCHECK_RUNDIR="$RESDIR/${CELL_NAME}.gdscheck.drc"
 # GDS only: magic writes this marker if the GDS top cell is not named like the loaded cell. It is checked after the run.
 CELL_MISMATCH_MARKER="$MAGIC_RUNDIR/drc_$CELL_NAME.cellmismatch"
 [ ! -d "$RESDIR" ] && mkdir -p "$RESDIR"
@@ -272,20 +327,23 @@ if [ "$RUN_CLEAN" -eq 1 ]; then
 	rm -f  -- "$RESDIR"/*.klayout.*.xml "$RESDIR"/*.klayout.*.log
 	rm -rf -- "$RESDIR"/*.magic.drc
 	rm -rf -- "$RESDIR"/*.klayout.drc
+	rm -rf -- "$RESDIR"/*.gdscheck.drc
 fi
 
-# decompress gzipped layout views, magic cannot read them directly
+# decompress gzipped layout views, magic cannot read them directly (gdscheck detects gzip itself, so a gdscheck-only run skips this)
 # ----------------------------------------------------------------
 
 GZ_TMP=""
-case "$CELL_LAY" in
-	*.gds.gz)
-		GZ_TMP="$RESDIR/${CELL_NAME}.drctmp.gds"
-		;;
-	*.mag.gz)
-		GZ_TMP="$RESDIR/${CELL_NAME}.drctmp.mag"
-		;;
-esac
+if [ "$RUN_MAGIC" -eq 1 ] || [ "$RUN_KLAYOUT" -eq 1 ]; then
+	case "$CELL_LAY" in
+		*.gds.gz)
+			GZ_TMP="$RESDIR/${CELL_NAME}.drctmp.gds"
+			;;
+		*.mag.gz)
+			GZ_TMP="$RESDIR/${CELL_NAME}.drctmp.mag"
+			;;
+	esac
+fi
 if [ -n "$GZ_TMP" ]; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] Decompressing <$CELL_LAY> to <$GZ_TMP>."
 	gunzip -c "$CELL_LAY" > "$GZ_TMP"
@@ -521,6 +579,41 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	fi
 fi
 
+# ============================================================================
+# gdscheck DRC (standalone engine with built-in ihp rule decks)
+# ============================================================================
+
+if [ "$RUN_GDSCHECK" -eq 1 ]; then
+	echo "[INFO] Launching gdscheck DRC..."
+
+	# map the DRC level onto the gdscheck suites unless -s selected one directly
+	# precheck: IHP's published open-source precheck subset
+	# macro: core suite, all geometric rules minus density/fill and antenna
+	# regular: main suite, every per-layer deck including density and antenna
+	if [ -z "$GDSCHECK_SUITE" ]; then
+		case "$DRC_LEVEL" in
+			precheck)	GDSCHECK_SUITE="precheck" ;;
+			macro)		GDSCHECK_SUITE="core" ;;
+			regular)	GDSCHECK_SUITE="main" ;;
+		esac
+	fi
+	[ $DEBUG -eq 1 ] && echo "[INFO] Using gdscheck suite <$GDSCHECK_SUITE>."
+
+	# the run dir is wiped so its contents only reflect this run
+	rm -rf "$GDSCHECK_RUNDIR"
+	mkdir -p "$GDSCHECK_RUNDIR"
+
+	# net extraction is lazy and only triggered by the antenna rules (main/antenna suites), so no --no-connectivity switch is needed
+	gdscheck run \
+		--input "$CELL_LAY" \
+		--process "$PDK" \
+		--suite "$GDSCHECK_SUITE" \
+		--topcell "$CELL_NAME" \
+		--report "$GDSCHECK_RUNDIR/$CELL_NAME.lyrdb" \
+		--threads "$(nproc --ignore 5)" \
+		> "$GDSCHECK_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
+fi
+
 # wait for all runs to finish
 # ---------------------------
 
@@ -642,6 +735,22 @@ elif [ "$RUN_KLAYOUT" -eq 1 ]; then
 		DRC_CLEAN=0
 	else
 		echo "[INFO] KLayout DRC is clean!"
+	fi
+fi
+
+if [ "$RUN_GDSCHECK" -eq 1 ]; then
+	# gdscheck writes its .lyrdb report for clean and dirty runs alike and always exits 0, so no report means the run itself failed (e.g. topcell not found), the reason is in the log
+	if [ ! -f "$GDSCHECK_RUNDIR/$CELL_NAME.lyrdb" ]; then
+		echo "[ERROR] gdscheck DRC run failed (no report produced), see <$GDSCHECK_RUNDIR/$CELL_NAME.drc.log>!"
+		exit $ERR_NO_OUTPUT
+	fi
+	# one violation is one <item> in the report, regardless of its geometry type
+	DRC_ERRORS=$(grep -c "<item>" "$GDSCHECK_RUNDIR/$CELL_NAME.lyrdb")
+	if [ "$DRC_ERRORS" -ne 0 ]; then
+		echo "[INFO] gdscheck $DRC_ERRORS DRC errors found! Check <$GDSCHECK_RUNDIR/$CELL_NAME.lyrdb>!"
+		DRC_CLEAN=0
+	else
+		echo "[INFO] gdscheck DRC is clean!"
 	fi
 fi
 
