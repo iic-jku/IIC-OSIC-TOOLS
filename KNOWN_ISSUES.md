@@ -85,14 +85,29 @@ instructions then trap. The CPU probe of AWS-LC/OpenSSL trusts the SVE2 bit and
 executes one (`cntb`, in `_armv8_sve_get_vl_bytes`) at library load time, so any
 binary using that dispatch dies with `Illegal instruction (core dumped)`.
 
-Observed on an Apple M4 with Podman 6.0.2 (Fedora CoreOS 41, kernel 6.12.13),
-where it broke `import cryptography` (and therefore `siliconcompiler`) as well as
-every `cocotb` simulation, which reports `Simulation failed: -4` because the
-simulator embeds Python and loads the same extension. The same image and library
-versions run fine on native `arm64` Linux, so this is a property of the VM, not
-of the `arm64` image. It is not specific to Podman either: the incoherent feature
-pair comes from the guest kernel on Apple's hypervisor, so Docker Desktop can be
-affected in the same way, depending on the kernel its VM ships.
+Which consumers trip over this changes as the bundled libraries move, so the
+symptom is a better guide than any single example. Re-checked on an Apple M4 with
+Podman 6.1.1 (Fedora CoreOS 41, kernel 6.12.13) against image `2026.08`:
+`import siliconcompiler` dies with `Illegal instruction (core dumped)` and exit
+code 132, and every `cocotb` simulation dies the same way inside the simulator
+process, right after cocotb prints its `Initialized cocotb` banner. The backend
+makes no difference, both the Icarus and the Verilator flow were checked: the
+crash happens in the embedded Python that cocotb loads, before the simulator
+itself does any work. `import cryptography` is *not* affected any more, though
+it was in earlier images, so it is no longer a usable probe for this problem.
+Older cocotb releases reported the crash as `Simulation failed: -4`, that is the
+negative of signal 4, `SIGILL`; cocotb 2.x lets the `Illegal instruction`
+message through instead.
+
+That the mask is what matters can be confirmed directly: pinning
+`OPENSSL_armcap` to any value avoids the crash, both `0` and `1` do, because the
+pin replaces the runtime capability detection rather than correcting it.
+
+The same image and library versions run fine on native `arm64` Linux, so this is
+a property of the VM, not of the `arm64` image. It is not specific to Podman
+either: the incoherent feature pair comes from the guest kernel on Apple's
+hypervisor, so Docker Desktop can be affected in the same way, depending on the
+kernel its VM ships.
 
 Since image `2026.08` the `start_*.sh` scripts detect Apple Silicon and pass
 `OPENSSL_armcap=0` into the container, which makes the probe use that mask
