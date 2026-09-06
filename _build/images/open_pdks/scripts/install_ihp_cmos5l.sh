@@ -108,6 +108,14 @@ else
 	echo "[WARN] KLayout netlist import templates not found at $TEMPLATES_FILE"
 fi
 
+# Anchor the KLayout GUI DRC/LVS run directory to the layout file, and add the
+# %top_cell% placeholder. CMOS5L ships its own copies of the DRC and LVS menu
+# macros and their options dialogs rather than symlinks into SG13G2, so
+# install_ihp.sh's patch does not reach them. Shared helper, same fix for both
+# PDKs, see install_ihp.sh for what it does and why.
+echo "[INFO] Fixing the KLayout GUI DRC/LVS run directory."
+python3 "$PDK_SCRIPT_DIR/fix_klayout_run_dir.py" "$PDK_ROOT/$PDK/libs.tech/klayout/tech/macros"
+
 # Remove testing folders to save space
 echo "[INFO] Removing unnecessary files to save space."
 cd "$PDK_ROOT/$PDK"

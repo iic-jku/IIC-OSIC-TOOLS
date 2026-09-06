@@ -82,6 +82,17 @@ else
     echo "[WARN] KLayout netlist import templates not found at $TEMPLATES_FILE"
 fi
 
+# Anchor the KLayout GUI DRC/LVS run directory to the layout file. The IHP menu
+# macros expand a relative run_dir against the working directory of the KLayout
+# process, so the same layout writes its reports to a different place depending
+# on how KLayout was started, and by default next to the GDS. The helper also
+# adds a %top_cell% placeholder, so one setting such as
+# ../verification/drc/%top_cell%.klayout.drc serves every cell of a project.
+# CMOS5L ships its own copies of these four macros rather than symlinks, so the
+# fix lives in a shared helper that install_ihp_cmos5l.sh runs as well.
+echo "[INFO] Fixing the KLayout GUI DRC/LVS run directory."
+python3 "$PDK_SCRIPT_DIR/fix_klayout_run_dir.py" "$PDK_ROOT/$PDK/libs.tech/klayout/tech/macros"
+
 # The IHP PDK renamed the IO netlist to libs.ref/sg13g2_io/spice/sg13g2_io.spice,
 # but several consumers still expect the old name sg13g2_io.spi:
 #   - libs.tech/librelane/config.tcl (PAD_SPICE_MODELS)
