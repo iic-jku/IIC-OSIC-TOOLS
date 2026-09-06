@@ -100,6 +100,15 @@ instead of detecting capabilities and avoids the crash. The only cost is ARM
 crypto acceleration inside the container. Export `OPENSSL_armcap` yourself to
 pin a different mask, or export it empty to switch the workaround off.
 
+Container options are fixed at create time, so a container created before this
+fix has to be removed (press `r` at the prompt) and re-created; a container that
+is reused silently keeps its old environment and still crashes. Check from
+inside the container with `printenv OPENSSL_armcap`: the workaround is in effect
+when that prints `0`, and absent when it prints nothing. Starting the container
+directly with `docker run` or `podman run` instead of through a `start_*.sh`
+script bypasses the workaround the same way. With an older checkout, use
+`DOCKER_EXTRA_PARAMS="-e OPENSSL_armcap=0" ./start_shell.sh`.
+
 ### SELinux Hosts (Fedora, RHEL and Clones)
 
 On hosts with SELinux the container runs as `container_t`, while the bind-mounted
