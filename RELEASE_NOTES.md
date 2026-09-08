@@ -13,6 +13,7 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] the `unifont` package
 * [Adding] a complete logo asset pack in `_logo/`
 * [Update] various tool and Python package version bumps
+* [Changing] both IHP PDKs are installed from the single `iic-jku/IHP-Open-PDK` repository, following IHP's move of `ihp-sg13cmos5l` into the SG13G2 repository. One clone now installs both PDK trees, they share the repo-level `versions.txt`, and `$PDK_ROOT/<pdk>/COMMIT` records the same commit for both
 * [Changing] the browser session serves the full noVNC client from upstream `v1.7.0` instead of the `vnc_lite.html` demo page from Ubuntu's `1.3.0`
 * [Changing] the branding is refreshed with the new logo
 * [Changing] the desktop terminal is `xfce4-terminal` instead of `gnome-terminal`
@@ -20,6 +21,7 @@ This document summarizes the most important changes of the individual releases o
 * [Changing] `xschem` requires the Ctrl key to zoom and pan inside graph (waveform) widgets (`graph_use_ctrl_key`), set system-wide
 * [Changing] the Liberty files in `libs.ref` of all packaged PDKs also ship gzipped as `.lib.gz`, which the PDK flow configurations reference and every Liberty-reading tool handles. **Deprecation notice:** the uncompressed `.lib` files are kept for the next few releases and will then be removed, so please migrate your own flows!
 * [Fix] the KLayout DRC and LVS menus of both IHP PDKs write their reports into the project's verification folder instead of next to the layout, with nothing to configure: a layout whose directory has a `verification` folder beside it reports into `../verification/drc/<cell>.klayout-gui.drc` and `../verification/lvs/<cell>.klayout-gui.lvs`, and every other layout keeps the previous default next to itself. The `klayout-gui` tag keeps a menu run from ever landing on the `<cell>.klayout.drc` of `sak-drc.sh -w`, which the DRC macro deletes before each run. The run directory is now also resolved against the layout file rather than the directory KLayout happened to be started in, so the same layout no longer reports somewhere else depending on how it was opened, and a `%top_cell%` placeholder lets one explicit setting serve every cell
+* [Fix] the thick-oxide standard cells of `ihp-sg13cmos5l` lost all three timing corners in LibreLane: `sg13cmos5l_stdcell_hv` borrows its Liberty from `sg13g2_stdcell_hv` through renamed symlinks, which the Liberty compression skipped, so the `.lib.gz` the rewritten configuration asks for did not exist and every corner fell out of `STA_CORNERS`
 * [Fix] `xschem` no longer asks whether embedded Tcl scripts may be executed, which the PDK launcher symbols and `tcleval()` attributes need: `xschem_execute_scripts yes` moved to the system-wide `xschemrc`
 * [Fix] `start_vnc.sh` detects rootless Podman on macOS and Windows too
 * [Fix] the start scripts no longer prefix `DOCKER_REGISTRY` when `DOCKER_USER` already names a registry
