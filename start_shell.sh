@@ -292,6 +292,11 @@ elif [ "$(${CONTAINER_ENGINE} ps -aq -f name="${CONTAINER_NAME}")" ]; then
 		echo "[WARNING] The existing container was created without \"--security-opt label=${SELINUX_LABEL}\" and will not work on this SELinux host."
 		echo "[HINT] Press \"r\" to remove it, then run this script again to re-create it."
 	fi
+	CREATED_ENV=$(${CONTAINER_ENGINE} inspect -f '{{range .Config.Env}}{{.}} {{end}}' "${CONTAINER_NAME}" 2>/dev/null)
+	if [ -n "${ARMCAP}" ] && [ -n "${CREATED_ENV}" ] && ! echo "${CREATED_ENV}" | grep -q "OPENSSL_armcap="; then
+		echo "[WARNING] The existing container was created without \"OPENSSL_armcap=${ARMCAP}\" and will crash with SIGILL on this Apple Silicon host (see KNOWN_ISSUES.md)."
+		echo "[HINT] Press \"r\" to remove it, then run this script again to re-create it."
+	fi
 	# --- END common create-time option check ---
 	echo
 	echo -n "Press \"s\" to start, and \"r\" to remove: "
