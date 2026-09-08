@@ -1,6 +1,6 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
-  commit: 97b599b2d3cb433d204cf71b8583f6ec2825d509
+  commit: b1f28461a4c475818123caab417aa7ae9b2f16d2
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -30,13 +30,13 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 5ab23063fe15bae91f8453e5f50a35cb03ea3206
+  commit: a079347a89f69a1942a3704872a36b7c4e1f9da9
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.1
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: 4992da5d0141a7224ee261471ab3a6ca486f0dc1
+  commit: 11d8ac4e44d69bcb4cc53ef8ccb60d99999cb975
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.12
@@ -66,10 +66,10 @@
   commit: 026824c7969ce6f4fc9678e6ca04b0a06a596c4b
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: 51274cd2a3fc1828ec7453c6d8b35558d607c15e
+  commit: ea3c012c688c9110973b2fdbf77b7b8aa09a099b
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 63fe72c577ef12d2ac2a0a944bbd842f9af8a0a7
+  commit: c7e5e75131a65e402a2d46a1cb82659d725655da
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -114,7 +114,7 @@
   commit: 7d61e0ad1666458db9f6c748af016b0a82be9b5c
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: b6e440d6a2586b93c2a43da676c207c8c2a15778
+  commit: b6f721f4a5624428f368ad20078e724c11e2658d
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: e7d32ba52eafead21fb20caae563bdab345b7c2a
@@ -138,7 +138,7 @@
   commit: 0.12.10
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: b48050e68cb304687b602f9f2f8b3e5ba0e29602
+  commit: 0212881e5a87cce91476cd86b9f59673f6da8e9a
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.052
@@ -150,7 +150,7 @@
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: f1174d7b1e7884c659ad90c7ba0d171a9b45e795
+  commit: 59e3cb96564a2b2d826e6520d8a8eb593d34eeaf
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
@@ -159,7 +159,7 @@
   commit: trilinos-release-12-12-1
 - name: yices2
   repo: https://github.com/SRI-CSL/yices2.git
-  commit: 35c09acc442d918e07ea4711d02a39f05b781e71
+  commit: 728b7eebd5d3b8303022775204cf46030f05244f
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
   commit: v0.68
