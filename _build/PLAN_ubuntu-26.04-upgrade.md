@@ -1,5 +1,9 @@
 # Upgrade the base image from Ubuntu 24.04 LTS to 26.04 LTS
 
+> Status: **planned, not started.** Written 2026-09-08 against `next_release`.
+> Package availability was verified against the `resolute` archive on that date;
+> re-run the Phase 0 pre-flight before acting on any of it.
+
 ## Context
 
 The image has been on Ubuntu 24.04 LTS ("noble") since release `2025.01` (`RELEASE_NOTES.md:243`).
