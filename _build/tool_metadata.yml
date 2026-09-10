@@ -1,6 +1,6 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
-  commit: b1f28461a4c475818123caab417aa7ae9b2f16d2
+  commit: c16584961d78f36867bce5b0912399683372c58a
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -30,10 +30,10 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: a079347a89f69a1942a3704872a36b7c4e1f9da9
+  commit: 79c42a1561d1ac38a8b96f5d39bb07fccca5a5f9
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
-  commit: v3.14.1
+  commit: v3.14.2
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
   commit: 11d8ac4e44d69bcb4cc53ef8ccb60d99999cb975
@@ -51,7 +51,7 @@
   commit: 1.5.323
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 3cfc28d02e05bef56a30517745d57d8d1118c97e
+  commit: e47c2589e80c88406966536083ae9133be40909f
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -69,7 +69,7 @@
   commit: ea3c012c688c9110973b2fdbf77b7b8aa09a099b
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: c7e5e75131a65e402a2d46a1cb82659d725655da
+  commit: c3e680b01b8bc61eb1dfaf144594b371cc222efc
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 43a54836d849fde725929b3de7ff974b4f8c6d38
+  commit: 75b4f6d833907f98b8813194caa1502dfacde070
 - name: prjtrellis
   repo: https://github.com/YosysHQ/prjtrellis.git
   commit: 3afe7b52b30f4b4417ee98f03016767a502006e3
@@ -111,13 +111,13 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 7d61e0ad1666458db9f6c748af016b0a82be9b5c
+  commit: b46cabbacc9a0e87adba9c69ff679dd4c7c90b41
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: b6f721f4a5624428f368ad20078e724c11e2658d
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
-  commit: e7d32ba52eafead21fb20caae563bdab345b7c2a
+  commit: ed1dd7c765bf6aaaa5dfb624459d5af75d154a46
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
   commit: 4ffd6ba860f4190ceac2716fa3c2cf139e85538f
@@ -135,7 +135,7 @@
   commit: 997b49c20705ca3d99e8c0ebe57d6a7840513bb4
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.12.10
+  commit: 0.12.12
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
   commit: 0212881e5a87cce91476cd86b9f59673f6da8e9a
@@ -144,13 +144,13 @@
   commit: v5.052
 - name: verible
   repo: https://github.com/chipsalliance/verible.git
-  commit: v0.0-4163-g6cce8f19
+  commit: v0.0-4171-ga5e38787
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 59e3cb96564a2b2d826e6520d8a8eb593d34eeaf
+  commit: 6f3514e1767550bed99c63ec61ff8eadbdd7b61c
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
@@ -162,13 +162,13 @@
   commit: 728b7eebd5d3b8303022775204cf46030f05244f
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: v0.68
+  commit: v0.69
 - name: yosys-eqy
   repo: https://github.com/YosysHQ/eqy.git
-  commit: v0.68
+  commit: v0.69
 - name: yosys-mcy
   repo: https://github.com/YosysHQ/mcy.git
-  commit: v0.68
+  commit: v0.69
 - name: yosys-sby
   repo: https://github.com/YosysHQ/sby.git
-  commit: v0.68
+  commit: v0.69

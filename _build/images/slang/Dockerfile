@@ -7,7 +7,7 @@
 ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS slang
 ARG SLANG_REPO_URL="https://github.com/MikePopoloski/slang.git"
-ARG SLANG_REPO_COMMIT="7d61e0ad1666458db9f6c748af016b0a82be9b5c"
+ARG SLANG_REPO_COMMIT="b46cabbacc9a0e87adba9c69ff679dd4c7c90b41"
 ARG SLANG_NAME="slang"
 RUN --mount=type=bind,source=images/slang,target=/images/slang \
     bash /images/slang/scripts/install.sh

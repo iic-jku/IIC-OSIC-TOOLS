@@ -62,7 +62,7 @@ pip3 install $PIP_FLAGS \
 	cocotbext-ams==0.1.0 \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
-	fusesoc==2.4.6 \
+	fusesoc==2.4.7 \
 	gds2palace==0.4.4 \
 	gdsfactory==9.49.0 \
 	gdspy==1.6.13 \
