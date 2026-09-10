@@ -65,7 +65,6 @@ pip3 install $PIP_FLAGS \
 	fusesoc==2.4.6 \
 	gds2palace==0.4.0 \
 	gdsfactory==9.48.0 \
-	gdsfill==0.1.8 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.3.15 \
