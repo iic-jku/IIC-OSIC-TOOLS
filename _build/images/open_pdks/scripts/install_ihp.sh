@@ -13,26 +13,42 @@ if [ ! -d "$PDK_ROOT" ]; then
     mkdir -p "$PDK_ROOT"
 fi
 
-# Install IHP-SG13G2
+# Install the IHP PDKs
+# SG13CMOS5L moved into the SG13G2 repository with IHP-Open-PDK#1124, so both
+# PDKs are fetched here in one clone: one commit, one repo-level versions.txt,
+# and both trees side by side under $PDK_ROOT. What follows below is the
+# SG13G2 post-processing; the CMOS5L one lives in install_ihp_cmos5l.sh.
 PDK="ihp-sg13g2"
+PDK_CMOS5L="ihp-sg13cmos5l"
 IHP_REPO_URL="https://github.com/iic-jku/IHP-Open-PDK.git"
 
-echo "[INFO] Installing IHP SG13G2 PDK."
+echo "[INFO] Installing the IHP PDKs."
 git clone "$IHP_REPO_URL" ihp
 cd ihp || exit 1
 # For now uses branch "dev" to get the latest releases
 git checkout dev
 git submodule update --init --recursive
 
-# Now move to the proper location
-if [ -d "$PDK" ]; then
-	mv "$PDK" "$PDK_ROOT/$PDK"
-else
-	echo "[ERROR] PDK directory '$PDK' not found after clone!"
-	exit 1
-fi
+# Store git hash of installed PDK version for reference. Both PDKs come from
+# this one commit, so both get the same hash.
+PDK_COMMIT=$(git rev-parse HEAD)
 
-# Copy the repo-level `versions.txt` next to the PDK (at $PDK_ROOT) so the KLayout DRC/LVS version check can find it.
+# Now move both PDKs to the proper location. They have to end up side by side:
+# CMOS5L reaches into SG13G2 through relative symlinks (../../ihp-sg13g2/...)
+# that resolve at $PDK_ROOT exactly as they do inside the repository, because
+# a PDK directory sits one level below the repository root in both places.
+for pdk in "$PDK" "$PDK_CMOS5L"; do
+	if [ -d "$pdk" ]; then
+		mv "$pdk" "$PDK_ROOT/$pdk"
+		echo "$PDK_COMMIT" > "$PDK_ROOT/$pdk/COMMIT"
+	else
+		echo "[ERROR] PDK directory '$pdk' not found after clone!"
+		exit 1
+	fi
+done
+
+# Copy the repo-level `versions.txt` next to the PDKs (at $PDK_ROOT) so the KLayout DRC/LVS version check can find it.
+# One file serves both PDKs: run_drc.py resolves it as <PDK_ROOT>/versions.txt (Path(__file__).parents[5]) for either.
 # This is mandatory since commit: https://github.com/IHP-GmbH/IHP-Open-PDK/commit/d54e4a48a3d34c555a038b64a0869cd295134376
 if [ -f "versions.txt" ]; then
 	cp "versions.txt" "$PDK_ROOT/versions.txt"
@@ -41,11 +57,8 @@ else
 	exit 1
 fi
 
-# Store git hash of installed PDK version for reference
-PDK_COMMIT=$(git rev-parse HEAD)
-echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
-
-# Cleanup cloned repo to save space
+# Cleanup cloned repo to save space. ihp-common/ and the Makefiles that stay
+# behind are the build infrastructure of the PDK repository, not part of a PDK.
 cd /tmp || exit 1
 rm -rf ihp
 
@@ -82,6 +95,17 @@ else
     echo "[WARN] KLayout netlist import templates not found at $TEMPLATES_FILE"
 fi
 
+# Anchor the KLayout GUI DRC/LVS run directory to the layout file. The IHP menu
+# macros expand a relative run_dir against the working directory of the KLayout
+# process, so the same layout writes its reports to a different place depending
+# on how KLayout was started, and by default next to the GDS. The helper also
+# adds a %top_cell% placeholder, so one setting such as
+# ../verification/drc/%top_cell%.klayout.drc serves every cell of a project.
+# CMOS5L ships its own copies of these four macros rather than symlinks, so the
+# fix lives in a shared helper that install_ihp_cmos5l.sh runs as well.
+echo "[INFO] Fixing the KLayout GUI DRC/LVS run directory."
+python3 "$PDK_SCRIPT_DIR/fix_klayout_run_dir.py" "$PDK_ROOT/$PDK/libs.tech/klayout/tech/macros"
+
 # The IHP PDK renamed the IO netlist to libs.ref/sg13g2_io/spice/sg13g2_io.spice,
 # but several consumers still expect the old name sg13g2_io.spi:
 #   - libs.tech/librelane/config.tcl (PAD_SPICE_MODELS)
@@ -94,52 +118,9 @@ if [ ! -e "$IO_SPICE_DIR/sg13g2_io.spi" ] && [ -e "$IO_SPICE_DIR/sg13g2_io.spice
 	ln -s sg13g2_io.spice "$IO_SPICE_DIR/sg13g2_io.spi"
 fi
 
-# The moscap_n/moscap_p callback entry in the KLayout PCell library is missing
-# the "usePcellParameterAsArgument" key that cni/dlo.py indexes unconditionally
-# in PCellDeclaration.coerce_parameters. The resulting KeyError is swallowed by
-# KLayout, produce() never runs and both PCells come out empty. CbMoscap_wl is
-# declared as `proc CbMoscap_wl {param}`, so the value has to be "true".
-# Remove this once https://github.com/IHP-GmbH/IHP-Open-PDK/issues/1083 is fixed.
-echo "[INFO] Fixing the moscap PCell callback definition."
-CALLBACKS_FILE="$PDK_ROOT/$PDK/libs.tech/klayout/python/sg13g2_pycell_lib/callbacks/callbacks.json"
-if [ -f "$CALLBACKS_FILE" ]; then
-    # Patched textually, not via a JSON round-trip: the file uses repeated "_"
-    # keys to carry its license header, and those collapse when re-serialized.
-    python3 - "$CALLBACKS_FILE" << 'PYEOF'
-import re
-import sys
-
-fname = sys.argv[1]
-with open(fname, 'r') as f:
-    content = f.read()
-
-# Match the pcellParameters line of the CbMoscap_wl callback, unless the key is
-# already there (upstream fix landed), and append it with the same indentation.
-pattern = re.compile(
-    r'("callback":\s*"CbMoscap_wl",\s*\n)'
-    r'(\s*)("pcellParameters":\s*\[[^\]]*\])'
-    r'(?!\s*,\s*\n\s*"usePcellParameterAsArgument")'
-)
-content, count = pattern.subn(
-    lambda m: '%s%s%s,\n%s"usePcellParameterAsArgument": "true"'
-              % (m.group(1), m.group(2), m.group(3), m.group(2)),
-    content
-)
-
-if count:
-    with open(fname, 'w') as f:
-        f.write(content)
-    print("[INFO] Added usePcellParameterAsArgument to the moscap callback in %s" % fname)
-else:
-    print("[WARN] moscap callback not patched in %s (already fixed upstream?)" % fname)
-PYEOF
-else
-    echo "[WARN] KLayout PCell callback definition not found at $CALLBACKS_FILE"
-fi
-
 # The sealring PCell stamps the PDK version into a label and obtains it by
 # shelling out to `git rev-parse` inside the PDK tree. There is no .git there
-# (SG13G2 is moved out of the clone above, CMOS5L deletes its own), so git prints
+# (both PDKs are moved out of the clone above), so git prints
 # "fatal: not a git repository" to stderr on every sealring instantiation and the
 # label ends up as "Unknown (Not a Git repo or Git not installed)". Use
 # the COMMIT file both IHP installers write next to the PDK instead, keep git as
@@ -248,30 +229,6 @@ if [ -d "$CNI_DIR" ]; then
 else
     echo "[WARN] CNI shape classes not found at $CNI_DIR"
 fi
-
-# The parallel-simulation launchers in the xschem test schematics call
-# "python3 <script>" straight from Tcl -- same class of defect as the `mkdir -p`
-# that was fixed in xschem-menu (IHP-Open-PDK 96fe2b70). It only appears to work
-# when xschem is started in a terminal foreground: Tk_Main() then sets
-# tcl_interactive to 1 and Tcl's `unknown` handler auto-executes external
-# programs. Started detached -- from sak-open, the desktop entry, or with
-# `xschem &` -- tcl_interactive stays 0 and the launcher dies with
-# `invalid command name "python3"`.
-# `exec >&@stdout` is what the auto-exec fallback does: run the program with its
-# output going to xschem's stdout, rather than capturing it and turning anything
-# the child writes to stderr into a Tcl error (which plain `exec` would do).
-echo "[INFO] Fixing the parallel-simulation launchers in the xschem test schematics."
-for tb in inv_mc_tb.sch inv_sweep_tb.sch isolbox_sweep_tb.sch; do
-	TB_FILE="$PDK_ROOT/$PDK/libs.tech/xschem/sg13g2_tests/$tb"
-	if [ ! -f "$TB_FILE" ]; then
-		echo "[WARN] xschem test schematic not found at $TB_FILE"
-	elif grep -q '^python3 ' "$TB_FILE"; then
-		sed -i 's|^python3 |exec >\&@stdout python3 |' "$TB_FILE"
-		echo "[INFO] Fixed the python3 launcher in $TB_FILE"
-	else
-		echo "[WARN] No bare 'python3' launcher in $TB_FILE (already fixed upstream?)"
-	fi
-done
 
 # Remove testing folders to save space
 echo "[INFO] Removing unnecessary files to save space."

@@ -33,8 +33,8 @@ no longer loads (regression test 29).
 
 Rather than pin the device name, this patch derives it from the PDK: every
 CMOS5L-own Verilog-A module (a real directory <name>/<name>.va under
-libs.tech/verilog-a -- psp103 and r3_cmc are symlinks into SG13G2 and are
-handled by the converter's osdi_symlinks) is added to included_va_files, and its
+libs.tech/verilog-a -- psp103, r3_cmc and mosvar are symlinks into SG13G2 and
+are handled by the converter's osdi_symlinks) is added to included_va_files, and its
 ngspice wrapper libs.tech/ngspice/models/<name>.lib, if there is one, to
 tech_files. The next device the PDK adds is therefore covered without a change
 here.
@@ -108,8 +108,8 @@ def own_va_modules(pdk_dir: str) -> list:
     modules = []
     for entry in sorted(os.listdir(va_dir)):
         path = os.path.join(va_dir, entry)
-        # psp103 and r3_cmc are symlinks into SG13G2; the converter symlinks
-        # their prebuilt OSDI objects in instead of recompiling them.
+        # psp103, r3_cmc and mosvar are symlinks into SG13G2; the converter
+        # symlinks their VACASK OSDI objects in instead of recompiling them.
         if os.path.islink(path) or not os.path.isdir(path):
             continue
         if os.path.isfile(os.path.join(path, entry + ".va")):

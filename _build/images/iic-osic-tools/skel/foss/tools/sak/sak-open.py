@@ -40,9 +40,10 @@ launches
                                                        collateral, Makefiles,
                                                        scripts, prose)
 
-in the file's own directory, so xschem finds its `simulations/` and klayout its
-run outputs where they belong. It needs a display, so run it in the VNC/noVNC
-desktop or over X11 forwarding, not in a shell-only container.
+in the file's own directory, so xschem finds its `simulations/` and every tool
+resolves relative paths as it would from a shell there. It needs a display, so
+run it in the VNC/noVNC desktop or over X11 forwarding, not in a shell-only
+container.
 
 Schematics and symbols of one design unit share a single tabbed xschem
 instance rather than getting one process per click, remote-controlled through

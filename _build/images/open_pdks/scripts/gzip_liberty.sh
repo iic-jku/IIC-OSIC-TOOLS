@@ -31,6 +31,30 @@ fi
 echo "[INFO] Compressing Liberty files in $PDK_DIR/libs.ref (keeping the uncompressed files)."
 find "$PDK_DIR/libs.ref" -name "*.lib" -type f -exec gzip -k -f {} +
 
+# A PDK can borrow a Liberty file from another one through a *renamed* symlink
+# -- ihp-sg13cmos5l/libs.ref/sg13cmos5l_stdcell_hv/lib/*.lib points at the
+# SG13G2 files, so that the LibreLane paths derived from $STD_CELL_LIBRARY
+# resolve. Those are not compressed above (find -type f does not follow
+# symlinks) and the .gz made on the other side carries the other PDK's name,
+# while the configuration rewritten below asks for the local one. Mirror the
+# link for the compressed file too: same relative target, .gz appended.
+# Borrowing a whole directory (libs.ref/sg13cmos5l_sram) needs none of this,
+# since the directory resolves to the other PDK with its .lib.gz files in it.
+find "$PDK_DIR/libs.ref" -name "*.lib" -type l | while read -r lib_link; do
+	[ -e "$lib_link.gz" ] && continue
+	link_target=$(readlink "$lib_link")
+	case "$link_target" in
+		/*) target_gz="$link_target.gz" ;;
+		*)  target_gz="$(dirname "$lib_link")/$link_target.gz" ;;
+	esac
+	if [ -e "$target_gz" ]; then
+		ln -s "$link_target.gz" "$lib_link.gz"
+		echo "[INFO] Linked $(basename "$lib_link").gz to the compressed file it borrows."
+	else
+		echo "[WARN] $lib_link is a symlink whose target has no .gz, references to it will not resolve."
+	fi
+done
+
 # Point the tool configurations to the compressed files. All tools in the image
 # that read Liberty (yosys/ABC, OpenROAD, OpenSTA, librelane, kepler-formal)
 # decompress .lib.gz transparently. Configurations outside of the PDK that still

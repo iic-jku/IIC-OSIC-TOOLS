@@ -58,29 +58,32 @@ pip3 install $PIP_FLAGS \
 	cace==2.11.0 \
 	chipify==0.2.2 \
 	ciel==2.6.1 \
-	cocotb==2.0.1 \
+	cocotb==2.1.0 \
 	cocotbext-ams==0.1.0 \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.6 \
 	gds2palace==0.4.0 \
 	gdsfactory==9.48.0 \
+	gds2palace==0.4.4 \
+	gdsfactory==9.49.0 \
+	gdsfill==0.1.10 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.3.15 \
+	klayout-pex==0.4.1 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev3 \
-	najaeda==0.7.20 \
+	najaeda==0.7.22 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
-	pyuvm==4.0.1 \
+	pyuvm==5.0.0 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.1.0 \
-	setupEM==0.3.15 \
-	siliconcompiler==0.38.5 \
-	snp2le==0.1.8 \
+	setupEM==0.6.4 \
+	siliconcompiler==0.38.7 \
+	snp2le==0.1.9 \
 	spicelib==1.6.3 \
 	spyci==1.0.2
 

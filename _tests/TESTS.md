@@ -68,3 +68,4 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 31       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) (DRC, LVS, PEX) with ihp-sg13cmos5l         |
 | 32       | [AMS chip template](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template) with ihp-sg13cmos5l                            |
 | 33       | FPGA place-and-route flows (an iCE40 and an ECP5 blinky through synthesis, place-and-route and bitstream packing)               |
+| 34       | KLayout GUI DRC/LVS run directory patch of both IHP PDKs (resolved against the layout file, `%top_cell%` placeholder)           |
