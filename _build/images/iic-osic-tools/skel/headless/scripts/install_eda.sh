@@ -65,7 +65,6 @@ pip3 install $PIP_FLAGS \
 	fusesoc==2.4.7 \
 	gds2palace==0.4.4 \
 	gdsfactory==9.50.0 \
-	gdsfill==0.1.11 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.4.1 \
@@ -153,7 +152,7 @@ rustup default stable
 # flag only for a single crate, so a second one would break the invocation.
 cargo install \
 	gdscheck@0.1.2 \
-	gdsfill@0.1.8 \
+	gdsfill@0.1.11 \
 	--root "${TOOLS}"
 
 # The venvs use --system-site-packages so large dependencies already in the
