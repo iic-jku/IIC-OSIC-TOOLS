@@ -6,7 +6,7 @@
 # Test Chisel with a simple ALU example from Martin Schoeberl
 
 if [ -z "${RAND}" ]; then
-    RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
+    RAND=$(hexdump -v -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
 # test output is kept out of the bind-mounted source tree (see run_integration_tests.sh)

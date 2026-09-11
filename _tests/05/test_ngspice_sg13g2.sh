@@ -6,7 +6,7 @@
 # Test if ngspice simulations for SG13G2 PDK run (this also checks the PSP OSDI model).
 
 if [ -z "${RAND}" ]; then
-    RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
+    RAND=$(hexdump -v -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
 # test output is kept out of the bind-mounted source tree (see run_integration_tests.sh)

@@ -67,7 +67,13 @@ if [[ "$OSTYPE" == "linux"* ]] && \
 fi
 
 FULL_TAG=$1
-RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
+# -v is required: hexdump collapses repeated identical output lines into a
+# single "*", and "/1" makes every byte its own line -- so without it any two
+# equal adjacent random bytes turn the run ID into something like "ad294d*" or
+# even "b8*". That lands in the container name (which rejects "*"), in the run
+# dir and in the name of the generated runner script. It hits about 1.8 % of
+# runs, which is often enough to lose one.
+RAND=$(hexdump -v -e '/1 "%02x"' -n4 < /dev/urandom)
 export RAND
 CONTAINER_NAME=iic-osic-tools_test${RAND}
 CMD=_run_tests_${RAND}.sh
