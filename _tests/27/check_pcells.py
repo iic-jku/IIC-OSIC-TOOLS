@@ -75,14 +75,17 @@ EXPECTED = {
     "ihp-sg13g2": {
         # 34 until the PDK bump of 2026-08 added cmomi, moscap_n and moscap_p,
         # 37 until cap_cmomf, the metal fringe MoM capacitor, landed on
-        # 2026-08-11. SG13_dev registers 37, SG13_native_pcell_lib adds Via.
-        "count": 38,
+        # 2026-08-11, 38 until chipText (upstream d8261b7f, 2026-09-07).
+        # SG13_dev registers 38, SG13_native_pcell_lib adds Via.
+        "count": 39,
         "known_bad": {},
     },
     "ihp-sg13cmos5l": {
-        # 24 until the PDK gained cap_cmomf and guard_ring on 2026-08-11.
-        # SG13_dev registers 25, SG13_native_pcell_lib adds Via.
-        "count": 26,
+        # 24 until the PDK gained cap_cmomf and guard_ring on 2026-08-11,
+        # 26 until chipText (upstream d8261b7f, 2026-09-07, which added the
+        # PCell to both IHP PDKs at once).
+        # SG13_dev registers 26, SG13_native_pcell_lib adds Via.
+        "count": 27,
         "known_bad": {},
     },
 }

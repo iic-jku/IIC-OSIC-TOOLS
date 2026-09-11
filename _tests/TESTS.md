@@ -37,7 +37,7 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | 01       | LibreLane with sky130A                                                                                                          |
 | 02       | DRC and LVS with sky130A                                                                                                        |
-| 03       | Import of Python packages                                                                                                       |
+| 03       | Import of Python packages (and the `gdsfill` CLI, which is no longer a Python package)                                           |
 | 04       | LibreLane with gf180mcuD                                                                                                        |
 | 05       | ngspice with SG13G2                                                                                                             |
 | 06       | ngspice with sky130A                                                                                                            |

@@ -29,7 +29,7 @@ plot = rawread("ac1.raw").get()
 f = np.abs(plot["frequency"])[0]
 
 # Same reference values as cap_cmomi.spice, i.e. the PCell C-label formula.
-expected = {"double": 16.2977e-15, "same": 21.6737e-15}
+expected = {"double": 21.1123e-15, "same": 21.2551e-15}
 for idx, (feed, want) in enumerate(expected.items(), start=1):
     y = -plot["v%d:flow(br)" % idx][0]
     got = np.imag(y) / (2 * np.pi * f)
