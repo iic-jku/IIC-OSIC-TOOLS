@@ -36,7 +36,7 @@
   commit: v3.14.2
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: d871c7c139c3ed994ee84f1b677b9d4c7d9e590c
+  commit: 4aea9d663b268aa3c292382ff125d8ab6750ca44
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.12
@@ -51,7 +51,7 @@
   commit: 1.5.323
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 6030081a15221d9de772fb937e45e08ecf280d15
+  commit: 813d876d026619b919478c85aaf3e4f5de3ecd09
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -66,10 +66,10 @@
   commit: 026824c7969ce6f4fc9678e6ca04b0a06a596c4b
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: 46169dec3e2e0a40a24858ac187cc5e15b0c4751
+  commit: 4266cf03dd49343dd6073a4e1f6ebbf48b18b371
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 766c85a4dde5f80a30dba7526f221a3953ef70a3
+  commit: 8f487833b337f4c21c4c03cc098061316ebf4fa6
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -120,7 +120,7 @@
   commit: 3fbc1e4fa5db9752f95c4325044db6404478b051
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 1e05ddac3a6c351bfc0aeed0cf3a68940e7200ab
+  commit: 2c37de9f39a6737f5958cb845c394be1736414fb
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.87
@@ -138,19 +138,19 @@
   commit: 0.12.15
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 3164317d27de127b59a734225d5244985f37bf00
+  commit: 20c2cd4626515ef64f3f9d0ab8fc1f65c22d27b6
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.052
 - name: verible
   repo: https://github.com/chipsalliance/verible.git
-  commit: v0.0-4214-gce503962
+  commit: v0.0-4219-g3275ab72
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 23862e371a279d1d70b0e6896293d9e792b60ae9
+  commit: 0ce3618bcf794ae68af485938fd5d7921875853c
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
