@@ -7,7 +7,7 @@
 ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS openems
 ARG OPENEMS_REPO_URL="https://github.com/thliebig/openEMS-Project.git"
-ARG OPENEMS_REPO_COMMIT="ea3c012c688c9110973b2fdbf77b7b8aa09a099b"
+ARG OPENEMS_REPO_COMMIT="46169dec3e2e0a40a24858ac187cc5e15b0c4751"
 ARG OPENEMS_NAME="openems"
 RUN --mount=type=bind,source=images/openems,target=/images/openems \
     bash /images/openems/scripts/install.sh

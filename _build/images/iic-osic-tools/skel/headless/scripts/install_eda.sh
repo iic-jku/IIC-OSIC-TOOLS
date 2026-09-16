@@ -64,22 +64,22 @@ pip3 install $PIP_FLAGS \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.7 \
 	gds2palace==0.5.0 \
-	gdsfactory==9.50.0 \
+	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.4.1 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev3 \
-	najaeda==0.7.23 \
+	najaeda==0.7.24 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
 	pyuvm==5.0.0 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.1.0 \
-	setupEM==0.7.0 \
-	siliconcompiler==0.38.7 \
+	setupEM==0.7.2 \
+	siliconcompiler==0.38.8 \
 	snp2le==0.1.9 \
 	spicelib==1.6.3 \
 	spyci==1.0.2
