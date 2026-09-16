@@ -35,6 +35,10 @@ git clone --filter=blob:none "${OPENROAD_REPO_URL}" "${OPENROAD_NAME}"
 cd "${OPENROAD_NAME}" || exit 1
 git checkout "${OPENROAD_REPO_COMMIT}"
 git submodule update --init --recursive
+# src/drt/test unconditionally does add_dependencies(build_and_test ...), but that
+# target only exists with ENABLE_TESTS=ON (upstream regression from OpenROAD PR #11160),
+# so configure fails. The directory only registers tests; skip it. Drop once fixed upstream.
+sed -i 's|^add_subdirectory(test)$|if(ENABLE_TESTS)\n  add_subdirectory(test)\nendif()|' src/drt/CMakeLists.txt
 mkdir -p build && cd build
 cmake .. \
     -DCMAKE_INSTALL_PREFIX="${TOOLS}/${OPENROAD_NAME}" \
