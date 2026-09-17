@@ -202,8 +202,8 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	# -- a shell command -- from Tcl, so clicking it aborts with
 	# `invalid command name "mkdir"` and no .save file is written. Tcl's own
 	# `file mkdir` is the exact equivalent: it creates parent directories and
-	# does not complain about an existing one. Same defect as in the IHP CMOS5L
-	# PDK, see install_ihp_cmos5l.sh.
+	# does not complain about an existing one. The IHP PDKs fixed the same
+	# defect upstream (iic-jku/IHP-Open-PDK#61).
 	XSCHEM_MENU="$PDK_ROOT/gf180mcuD/libs.tech/xschem/xschem-menu"
 	if grep -q '^[[:space:]]*mkdir -p \$netlist_dir[[:space:]]*$' "$XSCHEM_MENU"; then
 		sed -i 's/^\([[:space:]]*\)mkdir -p \$netlist_dir[[:space:]]*$/\1file mkdir $netlist_dir/' "$XSCHEM_MENU"
