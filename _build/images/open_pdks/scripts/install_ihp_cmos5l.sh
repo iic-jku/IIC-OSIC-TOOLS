@@ -224,29 +224,6 @@ else:
     print("[INFO] Added cornerDIO.lib and cornerPNP.lib to the corner list.")
 PYEOF
 
-# The xschem "Create FET .save file" menu entry and the matching launcher on the
-# xschem start page run "mkdir -p $netlist_dir" -- a shell command -- from Tcl.
-# Clicking either aborts with `invalid command name "mkdir"` and no .save file is
-# written. Tcl's own `file mkdir` is the exact equivalent: it creates parent
-# directories and does not complain about an existing one.
-# SG13G2 fixed this in the PDK (its libs.tech/xschem/xschem-menu and
-# start_page.sch already read `file mkdir`), CMOS5L still carries the shell
-# version: the fix was made in the standalone iic-jku/ihp-sg13cmos5l fork and
-# did not come along when the PDK moved into IHP-Open-PDK. Drop this once
-# iic-jku/IHP-Open-PDK#61 has landed and the image is rebuilt.
-echo "[INFO] Fixing the xschem 'Create FET .save file' entries."
-for xschem_file in xschem-menu start_page.sch; do
-	XSCHEM_FILE="$PDK_ROOT/$PDK/libs.tech/xschem/$xschem_file"
-	if [ ! -f "$XSCHEM_FILE" ]; then
-		echo "[WARN] xschem file not found at $XSCHEM_FILE"
-	elif grep -q '^[[:space:]]*mkdir -p \$netlist_dir[[:space:]]*$' "$XSCHEM_FILE"; then
-		sed -i 's/^\([[:space:]]*\)mkdir -p \$netlist_dir[[:space:]]*$/\1file mkdir $netlist_dir/' "$XSCHEM_FILE"
-		echo "[INFO] Replaced 'mkdir -p' by 'file mkdir' in $XSCHEM_FILE"
-	else
-		echo "[WARN] 'mkdir -p \$netlist_dir' not found in $XSCHEM_FILE (already fixed upstream?)"
-	fi
-done
-
 # Drop the backups the converter leaves behind: xschemrc.orig from its own
 # xschemrc patcher and *.sym.orig from xschem2vc's symbol patcher.
 find "$PDK_ROOT/$PDK/libs.tech/xschem" -name "*.orig" -delete
