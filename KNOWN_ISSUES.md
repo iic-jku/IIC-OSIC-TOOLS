@@ -16,17 +16,15 @@ To install `socat`, here are the commands for popular distributions:
 
 The current variant of the `start_x.bat` for Windows uses WSLg for audio & visual output, which comes preinstalled/packaged with WSL (Windows 10 Build 19044 or Windows 11). If problems arise, update WSL according to [the Microsoft website](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps).
 
-### Frequent Crashes of `xschem` on Windows 10+
-
-Since the update of the image to Ubuntu 24.04 LTS with tag `2025.01` there are reports of frequent crashes of `xschem` under Windows 11 using certain versions of specific X-servers. It has been found that using <https://vcxsrv.com> version `64.1.17.2.0` under Windows 11 works well (see [issue 92](https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/92)).
-
 ### Issues with OpenGL on Some Environments
 
-A few applications are using OpenGL graphics, which can lead to issues on some computing environments. A (potential) remedy is to enable SW-rendering with can be achieved by setting the following environment variable inside the Docker VM:
+A few applications are using OpenGL graphics, which can lead to issues on some computing environments. A (potential) remedy is to enable software rendering by setting the following environment variable inside the container:
 
 ```bash
-export LIBGL_ALWAYS_INDIRECT=0
+export LIBGL_ALWAYS_SOFTWARE=1
 ```
+
+In X11 mode `start_x.sh` sets `LIBGL_ALWAYS_INDIRECT=1`; `export LIBGL_ALWAYS_INDIRECT=0` switches indirect GLX off again, which can help as well.
 
 ### Mouse Gestures Break the Right-Button Drag in the Browser (noVNC) Session
 
@@ -54,7 +52,7 @@ Regression test 27 (`_tests/27`) instantiates every pcell of every packaged PDK 
 
 ### The OpenROAD Flow Scripts (ORFS)
 
-The ORFS require a recent version of `openroad`. Since image tag `2024.12` a recent version is installed alongside the OpenROAD version required by `librelane`. In tag `2025.10` and beyond the `openroad` and `sta` version that is found is a recent version that can be used with the ORFS.In order to use the ORFS, **before** calling the `make` script make sure to set the following env vars:
+The ORFS require a recent version of `openroad`. Since image tag `2024.12` a recent version is installed alongside the OpenROAD version required by `librelane`. In tag `2025.10` and beyond the `openroad` and `sta` found in `PATH` are this recent version. In order to use the ORFS, **before** calling the `make` script make sure to set the following env vars:
 
 ```bash
 export YOSYS_EXE=$TOOLS/yosys/bin/yosys
@@ -62,7 +60,7 @@ export OPENROAD_EXE=$TOOLS/openroad/bin/openroad
 export OPENSTA_EXE=$TOOLS/openroad/bin/sta
 ```
 
-Since the OpenROAD and ORFS version are tightly interlinked with regular interface breaks, the ORFS Git commit hash at image build time is stored in `$TOOLS/openroad/ORFS_COMMIT`. After cloning ORFS from GitHub use the following command to switch to a working and tested ORFS version:
+Since the OpenROAD and ORFS version are tightly interlinked with regular interface breaks, the ORFS Git commit hash at image build time is stored in `$TOOLS/openroad/ORFS_COMMIT` (regression test 10 runs against it). After cloning ORFS from GitHub use the following command to switch to that ORFS version:
 
 ```bash
 git checkout $(cat $TOOLS/openroad/ORFS_COMMIT)
@@ -159,7 +157,7 @@ Running Docker in rootless mode with X11/Wayland forwarding (`start_x.sh`) is no
 
 ### GDS3D crashing on macOS
 
-At least since tag `2025.12` GDS3D is crashing with an error message. Unfortunately, there is no known fix at the moment. See <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/220>.
+At least since tag `2025.12` GDS3D is crashing with an error message. Unfortunately, there is no known fix at the moment, and upstream GDS3D has seen no changes since 2024. See <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/220> (closed without a fix).
 
 ## Build
 
@@ -177,4 +175,4 @@ The image therefore does not assume the two sides agree:
 
 The counts in `_tests/27/check_pcells.py` consequently need updating whenever the PDKs legitimately gain or lose a pcell; the test reports the expected and the actual number so the change can be reviewed.
 
-No further known issues at the moment. However, be warned that building the image is quite involved and may take several hours depending on the host system performance and network connection. For a multi-architecture build (`amd64` + `arm64`) dedicated build servers with sufficient resources are recommended. Cross-architecture builds take ages and are not recommended. Plus, a private Docker registry is currently used by the build system to store intermediate build stages, which requires a fast network connection to the registry server.
+No other known build issues at the moment. However, be warned that building the image is quite involved and may take several hours depending on the host system performance and network connection. For a multi-architecture build (`amd64` + `arm64`) dedicated build servers with sufficient resources are recommended. Cross-architecture builds take ages and are not recommended. Plus, a private Docker registry is currently used by the build system to store intermediate build stages, which requires a fast network connection to the registry server.
