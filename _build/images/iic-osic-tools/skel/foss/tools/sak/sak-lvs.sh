@@ -636,7 +636,7 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	echo "[INFO] Run KLayout LVS..."
 	rm -rf "$KLAYOUT_RUNDIR"
 	mkdir -p "$KLAYOUT_RUNDIR"
-	# sky130 runs its LVS deck directly. The other PDKs use their run_lvs.py wrapper under klayout/tech/lvs.
+	# sky130 and gf180mcu run their LVS deck directly. The IHP PDKs use their run_lvs.py wrapper under klayout/tech/lvs.
 	if echo "$PDK" | grep -q -i "sky130"; then
 		# The sky130 run_lvs.py wrapper is not used because it resolves its deck as $PDK_ROOT/$PDK/sky130.lvs, which does not exist in this installation. The switches below match what the wrapper would pass.
 		klayout -b -r "$PDKPATH/libs.tech/klayout/lvs/sky130.lvs" \
@@ -648,16 +648,32 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			-rd run_mode=deep \
 			> "$KLAYOUT_LOG" 2>&1
 	elif echo "$PDK" | grep -q -i "gf180mcu"; then
-		# gf180mcu wrapper requires --variant. The letter is derived from the PDK name (e.g. gf180mcuD -> D), with D as fallback.
+		# The gf180mcu run_lvs.py wrapper is not used because it cannot pass check_ports. The deck turns that check on by
+		# default and then requires a labelled layout net for every schematic port. It always names the substrate SUB, so a
+		# bulk pin such as VPW of an untapped standard cell can never match. check_ports=false keeps the port handling of
+		# Magic+Netgen LVS. The other switches below match what the wrapper would pass.
+		# The metal stack follows the variant letter of the PDK name (e.g. gf180mcuD -> D), with D as fallback.
 		GF180_VARIANT=$(printf '%s' "$PDK" | sed 's/.*[Gg][Ff]180[Mm][Cc][Uu]//' | cut -c1 | tr 'a-z' 'A-Z')
-		[ -z "$GF180_VARIANT" ] && GF180_VARIANT=D
-		python3 "$PDKPATH/libs.tech/klayout/tech/lvs/run_lvs.py" \
-			--layout="$CELL_LAY" \
-			--netlist="$NETLIST_KLAYOUT" \
-			--variant="$GF180_VARIANT" \
-			--topcell="$TOPCELL" \
-			--run_dir="$KLAYOUT_RUNDIR" \
-			--run_mode=deep \
+		case "$GF180_VARIANT" in
+			A) GF180_STACK="-rd metal_top=30K -rd mim_option=A -rd metal_level=3LM" ;;
+			B) GF180_STACK="-rd metal_top=11K -rd mim_option=B -rd metal_level=4LM" ;;
+			C) GF180_STACK="-rd metal_top=9K -rd mim_option=B -rd metal_level=5LM" ;;
+			*) GF180_STACK="-rd metal_top=11K -rd mim_option=B -rd metal_level=5LM" ;;
+		esac
+		# shellcheck disable=SC2086
+		klayout -b -r "$PDKPATH/libs.tech/klayout/tech/lvs/gf180mcu.lvs" \
+			-rd input="$CELL_LAY" \
+			-rd topcell="$TOPCELL" \
+			-rd schematic="$NETLIST_KLAYOUT" \
+			-rd report="$KLAYOUT_RUNDIR/$FBASENAME.lvsdb" \
+			-rd target_netlist="$KLAYOUT_RUNDIR/$FBASENAME.cir" \
+			-rd run_mode=deep \
+			$GF180_STACK \
+			-rd poly_res=1k \
+			-rd mim_cap=2 \
+			-rd spice_net_names=true \
+			-rd spice_comments=false \
+			-rd check_ports=false \
 			> "$KLAYOUT_LOG" 2>&1
 	elif echo "$PDK" | grep -q -i -E "ihp-sg13g2|ihp-sg13cmos5l"; then
 		# the ihp-sg13g2 and ihp-sg13cmos5l wrappers share the same CLI.
