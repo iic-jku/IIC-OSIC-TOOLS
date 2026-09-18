@@ -39,6 +39,11 @@ ngspice wrapper libs.tech/ngspice/models/<name>.lib, if there is one, to
 tech_files. The next device the PDK adds is therefore covered without a change
 here.
 
+The same drift hits the netlist names in tech_files: when the PDK switches a
+standard-cell or I/O netlist between .spi and .spice (sg13cmos5l_io.spi became
+.spice in 2026-09), the entry is repointed to the file that exists, see
+fix_netlist_names().
+
 Devices the converter already lists are left alone, so this is a no-op once
 VACASK catches up, and it is idempotent. If either list cannot be found the
 patch fails instead of silently doing nothing: that means upstream restructured
@@ -117,6 +122,47 @@ def own_va_modules(pdk_dir: str) -> list:
     return modules
 
 
+def fix_netlist_names(content: str, tech_span: tuple, pdk_dir: str) -> tuple:
+    """Repoint tech_files netlist entries the PDK renamed between .spi and .spice.
+
+    The converter names the standard-cell and I/O netlists literally, and the
+    PDK does not keep their extension stable: sg13cmos5l_io.spi became
+    sg13cmos5l_io.spice on the IHP dev branch in 2026-09. The converter then
+    dies on "ConverterError: File sg13cmos5l_io.spi not found", which takes
+    the whole CMOS5L VACASK preparation down with it. (The traceback goes to
+    stderr, which is unbuffered, so in a build log it lands above the
+    converter's own progress output rather than after the stale name.) Only
+    the source name is changed; the destination .inc, which .vacaskrc.toml
+    points at, stays.
+
+    Returns the updated content and a list of (old, new) names.
+    """
+    src_dirs = [
+        os.path.join(pdk_dir, "libs.tech", "ngspice", "models"),
+        os.path.join(pdk_dir, "libs.ref", "sg13cmos5l_stdcell", "spice"),
+        os.path.join(pdk_dir, "libs.ref", "sg13cmos5l_io", "spice"),
+    ]
+
+    def exists(name):
+        return any(os.path.isfile(os.path.join(d, name)) for d in src_dirs)
+
+    tech_body = content[tech_span[0]:tech_span[1]]
+    renames = []
+    for name in sorted(set(re.findall(r'\(\s*"([^"]+\.spi(?:ce)?)"', tech_body))):
+        if exists(name):
+            continue
+        stem, ext = os.path.splitext(name)
+        alt = stem + (".spice" if ext == ".spi" else ".spi")
+        if exists(alt):
+            tech_body = tech_body.replace('"%s"' % name, '"%s"' % alt)
+            renames.append((name, alt))
+        else:
+            print("[WARN] %s is listed in tech_files but not found in the PDK."
+                  % name, file=sys.stderr)
+    content = content[:tech_span[0]] + tech_body + content[tech_span[1]:]
+    return content, renames
+
+
 def main() -> int:
     if len(sys.argv) != 3:
         print("usage: %s <sg13cmos5ltovc.py> <pdk_dir>" % sys.argv[0],
@@ -135,6 +181,13 @@ def main() -> int:
         print("[ERROR] The VACASK converter was restructured; "
               "fix_cmos5l_vacask_converter.py needs updating.", file=sys.stderr)
         return 1
+
+    # Rename first: it shifts the offsets, so both spans are taken again.
+    content, renames = fix_netlist_names(content, tech_span, pdk_dir)
+    for old, new in renames:
+        print("[INFO] Repointed the VACASK converter from %s to %s." % (old, new))
+    tech_span = find_list(content, "tech_files")
+    va_span = find_list(content, "included_va_files")
 
     modules = own_va_modules(pdk_dir)
     if not modules:
@@ -157,6 +210,9 @@ def main() -> int:
     if not new_tech and not new_va:
         print("[INFO] The VACASK converter already covers every CMOS5L-own "
               "device, nothing to add.")
+        if renames:
+            with open(converter, 'w') as f:
+                f.write(content)
         return 0
 
     # Append to each list body, later span first so the earlier offsets hold.
