@@ -63,7 +63,7 @@
   commit: r1.22.1
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
-  commit: 026824c7969ce6f4fc9678e6ca04b0a06a596c4b
+  commit: 1689ac3f2dc763876eaf967227c7dfe831b031ae
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
   commit: 0c435bf7313b5b1ff76efeb63628e9cf5e0527e8
