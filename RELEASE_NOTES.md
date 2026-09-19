@@ -12,6 +12,7 @@ This document summarizes the most important changes of the individual releases o
 * [Fix] the KLayout DRC and LVS menus of both IHP PDKs write their reports into the project's `verification` folder, resolved against the layout file instead of the working directory
 * [Fix] the start scripts warn on Apple Silicon when a reused container lacks the `OPENSSL_armcap` workaround
 * [Build] new regression tests 34 (KLayout GUI run directory) and 35 (PEX bench of the open-pdks regression tests)
+* [Build] `xschem` builds in a single parallel `make`, as the upstream Makefile race on `expandlabel.c`/`expandlabel.h` is fixed
 
 ## 2026.08
 
