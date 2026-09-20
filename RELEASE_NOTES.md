@@ -13,6 +13,7 @@ This document summarizes the most important changes of the individual releases o
 * [Fix] the start scripts warn on Apple Silicon when a reused container lacks the `OPENSSL_armcap` workaround
 * [Build] new regression tests 34 (KLayout GUI run directory) and 35 (PEX bench of the open-pdks regression tests)
 * [Build] `xschem` builds in a single parallel `make`, as the upstream Makefile race on `expandlabel.c`/`expandlabel.h` is fixed
+* [Build] the `pulp-tools` image clones the Slang, `fmt` and `mimalloc` sources that `bender` needs itself, with retries, instead of letting the `bender-slang` CMake step fetch them from GitHub in the middle of the `cargo` build, where a refused clone aborted the whole image build
 
 ## 2026.08
 
