@@ -57,13 +57,13 @@ pip3 install $PIP_FLAGS \
 	"amaranth==0.5.10" \
 	cace==2.11.0 \
 	chipify==0.2.2 \
-	ciel==2.6.1 \
+	ciel==3.0.0 \
 	cocotb==2.1.0 \
 	cocotbext-ams==0.1.0 \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.7 \
-	gds2palace==0.5.0 \
+	gds2palace==0.5.2 \
 	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
@@ -78,7 +78,7 @@ pip3 install $PIP_FLAGS \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.1.0 \
-	setupEM==0.7.3 \
+	setupEM==0.8.1 \
 	siliconcompiler==0.38.8 \
 	snp2le==0.1.9 \
 	spicelib==1.6.3 \
