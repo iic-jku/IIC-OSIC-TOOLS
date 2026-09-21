@@ -6,14 +6,15 @@ This document summarizes the most important changes of the individual releases o
 
 * [Adding] the 3.3 V high-voltage standard-cell libraries of both IHP PDKs, `sg13g2_stdcell_hv` and `sg13cmos5l_stdcell_hv`
 * [Update] `gdsfill` `v0.1.11`, which adds dummy fill for `gf180mcu`
+* [Update] `ciel` `3.0.0`, `cocotb` `2.1.0`, `pyuvm` `5.0.0` (major release, check your testbenches) and `klayout-pex` `0.4.4`
 * [Update] various tool and Python package version bumps
 * [Changing] both IHP PDKs are installed from the single `iic-jku/IHP-Open-PDK` repository, and `$PDK_ROOT/<pdk>/COMMIT` records the same commit for both
 * [Remove] the Python implementation of `gdsfill`; the Rust `gdsfill` CLI remains
-* [Fix] the KLayout DRC and LVS menus of both IHP PDKs write their reports into the project's `verification` folder, resolved against the layout file instead of the working directory
+* [Fix] the KLayout DRC and LVS menus of both IHP PDKs write their reports into the project's `verification` folder next to the layout
 * [Fix] the start scripts warn on Apple Silicon when a reused container lacks the `OPENSSL_armcap` workaround
 * [Build] new regression tests 34 (KLayout GUI run directory) and 35 (PEX bench of the open-pdks regression tests)
-* [Build] `xschem` builds in a single parallel `make`, as the upstream Makefile race on `expandlabel.c`/`expandlabel.h` is fixed
-* [Build] the `pulp-tools` image clones the Slang, `fmt` and `mimalloc` sources that `bender` needs itself, with retries, instead of letting the `bender-slang` CMake step fetch them from GitHub in the middle of the `cargo` build, where a refused clone aborted the whole image build
+* [Build] `xschem` builds in a single parallel `make` again
+* [Build] the `pulp-tools` image pre-fetches the sources `bender` needs, with retries
 
 ## 2026.08
 
