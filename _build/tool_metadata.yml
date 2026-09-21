@@ -120,7 +120,7 @@
   commit: 3fbc1e4fa5db9752f95c4325044db6404478b051
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 02b1dc182164bb73b19b050676dd89f0834f8b2e
+  commit: b7ed35aefe53dea25506c795ea1ffeb1dd519a0d
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.87
