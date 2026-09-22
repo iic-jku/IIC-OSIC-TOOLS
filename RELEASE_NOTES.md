@@ -6,7 +6,7 @@ This document summarizes the most important changes of the individual releases o
 
 * [Adding] the 3.3 V high-voltage standard-cell libraries of both IHP PDKs, `sg13g2_stdcell_hv` and `sg13cmos5l_stdcell_hv`
 * [Update] `gdsfill` `v0.1.11`, which adds dummy fill for `gf180mcu`
-* [Update] `ciel` `3.0.0`, `cocotb` `2.1.0`, `pyuvm` `5.0.0` (major release, check your testbenches) and `klayout-pex` `0.4.4`
+* [Update] `cocotb` `2.1.0`, `pyuvm` `5.0.0` (major release, check your testbenches) and `klayout-pex` `0.4.4`
 * [Update] various tool and Python package version bumps
 * [Changing] both IHP PDKs are installed from the single `iic-jku/IHP-Open-PDK` repository, and `$PDK_ROOT/<pdk>/COMMIT` records the same commit for both
 * [Remove] the Python implementation of `gdsfill`; the Rust `gdsfill` CLI remains
