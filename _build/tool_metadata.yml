@@ -30,13 +30,13 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 1a23d1ffdbff2192b5d43c57711a0e9e67b7bbbc
+  commit: d1982fc7d823f1786f4788a88551f0664c16d7e7
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: c7b8fe6db94d605acd6c4c2ae9b349dc272b1106
+  commit: f025fa2f254efd6c702cef004e55995c1f13a11a
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.12
@@ -51,7 +51,7 @@
   commit: 1.5.323
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 3e53a0bf44d13c0de603dd089a323ea85d67d4ef
+  commit: 3edea68ef37eddbe9fc4556de7d51ba08af201a0
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -69,7 +69,7 @@
   commit: f307142fb601a60753148760645f5f7fbd7c583d
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 3ab04b4dd1e1b86d603faf3e75a20bd276f61757
+  commit: 50432012f4ea2372f4abbbb08e305e5c266b9c81
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -84,7 +84,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: ae20d251e996e63a1f4d2c8172e311ca7be4f1c5
+  commit: 0dc74cdf8c36c58b69b21c4a06e816048ec0b83f
 - name: prjtrellis
   repo: https://github.com/YosysHQ/prjtrellis.git
   commit: 65fe191a290cd947c125f011e9e78a2ddc90d7a4
@@ -111,7 +111,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: f5a93a85a8d7d76449e33ffd54964f0ba4b66c46
+  commit: 31a29606b5fb7a50a68bd07fddef4458abd83f53
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 43a93f44b790ae5af57a25bfb5177c4dff0b22f9
@@ -138,7 +138,7 @@
   commit: 0.12.17
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: b86be525466157998b78dc9de58e80b055e5063f
+  commit: 89e888d993aa9afbeedde5636c495d9a58ec3b2a
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.052
@@ -150,7 +150,7 @@
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 4c875dbb0a45042784bec4fef855c95ff2668299
+  commit: ddc734480d5326fb787993dad24f4062e5d28434
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0

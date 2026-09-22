@@ -57,7 +57,7 @@ pip3 install $PIP_FLAGS \
 	"amaranth==0.5.10" \
 	cace==2.11.0 \
 	chipify==0.2.2 \
-	ciel==3.0.0 \
+	ciel==2.6.1 \
 	cocotb==2.1.0 \
 	cocotbext-ams==0.1.0 \
 	edalize==0.6.8 \
@@ -79,7 +79,7 @@ pip3 install $PIP_FLAGS \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.1.0 \
 	setupEM==0.8.2 \
-	siliconcompiler==0.38.8 \
+	siliconcompiler==0.38.9 \
 	snp2le==0.1.9 \
 	spicelib==1.6.3 \
 	spyci==1.0.2
