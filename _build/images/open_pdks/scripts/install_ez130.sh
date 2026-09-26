@@ -108,7 +108,9 @@ PYEOF
 extract_archive() {
     local archive=$1 dest=$2
     python3 - "$archive" "$dest" <<'PYEOF'
+import os
 import pathlib
+import shutil
 import sys
 import tarfile
 import zipfile
@@ -122,6 +124,16 @@ def is_safe_member(name: str) -> bool:
     pure = pathlib.PurePosixPath(name)
     return not pure.is_absolute() and ".." not in pure.parts
 
+def safe_link_source(name: str, linkname: str) -> pathlib.Path:
+    base = pathlib.PurePosixPath(name).parent
+    target = pathlib.PurePosixPath(linkname)
+    if target.is_absolute():
+        raise SystemExit(f"Unsafe EZ130 archive link target: {linkname}")
+    target = pathlib.PurePosixPath(base, target)
+    if ".." in target.parts:
+        raise SystemExit(f"Unsafe EZ130 archive link target: {linkname}")
+    return dest_path / pathlib.Path(*target.parts)
+
 name = path.name.lower()
 if name.endswith(".zip"):
     with zipfile.ZipFile(path) as zf:
@@ -132,15 +144,29 @@ if name.endswith(".zip"):
 elif name.endswith((".tar.gz", ".tgz", ".tar.xz", ".txz", ".tar")):
     with tarfile.open(path) as tf:
         members = tf.getmembers()
+        deferred_links = []
         for member in members:
             if not is_safe_member(member.name):
                 raise SystemExit(f"Unsafe EZ130 tar archive member: {member.name}")
-            if member.issym() or member.islnk() or not (member.isfile() or member.isdir()):
+            member_path = dest_path / member.name
+            if member.isdir():
+                member_path.mkdir(parents=True, exist_ok=True)
+            elif member.isfile():
+                member_path.parent.mkdir(parents=True, exist_ok=True)
+                with tf.extractfile(member) as src, open(member_path, "wb") as out:
+                    shutil.copyfileobj(src, out)
+            elif member.issym() or member.islnk():
+                safe_link_source(member.name, member.linkname)
+                deferred_links.append(member)
+            else:
                 raise SystemExit(f"Unsupported EZ130 tar archive member: {member.name}")
-        extract_kwargs = {}
-        if sys.version_info >= (3, 12):
-            extract_kwargs["filter"] = "data"
-        tf.extractall(dest_path, members=members, **extract_kwargs)
+        for member in deferred_links:
+            member_path = dest_path / member.name
+            member_path.parent.mkdir(parents=True, exist_ok=True)
+            if member.issym():
+                os.symlink(member.linkname, member_path)
+            else:
+                os.link(safe_link_source(member.name, member.linkname), member_path)
 else:
     raise SystemExit(f"Unsupported EZ130 archive format: {archive}")
 PYEOF
@@ -256,9 +282,26 @@ if [ ! -e "${TARGET_LIB_DIR}/lef/sg13g2_tech.lef" ] && [ -e "${IHP_STDCELL_LEF}"
     cp -a "${IHP_STDCELL_LEF}" "${TARGET_LIB_DIR}/lef/sg13g2_tech.lef"
 fi
 
-if [ -x "${PDK_SCRIPT_DIR}/gzip_liberty.sh" ]; then
+if [ -d "${TARGET_LIB_DIR}/lib" ]; then
     echo "[INFO] Compressing EZ130 Liberty files."
-    bash "${PDK_SCRIPT_DIR}/gzip_liberty.sh" "${PDK_ROOT}/${PDK}"
+    find "${TARGET_LIB_DIR}/lib" -name "*.lib" -type f -exec gzip -k -f {} +
+    find "${TARGET_LIB_DIR}/lib" -name "*.lib" -type l | while read -r lib_link; do
+        [ -e "${lib_link}.gz" ] && continue
+        link_target=$(readlink "${lib_link}")
+        case "${link_target}" in
+            /*) target_gz="${link_target}.gz" ;;
+            *)  target_gz="$(dirname "${lib_link}")/${link_target}.gz" ;;
+        esac
+        if [ -e "${target_gz}" ]; then
+            ln -s "${link_target}.gz" "${lib_link}.gz"
+        fi
+    done
+fi
+
+if [ -d "${TARGET_LIBRELANE_DIR:-}" ]; then
+    while IFS= read -r cfg; do
+        sed -i 's/\.lib\([^A-Za-z0-9_.]\|$\)/.lib.gz\1/g' "${cfg}"
+    done < <(grep -rl '\.lib' "${TARGET_LIBRELANE_DIR}" || true)
 fi
 
 echo "[INFO] EZ130 installation complete: ${TARGET_LIB_DIR}"
