@@ -6,7 +6,6 @@
 set -e
 set -o pipefail
 
-PDK_SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PDK="ihp-sg13g2"
 LIB_NAME="${EZ130_LIBRARY_NAME:-ez130_8t}"
 PAGE_URL="${EZ130_PAGE_URL:-https://iip.ethz.ch/ez-library/ihp130-8t.html}"
@@ -43,7 +42,6 @@ PYEOF
 resolve_archive_candidates() {
     python3 - "$PAGE_URL" "$ARCHIVE_URL" <<'PYEOF'
 import html.parser
-import os
 import sys
 import urllib.parse
 import urllib.request
