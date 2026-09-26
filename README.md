@@ -151,6 +151,10 @@ export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
 ```
 
+The image also installs ETH Zurich's `EZ130` 8-track standard-cell library
+alongside the IHP one under `ihp-sg13g2/libs.ref/ez130_8t`. Select it by
+setting `STD_CELL_LIBRARY=ez130_8t` for flows that consume `libs.ref` directly.
+
 | IHP Microelectronics `ihp-sg13cmos5l` |
 |---|
 
