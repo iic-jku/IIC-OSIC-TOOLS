@@ -107,7 +107,6 @@ PYEOF
 extract_archive() {
     local archive=$1 dest=$2
     python3 - "$archive" "$dest" <<'PYEOF'
-import os
 import pathlib
 import sys
 import tarfile
@@ -118,13 +117,24 @@ path = pathlib.Path(archive)
 dest_path = pathlib.Path(dest)
 dest_path.mkdir(parents=True, exist_ok=True)
 
+def is_safe_member(name: str) -> bool:
+    pure = pathlib.PurePosixPath(name)
+    return not pure.is_absolute() and ".." not in pure.parts
+
 name = path.name.lower()
 if name.endswith(".zip"):
     with zipfile.ZipFile(path) as zf:
-        zf.extractall(dest_path)
+        for member in zf.infolist():
+            if not is_safe_member(member.filename):
+                raise SystemExit(f"Unsafe EZ130 zip archive member: {member.filename}")
+            zf.extract(member, dest_path)
 elif name.endswith((".tar.gz", ".tgz", ".tar.xz", ".txz", ".tar")):
     with tarfile.open(path) as tf:
-        tf.extractall(dest_path)
+        members = tf.getmembers()
+        for member in members:
+            if not is_safe_member(member.name):
+                raise SystemExit(f"Unsafe EZ130 tar archive member: {member.name}")
+        tf.extractall(dest_path, filter="data")
 else:
     raise SystemExit(f"Unsupported EZ130 archive format: {archive}")
 PYEOF
@@ -132,7 +142,6 @@ PYEOF
 
 find_library_dir() {
     python3 - "$1" "$LIB_NAME" <<'PYEOF'
-import os
 import pathlib
 import sys
 
@@ -162,7 +171,8 @@ for candidate in candidates:
         print(candidate)
         raise SystemExit
 
-raise SystemExit(f"Could not locate {libname} in extracted EZ130 archive under {root}")
+print(f"Could not locate {libname} in extracted EZ130 archive under {root}", file=sys.stderr)
+raise SystemExit(1)
 PYEOF
 }
 

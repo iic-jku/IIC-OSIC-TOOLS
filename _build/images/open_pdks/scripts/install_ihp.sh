@@ -276,7 +276,7 @@ fi
 # so the build stays resilient if ETH renames the downloadable file.
 echo "[INFO] Installing the EZ130 standard-cell library."
 bash "$PDK_SCRIPT_DIR/install_ez130.sh"
- 
+
 OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
     python3 -m sg13g2tovc --openvaf-options --target_cpu generic
 cp /tmp/${VACASK_NAME}/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/vacask/.vacaskrc.toml"
