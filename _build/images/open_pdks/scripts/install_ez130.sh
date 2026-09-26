@@ -83,10 +83,10 @@ def add(url):
 
 for href in parser.links:
     full = urllib.parse.urljoin(page_url, href)
-    lowered = full.lower()
-    if not lowered.endswith(archive_exts):
+    lowered_path = urllib.parse.urlparse(full).path.lower()
+    if not lowered_path.endswith(archive_exts):
         continue
-    if any(token in lowered for token in ("ez130", "ihp130", "8t")):
+    if any(token in lowered_path for token in ("ez130", "ihp130", "8t")):
         preferred.append(full)
     else:
         fallback.append(full)
@@ -135,7 +135,9 @@ elif name.endswith((".tar.gz", ".tgz", ".tar.xz", ".txz", ".tar")):
         for member in members:
             if not is_safe_member(member.name):
                 raise SystemExit(f"Unsafe EZ130 tar archive member: {member.name}")
-        tf.extractall(dest_path, filter="data")
+            if member.issym() or member.islnk() or not (member.isfile() or member.isdir()):
+                raise SystemExit(f"Unsupported EZ130 tar archive member: {member.name}")
+        tf.extractall(dest_path, members=members)
 else:
     raise SystemExit(f"Unsupported EZ130 archive format: {archive}")
 PYEOF
@@ -183,10 +185,10 @@ import pathlib
 import sys
 
 root = pathlib.Path(sys.argv[1])
-parts = pathlib.Path(sys.argv[2]).parts
+suffix = pathlib.PurePosixPath(sys.argv[2]).as_posix()
 
-for path in root.rglob(parts[-1]):
-    if path.is_dir() and path.parts[-len(parts):] == parts:
+for path in root.rglob(pathlib.PurePosixPath(suffix).name):
+    if path.is_dir() and path.as_posix().endswith(suffix):
         print(path)
         raise SystemExit
 PYEOF
@@ -228,7 +230,7 @@ echo "[INFO] Copying ${SOURCE_LIB_DIR} to ${TARGET_LIB_DIR}"
 mkdir -p "$(dirname "${TARGET_LIB_DIR}")"
 cp -a "${SOURCE_LIB_DIR}" "${TARGET_LIB_DIR}"
 
-SOURCE_LIBRELANE_DIR=$(find_companion_dir "${EXTRACT_DIR}" "libs.tech/librelane/${LIB_NAME}" || true)
+SOURCE_LIBRELANE_DIR=$(find_companion_dir "${EXTRACT_DIR}" "libs.tech/librelane/${LIB_NAME}")
 if [ -n "${SOURCE_LIBRELANE_DIR}" ]; then
     TARGET_LIBRELANE_DIR="${PDK_ROOT}/${PDK}/libs.tech/librelane/${LIB_NAME}"
     echo "[INFO] Copying ${SOURCE_LIBRELANE_DIR} to ${TARGET_LIBRELANE_DIR}"
