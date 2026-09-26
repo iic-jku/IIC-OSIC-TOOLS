@@ -35,7 +35,7 @@ import shutil
 import urllib.request
 
 url, dst = sys.argv[1:3]
-with urllib.request.urlopen(url) as src, open(dst, "wb") as out:
+with urllib.request.urlopen(url, timeout=60) as src, open(dst, "wb") as out:
     shutil.copyfileobj(src, out)
 PYEOF
 }
@@ -65,11 +65,11 @@ class LinkParser(html.parser.HTMLParser):
         if href:
             self.links.append(href)
 
-with urllib.request.urlopen(page_url) as src:
-    html = src.read().decode("utf-8", "replace")
+with urllib.request.urlopen(page_url, timeout=60) as src:
+    page_html = src.read().decode("utf-8", "replace")
 
 parser = LinkParser()
-parser.feed(html)
+parser.feed(page_html)
 
 archive_exts = (".zip", ".tar.gz", ".tgz", ".tar.xz", ".txz", ".tar")
 preferred = []
@@ -137,7 +137,10 @@ elif name.endswith((".tar.gz", ".tgz", ".tar.xz", ".txz", ".tar")):
                 raise SystemExit(f"Unsafe EZ130 tar archive member: {member.name}")
             if member.issym() or member.islnk() or not (member.isfile() or member.isdir()):
                 raise SystemExit(f"Unsupported EZ130 tar archive member: {member.name}")
-        tf.extractall(dest_path, members=members)
+        extract_kwargs = {}
+        if sys.version_info >= (3, 12):
+            extract_kwargs["filter"] = "fully_trusted"
+        tf.extractall(dest_path, members=members, **extract_kwargs)
 else:
     raise SystemExit(f"Unsupported EZ130 archive format: {archive}")
 PYEOF
