@@ -32,6 +32,18 @@ ln -s "${TOOLS}"/bin/Xyce "${TOOLS}"/bin/xyce
 ln -s "${TOOLS}/ghdl-yosys-plugin/ghdl.so" "${TOOLS}/yosys/share/yosys/plugins/ghdl.so"
 ln -s "${TOOLS}/slang-yosys-plugin/slang.so" "${TOOLS}/yosys/share/yosys/plugins/slang.so"
 
+# Install wrapper for eqy so that its plugin lookup resolves correctly
+# eqy derives its plugin directory from the path it was called by (without
+# resolving symlinks), so calling it via $TOOLS/bin/eqy (a symlink to
+# $TOOLS/yosys/bin/eqy) makes it look in the wrong place and the combine step
+# fails. The wrapper exec's the real binary directly.
+# see https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/367
+rm -f "${TOOLS}"/bin/eqy
+# shellcheck disable=SC2016
+echo '#!/bin/bash
+exec -a "$0" "${TOOLS}/yosys/bin/eqy" "$@"' > "${TOOLS}"/bin/eqy
+chmod +x "${TOOLS}"/bin/eqy
+
 # Install wrapper for Yosys so that modules are loaded automatically
 # see https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/43
 rm -f "${TOOLS}"/bin/yosys
