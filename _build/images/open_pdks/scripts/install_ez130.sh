@@ -94,7 +94,7 @@ for href in parser.links:
 for url in preferred + fallback:
     add(url)
 
-page_dir = page_url.rsplit("/", 1)[0] + "/"
+page_dir = urllib.parse.urljoin(page_url, ".")
 for guess in (
     "ihp130-8t.zip",
     "ihp130-8t.tar.gz",
@@ -139,7 +139,7 @@ elif name.endswith((".tar.gz", ".tgz", ".tar.xz", ".txz", ".tar")):
                 raise SystemExit(f"Unsupported EZ130 tar archive member: {member.name}")
         extract_kwargs = {}
         if sys.version_info >= (3, 12):
-            extract_kwargs["filter"] = "fully_trusted"
+            extract_kwargs["filter"] = "data"
         tf.extractall(dest_path, members=members, **extract_kwargs)
 else:
     raise SystemExit(f"Unsupported EZ130 archive format: {archive}")
@@ -194,6 +194,7 @@ for path in root.rglob(pathlib.PurePosixPath(suffix).name):
     if path.is_dir() and path.as_posix().endswith(suffix):
         print(path)
         raise SystemExit
+raise SystemExit(3)
 PYEOF
 }
 
@@ -233,7 +234,16 @@ echo "[INFO] Copying ${SOURCE_LIB_DIR} to ${TARGET_LIB_DIR}"
 mkdir -p "$(dirname "${TARGET_LIB_DIR}")"
 cp -a "${SOURCE_LIB_DIR}" "${TARGET_LIB_DIR}"
 
-SOURCE_LIBRELANE_DIR=$(find_companion_dir "${EXTRACT_DIR}" "libs.tech/librelane/${LIB_NAME}")
+SOURCE_LIBRELANE_DIR=""
+if SOURCE_LIBRELANE_DIR=$(find_companion_dir "${EXTRACT_DIR}" "libs.tech/librelane/${LIB_NAME}"); then
+    :
+else
+    status=$?
+    if [ "${status}" -ne 3 ]; then
+        exit "${status}"
+    fi
+    SOURCE_LIBRELANE_DIR=""
+fi
 if [ -n "${SOURCE_LIBRELANE_DIR}" ]; then
     TARGET_LIBRELANE_DIR="${PDK_ROOT}/${PDK}/libs.tech/librelane/${LIB_NAME}"
     echo "[INFO] Copying ${SOURCE_LIBRELANE_DIR} to ${TARGET_LIBRELANE_DIR}"
