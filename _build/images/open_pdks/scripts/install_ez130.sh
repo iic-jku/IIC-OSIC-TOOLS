@@ -24,18 +24,19 @@ if [ -d "${TARGET_LIB_DIR}" ]; then
     exit 0
 fi
 
-TMPDIR=$(mktemp -d)
-trap 'rm -rf "${TMPDIR}"' EXIT
+EZ130_TMPDIR=$(mktemp -d)
+trap 'rm -rf "${EZ130_TMPDIR}"' EXIT
 
 download_url() {
     local url=$1 dst=$2
     python3 - "$url" "$dst" <<'PYEOF'
 import sys
+import shutil
 import urllib.request
 
 url, dst = sys.argv[1:3]
 with urllib.request.urlopen(url) as src, open(dst, "wb") as out:
-    out.write(src.read())
+    shutil.copyfileobj(src, out)
 PYEOF
 }
 
@@ -205,8 +206,8 @@ while IFS= read -r candidate; do
     echo "[INFO] Trying EZ130 archive ${candidate}"
     archive_name=$(basename "${candidate%%\?*}")
     [ -n "${archive_name}" ] || archive_name="ez130-archive"
-    if download_url "${candidate}" "${TMPDIR}/${archive_name}"; then
-        ARCHIVE_PATH="${TMPDIR}/${archive_name}"
+    if download_url "${candidate}" "${EZ130_TMPDIR}/${archive_name}"; then
+        ARCHIVE_PATH="${EZ130_TMPDIR}/${archive_name}"
         break
     fi
     echo "[WARN] Could not download ${candidate}"
@@ -219,7 +220,7 @@ if [ -z "${ARCHIVE_PATH}" ]; then
     exit 1
 fi
 
-EXTRACT_DIR="${TMPDIR}/extract"
+EXTRACT_DIR="${EZ130_TMPDIR}/extract"
 extract_archive "${ARCHIVE_PATH}" "${EXTRACT_DIR}"
 
 SOURCE_LIB_DIR=$(find_library_dir "${EXTRACT_DIR}")
