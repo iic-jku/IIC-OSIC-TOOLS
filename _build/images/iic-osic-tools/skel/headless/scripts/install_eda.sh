@@ -55,7 +55,7 @@ pip3 install $PIP_FLAGS --ignore-installed \
 # yosys from PATH instead
 pip3 install $PIP_FLAGS \
 	"amaranth==0.5.10" \
-	cace==2.11.0 \
+	cace==2.13.0 \
 	chipify==0.2.2 \
 	ciel==2.6.1 \
 	cocotb==2.1.0 \
@@ -63,22 +63,22 @@ pip3 install $PIP_FLAGS \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.7 \
-	gds2palace==0.5.2 \
+	gds2palace==0.7.0 \
 	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.4.4 \
+	klayout-pex==0.4.5 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev3 \
-	najaeda==0.7.24 \
+	najaeda==0.7.25 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
 	pyuvm==5.0.0 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.1.0 \
-	setupEM==0.8.2 \
+	setupEM==0.10.1 \
 	siliconcompiler==0.38.9 \
 	snp2le==0.1.9 \
 	spicelib==1.6.3 \
