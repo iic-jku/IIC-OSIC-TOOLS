@@ -5,7 +5,7 @@ This document summarizes the most important changes of the individual releases o
 ## 2026.09
 
 * [Adding] the 3.3 V high-voltage standard-cell libraries of both IHP PDKs, `sg13g2_stdcell_hv` and `sg13cmos5l_stdcell_hv`
-* [Adding] ETH Zurich's `EZ130` 8-track standard-cell library alongside `ihp-sg13g2/libs.ref/sg13g2_stdcell` as `ez130_8t`
+* [Adding] ETH Zurich's EZ130 8T standard-cell library `v1.1` as `ihp-sg13g2/libs.ref/ez130_8t` (library views only, no LibreLane configuration yet)
 * [Update] `gdsfill` `v0.1.11`, which adds dummy fill for `gf180mcu`
 * [Update] `ciel` `3.0.0`, `cocotb` `2.1.0`, `pyuvm` `5.0.0` (major release, check your testbenches) and `klayout-pex` `0.4.4`
 * [Update] various tool and Python package version bumps

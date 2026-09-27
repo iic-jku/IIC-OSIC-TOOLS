@@ -242,6 +242,10 @@ find . -name "*.mdm" -print0 | xargs -0 rm -rf
 # Remove measurement folder to save space
 rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
 
+# Add ETH Zurich's EZ130 8T standard-cell library as libs.ref/ez130_8t. This
+# runs before the Liberty compression below, which then covers it as well.
+bash "$PDK_SCRIPT_DIR/install_ez130.sh"
+
 # gzip Liberty (.lib) files
 bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/$PDK"
 
@@ -269,13 +273,6 @@ else
 		git checkout "${VACASK_REPO_COMMIT}"
 	fi
 fi
-
-# Install the ETH Zurich EZ130 8T standard-cell library alongside the IHP
-# SG13G2 one inside libs.ref/. The landing page is the stable issue reference;
-# the helper resolves the actual archive URL from there (or from an override)
-# so the build stays resilient if ETH renames the downloadable file.
-echo "[INFO] Installing the EZ130 standard-cell library."
-bash "$PDK_SCRIPT_DIR/install_ez130.sh"
 
 OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
     python3 -m sg13g2tovc --openvaf-options --target_cpu generic
