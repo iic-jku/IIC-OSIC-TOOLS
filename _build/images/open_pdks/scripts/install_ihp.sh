@@ -242,6 +242,10 @@ find . -name "*.mdm" -print0 | xargs -0 rm -rf
 # Remove measurement folder to save space
 rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
 
+# Add ETH Zurich's EZ130 8T standard-cell library as libs.ref/ez130_8t. This
+# runs before the Liberty compression below, which then covers it as well.
+bash "$PDK_SCRIPT_DIR/install_ez130.sh"
+
 # gzip Liberty (.lib) files
 bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/$PDK"
 

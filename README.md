@@ -151,6 +151,13 @@ export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
 ```
 
+The image also ships ETH Zurich's [EZ130 8T](https://iip.ethz.ch/ez-library/ihp130-8t.html)
+8-track standard-cell library (v1.1, 220 cells) next to `sg13g2_stdcell` in
+`$PDK_ROOT/ihp-sg13g2/libs.ref/ez130_8t` (Liberty, LEF, GDS, Verilog, CDL, datasheets).
+Use it together with its own technology LEF `lef/ez130_sg13g2_tech.lef`, not the
+stock `sg13g2_tech.lef`, as the routing pitches differ. There is no LibreLane
+configuration for it yet, so `STD_CELL_LIBRARY=ez130_8t` does not work in LibreLane.
+
 | IHP Microelectronics `ihp-sg13cmos5l` |
 |---|
 
