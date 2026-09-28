@@ -25,6 +25,7 @@ ARG TOOL_IMAGE_NETGEN="registry.iic.jku.at:5000/iic-osic-tools:tool-netgen-lates
 ARG TOOL_IMAGE_NGSPICE="registry.iic.jku.at:5000/iic-osic-tools:tool-ngspice-latest"
 ARG TOOL_IMAGE_NGSPYCE="registry.iic.jku.at:5000/iic-osic-tools:tool-ngspyce-latest"
 ARG TOOL_IMAGE_NVC="registry.iic.jku.at:5000/iic-osic-tools:tool-nvc-latest"
+ARG TOOL_IMAGE_OPENCDC="registry.iic.jku.at:5000/iic-osic-tools:tool-opencdc-latest"
 ARG TOOL_IMAGE_OPENEMS="registry.iic.jku.at:5000/iic-osic-tools:tool-openems-latest"
 ARG TOOL_IMAGE_OPEN_PDKS="registry.iic.jku.at:5000/iic-osic-tools:tool-open_pdks-latest"
 ARG TOOL_IMAGE_OPENROAD="registry.iic.jku.at:5000/iic-osic-tools:tool-openroad-latest"
@@ -75,6 +76,7 @@ FROM ${TOOL_IMAGE_NETGEN} AS netgen
 FROM ${TOOL_IMAGE_NGSPICE} AS ngspice
 FROM ${TOOL_IMAGE_NGSPYCE} AS ngspyce
 FROM ${TOOL_IMAGE_NVC} AS nvc
+FROM ${TOOL_IMAGE_OPENCDC} AS opencdc
 FROM ${TOOL_IMAGE_OPENEMS} AS openems
 FROM ${TOOL_IMAGE_OPEN_PDKS} AS open_pdks
 FROM ${TOOL_IMAGE_OPENROAD} AS openroad
@@ -136,7 +138,8 @@ COPY --link --from=netgen                       ${TOOLS}/netgen                 
 COPY --link --from=ngspice                      ${TOOLS}/ngspice                ${TOOLS}/ngspice/
 COPY --link --from=ngspyce                      ${TOOLS}/ngspyce                ${TOOLS}/ngspyce/
 COPY --link --from=nvc                          ${TOOLS}/nvc                    ${TOOLS}/nvc/
-COPY --link --from=openems                      ${TOOLS}/openems                ${TOOLS}/openems/
+COPY --link --from=opencdc                      ${TOOLS}/opencdc                ${TOOLS}/opencdc/
+COPY --link --from=openems                      ${TOOLS}/openems               ${TOOLS}/openems/
 COPY --link --from=open_pdks                    ${PDK_ROOT}/                    ${PDK_ROOT}/
 COPY --link --from=openroad                     ${TOOLS}/openroad               ${TOOLS}/openroad/
 COPY --link --from=openroad-librelane           ${TOOLS}/openroad-librelane     ${TOOLS}/openroad-librelane/
