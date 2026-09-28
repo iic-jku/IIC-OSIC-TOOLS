@@ -757,6 +757,22 @@ target "open_pdks" {
   cache-to   = cache_to("open_pdks")
 }
 
+target "opencdc" {
+  inherits   = ["base-tool"]
+  dockerfile = "images/opencdc/Dockerfile"
+  tags       = [img("tool-opencdc-latest")]
+  contexts = {
+    "ctx-base-dev"  = basedep("base-dev")
+    "ctx-slang"     = tooldep("slang")
+  }
+  args = {
+    BASE_IMAGE_BUILD = "ctx-base-dev"
+    TOOL_IMAGE_SLANG = "ctx-slang"
+  }
+  cache-from = tool_cache_from("opencdc")
+  cache-to   = cache_to("opencdc")
+}
+
 target "palace" {
   inherits   = ["base-tool"]
   dockerfile = "images/palace/Dockerfile"
@@ -859,6 +875,7 @@ target "image-full" {
     "ctx-ngspyce"              = tooldep("ngspyce")
     "ctx-nvc"                  = tooldep("nvc")
     "ctx-open_pdks"            = tooldep("open_pdks")
+    "ctx-opencdc"              = tooldep("opencdc")
     "ctx-openems"              = tooldep("openems")
     "ctx-openroad"             = tooldep("openroad")
     "ctx-openroad-librelane"   = tooldep("openroad-librelane")
@@ -911,6 +928,7 @@ target "image-full" {
     TOOL_IMAGE_NGSPYCE             = "ctx-ngspyce"
     TOOL_IMAGE_NVC                 = "ctx-nvc"
     TOOL_IMAGE_OPEN_PDKS           = "ctx-open_pdks"
+    TOOL_IMAGE_OPENCDC             = "ctx-opencdc"
     TOOL_IMAGE_OPENEMS             = "ctx-openems"
     TOOL_IMAGE_OPENROAD            = "ctx-openroad"
     TOOL_IMAGE_OPENROAD_LIBRELANE  = "ctx-openroad-librelane"
@@ -980,6 +998,7 @@ group "tools" {
     "ngspyce",
     "nvc",
     "open_pdks",
+    "opencdc",
     "openems",
     "openroad",
     "openroad-librelane",
@@ -1064,7 +1083,7 @@ group "tools-level-1" {
 }
 
 group "tools-level-2" {
-  targets = ["ghdl-yosys-plugin", "open_pdks", "slang-yosys-plugin", "spike", "vacask"]
+  targets = ["ghdl-yosys-plugin", "open_pdks", "opencdc", "slang-yosys-plugin", "spike", "vacask"]
 }
 
 group "tools-level-3" {

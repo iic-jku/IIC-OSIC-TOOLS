@@ -231,6 +231,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [ngspyce](https://github.com/ignamv/ngspyce) Python bindings for `ngspice`
 - [nvc](https://github.com/nickg/nvc) VHDL simulator and compiler
 - [open_pdks](https://github.com/RTimothyEdwards/open_pdks) PDK setup scripts
+- [opencdc](https://github.com/Ayoubbelguellaoui/CDC) static clock domain crossing (CDC) checker for Verilog/SystemVerilog RTL
 - [openems](https://github.com/thliebig/openEMS) electromagnetic field solver using the EC-FDTD method
 - [openram](https://github.com/VLSIDA/OpenRAM) OpenRAM Python library
 - [openroad](https://github.com/The-OpenROAD-Project/OpenROAD) RTL2GDS engine used by `librelane`

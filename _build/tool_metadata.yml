@@ -64,6 +64,9 @@
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
   commit: 1689ac3f2dc763876eaf967227c7dfe831b031ae
+- name: opencdc
+  repo: https://github.com/Ayoubbelguellaoui/CDC.git
+  commit: 6c6bd44bf2d137e108437bb5a9729c8fd5350886
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
   commit: 9f5cdd4d71cae312633ab0b2c1db64867f8c782b
