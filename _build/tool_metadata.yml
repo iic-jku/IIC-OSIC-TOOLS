@@ -69,10 +69,10 @@
   commit: 6c6bd44bf2d137e108437bb5a9729c8fd5350886
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: b174b0db66acb9249923b1c930fc72ca5dcd82e2
+  commit: 34770fd060814b92b49ef1518109cf564f6fd579
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 5d8d3a3413d014236c7f8c68f0efaad9b9ff5d03
+  commit: 27288f5c90265ae5296b2f5a9fa6e8714fa191ad
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -87,7 +87,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 376c078d4326d9fdd2a5444f6423d8d0c0d8e0e5
+  commit: 90e9ca242524f99e9b3e996cb0468e0155b76940
 - name: prjtrellis
   repo: https://github.com/YosysHQ/prjtrellis.git
   commit: 65fe191a290cd947c125f011e9e78a2ddc90d7a4
@@ -141,7 +141,7 @@
   commit: 0.12.21
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: f62a16047ba3bd59f35dee7ac61578d774efeb0a
+  commit: 1b48553c5b204bc11fb6f6d900b18f079fafc90e
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.052
@@ -153,7 +153,7 @@
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 903861594d60954c7dbacf9fa80ec92dfa8787ad
+  commit: b03ba84c804846c7462902a7aa0549e54e8750ad
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
