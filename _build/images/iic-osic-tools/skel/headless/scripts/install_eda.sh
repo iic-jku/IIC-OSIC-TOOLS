@@ -53,9 +53,13 @@ pip3 install $PIP_FLAGS --ignore-installed \
 # amaranth deliberately without [builtin-yosys]: that extra pulls in the
 # WASM-based amaranth-yosys + wasmtime (~75 MB); amaranth uses the native
 # yosys from PATH instead
+#
+# cace is held at 2.11.0 and ciel at 2.x: every librelane release (up to
+# 3.0.14 / 3.1.0.dev3) requires ciel<3, while cace>=2.12.0 requires ciel>=3.0.0.
+# Bump cace (and ciel) only once librelane accepts ciel 3.
 pip3 install $PIP_FLAGS \
 	"amaranth==0.5.10" \
-	cace==2.13.0 \
+	cace==2.11.0 \
 	chipify==0.2.2 \
 	ciel==2.6.1 \
 	cocotb==2.1.0 \
