@@ -11,15 +11,14 @@ Ubuntu 26.04 LTS ("resolute", Resolute Raccoon) was released 2026-04-23 and has 
 point release, so the archive is settled.
 
 24.04 is supported until 2029, so this is not urgent — the payoff is toolchain freshness and
-debt removal. Six workarounds in this repo exist only because 24.04 was too old, and the
+debt removal. Five workarounds in this repo exist only because 24.04 was too old, and the
 distro now ships adequate versions of all of them:
 
 | Workaround | Reason it exists | Status on 26.04 |
 |---|---|---|
 | `71_fix_gobject_introspection.sh` | g-i 1.80 imports `distutils.msvccompiler` | g-i 1.86 — **must** be deleted, script hard-fails by design |
-| SWIG 4.3.0 source build (openroad) | noble ships 4.2.0 | archive ships 4.4 |
 | Boost 1.88 source build ×2 (slang, vacask) | noble's 1.83 lacks `concurrent_flat_set.hpp` | default Boost is 1.90 |
-| spdlog 1.15.1 source build ×2 (openroad, openroad-librelane) | noble ships 1.12 | archive ships 1.15 |
+| spdlog 1.15.1 source build (openroad-librelane) | noble ships 1.12 | archive ships 1.15 |
 | `OMPI_MCA_btl_vader_*` | OpenMPI 4.1.6 | OpenMPI 5.0.10, knob renamed `..._btl_sm_...` |
 | `30_install_boost.sh`, `34_install_spdlog.sh` | — | already 100 % commented out, dead files |
 
@@ -28,7 +27,7 @@ those workarounds gone, shipped as a distro-only release.
 
 **What 26.04 brings:** Python 3.12 → **3.14**, GCC 13 → **15**, CMake 3.28 → **4.2**, SWIG →
 4.4, OpenMPI 4 → **5.0.10**, Boost 1.83 → **1.90**, Qt6 6.4 → 6.10.2, Node 22, glibc 2.43.
-Verified non-blockers: **Qt5 is still in the archive** (5.15.18, universe — OpenROAD's Qt5-only
+Verified non-blockers: **Qt5 is still in the archive** (5.15.18, universe — LibreLane OpenROAD's Qt5-only
 GUI and Qt5-built VTK are safe), **llvm-18/clang-18 still packaged** (1:18.1.8), **openjdk-17
 still packaged**, and the **mozillateam PPA publishes for `resolute`** (firefox 155).
 
@@ -245,9 +244,7 @@ still need it.
 
 | File / lines | Action |
 |---|---|
-| `_build/images/openroad/scripts/install.sh:9-19`, `:41` | drop the SWIG 4.3.0 source build and `-DSWIG_EXECUTABLE` (resolute swig 4.4) |
-| `_build/images/openroad/scripts/install.sh:21-29` | drop the spdlog 1.15.1 source build (system `libspdlog-dev` is 1.15) |
-| `_build/images/openroad-librelane/scripts/install.sh:8-17` | same spdlog removal. **Keep** the `Tcl_Size` shim at `:31-40` — grep-guarded and keyed to the pinned OpenROAD revision, not the distro |
+| `_build/images/openroad-librelane/scripts/install.sh:8-17` | drop the spdlog 1.15.1 source build (system `libspdlog-dev` is 1.15). **Keep** the `Tcl_Size` shim at `:31-40` — grep-guarded and keyed to the pinned OpenROAD revision, not the distro |
 | `_build/images/slang/scripts/install.sh:9-31` | drop the Boost 1.88 source build and `-DBoost_ROOT` / `-DBoost_NO_SYSTEM_PATHS` |
 | `_build/images/vacask/scripts/install.sh:18-43`, `:74` | drop the Boost source build and `-DBoost_ROOT`. **Keep** `BOOST_PROCESS_V2_DISABLE_PIDFD_OPEN` — a container/pidfd constraint, not a Boost-version workaround; re-verify the macro name against Boost 1.90 Process v2 |
 | `_build/images/base/scripts/30_install_boost.sh`, `34_install_spdlog.sh` + `base/Dockerfile:49,53` | both files are entirely commented out — delete the files and their Dockerfile lines |
@@ -275,8 +272,8 @@ for t in openroad openroad-librelane klayout xyce palace openems slang pyopus; d
 done
 ```
 
-Why these: `openroad`/`openroad-librelane` combine CMake 4 + Boost 1.90 + SWIG 4.4 + Tcl +
-or-tools; `klayout` builds Python C-API bindings against 3.14 via `qmake6`; `xyce` is autotools
+Why these: `openroad-librelane` combines CMake 4 + Boost 1.90 + SWIG 4.4 + Tcl + or-tools,
+`openroad` (Bazel) links the system xcb libraries on arm64; `klayout` builds Python C-API bindings against 3.14 via `qmake6`; `xyce` is autotools
 + gfortran/Trilinos + OpenMPI 5; `palace` is a CMake superbuild (MFEM/PETSc/SLEPc), the most
 likely `cmake_minimum_required(VERSION <3.5)` casualty; `openems` is CMake + Cython + VTK 9.5 +
 Qt5; `slang`/`vacask` make the Boost decision concrete; `pyopus` is a Python sdist with C
@@ -333,7 +330,7 @@ Budget one full cold build per arch — a single-arch cache does not help the ot
   - `[Update] Upgrade base OS to Ubuntu 26.04 LTS (from 24.04 LTS)` — noting Python 3.14,
     GCC 15, CMake 4, OpenMPI 5, Boost 1.90
   - `[Remove]` lines for the gobject-introspection patch (its own header documents the
-    hard-fail-as-signal contract, so the removal is worth calling out), and the SWIG, spdlog
+    hard-fail-as-signal contract, so the removal is worth calling out), and the spdlog
     and Boost source builds
   - `[Update]` line per forced PyPI pin bump
 

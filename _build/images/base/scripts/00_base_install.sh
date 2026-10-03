@@ -33,10 +33,12 @@ apt-get -y install openjdk-17-jdk
 # mold must stay as well: verilator bakes "-fuse-ld=mold" into verilated.mk at
 # build time, so every user model build links with it.
 #
-# The Qt5 and Qt6 runtimes both have to stay: OpenROAD's GUI is Qt5-only
-# (src/gui/CMakeLists.txt does find_package(Qt5 ...), no Qt6 path) and openEMS
-# links libvtk9-qt, which Ubuntu builds against Qt5; klayout, kactus2, qucs-s,
-# libman and mcy-gui are Qt6. The Python side is consolidated on PySide6
+# The Qt5 and Qt6 runtimes both have to stay: the CMake-built OpenROAD for
+# LibreLane has a Qt5-only GUI (src/gui/CMakeLists.txt does find_package(Qt5
+# ...), no Qt6 path) and openEMS links libvtk9-qt, which Ubuntu builds against
+# Qt5; klayout, kactus2, qucs-s, libman and mcy-gui are Qt6. The Bazel-built
+# OpenROAD links its own Qt6 statically, but loads the X11/xcb/xkbcommon,
+# dbus and fontconfig libraries listed below from the system at runtime. The Python side is consolidated on PySide6
 # (installed by install_eda.sh, required by chipify/snp2le/gds2palace/setupEM),
 # so python3-pyqt5 and python3-pyqt6 are NOT installed here -- see base-dev for
 # the build-time PyQt5. That makes libqt6{xml,printsupport,uitools,openglwidgets}
@@ -103,6 +105,7 @@ apt-get -y install \
 	libcairo2 \
 	libcapnp-1.0.1 \
 	libcurl4 \
+	libdbus-1-3 \
 	libdw1 \
 	libedit2 \
 	libegl1 \
@@ -113,6 +116,7 @@ apt-get -y install \
 	libfftw3-single3 \
 	libfindbin-libs-perl \
 	libfl2 \
+	libfontconfig1 \
 	libftdi1 \
 	libgcc-s1 \
 	libgettextpo0 \
@@ -127,6 +131,7 @@ apt-get -y install \
 	libgtk-3-0 \
 	libgtk-4-1 \
 	libhdf5-103-1 \
+	libice6 \
 	libjpeg-turbo8 \
 	libjson-glib-1.0-0 \
 	libjudydebian1 \
@@ -179,9 +184,24 @@ apt-get -y install \
 	libx11-xcb1 \
 	libxaw7 \
 	libxcb-cursor0 \
+	libxcb-icccm4 \
+	libxcb-image0 \
+	libxcb-keysyms1 \
+	libxcb-randr0 \
+	libxcb-render-util0 \
+	libxcb-render0 \
+	libxcb-shape0 \
+	libxcb-shm0 \
+	libxcb-sync1 \
+	libxcb-util1 \
+	libxcb-xfixes0 \
+	libxcb-xinerama0 \
+	libxcb-xkb1 \
 	libxcb1 \
 	libxext6 \
 	libxft2 \
+	libxkbcommon-x11-0 \
+	libxkbcommon0 \
 	libxml2 \
 	libxpm4 \
 	libxrender1 \

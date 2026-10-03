@@ -20,6 +20,11 @@ apt-get -y upgrade
 # aarch64 without it, but the installed sources are ported to PySide6 right
 # after (see images/pyopus/scripts/install.sh), so the runtime image needs no
 # PyQt at all.
+#
+# The libxcb-*-dev and libxkbcommon-x11-dev packages are for OpenROAD's Bazel
+# build: on aarch64 its Qt (qt-bazel) links against the system xcb/xkbcommon
+# libraries (-lxcb-cursor, ...) instead of interface stubs, so the unversioned
+# .so files must exist.
 apt-get -y install \
 	autotools-dev \
 	clang-18 \
@@ -98,9 +103,21 @@ apt-get -y install \
 	libx11-dev \
 	libx11-xcb-dev \
 	libxaw7-dev \
+	libxcb-cursor-dev \
+	libxcb-icccm4-dev \
+	libxcb-image0-dev \
+	libxcb-keysyms1-dev \
+	libxcb-randr0-dev \
+	libxcb-render-util0-dev \
+	libxcb-shape0-dev \
+	libxcb-sync-dev \
+	libxcb-util-dev \
+	libxcb-xfixes0-dev \
+	libxcb-xkb-dev \
 	libxcb1-dev \
 	libxext-dev \
 	libxft-dev \
+	libxkbcommon-x11-dev \
 	libxml2-dev \
 	libxpm-dev \
 	libxrender-dev \
@@ -131,6 +148,18 @@ apt-get -y install \
 	tk-dev \
 	uuid-dev \
 	zlib1g-dev
+
+# bazelisk runs the Bazel version a project pins in its .bazelversion
+# (OpenROAD builds with Bazel, its CMake build is deprecated)
+BAZELISK_VERSION=1.28.1
+echo "[INFO] Installing bazelisk version $BAZELISK_VERSION"
+if [ "$(arch)" == "aarch64" ]; then
+    BAZELISK_ARCH="arm64"
+else
+    BAZELISK_ARCH="amd64"
+fi
+wget --no-verbose "https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_VERSION}/bazelisk-linux-${BAZELISK_ARCH}" -O /usr/local/bin/bazelisk
+chmod +x /usr/local/bin/bazelisk
 
 # Provide the unversioned LLVM/clang tool names (clang, llvm-config, ...):
 # tool builds use them (e.g. ghdl configures with plain llvm-config)
