@@ -11,10 +11,12 @@ cd "${SPIKE_NAME}" || exit 1
 git checkout "${SPIKE_REPO_COMMIT}"
 mkdir build && cd build
 ../configure --prefix="${TOOLS}/${SPIKE_NAME}"
+# Upstream builds with -Werror since cae2943; -Os triggers false-positive
+# -Wmaybe-uninitialized warnings, so do not treat warnings as errors
 make -j"$(nproc)" \
   ASFLAGS="-Os -g0" \
-  CFLAGS="-Os -g0" \
-  CXXFLAGS="-Os -g0" \
+  CFLAGS="-Os -g0 -Wno-error" \
+  CXXFLAGS="-Os -g0 -Wno-error" \
   LDFLAGS="-Wl,-s"
 make install
 
