@@ -70,3 +70,4 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 33       | FPGA place-and-route flows (an iCE40 and an ECP5 blinky through synthesis, place-and-route and bitstream packing)               |
 | 34       | KLayout GUI DRC/LVS run directory patch of both IHP PDKs (resolved against the layout file, `%top_cell%` placeholder)           |
 | 35       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) PEX bench (Magic, kpex 2.5D) with all PDKs  |
+| 36       | VACASK model conversion of both IHP PDKs (corner sections and xschem models symbol load, MOSCAP/Schottky against ngspice)       |

@@ -249,6 +249,23 @@ bash "$PDK_SCRIPT_DIR/install_ez130.sh"
 # gzip Liberty (.lib) files
 bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/$PDK"
 
+# sg13g2_svaricaphv_mod_mismatch.lib writes one model parameter as "+ stuac 40",
+# without the "=". IHP fixed that typo in sg13g2_svaricaphv_mod.lib
+# (IHP-Open-PDK cf1083b5, #612) but not in its mismatch twin, and VACASK's
+# converter only patches the former. It turns the line into "stuac=1 40=1",
+# which VACASK rejects with a syntax error, so every mos_*_mismatch section of
+# the converted cornerMOShv.lib fails to load. Fix it the way upstream did
+# (reported as https://github.com/IHP-GmbH/IHP-Open-PDK/issues/1255).
+# CMOS5L symlinks this file into SG13G2, so this covers both PDKs.
+echo "[INFO] Fixing the stuac parameter of the HV varicap mismatch model."
+SVARICAP_MISMATCH="$PDK_ROOT/$PDK/libs.tech/ngspice/models/sg13g2_svaricaphv_mod_mismatch.lib"
+if grep -q '^+ *stuac \+40 *$' "$SVARICAP_MISMATCH"; then
+    sed -i 's/^\(+ *stuac\) \+40 *$/\1 = 40/' "$SVARICAP_MISMATCH"
+    echo "[INFO] Fixed the stuac parameter in $SVARICAP_MISMATCH"
+else
+    echo "[WARN] stuac not patched in $SVARICAP_MISMATCH (already fixed upstream?)"
+fi
+
 # Perform required preparation of IHP PDK for use with VACASK
 echo "[INFO] Preparing IHP PDK for VACASK."
 cd /tmp || exit 1
@@ -274,9 +291,50 @@ else
 	fi
 fi
 
+# The converter names the model files it converts in a hardcoded list, while
+# the PDK is installed unpinned and drifts away from it in both directions: it
+# drops files the list still names (sg13g2_hbt_mod_mismatch.lib, folded into
+# sg13g2_hbt_mod.lib in 2026-09) and its corner files include files the list
+# does not name (sg13g2_dschottky_nbl1_stat.lib), up to a whole device
+# (cornerMOSCAP.lib). The list is reconciled with the PDK before the converter
+# runs, and every model file that sets SWSOA globally gets the patch upstream
+# only gives the MOS transistor files (shared with install_ihp_cmos5l.sh).
+echo "[INFO] Checking the VACASK converter against the installed PDK."
+python3 "$PDK_SCRIPT_DIR/fix_sg13g2_vacask_converter.py" \
+	"/tmp/${VACASK_NAME}/python/sg13g2tovc.py" "$PDK_ROOT/$PDK"
+python3 "$PDK_SCRIPT_DIR/fix_vacask_swsoa.py" \
+	"/tmp/${VACASK_NAME}/python/sg13g2tovc.py" "$PDK_ROOT/$PDK"
+
 OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
     python3 -m sg13g2tovc --openvaf-options --target_cpu generic
 cp /tmp/${VACASK_NAME}/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/vacask/.vacaskrc.toml"
+
+# Every file the converted models include has to exist, or a deck pulling in
+# that section dies on the include even when it uses none of the devices behind
+# it. Same check as in install_ihp_cmos5l.sh, see there.
+echo "[INFO] Verifying the converted VACASK model includes resolve."
+VACASK_MODELS="$PDK_ROOT/$PDK/libs.tech/vacask/models"
+INCLUDE_MISSING=0
+for model in "$VACASK_MODELS"/*.lib; do
+	[ -f "$model" ] || continue
+	for inc in $(sed -n 's/^[[:space:]]*include[[:space:]]*"\([^"]*\)".*/\1/p' "$model" | sort -u); do
+		if [ ! -f "$(dirname "$model")/$inc" ]; then
+			echo "[ERROR] $(basename "$model") includes $inc, which was not converted!"
+			INCLUDE_MISSING=1
+		fi
+	done
+done
+if [ "$INCLUDE_MISSING" -ne 0 ]; then
+	echo "[ERROR] The VACASK model conversion is incomplete."
+	exit 1
+fi
+
+# Add the diode and MOSCAP corners to the "Add VACASK models symbol" menu
+# entry, which upstream limits to MOSlv, MOShv, HBT, RES and CAP. A local
+# addition, not a fix (shared with install_ihp_cmos5l.sh).
+echo "[INFO] Adding the diode and MOSCAP corners to the xschem VACASK menu."
+python3 "$PDK_SCRIPT_DIR/fix_xschem_vacask_menu.py" "$PDK_ROOT/$PDK" \
+	cornerDIO.lib=dio_tt cornerMOSCAP.lib=moscap_tt
 
 cd /tmp || exit 1
 rm -rf "${VACASK_NAME}"
