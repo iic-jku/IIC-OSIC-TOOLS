@@ -18,6 +18,14 @@ git submodule update --init --recursive
 # Same flags as upstream etc/Build.sh: --config=release stamps the real
 # `git describe` version and includes --config=opt (-O3, ThinLTO).
 BAZEL_ARGS=("--jobs=$(nproc)" "--config=release" "--//:platform=gui")
+# On aarch64, qt-bazel links the real system X11/xcb/xkbcommon libraries
+# instead of interface stubs. These need newer glibc symbol versions (e.g.
+# __isoc23_strtol@GLIBC_2.38) than the toolchain's glibc 2.28 link stubs
+# provide, so lld's default --no-allow-shlib-undefined fails the link. The
+# system glibc resolves them at runtime, so let the link through.
+if [ "$(arch)" == "aarch64" ]; then
+    BAZEL_ARGS+=("--linkopt=-Wl,--allow-shlib-undefined")
+fi
 bazelisk build "${BAZEL_ARGS[@]}" //:openroad //src/sta:opensta
 bazelisk run "${BAZEL_ARGS[@]}" //:install -- "${TOOLS}/${OPENROAD_NAME}"
 # //:install only ships openroad; add the standalone OpenSTA binary as the
