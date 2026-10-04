@@ -46,5 +46,3 @@ for dist, gone in missing.items():
 
 if missing:
     sys.exit(1)
-
-print("[INFO] All installed PySide6 distributions are complete on disk.")

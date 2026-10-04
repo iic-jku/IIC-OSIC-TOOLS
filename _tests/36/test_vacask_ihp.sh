@@ -27,6 +27,8 @@ fi
 # test output is kept out of the bind-mounted source tree (see run_integration_tests.sh)
 RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
 
+DEBUG=${DEBUG:-0}
+
 ERROR=0
 WORKDIR=${RUNS_DIR}/${RAND}/36
 
@@ -46,7 +48,7 @@ compare() {
     ref=$(ngspice -b "$spice" 2>/dev/null | awk '/^result = / {print $3}')
     got=$(vacask --extra-tomlfile "$VACASKRC" "$sim" 2>&1 | awk '/^RESULT / {print $2}')
     if within "$got" "$ref"; then
-        echo "[INFO] $pdk $what: VACASK $got, ngspice $ref"
+        [ "$DEBUG" = 1 ] && echo "[INFO] $pdk $what: VACASK $got, ngspice $ref"
     else
         echo "[ERROR] $pdk $what: VACASK '$got', ngspice '$ref'"
         ERROR=1
@@ -90,7 +92,7 @@ EOF
     if [ "$SECTIONS" -eq 0 ]; then
         echo "[ERROR] $pdk: no corner sections found in $MODELS"
         ERROR=1
-    else
+    elif [ "$DEBUG" = 1 ]; then
         echo "[INFO] $pdk: $SECTIONS corner sections checked."
     fi
 
