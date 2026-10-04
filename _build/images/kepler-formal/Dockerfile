@@ -7,7 +7,7 @@
 ARG BASE_IMAGE_BUILD="registry.iic.jku.at:5000/iic-osic-tools:base-dev"
 FROM ${BASE_IMAGE_BUILD} AS kepler-formal
 ARG KEPLER_FORMAL_REPO_URL="https://github.com/keplertech/kepler-formal.git"
-ARG KEPLER_FORMAL_REPO_COMMIT="7b260cc1a0ef0f663d727addecaf3305f33931d2"
+ARG KEPLER_FORMAL_REPO_COMMIT="68cc28b0c03ba2f18b01be30048fbf8afbf924a3"
 ARG KEPLER_FORMAL_NAME="kepler-formal"
 RUN --mount=type=bind,source=images/kepler-formal,target=/images/kepler-formal \
     bash /images/kepler-formal/scripts/install.sh

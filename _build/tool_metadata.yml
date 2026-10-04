@@ -30,13 +30,13 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 2f296d88ae0d9af54fdf59d8bc0d91d7679edce3
+  commit: cbbc0ebb3c3eef1463c8394097deeb6e7d750af2
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: 7b260cc1a0ef0f663d727addecaf3305f33931d2
+  commit: 68cc28b0c03ba2f18b01be30048fbf8afbf924a3
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.12
@@ -114,7 +114,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 2f93a7a12fed6f4903cd342f44f2da4216b5ce79
+  commit: a29daca51604dbb9af611d3608e714316e3e31df
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 1582cc2d5bd199949669a1440a4c8947d713f842
@@ -138,7 +138,7 @@
   commit: 997b49c20705ca3d99e8c0ebe57d6a7840513bb4
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.12.22
+  commit: 0.12.23
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
   commit: 29d99ad2df4d8262e64ba883849c2974b3f01cce
@@ -153,7 +153,7 @@
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: ada76bb0a6b255f9249d4ee52a32fe7bc9f0753f
+  commit: c15c6c05b175de17e81e6c4dd6175e07815add28
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
