@@ -85,7 +85,7 @@ pip3 install $PIP_FLAGS \
 	setupEM==0.10.2 \
 	siliconcompiler==0.38.9 \
 	snp2le==0.1.9 \
-	spicelib==1.6.3 \
+	spicelib==1.6.4 \
 	spyci==1.0.2
 
 # librelane's Toolbox.get_lib_voltage() is the only Liberty reader in the flow
@@ -155,7 +155,7 @@ rustup default stable
 # Pinned with the crate@version form rather than --version: cargo accepts that
 # flag only for a single crate, so a second one would break the invocation.
 cargo install \
-	gdscheck@0.1.2 \
+	gdscheck@0.2.0 \
 	gdsfill@0.1.11 \
 	--root "${TOOLS}"
 

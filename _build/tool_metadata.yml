@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: e2d92172865e5bb1af859ead952eb8fc23162883
+  commit: 4919fc2cad7b045a166861d5cec345d06429a6d7
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 5ec8c1921670588bd8bab4fa664b6f72ecb84016
@@ -24,19 +24,19 @@
   commit: 132a0863a5ce97c275fd35f1c88cd7cc4f2b4ca9
 - name: icestorm
   repo: https://github.com/YosysHQ/icestorm.git
-  commit: 1fb7443c7c6870fadc275066c19af9c5add3482a
+  commit: b77a2d5b84d88cdab96b218c21330bd609af4546
 - name: irsim
   repo: https://github.com/rtimothyedwards/irsim.git
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: cbbc0ebb3c3eef1463c8394097deeb6e7d750af2
+  commit: 467d830d2435d28d63ecdfc011c5bf150f15f206
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: 68cc28b0c03ba2f18b01be30048fbf8afbf924a3
+  commit: acb85ea8eb7b733ee8269d103df7b37f8c28fe4f
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.12
@@ -51,7 +51,7 @@
   commit: 1.5.324
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: e2fe86b3ce6feaa3f09d8db5c0971c1cda3fc641
+  commit: 1e6050d50bb278427f2a99ff73c89c34e8b4bf08
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -72,7 +72,7 @@
   commit: 81f32e03d514f270e679b63e8861d24eaa03a7e2
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 444194f8753d34c1e5716d7593a28a00320b2fbf
+  commit: 8da18c8593de5352239c486a94c81f8d6ca809ac
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -141,7 +141,7 @@
   commit: 0.12.23
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 29d99ad2df4d8262e64ba883849c2974b3f01cce
+  commit: 7eeb9d2ec0234139b96a53ab194f772c0b902dc9
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.052

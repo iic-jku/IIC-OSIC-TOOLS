@@ -9,10 +9,10 @@ ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS fpga-tools
 ARG FPGA_NAME="fpga"
 ARG ICESTORM_REPO_URL="https://github.com/YosysHQ/icestorm.git"
-ARG ICESTORM_REPO_COMMIT="1fb7443c7c6870fadc275066c19af9c5add3482a"
+ARG ICESTORM_REPO_COMMIT="b77a2d5b84d88cdab96b218c21330bd609af4546"
 ARG PRJTRELLIS_REPO_URL="https://github.com/YosysHQ/prjtrellis.git"
 ARG PRJTRELLIS_REPO_COMMIT="65fe191a290cd947c125f011e9e78a2ddc90d7a4"
 ARG NEXTPNR_REPO_URL="https://github.com/YosysHQ/nextpnr.git"
-ARG NEXTPNR_REPO_COMMIT="e2fe86b3ce6feaa3f09d8db5c0971c1cda3fc641"
+ARG NEXTPNR_REPO_COMMIT="1e6050d50bb278427f2a99ff73c89c34e8b4bf08"
 RUN --mount=type=bind,source=images/fpga-tools,target=/images/fpga-tools \
     bash /images/fpga-tools/scripts/install.sh
