@@ -70,10 +70,12 @@ cd _build
 python3 tools/check_yaml_tool_version.py                # list newer upstream commits and tags
 python3 tools/check_yaml_tool_version.py -u -t xschem   # write them into tool_metadata.yml (without -t: every tool)
 python3 tools/rev_from_yaml.py --dry-run                # preview, then run without --dry-run to rewrite the Dockerfile ARGs
+python3 tools/check_eda_tool_version.py                 # list newer pip, cargo and gem releases than pinned in install_eda.sh
+python3 tools/check_eda_tool_version.py -u -t cocotb --dry-run   # preview, then run without --dry-run to write the pin (without -t: every package)
 ```
 
 - Commit pins move to the head of the upstream default branch, tag pins to the newest tag with the same prefix. The helpers need PyYAML, and `check_eda_tool_version.py` also needs `requests` and `packaging`.
-- pip, cargo and gem packages: pinned in `install_eda.sh`, checked with `python3 tools/check_eda_tool_version.py` (`-u` to update, `-t PKG`, `--dry-run`). Its default input `_build/tool_eda.sh` is a git symlink to `install_eda.sh`. On a checkout without symlink support, pass `images/iic-osic-tools/skel/headless/scripts/install_eda.sh` explicitly.
+- pip, cargo and gem packages: pinned in `install_eda.sh`, checked and bumped with `check_eda_tool_version.py` (commands above). Its default input `_build/tool_eda.sh` is a git symlink to `install_eda.sh`. On a checkout without symlink support, pass `images/iic-osic-tools/skel/headless/scripts/install_eda.sh` explicitly.
 - Comments next to a pin record why it is held (e.g. `cace` in `install_eda.sh`). Read them before bumping.
 - The IHP PDKs are not pinned: `_build/images/open_pdks/scripts/install_ihp.sh` checks out branch `dev` of `iic-jku/IHP-Open-PDK`, so a rebuild can change them with no diff in this repo. sky130A and gf180mcuD follow `OPEN_PDKS_REPO_COMMIT` in `_build/images/open_pdks/Dockerfile`.
 
