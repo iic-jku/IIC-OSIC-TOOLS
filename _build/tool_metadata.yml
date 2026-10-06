@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 4919fc2cad7b045a166861d5cec345d06429a6d7
+  commit: 69cbd2ad79ec098b78e2783fe4933c0e4d4ebcae
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 5ec8c1921670588bd8bab4fa664b6f72ecb84016
@@ -36,7 +36,7 @@
   commit: v3.14.2
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: acb85ea8eb7b733ee8269d103df7b37f8c28fe4f
+  commit: ea09c2a7917496e5c1db596c79f3fef308a827b5
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.12
@@ -51,7 +51,7 @@
   commit: 1.5.324
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 1e6050d50bb278427f2a99ff73c89c34e8b4bf08
+  commit: 8cd90d8b6f424b10f1713897bab20b42fc211c27
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -72,7 +72,7 @@
   commit: 81f32e03d514f270e679b63e8861d24eaa03a7e2
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 8da18c8593de5352239c486a94c81f8d6ca809ac
+  commit: 92a20a6b6031b98b1ce8cee58ff19e7dd3959a9e
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -87,7 +87,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: b797ea8060a52241cd9ab1176199f06af8585816
+  commit: 8e4b4ca6bafec3236bf1c280d2d72a78c176c1dd
 - name: prjtrellis
   repo: https://github.com/YosysHQ/prjtrellis.git
   commit: 65fe191a290cd947c125f011e9e78a2ddc90d7a4
@@ -114,7 +114,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: a29daca51604dbb9af611d3608e714316e3e31df
+  commit: 9ad44fd1f82d5f7982ce0d0cf117fdc56e442806
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 1582cc2d5bd199949669a1440a4c8947d713f842
@@ -123,7 +123,7 @@
   commit: 668b9a6a1b474f7b5181b5caed915e8d0a1505bd
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 609dbe0b9994154833039209fa37151e7c05e9d4
+  commit: fdc1ffa05152707a00ca22a9cf50c59a1b487875
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.87
