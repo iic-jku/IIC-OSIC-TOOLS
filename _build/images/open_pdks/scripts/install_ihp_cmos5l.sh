@@ -87,7 +87,11 @@ NGSPICE_OSDI_DIR="$PDK_ROOT/$PDK/libs.tech/ngspice/osdi"
 # without this the check below would happily pass on the stale shipped files.
 # Only real files, so a symlink into SG13G2 -- should the PDK ever go back to
 # borrowing an object -- is left for the check below to judge.
-find "$NGSPICE_OSDI_DIR" -maxdepth 1 -type f -name '*.osdi' -delete
+# The PDK stopped shipping the directory (IHP-Open-PDK dev, 2026-10), and
+# openvaf-compile-va.sh creates it, so it may be absent here.
+if [ -d "$NGSPICE_OSDI_DIR" ]; then
+	find "$NGSPICE_OSDI_DIR" -maxdepth 1 -type f -name '*.osdi' -delete
+fi
 cd "$VA_DIR" || exit 1
 chmod +x openvaf-compile-va.sh
 ./openvaf-compile-va.sh --compile-model-generic
