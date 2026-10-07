@@ -136,11 +136,12 @@ def find_latest_tag(tags, current_tag):
     return None
 
 
-def git_ls_remote_head(repo_url):
-    """Get the latest commit on HEAD using git ls-remote."""
+def git_ls_remote_head(repo_url, branch=None):
+    """Get the latest commit on HEAD (or on branch, if given) using git ls-remote."""
+    ref = f'refs/heads/{branch}' if branch else 'HEAD'
     try:
         result = subprocess.run(
-            ['git', 'ls-remote', repo_url, 'HEAD'],
+            ['git', 'ls-remote', repo_url, ref],
             capture_output=True, text=True, timeout=30
         )
         if result.returncode == 0 and result.stdout.strip():
@@ -201,9 +202,11 @@ def check_newer_versions(repos, update_yaml=False, yaml_file=None, tool_filter=N
             continue
 
         if re.match(r'^[0-9a-f]{40}$', current_version):
-            latest_commit = git_ls_remote_head(repo_url)
+            # An optional 'branch' key pins a tool to a branch other than the default one
+            branch = repo.get('branch')
+            latest_commit = git_ls_remote_head(repo_url, branch)
             if latest_commit is None:
-                print(f"Error: Could not fetch latest commit for {name}")
+                print(f"Error: Could not fetch latest commit for {name}" + (f" on branch {branch}" if branch else ""))
                 continue
 
             if current_version != latest_commit:

@@ -71,3 +71,4 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 34       | KLayout GUI DRC/LVS run directory patch of both IHP PDKs (resolved against the layout file, `%top_cell%` placeholder)           |
 | 35       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) PEX bench (Magic, kpex 2.5D) with all PDKs  |
 | 36       | VACASK model conversion of both IHP PDKs (corner sections and xschem models symbol load, MOSCAP/Schottky against ngspice)       |
+| 37       | VACASK `absdelay` (OSDI 0.5 compiler and shipped models, compiler found without `$TOOLS/bin` on `PATH`, ideal line delay)       |

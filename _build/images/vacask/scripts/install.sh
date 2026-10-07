@@ -75,8 +75,12 @@ cmake -G Ninja -S .. -B . \
 cmake --build . -j "$(nproc)"
 cmake --install . --prefix "${TOOLS}/${VACASK_NAME}" --strip
 
-# Remove openvaf-r binary since it's already provided by the openvaf image.
+# Replace the installed openvaf-r copy with a link to the openvaf image's
+# binary. vacask looks for openvaf-r next to its own executable before PATH,
+# so .va loads work even when $TOOLS/bin is not on PATH (non-login shells,
+# see https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/375).
 rm -f "${TOOLS}/${VACASK_NAME}/bin/openvaf-r"
+ln -s ../../openvaf/bin/openvaf-r "${TOOLS}/${VACASK_NAME}/bin/openvaf-r"
 
 echo "${VACASK_NAME} ${VACASK_REPO_COMMIT:-HEAD}" > "${TOOLS}/${VACASK_NAME}/SOURCES"
 
