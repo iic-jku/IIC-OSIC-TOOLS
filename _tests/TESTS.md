@@ -73,6 +73,5 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 36       | VACASK model conversion of both IHP PDKs (corner sections and xschem models symbol load, MOSCAP/Schottky against ngspice)       |
 | 37       | VACASK `absdelay` (OSDI 0.5 compiler and shipped models, compiler found without `$TOOLS/bin` on `PATH`, ideal line delay)       |
 | 38       | KLayout standard-cell libraries of both IHP PDKs (LV and HV cells registered for the Instance dialog)                           |
-| 40       | ngspice mixed-signal co-simulation (`d_cosim` counter with Icarus Verilog through `ivlng` and Verilator through `vlnggen`)      |
 | 39       | PyOPUS with ngspice (performance evaluator, cost report, threaded plotter ported to PySide6)                                    |
 | 40       | ngspice mixed-signal co-simulation (`d_cosim` counter with Icarus Verilog through `ivlng` and Verilator through `vlnggen`)      |
