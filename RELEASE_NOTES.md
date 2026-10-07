@@ -2,10 +2,24 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2026.10
+
+* [Adding] [`opencdc`](https://github.com/Ayoubbelguellaoui/CDC), a static clock domain crossing (CDC) checker for Verilog/SystemVerilog RTL
+* [Adding] ETH Zurich's EZ130 8T standard-cell library `v1.1` as `ihp-sg13g2/libs.ref/ez130_8t` (library views only, no LibreLane configuration yet)
+* [Update] `gdscheck` `v0.2.0`, which adds `gf180mcu` support and runs about 4x faster
+* [Update] various tool and Python package version bumps
+* [Changing] the `eda_server_*.sh` scripts prefer rootless Podman when it works, check the host setup it needs, and run on macOS
+* [Fix] `eqy` finds its plugins again when called from `PATH`
+* [Fix] VACASK applies the delay of `absdelay()` in Verilog-A models (e.g. `tline_ideal`), which it treated as zero before, as OpenVAF is now built from branch `mb-experimental`
+* [Fix] VACASK loads every corner section of the IHP PDK models (HV MOS mismatch, MOSCAP, Schottky diode statistics), and the "Add VACASK models symbol" menu entry includes the diode, PNP and MOSCAP corners
+* [Fix] the LV standard cells of both IHP PDKs are registered as KLayout libraries again
+* [Build] OpenROAD is built with Bazel instead of the deprecated CMake build
+* [Build] new regression tests 36 (VACASK with the IHP PDKs), 37 (VACASK `absdelay`) and 38 (KLayout standard-cell libraries of the IHP PDKs)
+* [Docs] `AGENTS.md` with the repository conventions for coding agents
+
 ## 2026.09
 
 * [Adding] the 3.3 V high-voltage standard-cell libraries of both IHP PDKs, `sg13g2_stdcell_hv` and `sg13cmos5l_stdcell_hv`
-* [Adding] ETH Zurich's EZ130 8T standard-cell library `v1.1` as `ihp-sg13g2/libs.ref/ez130_8t` (library views only, no LibreLane configuration yet)
 * [Update] `gdsfill` `v0.1.11`, which adds dummy fill for `gf180mcu`
 * [Update] `cocotb` `2.1.0`, `pyuvm` `5.0.0` (major release, check your testbenches) and `klayout-pex` `0.4.4`
 * [Update] various tool and Python package version bumps
