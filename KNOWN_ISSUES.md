@@ -24,7 +24,7 @@ A few applications are using OpenGL graphics, which can lead to issues on some c
 export LIBGL_ALWAYS_SOFTWARE=1
 ```
 
-In X11 mode `start_x.sh` sets `LIBGL_ALWAYS_INDIRECT=1`; `export LIBGL_ALWAYS_INDIRECT=0` switches indirect GLX off again, which can help as well.
+`start_x.sh` sets `LIBGL_ALWAYS_INDIRECT=1` on macOS, with Docker Desktop, and on Linux hosts without `/dev/dri`. `export LIBGL_ALWAYS_INDIRECT=0` switches indirect GLX off again, which can help as well.
 
 ### Mouse Gestures Break the Right-Button Drag in the Browser (noVNC) Session
 
@@ -169,10 +169,10 @@ That is not free, and the failure it causes is indirect. When the PDK gains a de
 
 The image therefore does not assume the two sides agree:
 
-- the converter's device lists are completed from the installed PDK before it runs, so a device the PDK ships but VACASK does not know about is converted and compiled anyway (a no-op once VACASK catches up);
+- `sg13cmos5ltovc.py`'s device lists are completed from the installed PDK before it runs, so a device the PDK ships but VACASK does not know about is converted and compiled anyway (a no-op once VACASK catches up);
 - `sg13g2tovc.py`'s model file list is reconciled with the PDK in both directions before it runs: a file the PDK no longer ships is dropped, unless a model file of the PDK still includes it, and a corner file the PDK ships, or a file a corner file includes, is added if the list lacks it. Without the former, the converter aborts on the first stale entry and takes the image build with it, as it did when `sg13g2_hbt_mod_mismatch.lib` was folded into `sg13g2_hbt_mod.lib` on 2026-09-17. Without the latter, the `dio_tt_stat` section of `cornerDIO.lib` shipped unloadable from 2025-09 to 2026.09, because `sg13g2_dschottky_nbl1_stat.lib` was never converted, and the MOS capacitor (`cornerMOSCAP.lib`, in the PDK since 2026-07-22) never reached VACASK at all;
 - every converted model file that sets `SWSOA` globally gets that line patched out, for both PDKs, as upstream does for the MOS transistor files only. The MOS capacitor's model files carry the same line, so every `cornerMOSCAP.lib` section of `ihp-sg13cmos5l` failed with "Parameter redefinition." up to 2026.09;
-- after the conversion, every include in the converted model files is resolved (for both PDKs), and every OSDI object the PDK's own `.spiceinit` loads is checked to exist, so an incomplete conversion fails the build instead of shipping;
+- after the conversion, every include in the converted model files is resolved (for both PDKs), and for `ihp-sg13cmos5l` every OSDI object the PDK's own `.spiceinit` loads is checked to exist, so an incomplete conversion fails the build instead of shipping;
 - regression test 36 loads every section of every converted corner file of both PDKs in VACASK, which also catches a model line the converter mistranslates (the `stuac 40` typo in `sg13g2_svaricaphv_mod_mismatch.lib` broke all five `cornerMOShv.lib` mismatch sections of both PDKs), and compares the MOS capacitor and the Schottky diode with ngspice;
 - regression test 27 pins the pcell count of every PDK, which turns an inventory change into a failure that has to be looked at rather than a silent drift.
 
