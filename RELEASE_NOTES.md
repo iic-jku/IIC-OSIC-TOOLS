@@ -13,8 +13,9 @@ This document summarizes the most important changes of the individual releases o
 * [Fix] VACASK applies the delay of `absdelay()` in Verilog-A models (e.g. `tline_ideal`), which it treated as zero before, as OpenVAF is now built from branch `mb-experimental`
 * [Fix] VACASK loads every corner section of the IHP PDK models (HV MOS mismatch, MOSCAP, Schottky diode statistics), and the "Add VACASK models symbol" menu entry includes the diode, PNP and MOSCAP corners
 * [Fix] the LV standard cells of both IHP PDKs are registered as KLayout libraries again
+* [Fix] PyOPUS evaluations run again under Podman, and `pyopus` follows upstream `main` for the fixes made after `0.12`
 * [Build] OpenROAD is built with Bazel instead of the deprecated CMake build
-* [Build] new regression tests 36 (VACASK with the IHP PDKs), 37 (VACASK `absdelay`) and 38 (KLayout standard-cell libraries of the IHP PDKs)
+* [Build] new regression tests 36 (VACASK with the IHP PDKs), 37 (VACASK `absdelay`), 38 (KLayout standard-cell libraries of the IHP PDKs) and 39 (PyOPUS with ngspice)
 * [Docs] `AGENTS.md` with the repository conventions for coding agents
 
 ## 2026.09

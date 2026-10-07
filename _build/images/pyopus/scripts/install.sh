@@ -9,10 +9,14 @@ set -e
 # (otherwise build fails on aarch64). python3-pyqt5 is a base-dev package and does
 # not reach the runtime image -- the installed sources are ported to PySide6 below.
 mkdir -p "$TOOLS"
-cd /tmp || exit 1 
-wget --no-verbose "$PYOPUS_REPO_URL/$PYOPUS_REPO_COMMIT/pyopus-$PYOPUS_REPO_COMMIT.tar.gz"
-tar xfz "pyopus-$PYOPUS_REPO_COMMIT.tar.gz"
-cd "pyopus-$PYOPUS_REPO_COMMIT" || exit 1
+cd /tmp || exit 1
+# No --depth: setuptools_scm derives the package version from the nearest tag.
+git clone --filter=blob:none "${PYOPUS_REPO_URL}" "${PYOPUS_NAME}"
+cd "${PYOPUS_NAME}" || exit 1
+git checkout "${PYOPUS_REPO_COMMIT}"
+# Release that the pinned commit descends from (v0.12 -> 0.12), names the doc download below
+PYOPUS_RELEASE=$(git describe --tags --abbrev=0 --match 'v[0-9]*')
+PYOPUS_RELEASE=${PYOPUS_RELEASE#v}
 pip3 install . --prefix="$TOOLS/$PYOPUS_NAME" --no-cache-dir
 ln -s "$TOOLS/$PYOPUS_NAME/local/bin" "$TOOLS/$PYOPUS_NAME/bin"
 
@@ -115,18 +119,17 @@ if grep -rq '\bPyQt5\b' "$PYOPUS_PKG" --include='*.py'; then
 	exit 1
 fi
 
-# Cleanup compile dir
-cd /tmp && rm -rf "pyopus-$PYOPUS_REPO_COMMIT" && rm -f "pyopus-$PYOPUS_REPO_COMMIT.tar.gz"
+# Install examples from the pinned commit
+mv /tmp/"${PYOPUS_NAME}"/demo "$TOOLS/$PYOPUS_NAME/demo"
+cd /tmp && rm -rf "${PYOPUS_NAME}"
 
-# Install examples and docs
-cd /tmp || exit 1
-wget --no-verbose "$PYOPUS_REPO_URL/$PYOPUS_REPO_COMMIT/PyOPUS-$PYOPUS_REPO_COMMIT-doc-demo.tar.gz"
-tar xfz "PyOPUS-$PYOPUS_REPO_COMMIT-doc-demo.tar.gz"
-cd "PyOPUS-$PYOPUS_REPO_COMMIT" || exit 1
-mv demo "$TOOLS/$PYOPUS_NAME/demo"
-mv docsrc/_build/html "$TOOLS/$PYOPUS_NAME/doc" 
-
-# Cleanup doc and demo dir
-cd /tmp && rm -rf "PyOPUS-$PYOPUS_REPO_COMMIT" && rm -f "PyOPUS-$PYOPUS_REPO_COMMIT-doc-demo.tar.gz"
+# The repo holds only the Sphinx sources of the docs (autodoc, needs the
+# sphinx_rtd_theme and graphviz). The HTML build is published per release only,
+# so install the one of the release the pinned commit descends from.
+PYOPUS_DOC_URL="https://fides.fe.uni-lj.si/pyopus/download"
+wget --no-verbose "$PYOPUS_DOC_URL/$PYOPUS_RELEASE/PyOPUS-$PYOPUS_RELEASE-doc-demo.tar.gz"
+tar xfz "PyOPUS-$PYOPUS_RELEASE-doc-demo.tar.gz"
+mv "PyOPUS-$PYOPUS_RELEASE/docsrc/_build/html" "$TOOLS/$PYOPUS_NAME/doc"
+rm -rf "PyOPUS-$PYOPUS_RELEASE" "PyOPUS-$PYOPUS_RELEASE-doc-demo.tar.gz"
 
 echo "${PYOPUS_NAME} ${PYOPUS_REPO_COMMIT}" > "${TOOLS}/${PYOPUS_NAME}/SOURCES"
