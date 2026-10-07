@@ -71,19 +71,19 @@ pip3 install $PIP_FLAGS \
 	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.6.1 \
+	klayout-pex==0.6.3 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev3 \
-	najaeda==0.7.26 \
+	najaeda==0.7.27 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
 	pyuvm==5.0.0 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.1.0 \
-	setupEM==0.10.2 \
-	siliconcompiler==0.38.9 \
+	setupEM==0.11.1.post1 \
+	siliconcompiler==0.38.10 \
 	snp2le==0.1.9 \
 	spicelib==1.6.4 \
 	spyci==1.0.2
