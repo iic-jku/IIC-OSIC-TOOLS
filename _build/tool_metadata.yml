@@ -45,7 +45,7 @@
   commit: 8e2409703adba050f8c51b3c7ded007e102316c7
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.684
+  commit: 8.3.685
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.324
@@ -72,7 +72,7 @@
   commit: c49e6a84f317b9d1758c3f8e05b18ab91193bae7
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 2721361cfd401b93bceeaddbddd1dd75b8812ef5
+  commit: cf93b7efb17c8a004beed94f83282f0013f7fcd7
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -118,7 +118,7 @@
   commit: 9ad44fd1f82d5f7982ce0d0cf117fdc56e442806
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 988b9c6fec796ea3b4656d439757959161f8db26
+  commit: ddb91c219c00260a3675bb321e6f693ea79d915e
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: 668b9a6a1b474f7b5181b5caed915e8d0a1505bd
@@ -142,7 +142,7 @@
   commit: 0.12.23
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 87e4a83266f49cded4b48dfa5dae62e518b9892a
+  commit: d249a508f3a9df44a49ffdba40f25718ec976f57
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.052
@@ -154,7 +154,7 @@
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 3096e2bf6b67e000af5b118db8afa87eb6e9c987
+  commit: b39048fb88cfdee6ec233b41a0462a7f329091fb
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0

@@ -82,7 +82,7 @@ pip3 install $PIP_FLAGS \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.1.0 \
-	setupEM==0.11.1.post1 \
+	setupEM==0.12.0 \
 	siliconcompiler==0.38.10 \
 	snp2le==0.1.9 \
 	spicelib==1.6.4 \
