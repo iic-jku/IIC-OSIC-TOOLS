@@ -82,6 +82,17 @@ cmake --install . --prefix "${TOOLS}/${VACASK_NAME}" --strip
 rm -f "${TOOLS}/${VACASK_NAME}/bin/openvaf-r"
 ln -s ../../openvaf/bin/openvaf-r "${TOOLS}/${VACASK_NAME}/bin/openvaf-r"
 
+# Keep `from rawfile import rawread` working. VACASK 999861d moved rawfile.py
+# into the package vacask, which broke every postprocess script written for the
+# old layout (e.g. the SG13CMOS_SPARX plot scripts of test 22). The alias makes
+# rawfile the very module vacask.rawfile.
+cat > "${TOOLS}/${VACASK_NAME}/lib/vacask/python/rawfile.py" <<'EOF'
+# Compatibility alias added by IIC-OSIC-TOOLS: rawfile is vacask.rawfile.
+import sys
+import vacask.rawfile
+sys.modules[__name__] = vacask.rawfile
+EOF
+
 echo "${VACASK_NAME} ${VACASK_REPO_COMMIT:-HEAD}" > "${TOOLS}/${VACASK_NAME}/SOURCES"
 
 # Cleanup build artifacts
