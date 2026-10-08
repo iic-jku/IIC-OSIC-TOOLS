@@ -1,5 +1,3 @@
-* Set to 4 threads, if not changed otherwise
-set num_threads=4
 * assert BSIM compatibility mode with "nf" vs. "W"
 set ngbehavior=hsa
 * "nomodcheck" speeds up loading time
