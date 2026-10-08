@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 633cc63a1a8fe10c749d858f90e494eaa29ad13e
+  commit: f45ffabed3212a106f01cb362ef42c5d293f4513
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
@@ -72,7 +72,7 @@
   commit: c49e6a84f317b9d1758c3f8e05b18ab91193bae7
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 13758adcde1d7b040cfaa0c1e19fbdd7dd864e0f
+  commit: 2721361cfd401b93bceeaddbddd1dd75b8812ef5
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -142,7 +142,7 @@
   commit: 0.12.23
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: b69dfae58efdc9f2d5275b9f4d58ba417dfa472e
+  commit: 87e4a83266f49cded4b48dfa5dae62e518b9892a
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.052
@@ -154,7 +154,7 @@
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: cc25bec055faf2b59322acab36106416b34fc863
+  commit: 3096e2bf6b67e000af5b118db8afa87eb6e9c987
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
