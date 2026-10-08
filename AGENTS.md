@@ -90,7 +90,8 @@ IIC_TEST_NO_PULL=1 ./run_integration_tests.sh <registry>/iic-osic-tools:<tag>   
 ```
 
 - The runner pulls the tag first. For a locally built image set `IIC_TEST_NO_PULL=1`, or the pull replaces it with the registry image of the same tag.
-- Output goes to `/tmp/iic-osic-tools-tests/<run-id>` (`IIC_TEST_RUNDIR` overrides it), never into the source tree, and stays after the run. Delete old run dirs by hand.
+- Output goes to `/tmp/iic-osic-tools-tests/<run-id>` (`IIC_TEST_RUNDIR` overrides it), never into the source tree. The work dir and log of a passing test are deleted when it finishes (`IIC_TEST_KEEP_PASSED=1` keeps them), the joblog and the data of failed tests stay after the run. Delete old run dirs by hand.
+- On a terminal the runner shows a live progress line and prints only the failures, each with its log under `logs/` in the run dir. Redirected output and `IIC_TEST_PROGRESS=0` give the plain per-test output.
 - A full run takes over an hour (test 28 alone ran 4356 s in the timing recorded in the runner). Each test is a standalone bash script, so in a container with the repo mounted one test runs directly, e.g. `bash _tests/05/test_ngspice_sg13g2.sh`.
 - A new test goes into the next free `_tests/NN/` as `test_<what>_<pdk>.sh`. Model it on `_tests/05/test_ngspice_sg13g2.sh`: default `RAND`, write only below `${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}/$RAND/NN`, end with `[INFO] Test <name> passed.` or `[ERROR] Test <name> FAILED.` and the matching exit code, and gate extra output behind `DEBUG=1`. Add its row to `_tests/TESTS.md`, and add a long-running test to `SLOW_TESTS` in the runner.
 - A workaround or PDK fixup should have a test that fails without it (e.g. `_tests/34` guards `open_pdks/scripts/fix_klayout_run_dir.py`). A change to the image counts as verified only after an image build and the affected tests pass.

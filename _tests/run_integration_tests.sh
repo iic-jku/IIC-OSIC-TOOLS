@@ -18,6 +18,24 @@ else
     NC=""
 fi
 
+# On a terminal, show one live progress line instead of the output of every
+# test, and print only the failures. IIC_TEST_PROGRESS=0 keeps the plain
+# per-test output, which is also what redirected output and CI logs get.
+if [ -t 1 ] && [ "${IIC_TEST_PROGRESS:-1}" != 0 ]; then
+    PROGRESS=1
+else
+    PROGRESS=0
+fi
+
+# The work dir and log of a passing test are deleted as soon as it finishes,
+# so the run dir only holds what is needed to debug the failures. Set
+# IIC_TEST_KEEP_PASSED=1 to keep everything.
+if [ "${IIC_TEST_KEEP_PASSED:-0}" = 1 ]; then
+    KEEP_PASSED=1
+else
+    KEEP_PASSED=0
+fi
+
 if [ $# -ne 1 ]; then
     echo "${RED}[ERROR] Please specify the full image tag to test! (e.g.: hpretl/iic-osic-tools:latest)${NC}"
     exit 1
@@ -166,16 +184,44 @@ fi
 #
 # --joblog records start time, runtime and exit status of every test, which is
 # what the per-test timings at the end of the run (and the SLOW_TESTS order in
-# run_integration_tests.sh) are based on.
-JOBLOG=$RUNDIR/$RAND/joblog.tsv
-mkdir -p "\$(dirname "\$JOBLOG")"
+# run_integration_tests.sh) are based on. The progress line on the host reads
+# it as well.
+RUN=$RUNDIR/$RAND
+JOBLOG=\$RUN/joblog.tsv
+mkdir -p "\$RUN/logs"
+
+# Every test logs to logs/<NN>_<test>.log, which the progress line on the host
+# also uses to tell which tests are running. Without the progress line the
+# output goes to stdout as well. A test writes only below \$RUN/<NN> (one test
+# per directory), so a passing test is cleaned up by removing that dir.
+run_one() {
+    set -o pipefail
+    local nn log rc
+    nn=\$(basename "\$(dirname "\$1")")
+    log=\$RUN/logs/\${nn}_\$(basename "\$1" .sh).log
+    if [ ${PROGRESS} -eq 1 ]; then
+        "\$1" > "\$log" 2>&1
+    else
+        "\$1" 2>&1 | tee "\$log"
+    fi
+    rc=\$?
+    if [ \$rc -eq 0 ] && [ ${KEEP_PASSED} -ne 1 ]; then
+        rm -rf "\${RUN:?}/\$nn" "\$log"
+    fi
+    return \$rc
+}
+export -f run_one
+export RUN
+export PARALLEL_SHELL=/bin/bash
+
 set -o pipefail
-parallel --will-cite --joblog "\$JOBLOG" 2>&1 << 'TESTS' \\
+parallel --will-cite --joblog "\$JOBLOG" run_one 2>&1 << 'TESTS' \\
     | sed -u -e "s/^\\(\\[ERROR\\].*\\)\$/\${RED}\\1\${NC}/" \\
              -e "s/^\\(\\[INFO\\] Test .*passed.*\\)\$/\${GRN}\\1\${NC}/"
 $TEST_LIST
 TESTS
 RESULT=\$?
+rmdir "\$RUN/logs" 2> /dev/null
 
 # Runtime of the five slowest tests, so the SLOW_TESTS order can be kept honest
 # (the full table is in \$JOBLOG).
@@ -199,15 +245,102 @@ fi
 EOL
 chmod +x "$CMD"
 
+run_container() {
+    # ACD_JOBS sizes the inner simulation pool of test 21; empty means "use the
+    # test's default" (see _tests/21/test_analog_circuit_design.sh).
+    # shellcheck disable=SC2086
+    ${CONTAINER_ENGINE} run -i --rm --name "$CONTAINER_NAME" --user "$(id -u):$(id -g)" -e DISPLAY= -e RAND="$RAND" \
+        -e ACD_JOBS="${ACD_JOBS:-}" $ENGINE_EXTRA_PARAMS \
+        -v "$PWD":"$WORKDIR":rw -v "$HOST_RUNDIR":"$RUNDIR":rw "$FULL_TAG" -s "$WORKDIR/$CMD"
+}
+
+# Redraw the progress line from the joblog and the logs dir, both visible on
+# the host through the bind-mounted run dir. A test with a log but no joblog
+# row is running. Failures are printed above the line once, with an excerpt.
+HOST_RUN=$HOST_RUNDIR/$RAND
+TOTAL=$(printf '%s\n' "$TEST_LIST" | wc -l | tr -d ' ')
+REPORTED=0
+FAILED=0
+progress_update() {
+    local n=0 cols fill bar running line
+    # Count complete rows only (parallel may be writing the last one), minus
+    # the header.
+    if [ -f "$HOST_RUN/joblog.tsv" ]; then
+        n=$(( $(wc -l < "$HOST_RUN/joblog.tsv") - 1 ))
+        [ "$n" -lt 0 ] && n=0
+    fi
+    if [ "$n" -gt "$REPORTED" ]; then
+        head -n $((n + 1)) "$HOST_RUN/joblog.tsv" | tail -n +$((REPORTED + 2)) \
+            | awk -F'\t' '$7 != 0 || $8 != 0 {
+                  k = split($NF, p, "/"); name = p[k]; sub(/\.sh$/, "", name)
+                  why = ($8 != 0) ? "signal " $8 : "exit " $7
+                  printf "%s/%s\t%s_%s.log\t%s, %.0f s\n", p[k-1], p[k], p[k-1], name, why, $4 }' \
+            | while IFS=$'\t' read -r test log why; do
+                  printf '\r\033[K%s[ERROR] %s FAILED (%s), log: %s%s\n' "$RED" "$test" "$why" "$HOST_RUN/logs/$log" "$NC"
+                  { grep '^\[ERROR\]' "$HOST_RUN/logs/$log" || tail -n 5 "$HOST_RUN/logs/$log"; } 2> /dev/null \
+                      | tail -n 5 | sed 's/^/        > /'
+              done
+        FAILED=$(head -n $((n + 1)) "$HOST_RUN/joblog.tsv" | awk -F'\t' 'NR > 1 && ($7 != 0 || $8 != 0)' | wc -l | tr -d ' ')
+        REPORTED=$n
+    fi
+    running=$(
+        {
+            head -n $((n + 1)) "$HOST_RUN/joblog.tsv" 2> /dev/null \
+                | awk -F'\t' 'NR > 1 { k = split($NF, p, "/"); sub(/\.sh$/, "", p[k]); print "D " p[k-1] "_" p[k] }'
+            # shellcheck disable=SC2012  # log names are generated, plain ASCII
+            ls "$HOST_RUN/logs" 2> /dev/null | sed -e 's/\.log$//' -e 's/^/L /'
+        } | awk '$1 == "D" { done[$2] = 1; next } !($2 in done) { split($2, q, "_"); printf "%s ", q[1] }'
+    )
+    cols=$(stty size < /dev/tty 2> /dev/null | awk '{ print $2 }')
+    # A pty without a size reports 0 columns.
+    if [ -z "$cols" ] || [ "$cols" -lt 2 ]; then
+        cols=80
+    fi
+    fill=$((n * 30 / TOTAL))
+    bar=$(printf '%*s' "$fill" '' | tr ' ' '#')$(printf '%*s' $((30 - fill)) '' | tr ' ' '.')
+    line=$(printf '[%s] %d/%d  %d failed  %02d:%02d:%02d' "$bar" "$n" "$TOTAL" "$FAILED" \
+        $((SECONDS / 3600)) $((SECONDS % 3600 / 60)) $((SECONDS % 60)))
+    [ -n "$running" ] && line="$line  running: $running"
+    # A wrapped line cannot be redrawn with \r, so cut it to the terminal width.
+    line=${line:0:$((cols - 1))}
+    [ "$FAILED" -gt 0 ] && line=${line/"$FAILED failed"/"${RED}$FAILED failed${NC}"}
+    printf '\r\033[K%s' "$line"
+}
+
 # Now run the actual tests
-echo "[INFO] Test output of this run: $HOST_RUNDIR/$RAND (inside the container: $RUNDIR/$RAND)"
-# ACD_JOBS sizes the inner simulation pool of test 21; empty means "use the
-# test's default" (see _tests/21/test_analog_circuit_design.sh).
-# shellcheck disable=SC2086
-${CONTAINER_ENGINE} run -i --rm --name "$CONTAINER_NAME" --user "$(id -u):$(id -g)" -e DISPLAY= -e RAND="$RAND" \
-    -e ACD_JOBS="${ACD_JOBS:-}" $ENGINE_EXTRA_PARAMS \
-    -v "$PWD":"$WORKDIR":rw -v "$HOST_RUNDIR":"$RUNDIR":rw "$FULL_TAG" -s "$WORKDIR/$CMD"
-RESULT=$?
+echo "[INFO] Test output of this run: $HOST_RUN (inside the container: $RUNDIR/$RAND)"
+if [ $KEEP_PASSED -eq 0 ]; then
+    echo "[INFO] Only failed tests keep their data, set IIC_TEST_KEEP_PASSED=1 to keep all."
+fi
+if [ $PROGRESS -eq 1 ]; then
+    # The container runs in the background, where it ignores Ctrl-C, so stop
+    # it explicitly. Its own output (parallel messages and the final summary)
+    # goes to runner.log and is shown when it is done.
+    mkdir -p "$HOST_RUN"
+    trap 'printf "\n%s\n" "${RED}[ERROR] Interrupted, stopping container $CONTAINER_NAME.${NC}"
+          ${CONTAINER_ENGINE} kill "$CONTAINER_NAME" > /dev/null 2>&1
+          rm -f "$CMD"
+          exit 130' INT TERM
+    SECONDS=0
+    run_container > "$HOST_RUN/runner.log" 2>&1 &
+    PID=$!
+    while kill -0 "$PID" 2> /dev/null; do
+        progress_update
+        sleep 2
+    done
+    wait "$PID"
+    RESULT=$?
+    progress_update
+    printf '\n'
+    trap - INT TERM
+    # Skip the startup banner of the container, unless it failed before
+    # getting to the tests.
+    awk 'FNR == NR { if (/^\[INFO\] Executing command:/) skip = FNR; next } FNR > skip' \
+        "$HOST_RUN/runner.log" "$HOST_RUN/runner.log"
+else
+    run_container
+    RESULT=$?
+fi
 
 # Cleanup (the run dir is kept for post-mortem analysis, remove it manually)
 rm -f "$CMD"

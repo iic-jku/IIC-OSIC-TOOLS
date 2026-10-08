@@ -17,7 +17,15 @@ macOS the podman machine already maps the host user, so nothing is added there.
 
 ## Test output
 
-Logs, work dirs and cloned repositories of a full run add up to several GB, so they are *not* written into this source tree (which is bind-mounted into the container) but into `/tmp/iic-osic-tools-tests/<run-id>`. `run_integration_tests.sh` prints the exact location at the start of the run and keeps it afterwards for post-mortem analysis, so remove old run dirs manually when you no longer need them.
+Logs, work dirs and cloned repositories of a full run add up to several GB, so they are *not* written into this source tree (which is bind-mounted into the container) but into `/tmp/iic-osic-tools-tests/<run-id>`. `run_integration_tests.sh` prints the exact location at the start of the run.
+
+Each test logs to `logs/<NN>_<test>.log` in the run dir and writes its work files below `<NN>/`. When a test passes, both are deleted right away, so after the run the run dir holds the joblog (`joblog.tsv`, runtime and exit status of every test) and the logs and work dirs of the failed tests only. Set `IIC_TEST_KEEP_PASSED=1` to keep the data of the passing tests as well. The run dir itself stays for post-mortem analysis, so remove old run dirs manually when you no longer need them.
+
+## Progress display
+
+On a terminal the runner shows one live status line instead of the output of every test: a progress bar, finished and failed counts, the elapsed time and the tests still running. A failing test is printed above that line as soon as it finishes, with the path to its log and its last `[ERROR]` lines. The container's own output (the summary at the end, parallel messages) goes to `runner.log` in the run dir and is printed when the run is done. Ctrl-C stops the container.
+
+Redirected output (a file, a pipe, CI) keeps the plain output of every test, and `IIC_TEST_PROGRESS=0` selects that on a terminal too.
 
 Set `IIC_TEST_RUNDIR=<path>` to collect the output somewhere else, for example on a larger volume:
 
