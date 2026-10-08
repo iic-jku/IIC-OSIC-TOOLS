@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Teach VACASK's sg13cmos5ltovc.py about the CMOS5L-own OSDI devices it misses.
 
-VACASK ships the CMOS5L -> VACASK converter as python/sg13cmos5ltovc.py, and it
+VACASK ships the CMOS5L -> VACASK converter as python/src/vacask/sg13cmos5ltovc.py, and it
 names the devices it converts in two hardcoded lists:
 
     tech_files = [

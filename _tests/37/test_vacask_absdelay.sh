@@ -112,7 +112,7 @@ endc
 
 embed "check.py" <<<FILE
 import numpy as np
-from rawfile import rawread
+from vacask.rawfile import rawread
 ac = rawread("ac1.raw").get()
 print("PHASE %.3f" % np.degrees(np.angle(ac["b"][0] / ac["a"][0])))
 tran = rawread("tran1.raw").get()

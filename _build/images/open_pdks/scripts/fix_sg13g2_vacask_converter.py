@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Reconcile VACASK's sg13g2tovc.py model file list with the installed SG13G2 PDK.
 
-VACASK's SG13G2 -> VACASK converter, python/sg13g2tovc.py, names the ngspice
+VACASK's SG13G2 -> VACASK converter, python/src/vacask/sg13g2tovc.py, names the ngspice
 model files it converts in a hardcoded list:
 
     tech_files = [

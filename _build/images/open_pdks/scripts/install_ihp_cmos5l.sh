@@ -167,13 +167,13 @@ cd /tmp || exit 1
 # see install_ihp.sh).
 echo "[INFO] Checking the VACASK converter against the installed PDK."
 python3 "$PDK_SCRIPT_DIR/fix_cmos5l_vacask_converter.py" \
-	"/tmp/${VACASK_NAME}/python/sg13cmos5ltovc.py" "$PDK_ROOT/$PDK"
+	"/tmp/${VACASK_NAME}/python/src/vacask/sg13cmos5ltovc.py" "$PDK_ROOT/$PDK"
 python3 "$PDK_SCRIPT_DIR/fix_vacask_swsoa.py" \
-	"/tmp/${VACASK_NAME}/python/sg13cmos5ltovc.py" "$PDK_ROOT/$PDK"
+	"/tmp/${VACASK_NAME}/python/src/vacask/sg13cmos5ltovc.py" "$PDK_ROOT/$PDK"
 
-OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
+OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python/src \
     PDK_ROOT="$PDK_ROOT" PDK="$PDK" \
-    python3 -m sg13cmos5ltovc --openvaf-options --target_cpu generic
+    python3 -m vacask.sg13cmos5ltovc --openvaf-options --target_cpu generic
 
 # Every file the converted models include has to exist, or a deck pulling in
 # that file dies on the include even when it uses none of the devices behind it

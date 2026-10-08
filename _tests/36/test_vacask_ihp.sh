@@ -154,7 +154,7 @@ endc
 
 embed "check.py" <<<FILE
 import numpy as np
-from rawfile import rawread
+from vacask.rawfile import rawread
 plot = rawread("ac1.raw").get()
 y = -plot["v1:flow(br)"][0]
 print("RESULT %.6e" % (np.imag(y) / (2 * np.pi * np.abs(plot["frequency"][0]))))
@@ -196,7 +196,7 @@ control
 endc
 
 embed "check.py" <<<FILE
-from rawfile import rawread
+from vacask.rawfile import rawread
 print("RESULT %.6e" % -rawread("op1.raw").get()["v1:flow(br)"][0])
 >>>FILE
 EOF

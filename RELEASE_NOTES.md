@@ -8,6 +8,7 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] ETH Zurich's EZ130 8T standard-cell library `v1.1` as `ihp-sg13g2/libs.ref/ez130_8t` (library views only, no LibreLane configuration yet)
 * [Update] `gdscheck` `v0.2.0`, which adds `gf180mcu` support and runs about 4x faster
 * [Update] various tool and Python package version bumps
+* [Changing] VACASK's Python helpers are now the package `vacask`: postprocess scripts import `from vacask.rawfile import rawread` instead of `from rawfile import rawread`, and the converters run as `python3 -m vacask.<converter>`
 * [Changing] the `eda_server_*.sh` scripts prefer rootless Podman when it works, check the host setup it needs, and run on macOS
 * [Fix] `eqy` finds its plugins again when called from `PATH`
 * [Fix] VACASK applies the delay of `absdelay()` in Verilog-A models (e.g. `tline_ideal`), which it treated as zero before, as OpenVAF is now built from branch `mb-experimental`

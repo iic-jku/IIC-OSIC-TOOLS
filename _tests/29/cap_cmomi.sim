@@ -23,7 +23,7 @@ endc
 embed "check.py" <<<FILE
 import sys
 import numpy as np
-from rawfile import rawread
+from vacask.rawfile import rawread
 
 plot = rawread("ac1.raw").get()
 f = np.abs(plot["frequency"])[0]

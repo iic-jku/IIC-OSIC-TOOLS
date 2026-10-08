@@ -301,12 +301,12 @@ fi
 # only gives the MOS transistor files (shared with install_ihp_cmos5l.sh).
 echo "[INFO] Checking the VACASK converter against the installed PDK."
 python3 "$PDK_SCRIPT_DIR/fix_sg13g2_vacask_converter.py" \
-	"/tmp/${VACASK_NAME}/python/sg13g2tovc.py" "$PDK_ROOT/$PDK"
+	"/tmp/${VACASK_NAME}/python/src/vacask/sg13g2tovc.py" "$PDK_ROOT/$PDK"
 python3 "$PDK_SCRIPT_DIR/fix_vacask_swsoa.py" \
-	"/tmp/${VACASK_NAME}/python/sg13g2tovc.py" "$PDK_ROOT/$PDK"
+	"/tmp/${VACASK_NAME}/python/src/vacask/sg13g2tovc.py" "$PDK_ROOT/$PDK"
 
-OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
-    python3 -m sg13g2tovc --openvaf-options --target_cpu generic
+OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python/src \
+    python3 -m vacask.sg13g2tovc --openvaf-options --target_cpu generic
 cp /tmp/${VACASK_NAME}/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/vacask/.vacaskrc.toml"
 
 # Every file the converted models include has to exist, or a deck pulling in
