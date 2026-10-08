@@ -109,9 +109,11 @@ python3 -m py_compile "$LIBRELANE_TOOLBOX"
 
 # The four packages pulling in PySide6 (chipify, snp2le, gds2palace, setupEM)
 # only use QtWidgets/QtCore/QtGui/QtSvg, all of which live in
-# PySide6-Essentials. The PySide6-Addons half (~340 MB, dominated by a 254 MB
-# embedded Chromium in QtWebEngine, plus Qt3D/Quick3D/Designer/Multimedia) is
-# not imported by anything in the image, so remove it.
+# PySide6-Essentials. The rest is not imported by anything in the image, so
+# remove it: PySide6-Addons (Qt3D/Quick3D/Multimedia/Charts, ...) and, split off
+# from Addons since 6.12, PySide6-WebEngine (~270 MB, an embedded Chromium) and
+# PySide6-Pdf. Before 6.12 Addons held all three, and pip skips the two names
+# that are not installed.
 #
 # Catch: the Essentials and Addons wheels BOTH ship the shared top-level PySide6
 # files (PySide6/__init__.py, _config.py, __feature__.py, _git_pyside_version.py),
@@ -124,14 +126,18 @@ python3 -m py_compile "$LIBRELANE_TOOLBOX"
 #
 # The PySide6 meta-package is kept on purpose: gds2palace and setupEM depend on it
 # by name, so removing it would leave their dependency unsatisfied. pip check will
-# note the meta-package wants Addons, which is harmless at runtime.
-echo "[INFO] Removing unused PySide6-Addons (QtWebEngine, Qt3D, ...)"
+# note the meta-package wants the removed wheels, which is harmless at runtime.
+# Since 6.12 the .pyi stubs of the removed modules (Qt3D*, QtWebEngine*, ...) are
+# shared by the meta-package and the removed wheels only, so the uninstall deletes
+# them too. Reinstall the meta-package as well, or its RECORD lists files that are
+# gone (test 03 checks).
+echo "[INFO] Removing unused PySide6-Addons, -WebEngine and -Pdf"
 # Pin the reinstall to the version already resolved above, so it cannot pull a
 # newer PySide6-Essentials that mismatches the installed shiboken6.
 PYSIDE6_VER=$(pip3 show PySide6-Essentials | awk '/^Version:/{print $2}')
 [ -n "$PYSIDE6_VER" ] || { echo "[ERROR] PySide6-Essentials not installed"; exit 1; }
-pip3 uninstall -y --break-system-packages PySide6-Addons
-pip3 install $PIP_FLAGS --no-deps --force-reinstall "PySide6-Essentials==${PYSIDE6_VER}"
+pip3 uninstall -y --break-system-packages PySide6-Addons PySide6-WebEngine PySide6-Pdf
+pip3 install $PIP_FLAGS --no-deps --force-reinstall "PySide6-Essentials==${PYSIDE6_VER}" "PySide6==${PYSIDE6_VER}"
 
 # What is left of PySide6 is still the largest Qt stack in the image, several
 # times the size of the system Qt6 that the C++ tools share. Two directories of

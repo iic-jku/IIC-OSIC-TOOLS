@@ -1,4 +1,5 @@
-# The image uninstalls PySide6-Addons to save ~340 MB (QtWebEngine, Qt3D, ...).
+# The image uninstalls PySide6-Addons, -WebEngine and -Pdf to save several
+# hundred MB (QtWebEngine, Qt3D, ...).
 # The Essentials, Addons and meta-package wheels all ship the same top-level
 # PySide6 files (__init__.py, _config.py, _git_pyside_version.py, the .pyi
 # stubs), and pip does no cross-package refcounting -- so that uninstall
