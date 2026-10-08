@@ -9,7 +9,7 @@
 # It clones the repository and runs its `xschem/run_simulation_tests.sh`,
 # which netlists every Xschem testbench with xschem (headless) and simulates
 # it with ngspice in batch mode, scanning the logs for errors. This exercises
-# the full analog simulation path (xschem -> ngspice + IHP SG13G2 PDK models).
+# the full analog simulation path (xschem -> ngspice + IHP SG13CMOS5L PDK models).
 
 if [ -z "${RAND}" ]; then
     RAND=$(hexdump -v -e '/1 "%02x"' -n4 < /dev/urandom)
@@ -31,7 +31,7 @@ cd "$TMP" || exit 1
 [ "$DEBUG" = 1 ] && echo "[INFO] Cloning $REPO (main branch) ..."
 if ! git clone --depth 1 --branch main \
         https://github.com/iic-jku/"$REPO".git "$REPO" > "$LOG" 2>&1; then
-    echo "[ERROR] Test <analog-circuit-design with ihp-sg13g2> FAILED! Could not clone the repository. Check the log file $LOG for details."
+    echo "[ERROR] Test <analog-circuit-design with ihp-sg13cmos5l> FAILED! Could not clone the repository. Check the log file $LOG for details."
     exit 1
 fi
 cd "$REPO" || exit 1
@@ -40,10 +40,10 @@ cd "$REPO" || exit 1
 # container user (avoids "detected dubious ownership")
 git config --global --add safe.directory "$TMP/$REPO"
 
-# Switch to the ihp-sg13g2 PDK (sets PDK and PDK_ROOT, loads the OSDI models)
-[ "$DEBUG" = 1 ] && echo "[INFO] Switching to the ihp-sg13g2 PDK ..."
+# Switch to the ihp-sg13cmos5l PDK (sets PDK and PDK_ROOT, loads the OSDI models)
+[ "$DEBUG" = 1 ] && echo "[INFO] Switching to the ihp-sg13cmos5l PDK ..."
 # shellcheck source=/dev/null
-source sak-pdk-script.sh ihp-sg13g2 > /dev/null
+source sak-pdk-script.sh ihp-sg13cmos5l > /dev/null
 
 # Run the simulation testbenches. The runner takes care of the headless setup
 # itself: it starts one shared Xvfb for the whole run and points every
@@ -59,7 +59,7 @@ source sak-pdk-script.sh ihp-sg13g2 > /dev/null
 # of all testbench runtimes to roughly the longest one.
 #
 # SPICE_THREADS=1: ngspice threading does not pay off for these testbenches and
-# badly hurts the two that dominate the runtime -- techsweep_sg13g2_lv_{n,p}mos
+# badly hurts the two that dominate the runtime -- techsweep_sg13cmos5l_lv_{n,p}mos
 # sweep L x Vg x Vd x Vb and thus issue ~119k separate `run` commands on a
 # single transistor each, where per-run OpenMP fork/join overhead is all that
 # extra threads add (measured: 23 s with 1 thread vs 164 s with 9). Passed
@@ -72,9 +72,9 @@ case $JOBS in '' | *[!0-9]* | 0) JOBS=4 ;; esac
 
 [ "$DEBUG" = 1 ] && echo "[INFO] Running 'xschem/run_simulation_tests.sh' (JOBS=$JOBS, output is logged to $LOG) ..."
 if JOBS=$JOBS SPICE_THREADS=1 ./xschem/run_simulation_tests.sh >> "$LOG" 2>&1; then
-    echo "[INFO] Test <analog-circuit-design with ihp-sg13g2> passed."
+    echo "[INFO] Test <analog-circuit-design with ihp-sg13cmos5l> passed."
     exit 0
 else
-    echo "[ERROR] Test <analog-circuit-design with ihp-sg13g2> FAILED! Check the log file $LOG for details."
+    echo "[ERROR] Test <analog-circuit-design with ihp-sg13cmos5l> FAILED! Check the log file $LOG for details."
     exit 1
 fi
