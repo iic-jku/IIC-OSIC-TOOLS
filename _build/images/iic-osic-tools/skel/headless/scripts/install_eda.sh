@@ -71,11 +71,11 @@ pip3 install $PIP_FLAGS \
 	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.6.3 \
+	klayout-pex==0.6.5 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev3 \
-	najaeda==0.7.27 \
+	najaeda==0.7.28 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
 	pyuvm==5.0.0 \

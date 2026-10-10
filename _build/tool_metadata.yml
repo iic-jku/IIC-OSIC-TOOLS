@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: f45ffabed3212a106f01cb362ef42c5d293f4513
+  commit: b255106384fced05b3544f693f77915e33e7145e
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
@@ -42,7 +42,7 @@
   commit: v0.30.12
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
-  commit: 8e2409703adba050f8c51b3c7ded007e102316c7
+  commit: e66f1a76c662ee954e11ef0486e8d662b1aa6ce5
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
   commit: 8.3.685
@@ -51,7 +51,7 @@
   commit: 1.5.324
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 861c57be9c9a0c38ab60b0eabd19903db37efa22
+  commit: 837d0eedfc2ee5342b3f80922c083f6b0126aa6f
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -69,10 +69,10 @@
   commit: 6c6bd44bf2d137e108437bb5a9729c8fd5350886
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: c49e6a84f317b9d1758c3f8e05b18ab91193bae7
+  commit: 974294ba7d812ef5a46a4760593057aee7ce6866
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: cf93b7efb17c8a004beed94f83282f0013f7fcd7
+  commit: 8a05d8549b295e8bb84be52d1e3b3d323e539375
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -88,7 +88,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 0db977f8116708323ba2932f842e9d8215709456
+  commit: eb94e7af2c6fb1256a15209492586e45231496a6
 - name: prjtrellis
   repo: https://github.com/YosysHQ/prjtrellis.git
   commit: 65fe191a290cd947c125f011e9e78a2ddc90d7a4
@@ -124,7 +124,7 @@
   commit: 668b9a6a1b474f7b5181b5caed915e8d0a1505bd
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: fdc1ffa05152707a00ca22a9cf50c59a1b487875
+  commit: d6cfe9efdb531a9dbb2206367deffdf39452434e
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.87
@@ -139,10 +139,10 @@
   commit: 997b49c20705ca3d99e8c0ebe57d6a7840513bb4
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.12.23
+  commit: 0.13.0
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: d249a508f3a9df44a49ffdba40f25718ec976f57
+  commit: fb8cc2055a4f10cff1de8017b554d22ea57ce448
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.052
@@ -154,7 +154,7 @@
   commit: 9051f4804fe8f6386272085f604c9238e5ac0b05
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: b39048fb88cfdee6ec233b41a0462a7f329091fb
+  commit: efc04f496485f112fd97b69ce907131bc63e4dab
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
