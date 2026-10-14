@@ -350,7 +350,7 @@ class Launcher:
     """The window: a filter row, a scrolling wall of buttons, a status line."""
 
     COL_WIDTH = 240  # px of button grid per column
-    EXT_WIDTH = 78  # px per extension checkbox
+    EXT_WIDTH = 78  # minimum px per extension checkbox column
     MAX_COLUMNS = 6
 
     # Every file is a Tk button, and every Tk button is an X window with its own
@@ -441,6 +441,7 @@ class Launcher:
         self.ext_box.pack(fill="x")
         self.ext_boxes = []
         self.ext_cols = 0
+        self.ext_width = self.EXT_WIDTH
         self.ext_box.bind("<Configure>", lambda e: self._reflow_exts(e.width))
 
     def _sync_ext_boxes(self, found):
@@ -465,6 +466,10 @@ class Launcher:
             )
             for ext in sorted(ext for ext in VIEWERS if found.get(ext))
         ]
+        # Columns as wide as the widest label (+4 for padx), so a long one like
+        # ".gds.gz (5)" or a font larger than assumed does not clip into the next.
+        widest = max((box.winfo_reqwidth() for box in self.ext_boxes), default=0)
+        self.ext_width = max(self.EXT_WIDTH, widest + 4)
         self.ext_cols = 0  # force the regrid below
         self._reflow_exts(self.ext_box.winfo_width() or self.win.winfo_width())
         self._sync_controls()  # a rescan during cell view rebuilds these boxes
@@ -473,7 +478,7 @@ class Launcher:
         """Re-grid the extension checkboxes into as many columns as `width` holds."""
         if not self.ext_boxes:
             return
-        cols = max(1, min(len(self.ext_boxes), int(width) // self.EXT_WIDTH))
+        cols = max(1, min(len(self.ext_boxes), int(width) // self.ext_width))
         if cols == self.ext_cols:
             return  # a no-op regrid would retrigger <Configure> forever
         self.ext_cols = cols
