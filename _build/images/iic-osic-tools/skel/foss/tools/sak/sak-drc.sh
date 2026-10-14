@@ -25,7 +25,7 @@
 #        -g  Run gdscheck DRC
 #        -c  Clean output files before running
 #        -l  KLayout/gdscheck DRC level: precheck|macro|regular (default: macro)
-#        -s  gdscheck suite: precheck|core|main|density|antenna (default: derived from -l)
+#        -s  gdscheck suite, e.g. density or antenna (default: derived from -l)
 #        -f  Set GDS flatglob pattern for Magic (e.g. '*' to flatten all)
 #        -w  Use <workdir> to store result files (default: current dir)
 #        -d  Enable debug information
@@ -55,8 +55,9 @@ if [ $# -eq 0 ]; then
 	echo "          precheck: core FEOL and BEOL rules only"
 	echo "          macro: adds off-grid, pin, and zero-area checks, skips chip-level density and antenna"
 	echo "          regular: all checks"
-	echo "       -s gdscheck suite, overrides the -l mapping (precheck|core|main|density|antenna)"
-	echo "          precheck maps to precheck, macro to core, regular to main"
+	echo "          gdscheck: macro runs the core suite, regular runs main, precheck runs IHP's precheck suite"
+	echo "          (density rules included) or core on gf180mcu, which has no precheck suite"
+	echo "       -s gdscheck suite, overrides the -l mapping (e.g. density or antenna, 'gdscheck list-suites -p \$PDK' lists them)"
 	echo "       -f Set GDS flatglob pattern for Magic (e.g. '*' to flatten all)"
 	echo "       -w Use <workdir> to store result files (default current dir)"
 	echo "       -d Enable debug information"
@@ -144,16 +145,6 @@ case "$DRC_LEVEL" in
 	precheck|macro|regular) ;;
 	*)
 		echo "[ERROR] Unknown KLayout/gdscheck DRC level <$DRC_LEVEL> (expected precheck, macro, or regular)!"
-		exit $ERR_NO_PARAM ;;
-esac
-
-# check that the gdscheck suite is valid (empty means derive it from the DRC level)
-# ---------------------------------------------------------------------------------
-
-case "$GDSCHECK_SUITE" in
-	""|precheck|core|main|density|antenna) ;;
-	*)
-		echo "[ERROR] Unknown gdscheck suite <$GDSCHECK_SUITE> (expected precheck, core, main, density, or antenna)!"
 		exit $ERR_NO_PARAM ;;
 esac
 
@@ -251,6 +242,13 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 		echo "[ERROR] gdscheck could not be found!"
 		exit $ERR_CMD_NOT_FOUND
 	fi
+	# gdscheck 0.1 exits 0 even on violations, the evaluation below needs the exit codes of 0.2.0
+	case "$(gdscheck --version)" in
+		"gdscheck 0.1."*)
+			echo "[ERROR] gdscheck 0.2.0 or newer is needed (found <$(gdscheck --version)>)!"
+			exit $ERR_CMD_NOT_FOUND
+			;;
+	esac
 fi
 
 # KLayout DRC is implemented for sky130/gf180mcu/ihp-sg13g2/ihp-sg13cmos5l and needs a GDS layout. In each unmet case skip KLayout: warn and continue if Magic DRC also runs, otherwise error out.
@@ -279,20 +277,26 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	esac
 fi
 
-# gdscheck DRC (-g) carries its own built-in rule decks for ihp-sg13g2/ihp-sg13cmos5l and needs a GDS layout. -g runs gdscheck alone, so both unmet cases error out.
+# gdscheck DRC (-g) carries its own built-in rule decks (gf180mcuD/ihp-sg13g2/ihp-sg13cmos5l in the image) and needs a GDS layout. -g runs gdscheck alone, so every unmet case errors out.
 # ----------------------------------------------------------------------------------------------
 
-if [ "$RUN_GDSCHECK" -eq 1 ] && ! echo "$PDK" | grep -q -i -E "ihp-sg13g2|ihp-sg13cmos5l"; then
-	echo "[ERROR] gdscheck DRC for $PDK not yet supported!"
-	exit $ERR_PDK_NOT_SUPPORTED
-fi
 if [ "$RUN_GDSCHECK" -eq 1 ]; then
+	# the binary lists the suites of every PDK it supports, which also validates -s for the installed version
+	GDSCHECK_SUITES=$(gdscheck list-suites --process "$PDK" 2>/dev/null | awk '{print $1}')
+	if [ -z "$GDSCHECK_SUITES" ]; then
+		echo "[ERROR] gdscheck DRC for $PDK not yet supported!"
+		exit $ERR_PDK_NOT_SUPPORTED
+	fi
 	case "$CELL_LAY" in
 		*.mag|*.mag.gz)
 			echo "[ERROR] gdscheck DRC needs a GDS layout (got <$CELL_LAY>)!"
 			exit $ERR_UNKNOWN_FILE
 			;;
 	esac
+	if [ -n "$GDSCHECK_SUITE" ] && ! echo "$GDSCHECK_SUITES" | grep -q -x -F -e "$GDSCHECK_SUITE"; then
+		echo "[ERROR] Unknown gdscheck suite <$GDSCHECK_SUITE> for $PDK (expected one of $(echo "$GDSCHECK_SUITES" | awk '{printf "%s%s", sep, $1; sep=", "}'))!"
+		exit $ERR_NO_PARAM
+	fi
 fi
 
 # define useful variables
@@ -587,7 +591,7 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 	echo "[INFO] Launching gdscheck DRC..."
 
 	# map the DRC level onto the gdscheck suites unless -s selected one directly
-	# precheck: IHP's published open-source precheck subset
+	# precheck: IHP's published open-source precheck subset, which includes the density/fill rules unlike the KLayout precheck level
 	# macro: core suite, all geometric rules minus density/fill and antenna
 	# regular: main suite, every per-layer deck including density and antenna
 	if [ -z "$GDSCHECK_SUITE" ]; then
@@ -596,6 +600,10 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 			macro)		GDSCHECK_SUITE="core" ;;
 			regular)	GDSCHECK_SUITE="main" ;;
 		esac
+		# gf180mcu has no precheck suite, so its precheck level runs core like macro
+		if [ "$GDSCHECK_SUITE" = "precheck" ] && echo "$PDK" | grep -q -i "gf180mcu"; then
+			GDSCHECK_SUITE="core"
+		fi
 	fi
 	[ $DEBUG -eq 1 ] && echo "[INFO] Using gdscheck suite <$GDSCHECK_SUITE>."
 
@@ -612,11 +620,17 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 		--report "$GDSCHECK_RUNDIR/$CELL_NAME.lyrdb" \
 		--threads "$(nproc --ignore 5)" \
 		> "$GDSCHECK_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
+	GDSCHECK_PID=$!
 fi
 
 # wait for all runs to finish
 # ---------------------------
 
+# gdscheck gives its verdict as exit code, which only a wait on its PID returns
+if [ "$RUN_GDSCHECK" -eq 1 ]; then
+	wait "$GDSCHECK_PID"
+	GDSCHECK_RC=$?
+fi
 wait
 echo "---"
 
@@ -739,19 +753,35 @@ elif [ "$RUN_KLAYOUT" -eq 1 ]; then
 fi
 
 if [ "$RUN_GDSCHECK" -eq 1 ]; then
-	# gdscheck writes its .lyrdb report for clean and dirty runs alike and always exits 0, so no report means the run itself failed (e.g. topcell not found), the reason is in the log
-	if [ ! -f "$GDSCHECK_RUNDIR/$CELL_NAME.lyrdb" ]; then
+	# gdscheck (0.2.0 and newer) exits 0 clean, 2 on violations, 3 if rules went unchecked for lack of memory, and 1 if the run failed (e.g. topcell not found).
+	# The report also lists the violations the PDK waives in qualified cells (IHP SRAM, gf180mcu IO), so it gives the counts but not the verdict.
+	GDSCHECK_RPT="$GDSCHECK_RUNDIR/$CELL_NAME.lyrdb"
+	if [ ! -f "$GDSCHECK_RPT" ]; then
 		echo "[ERROR] gdscheck DRC run failed (no report produced), see <$GDSCHECK_RUNDIR/$CELL_NAME.drc.log>!"
 		exit $ERR_NO_OUTPUT
 	fi
-	# one violation is one <item> in the report, regardless of its geometry type
-	DRC_ERRORS=$(grep -c "<item>" "$GDSCHECK_RUNDIR/$CELL_NAME.lyrdb")
-	if [ "$DRC_ERRORS" -ne 0 ]; then
-		echo "[INFO] gdscheck $DRC_ERRORS DRC errors found! Check <$GDSCHECK_RUNDIR/$CELL_NAME.lyrdb>!"
-		DRC_CLEAN=0
-	else
-		echo "[INFO] gdscheck DRC is clean!"
-	fi
+	GDSCHECK_WAIVED=$(grep -c "<tags>waived</tags>" "$GDSCHECK_RPT")
+	case "$GDSCHECK_RC" in
+		0)
+			echo "[INFO] gdscheck DRC is clean!"
+			if [ "$GDSCHECK_WAIVED" -ne 0 ]; then
+				echo "[INFO] gdscheck reports $GDSCHECK_WAIVED waived violations in <$GDSCHECK_RPT>."
+			fi
+			;;
+		2)
+			DRC_ERRORS=$(($(grep -c "<item>" "$GDSCHECK_RPT") - GDSCHECK_WAIVED))
+			echo "[INFO] gdscheck $DRC_ERRORS DRC errors found! Check <$GDSCHECK_RPT>!"
+			DRC_CLEAN=0
+			;;
+		3)
+			echo "[ERROR] gdscheck DRC is incomplete, rules were not checked for lack of memory, see <$GDSCHECK_RUNDIR/$CELL_NAME.drc.log>!"
+			exit $ERR_NO_OUTPUT
+			;;
+		*)
+			echo "[ERROR] gdscheck DRC run failed (exit code $GDSCHECK_RC), see <$GDSCHECK_RUNDIR/$CELL_NAME.drc.log>!"
+			exit $ERR_NO_OUTPUT
+			;;
+	esac
 fi
 
 echo "---"
