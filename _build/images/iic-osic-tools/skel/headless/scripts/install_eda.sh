@@ -72,6 +72,9 @@ pip3 install $PIP_FLAGS \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
 	klayout-pex==0.6.7 \
+	klayout-pex-plugin-elmer==0.1.0 \
+	klayout-pex-plugin-gmsh==0.1.0 \
+	klayout-pex-plugin-palace==0.1.0 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev3 \
