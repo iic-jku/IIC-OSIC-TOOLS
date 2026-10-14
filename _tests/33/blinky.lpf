@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2026 Harald Pretl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+#
+# ECP5-85F CABGA381, pins taken from the ULX3S board.
+
+LOCATE COMP "clk" SITE "G2";
+IOBUF  PORT "clk" IO_TYPE=LVCMOS33;
+LOCATE COMP "led" SITE "B2";
+IOBUF  PORT "led" IO_TYPE=LVCMOS33;

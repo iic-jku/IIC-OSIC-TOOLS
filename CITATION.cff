@@ -7,6 +7,9 @@ authors:
 - family-names: Zachl
   given-names: Georg
   orcid: https://orcid.org/0009-0006-7676-6389
+- family-names: Dorrer
+  given-names: Simon
+  orcid: https://orcid.org/0009-0001-5994-5477
 title: "GitHub repository of the IIC-OSIC-TOOLS"
 date-released: 2023-09-18
 url: https://github.com/iic-jku/IIC-OSIC-TOOLS

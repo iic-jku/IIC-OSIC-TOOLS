@@ -12,85 +12,27 @@ if [ ! -d "$PDK_ROOT" ]; then
     mkdir -p "$PDK_ROOT"
 fi
 
-# CMOS5L has symlinks to SG13G2 (OSDI models, Xyce plugins, xschem libs)
+# Post-processing of the CMOS5L PDK. install_ihp.sh installs both IHP PDK
+# trees from the single IHP-Open-PDK repository (IHP-Open-PDK#1124) and writes
+# their COMMIT files, so this script only prepares the CMOS5L one. It has to
+# run after install_ihp.sh: CMOS5L reaches into SG13G2 through relative
+# symlinks (pycell code, xschem libraries, the SRAM Liberty files, the
+# thick-oxide standard cells), and its Verilog-A sources for psp103, r3_cmc
+# and mosvar are symlinks into SG13G2 as well.
+PDK="ihp-sg13cmos5l"
+
+if [ ! -d "$PDK_ROOT/$PDK" ]; then
+    echo "[ERROR] IHP SG13CMOS5L PDK not found at $PDK_ROOT/$PDK."
+    echo "[ERROR] Please run install_ihp.sh first, it installs both IHP PDKs."
+    exit 1
+fi
 if [ ! -d "$PDK_ROOT/ihp-sg13g2" ]; then
     echo "[ERROR] IHP SG13G2 PDK not found at $PDK_ROOT/ihp-sg13g2."
-    echo "[ERROR] Please install SG13G2 first, as CMOS5L depends on it."
+    echo "[ERROR] CMOS5L symlinks into it, so both have to be installed."
     exit 1
 fi
 
-# Install IHP-SG13CMOS5L
-PDK="ihp-sg13cmos5l"
-IHP_CMOS5L_REPO_URL="https://github.com/iic-jku/ihp-sg13cmos5l.git"
-
-echo "[INFO] Installing IHP SG13CMOS5L PDK."
-git clone "$IHP_CMOS5L_REPO_URL" ihp-cmos5l
-cd ihp-cmos5l || exit 1
-
-# Store git hash of installed PDK version for reference
-PDK_COMMIT=$(git rev-parse HEAD)
-
-# Now move to the proper location
-cd /tmp || exit 1
-if [ -d ihp-cmos5l ]; then
-	mv ihp-cmos5l "$PDK_ROOT/$PDK"
-else
-	echo "[ERROR] PDK directory 'ihp-cmos5l' not found after clone!"
-	exit 1
-fi
-
-# Store git hash
-echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
-
-# Reconcile the repo-level versions.txt used by the KLayout DRC/LVS version check.
-# run_drc.py resolves it as <PDK_ROOT>/versions.txt (Path(__file__).parents[5]),
-# so one file has to serve both PDKs. install_ihp.sh already installed SG13G2's
-# copy, which carries entries for every tool; CMOS5L ships its own declaring only
-# a KLayout minimum. Keep SG13G2's file and raise just the klayout line to the
-# stricter of the two, so neither PDK's gate is silently weakened when they drift.
-SHARED_VERSIONS="$PDK_ROOT/versions.txt"
-CMOS5L_VERSIONS="$PDK_ROOT/$PDK/versions.txt"
-if [ -f "$SHARED_VERSIONS" ] && [ -f "$CMOS5L_VERSIONS" ]; then
-	python3 - "$SHARED_VERSIONS" "$CMOS5L_VERSIONS" << 'PYEOF'
-import re
-import sys
-
-def klayout_version(path):
-    with open(path, 'r') as f:
-        for line in f:
-            match = re.match(r'\s*klayout\s+(\S+)', line)
-            if match:
-                return match.group(1)
-    return None
-
-def sort_key(version):
-    return tuple(int(part) for part in re.findall(r'\d+', version))
-
-shared_path, own_path = sys.argv[1], sys.argv[2]
-shared, own = klayout_version(shared_path), klayout_version(own_path)
-
-if shared is None or own is None:
-    print(f"[WARN] klayout entry missing (shared={shared}, cmos5l={own}), "
-          f"leaving {shared_path} untouched")
-    sys.exit(0)
-if sort_key(own) <= sort_key(shared):
-    print(f"[INFO] {shared_path} already requires klayout {shared} >= {own}")
-    sys.exit(0)
-
-with open(shared_path, 'r') as f:
-    content = f.read()
-content = re.sub(r'(?m)^(\s*klayout\s+)\S+', lambda m: m.group(1) + own, content, count=1)
-with open(shared_path, 'w') as f:
-    f.write(content)
-print(f"[INFO] Raised klayout requirement in {shared_path} from {shared} to {own}")
-PYEOF
-else
-	echo "[WARN] versions.txt not found (shared: $SHARED_VERSIONS, CMOS5L: $CMOS5L_VERSIONS)."
-	echo "[WARN] The KLayout DRC/LVS version check may use the wrong minimum."
-fi
-
-# Remove .git directory to save space
-rm -rf "$PDK_ROOT/$PDK/.git"
+echo "[INFO] Preparing the IHP SG13CMOS5L PDK."
 
 # Add custom bindkeys for Magic
 echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/$PDK/libs.tech/magic/$PDK.magicrc"
@@ -108,19 +50,13 @@ else
 	echo "[WARN] KLayout netlist import templates not found at $TEMPLATES_FILE"
 fi
 
-# Make the PCell preprocessor temp file per-process. CMOS5L ships its own copy of
-# the PCell library __init__.py (it only symlinks pycell4klayout-api and
-# pypreprocessor into SG13G2), so install_ihp.sh's patch does not reach it.
-# Both PDKs use the same PCell module names, so without this two concurrent
-# KLayout processes delete each other's /tmp/<module>_pre.py and the loser
-# registers no PCells at all. Shared helper, same fix for both PDKs.
-echo "[INFO] Making the PCell preprocessor temp file per-process."
-PYCELL_INIT="$PDK_ROOT/$PDK/libs.tech/klayout/python/sg13cmos5l_pycell_lib/__init__.py"
-if [ -f "$PYCELL_INIT" ]; then
-	python3 "$PDK_SCRIPT_DIR/fix_pycell_tempfile.py" "$PYCELL_INIT"
-else
-	echo "[WARN] KLayout PCell library not found at $PYCELL_INIT"
-fi
+# Anchor the KLayout GUI DRC/LVS run directory to the layout file, and add the
+# %top_cell% placeholder. CMOS5L ships its own copies of the DRC and LVS menu
+# macros and their options dialogs rather than symlinks into SG13G2, so
+# install_ihp.sh's patch does not reach them. Shared helper, same fix for both
+# PDKs, see install_ihp.sh for what it does and why.
+echo "[INFO] Fixing the KLayout GUI DRC/LVS run directory."
+python3 "$PDK_SCRIPT_DIR/fix_klayout_run_dir.py" "$PDK_ROOT/$PDK/libs.tech/klayout/tech/macros"
 
 # Remove testing folders to save space
 echo "[INFO] Removing unnecessary files to save space."
@@ -130,59 +66,45 @@ find . -name "testing" -print0 | xargs -0 rm -rf
 # Remove *.orig files created during PDK preparation
 find "$PDK_ROOT/$PDK/libs.tech/xschem" -name "*.orig" -delete
 
-# Rebuild the CMOS5L-own Verilog-A models for ngspice, the same way
-# install_ihp.sh does for SG13G2: in-image and with --compile-model-generic, so
-# the resulting OSDI runs on any host CPU. The PDK repo ships the objects
-# prebuilt, but they come from whoever committed them (unknown OpenVAF version
-# and target CPU), so they are not trustworthy for the image. psp103 and r3_cmc
-# are symlinks into SG13G2 and are already compiled by install_ihp.sh.
+# Rebuild the Verilog-A models for ngspice, the same way install_ihp.sh does
+# for SG13G2: in-image and with --compile-model-generic, so the resulting OSDI
+# runs on any host CPU. The PDK repo ships cap_cmomi and cap_cmomf prebuilt,
+# but they come from whoever committed them (unknown OpenVAF version and target
+# CPU), so they are not trustworthy for the image.
+# The PDK's own openvaf-compile-va.sh builds every object CMOS5L needs -- its
+# own cap_cmomi and cap_cmomf, plus psp103, psp103_nqs, r3_cmc and mosvar from
+# the SG13G2 sources the symlinks in libs.tech/verilog-a point at. There are no
+# OSDI symlinks into SG13G2 any more, so nothing here can rely on
+# install_ihp.sh having produced them.
 # NOTE: this is the ngspice copy in libs.tech/ngspice/osdi. The VACASK copies in
 # libs.tech/vacask/osdi are built separately further down.
-#
-# The device list is derived from the PDK rather than spelled out, because the
-# PDK is installed from its default branch and grows devices (cap_cmomf arrived
-# this way in 2026-08). A CMOS5L-own model is a real directory <name>/<name>.va;
-# psp103 and r3_cmc are symlinks into SG13G2 and are skipped.
 echo "[INFO] Compiling Verilog-A models."
 export PATH="$TOOLS/openvaf/bin:$PATH"
 VA_DIR="$PDK_ROOT/$PDK/libs.tech/verilog-a"
 NGSPICE_OSDI_DIR="$PDK_ROOT/$PDK/libs.tech/ngspice/osdi"
-CMOS5L_VA_MODULES=""
-for va_module in "$VA_DIR"/*/; do
-	va_module=${va_module%/}
-	[ -L "$va_module" ] && continue
-	va_name=$(basename "$va_module")
-	[ -f "$va_module/$va_name.va" ] || continue
-	CMOS5L_VA_MODULES="$CMOS5L_VA_MODULES $va_name"
-done
-if [ -z "$CMOS5L_VA_MODULES" ]; then
-	echo "[ERROR] No CMOS5L-own Verilog-A model found in $VA_DIR!"
-	exit 1
-fi
-echo "[INFO] CMOS5L-own Verilog-A models:$CMOS5L_VA_MODULES"
 
 # Drop the prebuilt objects first: openvaf-compile-va.sh does not set -e, so
 # without this the check below would happily pass on the stale shipped files.
-for va_name in $CMOS5L_VA_MODULES; do
-	rm -f "$NGSPICE_OSDI_DIR/$va_name.osdi"
-done
+# Only real files, so a symlink into SG13G2 -- should the PDK ever go back to
+# borrowing an object -- is left for the check below to judge.
+# The PDK stopped shipping the directory (IHP-Open-PDK dev, 2026-10), and
+# openvaf-compile-va.sh creates it, so it may be absent here.
+if [ -d "$NGSPICE_OSDI_DIR" ]; then
+	find "$NGSPICE_OSDI_DIR" -maxdepth 1 -type f -name '*.osdi' -delete
+fi
 cd "$VA_DIR" || exit 1
 chmod +x openvaf-compile-va.sh
 ./openvaf-compile-va.sh --compile-model-generic
 
-# Verify every OSDI object the PDK's own .spiceinit loads is there. That covers
-# the models just compiled and, as a bonus, the SG13G2 ones reached by symlink
-# (-f follows the link, so a dangling one is caught too). A missing object makes
-# every ngspice run using that device fail at load time, which is worth failing
-# the build for rather than shipping.
+# Verify every OSDI object the PDK's own .spiceinit loads is there. Since the
+# compile script and .spiceinit are both PDK-side, this is the completeness
+# gate: it follows the PDK when it gains a device instead of naming the models
+# here (cap_cmomf arrived that way in 2026-08). -f follows symlinks, so a
+# dangling one is caught too. A missing object makes every ngspice run using
+# that device fail at load time, which is worth failing the build for rather
+# than shipping.
 SPICEINIT="$PDK_ROOT/$PDK/libs.tech/ngspice/.spiceinit"
 OSDI_MISSING=0
-for va_name in $CMOS5L_VA_MODULES; do
-	if [ ! -f "$NGSPICE_OSDI_DIR/$va_name.osdi" ]; then
-		echo "[ERROR] OpenVAF model compilation for ngspice failed: $va_name.osdi not built!"
-		OSDI_MISSING=1
-	fi
-done
 if [ -f "$SPICEINIT" ]; then
 	for osdi_name in $(grep -o '[A-Za-z0-9_]*\.osdi' "$SPICEINIT" | sort -u); do
 		if [ ! -f "$NGSPICE_OSDI_DIR/$osdi_name" ]; then
@@ -191,7 +113,8 @@ if [ -f "$SPICEINIT" ]; then
 		fi
 	done
 else
-	echo "[WARN] $SPICEINIT not found, cannot verify the OSDI objects ngspice loads."
+	echo "[ERROR] $SPICEINIT not found, cannot verify the OSDI objects ngspice loads."
+	OSDI_MISSING=1
 fi
 if [ "$OSDI_MISSING" -ne 0 ]; then
 	exit 1
@@ -237,14 +160,20 @@ else
 fi
 cd /tmp || exit 1
 
-# Complete the converter's device lists from the PDK before running it.
+# Complete the converter's device lists from the PDK before running it. The
+# MOS capacitor's model files set SWSOA globally like the MOS transistors' do,
+# but upstream only patches that out of the latter, which leaves every
+# cornerMOSCAP.lib section failing with "Parameter redefinition." (shared helper,
+# see install_ihp.sh).
 echo "[INFO] Checking the VACASK converter against the installed PDK."
 python3 "$PDK_SCRIPT_DIR/fix_cmos5l_vacask_converter.py" \
-	"/tmp/${VACASK_NAME}/python/sg13cmos5ltovc.py" "$PDK_ROOT/$PDK"
+	"/tmp/${VACASK_NAME}/python/src/vacask/sg13cmos5ltovc.py" "$PDK_ROOT/$PDK"
+python3 "$PDK_SCRIPT_DIR/fix_vacask_swsoa.py" \
+	"/tmp/${VACASK_NAME}/python/src/vacask/sg13cmos5ltovc.py" "$PDK_ROOT/$PDK"
 
-OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
+OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python/src \
     PDK_ROOT="$PDK_ROOT" PDK="$PDK" \
-    python3 -m sg13cmos5ltovc --openvaf-options --target_cpu generic
+    python3 -m vacask.sg13cmos5ltovc --openvaf-options --target_cpu generic
 
 # Every file the converted models include has to exist, or a deck pulling in
 # that file dies on the include even when it uses none of the devices behind it
@@ -270,40 +199,14 @@ if [ "$INCLUDE_MISSING" -ne 0 ]; then
 	exit 1
 fi
 
-# ---------------------------------------------------------------------------
-# Add the diode and PNP corners to the "Add VACASK models symbol" menu entry.
-#
-# The corner list upstream ships covers MOSlv, MOShv, RES and CAP only, so a
-# design using a diode or the pnpMPA gets no corner section for it and has to
-# add the include by hand. CMOS5L converts both corner files, so list them.
-# Upstream omits cornerDIO for SG13G2 as well, i.e. this is a local addition
-# and not a fix -- keep it as a separate, clearly bounded edit.
-# ---------------------------------------------------------------------------
-echo "[INFO] Adding the diode and PNP corners to the xschem VACASK menu."
-python3 - "$PDK_ROOT" "$PDK" << 'PYEOF'
-import os
-import sys
-
-pdkroot, pdk = sys.argv[1], sys.argv[2]
-path = os.path.join(pdkroot, pdk, "libs.tech", "xschem", "xschem-vacask")
-
-with open(path) as f:
-    tcl = f.read()
-
-anchor = 'include \\"cornerCAP.lib\\" section=cap_typ\n'
-added = ('include \\"cornerDIO.lib\\" section=dio_tt\n'
-         'include \\"cornerPNP.lib\\" section=typ\n')
-
-if 'cornerDIO.lib' in tcl and 'cornerPNP.lib' in tcl:
-    print("[INFO] Diode and PNP corners already listed, nothing to do.")
-elif anchor not in tcl:
-    print("[WARN] cornerCAP.lib entry not found in %s, corner list left as is "
-          "(upstream changed the menu?)" % path)
-else:
-    with open(path, "w") as f:
-        f.write(tcl.replace(anchor, anchor + added, 1))
-    print("[INFO] Added cornerDIO.lib and cornerPNP.lib to the corner list.")
-PYEOF
+# Add the diode, PNP and MOSCAP corners to the "Add VACASK models symbol" menu
+# entry. The corner list upstream ships covers MOSlv, MOShv, RES and CAP only,
+# so a design using one of these devices gets no corner section for it and has
+# to add the include by hand, although CMOS5L converts their corner files. A
+# local addition, not a fix (shared helper, see there).
+echo "[INFO] Adding the diode, PNP and MOSCAP corners to the xschem VACASK menu."
+python3 "$PDK_SCRIPT_DIR/fix_xschem_vacask_menu.py" "$PDK_ROOT/$PDK" \
+	cornerDIO.lib=dio_tt cornerPNP.lib=typ cornerMOSCAP.lib=moscap_tt
 
 # Drop the backups the converter leaves behind: xschemrc.orig from its own
 # xschemrc patcher and *.sym.orig from xschem2vc's symbol patcher.
@@ -314,8 +217,10 @@ fi
 
 rm -rf "/tmp/${VACASK_NAME}"
 
-# gzip Liberty (.lib) files. The SRAM Liberty files are symlinks into the
-# SG13G2 PDK and are already compressed by install_ihp.sh.
+# gzip Liberty (.lib) files. The SRAM and thick-oxide standard-cell Liberty
+# files are symlinks into the SG13G2 PDK and are already compressed by
+# install_ihp.sh; gzip_liberty.sh leaves those links alone and only rewrites
+# the references to them.
 bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/$PDK"
 
 # CMOS5L is largely symlinks into SG13G2, so a rename on the SG13G2 side silently

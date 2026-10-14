@@ -8,8 +8,6 @@ set -e
 PIP_FLAGS="--upgrade --no-cache-dir --break-system-packages --ignore-installed"
 
 echo "[INFO] Install support packages via PIP"
-# pipdeptree is pinned <4 since 4.x ships no aarch64 wheels and thus needs a
-# full Rust source build on arm64
 pip3 install $PIP_FLAGS \
 	anytree \
 	black \
@@ -33,7 +31,7 @@ pip3 install $PIP_FLAGS \
 	pandas \
 	paramiko \
 	pathspec \
-	"pipdeptree<4" \
+	pipdeptree \
 	plotly \
 	prettyprinttree \
 	prettytable \

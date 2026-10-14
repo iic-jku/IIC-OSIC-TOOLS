@@ -51,7 +51,7 @@ while getopts "hdf:g:t:" flag; do
             ;;
         h)
          	echo
-            echo "Restarting Docker instances for EDA users (ICD@JKU)"
+            echo "Restarting container instances for EDA users (ICD@JKU)"
             echo
             echo "Usage: $0 [-h] [-d] [-f credential_file] [-g user_group] [-t image_tag]"
             echo
@@ -59,7 +59,7 @@ while getopts "hdf:g:t:" flag; do
             echo "       -d enables the debug mode"
             echo "       -f sets the name of the credentials file (default $EDA_CREDENTIAL_FILE)"
             echo "       -g sets the used group-ID (default $EDA_USER_GROUP)"
-            echo "       -t sets the Docker image tag to use (default $EDA_IMAGE_TAG)"
+            echo "       -t sets the container image tag to use (default $EDA_IMAGE_TAG)"
             echo
             exit 0
             ;;
@@ -102,14 +102,27 @@ _spin_up_server () {
         return 1
     fi
 
+    # A stopped container (e.g. after a host reboot without
+    # podman-restart.service) is started as it is, instead of letting
+    # start_vnc.sh prompt for it. It keeps its image tag and group-ID.
+    if [ "$(${CONTAINER_ENGINE} ps -a -q -f name="${CONTAINER_NAME}")" ]; then
+        if ! ${CONTAINER_ENGINE} start "${CONTAINER_NAME}" > /dev/null; then
+            echo "[ERROR] Failed to start the existing container $CONTAINER_NAME"
+            return 1
+        fi
+        echo "[INFO] Successfully started the existing container $CONTAINER_NAME"
+        return 0
+    fi
+
     if [ ! -d "$DESIGNS" ]; then
         echo "[ERROR] User directory $DESIGNS not found, skipping user $username!"
         return 1
     fi
 
-    # Now spinning up the EDA container using standard scripts
+    # Now spinning up the EDA container using standard scripts, in a
+    # subshell, so that its "exit" on errors does not end this loop
     # shellcheck source=/dev/null
-    if ! source start_vnc.sh; then
+    if ! ( source start_vnc.sh ); then
         echo "[ERROR] Failed to start container for user $username"
         return 1
     fi
@@ -127,6 +140,12 @@ if [ ! -f "$EDA_CREDENTIAL_FILE" ]; then
     echo "[ERROR] Credential file $EDA_CREDENTIAL_FILE not found!"
     exit 1
 fi
+
+if ! _check_container_engine; then
+    exit 1
+fi
+PREFIX=$(jq -r '.[0].prefix // empty' "$EDA_CREDENTIAL_FILE" 2>/dev/null)
+_hint_other_engine "${PREFIX:-$EDA_CONTAINER_PREFIX}"
 
 # Here is the loop
 echo "[INFO] Starting EDA server instances."

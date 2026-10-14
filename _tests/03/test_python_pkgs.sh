@@ -56,6 +56,17 @@ else
     echo "[INFO] Test <charlib PYTHONPATH wrapper> passed."
 fi
 
+# gdsfill is no longer a Python package: the image installs the Rust
+# implementation via cargo (see install_eda.sh), so it is covered here as a CLI
+# instead of as an import.
+if ! gdsfill --help > /dev/null 2>&1
+then
+    echo "[ERROR] Test <gdsfill CLI> FAILED."
+    ERR=1
+else
+    echo "[INFO] Test <gdsfill CLI> passed."
+fi
+
 if ! /foss/tools/vlsirtools/bin/python -c "import hdl21"
 then
     echo "[ERROR] Test <Loading hdl21> FAILED."

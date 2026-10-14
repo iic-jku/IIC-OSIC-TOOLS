@@ -16,6 +16,7 @@
 
 import os, re, json, math
 import skrf as rf
+from skrf.circuit import Circuit
 import numpy as np
 
 
@@ -214,20 +215,28 @@ def port_deembedding(snp_filename, port_info_available, port_info_data):
 			if (length is not None) and (width is not None) and (portnum is not None):
 				thickness = 0
 				L = flat_strip_inductance(length, width, thickness, unit)
-				Lport[str(portnum)] = L
-
-		L_values = []
-		for key in Lport.keys():
-			L_values.append(-Lport[key])
+				Lport[int(portnum)] = L
 
 		ntwk  = rf.Network(snp_filename)
 		freq_obj = ntwk.frequency
-		media = rf.media.DefinedGammaZ0(frequency=freq_obj, z0=50)
 
-		for n, L in enumerate(L_values):
-			print(f'Cascading L= {L*1e12:.2f} pH at port {n+1}')
-			inductor = media.inductor(L=L)
-			ntwk = rf.connect(inductor, 0, ntwk, 0)
+		# One negative series L in front of each port, keyed by port number.
+		# A Circuit keeps the port order (skrf 2.x has no top-level connect,
+		# and chaining connect() on port 0 stacked every L onto port 1).
+		connections = []
+		for k in range(ntwk.nports):
+			z0 = ntwk.z0[0, k]
+			port = Circuit.Port(freq_obj, f'P{k+1}', z0=z0)
+			L = Lport.get(k + 1)
+			if L is None:
+				connections.append([(port, 0), (ntwk, k)])
+				continue
+			print(f'Cascading L= {-L*1e12:.2f} pH at port {k+1}')
+			media = rf.media.DefinedGammaZ0(frequency=freq_obj, z0=z0)
+			inductor = media.inductor(L=-L, name=f'L{k+1}')
+			connections.append([(port, 0), (inductor, 0)])
+			connections.append([(inductor, 1), (ntwk, k)])
+		ntwk = Circuit(connections).network
 
 		filename, file_extension = os.path.splitext(snp_filename)
 		out_filename = filename + '_deembedded'

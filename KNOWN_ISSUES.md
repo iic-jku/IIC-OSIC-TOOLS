@@ -16,17 +16,15 @@ To install `socat`, here are the commands for popular distributions:
 
 The current variant of the `start_x.bat` for Windows uses WSLg for audio & visual output, which comes preinstalled/packaged with WSL (Windows 10 Build 19044 or Windows 11). If problems arise, update WSL according to [the Microsoft website](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps).
 
-### Frequent Crashes of `xschem` on Windows 10+
-
-Since the update of the image to Ubuntu 24.04 LTS with tag `2025.01` there are reports of frequent crashes of `xschem` under Windows 11 using certain versions of specific X-servers. It has been found that using <https://vcxsrv.com> version `64.1.17.2.0` under Windows 11 works well (see [issue 92](https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/92)).
-
 ### Issues with OpenGL on Some Environments
 
-A few applications are using OpenGL graphics, which can lead to issues on some computing environments. A (potential) remedy is to enable SW-rendering with can be achieved by setting the following environment variable inside the Docker VM:
+A few applications are using OpenGL graphics, which can lead to issues on some computing environments. A (potential) remedy is to enable software rendering by setting the following environment variable inside the container:
 
 ```bash
-export LIBGL_ALWAYS_INDIRECT=0
+export LIBGL_ALWAYS_SOFTWARE=1
 ```
+
+`start_x.sh` sets `LIBGL_ALWAYS_INDIRECT=1` on macOS, with Docker Desktop, and on Linux hosts without `/dev/dri`. `export LIBGL_ALWAYS_INDIRECT=0` switches indirect GLX off again, which can help as well.
 
 ### Mouse Gestures Break the Right-Button Drag in the Browser (noVNC) Session
 
@@ -40,30 +38,21 @@ Note that up to image `2026.07` this was partly masked by a defect in the shippe
 
 Some pcell libraries were developed for older `gdsfactory` versions:
 
-- Skywater `sky130A`/`sky130B`: pcells were written against the `gdsfactory` 8.x APIs and private kfactory 0.17.x internals (`_get_default_kcl`, `_kdb_cell`, `Component.add_array`, implicit generic-PDK activation), which later `gdsfactory`/kfactory versions removed.
-- Global Foundries `gf180mcuC`/`gf180mcuD`: pcells rely on the implicit generic-PDK activation that `gdsfactory` removed in 9.29.0.
+- Skywater `sky130A`: pcells were written against the `gdsfactory` 8.x APIs and private kfactory 0.17.x internals (`_get_default_kcl`, `_kdb_cell`, `Component.add_array`, implicit generic-PDK activation), which later `gdsfactory`/kfactory versions removed.
+- Global Foundries `gf180mcuD`: pcells rely on the implicit generic-PDK activation that `gdsfactory` removed in 9.29.0.
 
 The image addresses these automatically (issue <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/162>): both pcell libraries are patched at PDK-install time so they work with the current system `gdsfactory` and need no dedicated virtual environment.
 
-Three further pcell defects are patched at PDK-install time as well, and the patches are removed once they are fixed upstream:
+Two further pcell defects are patched at PDK-install time as well, and the patches are removed once they are fixed upstream:
 
-- IHP `ihp-sg13g2`/`ihp-sg13cmos5l`: the pcell libraries preprocess every pcell module into `$TMPDIR/<module>_pre.py` and delete it again, using the bare module name. Both PDKs use the same module names, so two KLayout processes sharing `/tmp` deleted each other's file and the loser registered no pcell at all. The temp file now carries the process ID (issue <https://github.com/IHP-GmbH/IHP-Open-PDK/issues/1087>).
 - IHP `ihp-sg13g2`: `sealring` obtained the PDK version by running `git` inside the PDK tree, which is installed without its `.git`. It now reads the `COMMIT` file next to the PDK. `isolbox` defaulted its length and width below the minimum its own callback enforces, warning on every default instantiation.
 - Global Foundries `gf180mcuD`: the `efuse` pcell came out empty, because `draw_efuse()` was called without its required `device_name` argument and looked for its GDS in `~/.klayout/pymacros`, where nothing installs it.
 
 Regression test 27 (`_tests/27`) instantiates every pcell of every packaged PDK with its default parameters and pins the outcome, so a regression or an upstream fix is reported.
 
-### KLayout 0.30.10 Reports False DRC Violations in Deep Mode
-
-`KLayout` `0.30.10`, shipped with image `2026.08`, finds two-layer separation and enclosure violations in hierarchical (`deep`) mode that are not in the layout. On the stock `gf180mcuD` standard cell `gf180mcu_fd_sc_mcu7t5v0__dffrnq_1` it reports `DF.6_MV`, `PL.5a_MV` and `PL.5b_MV`; `0.30.9` reports none of them, and neither does `0.30.10` in flat mode. Rule deck and cell geometry are byte-identical between the two versions, so this is the tool and not the PDK.
-
-The visible consequence in this image is that regression test 04 (LibreLane with `gf180mcuD`) fails at `KLayout.DRC`. To tell a real violation from this one, rerun the deck with `-rd run_mode=flat`.
-
-Reported as [KLayout issue 2423](https://github.com/KLayout/klayout/issues/2423). It is not the already-fixed [issue 2416](https://github.com/KLayout/klayout/issues/2416): adding `.merged` to the first input of the affected rules does not change the result.
-
 ### The OpenROAD Flow Scripts (ORFS)
 
-The ORFS require a recent version of `openroad`. Since image tag `2024.12` a recent version is installed alongside the OpenROAD version required by `librelane`. In tag `2025.10` and beyond the `openroad` and `sta` version that is found is a recent version that can be used with the ORFS.In order to use the ORFS, **before** calling the `make` script make sure to set the following env vars:
+The ORFS require a recent version of `openroad`. Since image tag `2024.12` a recent version is installed alongside the OpenROAD version required by `librelane`. In tag `2025.10` and beyond the `openroad` and `sta` found in `PATH` are this recent version. In order to use the ORFS, **before** calling the `make` script make sure to set the following env vars:
 
 ```bash
 export YOSYS_EXE=$TOOLS/yosys/bin/yosys
@@ -71,11 +60,20 @@ export OPENROAD_EXE=$TOOLS/openroad/bin/openroad
 export OPENSTA_EXE=$TOOLS/openroad/bin/sta
 ```
 
-Since the OpenROAD and ORFS version are tightly interlinked with regular interface breaks, the ORFS Git commit hash at image build time is stored in `$TOOLS/openroad/ORFS_COMMIT`. After cloning ORFS from GitHub use the following command to switch to a working and tested ORFS version:
+Since the OpenROAD and ORFS version are tightly interlinked with regular interface breaks, the ORFS Git commit hash at image build time is stored in `$TOOLS/openroad/ORFS_COMMIT` (regression test 10 runs against it). After cloning ORFS from GitHub use the following command to switch to that ORFS version:
 
 ```bash
 git checkout $(cat $TOOLS/openroad/ORFS_COMMIT)
 ```
+
+### Yosys Miscompiles or Rejects Some SystemVerilog
+
+Yosys reads SystemVerilog either through its built-in frontend (`read_verilog -sv`) or through the `yosys-slang` plugin (`read_slang`). LibreLane uses the built-in frontend unless `USE_SLANG: true` is set. Synthesis of the OpenBLAU SoC found the following defects of the built-in frontend, all present in the shipped Yosys `0.70`:
+
+- **Silent wrong netlist:** a unary `-`, `~` or `!` in front of a size cast is parsed as part of the cast width, so `-8'(16)` is read as `(-8)'(16)`. With a constant operand the operator is dropped without any message (`-8'(16)` synthesizes to `8'd16` instead of `8'd240`). With a non-constant operand Yosys stops with `ERROR: Static cast with zero or negative size!`. RTL simulation and lint stay clean, only gate-level simulation or an equivalence check catches it. See <https://github.com/YosysHQ/yosys/issues/6249>. Write `-(8'(x))`, `8'(-x)` or `a - 8'(x)` instead, or use `read_slang`.
+- **Rejected constructs:** the built-in frontend stops with a syntax error on unpacked `localparam` arrays (e.g. ROM tables), packed 2-D `localparam`s, a package `import` inside a module, a part-select of a function call (`f(x)[3:0]`), and `return` in a function. Rewriting a design around these ended in an internal assertion in `frontends/ast/simplify.cc`. `read_slang` (LibreLane `USE_SLANG: true`) reads all of them as written, alternatively convert the sources with `sv2v` first.
+
+The `arith_tree` pass dropped the width of a narrower operand folded into a wider sum (<https://github.com/YosysHQ/yosys/pull/6130>). This affected images up to `2026.08` and is fixed since `2026.09` (Yosys `0.69`).
 
 ### Surfer Crashing
 
@@ -94,20 +92,44 @@ instructions then trap. The CPU probe of AWS-LC/OpenSSL trusts the SVE2 bit and
 executes one (`cntb`, in `_armv8_sve_get_vl_bytes`) at library load time, so any
 binary using that dispatch dies with `Illegal instruction (core dumped)`.
 
-Observed on an Apple M4 with Podman 6.0.2 (Fedora CoreOS 41, kernel 6.12.13),
-where it broke `import cryptography` (and therefore `siliconcompiler`) as well as
-every `cocotb` simulation, which reports `Simulation failed: -4` because the
-simulator embeds Python and loads the same extension. The same image and library
-versions run fine on native `arm64` Linux, so this is a property of the VM, not
-of the `arm64` image. It is not specific to Podman either: the incoherent feature
-pair comes from the guest kernel on Apple's hypervisor, so Docker Desktop can be
-affected in the same way, depending on the kernel its VM ships.
+Which consumers trip over this changes as the bundled libraries move, so the
+symptom is a better guide than any single example. Re-checked on an Apple M4 with
+Podman 6.1.1 (Fedora CoreOS 41, kernel 6.12.13) against image `2026.08`:
+`import siliconcompiler` dies with `Illegal instruction (core dumped)` and exit
+code 132, and every `cocotb` simulation dies the same way inside the simulator
+process, right after cocotb prints its `Initialized cocotb` banner. The backend
+makes no difference, both the Icarus and the Verilator flow were checked: the
+crash happens in the embedded Python that cocotb loads, before the simulator
+itself does any work. `import cryptography` is *not* affected any more, though
+it was in earlier images, so it is no longer a usable probe for this problem.
+Older cocotb releases reported the crash as `Simulation failed: -4`, that is the
+negative of signal 4, `SIGILL`; cocotb 2.x lets the `Illegal instruction`
+message through instead.
+
+That the mask is what matters can be confirmed directly: pinning
+`OPENSSL_armcap` to any value avoids the crash, both `0` and `1` do, because the
+pin replaces the runtime capability detection rather than correcting it.
+
+The same image and library versions run fine on native `arm64` Linux, so this is
+a property of the VM, not of the `arm64` image. It is not specific to Podman
+either: the incoherent feature pair comes from the guest kernel on Apple's
+hypervisor, so Docker Desktop can be affected in the same way, depending on the
+kernel its VM ships.
 
 Since image `2026.08` the `start_*.sh` scripts detect Apple Silicon and pass
 `OPENSSL_armcap=0` into the container, which makes the probe use that mask
 instead of detecting capabilities and avoids the crash. The only cost is ARM
 crypto acceleration inside the container. Export `OPENSSL_armcap` yourself to
 pin a different mask, or export it empty to switch the workaround off.
+
+Container options are fixed at create time, so a container created before this
+fix has to be removed (press `r` at the prompt) and re-created; a container that
+is reused silently keeps its old environment and still crashes. Check from
+inside the container with `printenv OPENSSL_armcap`: the workaround is in effect
+when that prints `0`, and absent when it prints nothing. Starting the container
+directly with `docker run` or `podman run` instead of through a `start_*.sh`
+script bypasses the workaround the same way. With an older checkout, use
+`DOCKER_EXTRA_PARAMS="-e OPENSSL_armcap=0" ./start_shell.sh`.
 
 ### SELinux Hosts (Fedora, RHEL and Clones)
 
@@ -142,28 +164,28 @@ Running Docker in rootless mode with X11/Wayland forwarding (`start_x.sh`) is no
 
 **Workaround:** Switch to [Podman](https://podman.io/) in rootless mode (see [Section 5.1 of the README](README.md#51-podman)). The start scripts automatically detect Podman rootless mode and add `--userns=keep-id`. On Fedora/RHEL also see the SELinux section above.
 
-### Palace EM-Setup
-
-Volker Muehlaus' `setupEM`/`gds2palace` tool for AWS Palace is only installed for `x86_64`, as there are currently issues with `gmsh` for `arm64` on Linux.
-
 ### GDS3D crashing on macOS
 
-At least since tag `2025.12` GDS3D is crashing with an error message. Unfortunately, there is no known fix at the moment. See <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/220>.
+At least since tag `2025.12` GDS3D is crashing with an error message. Unfortunately, there is no known fix at the moment, and upstream GDS3D has seen no changes since 2024. See <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/220> (closed without a fix).
 
 ## Build
 
 ### The IHP PDKs Are Built from a Branch, Not from a Pinned Commit
 
-Unlike every other component of the image, the two IHP PDKs are installed from the tip of a branch: `ihp-sg13g2` from the `dev` branch of `iic-jku/IHP-Open-PDK` and `ihp-sg13cmos5l` from the default branch of `iic-jku/ihp-sg13cmos5l`. This is deliberate (both move fast and the image is expected to carry their current state), but it means two rebuilds of the same commit of this repository can produce different PDK content, and that new devices can appear without any change here.
+Unlike every other component of the image, the IHP PDKs are installed from the tip of a branch: both `ihp-sg13g2` and `ihp-sg13cmos5l` come from the `dev` branch of `iic-jku/IHP-Open-PDK`, which carries the two of them side by side since SG13CMOS5L moved into that repository. This is deliberate (the PDKs move fast and the image is expected to carry their current state), but it means two rebuilds of the same commit of this repository can produce different PDK content, and that new devices can appear without any change here. The commit actually installed is recorded in `$PDK_ROOT/<pdk>/COMMIT`, the same hash for both PDKs.
 
 That is not free, and the failure it causes is indirect. When the PDK gains a device, the corner files gain an `.include` for it, while the tools that consume the PDK are pinned and know nothing about it. VACASK's `sg13cmos5ltovc.py` converter, for example, names the model files it converts and the Verilog-A it compiles in two hardcoded lists, so a new device is silently skipped, yet the corner file including it is converted verbatim. Every VACASK deck pulling in that corner then fails on a missing include, even one that uses none of its devices. The metal fringe MoM capacitor `cap_cmomf`, added to both PDKs on 2026-08-11, broke the entire `ihp-sg13cmos5l` VACASK capacitor path exactly this way.
 
 The image therefore does not assume the two sides agree:
 
-- the converter's device lists are completed from the installed PDK before it runs, so a device the PDK ships but VACASK does not know about is converted and compiled anyway (a no-op once VACASK catches up);
-- after the conversion, every include in the converted model files is resolved, and every OSDI object the PDK's own `.spiceinit` loads is checked to exist, so an incomplete conversion fails the build instead of shipping;
+- `sg13cmos5ltovc.py`'s device lists are completed from the installed PDK before it runs, so a device the PDK ships but VACASK does not know about is converted and compiled anyway (a no-op once VACASK catches up);
+- `sg13g2tovc.py`'s model file list is reconciled with the PDK in both directions before it runs: a file the PDK no longer ships is dropped, unless a model file of the PDK still includes it, and a corner file the PDK ships, or a file a corner file includes, is added if the list lacks it. Without the former, the converter aborts on the first stale entry and takes the image build with it, as it did when `sg13g2_hbt_mod_mismatch.lib` was folded into `sg13g2_hbt_mod.lib` on 2026-09-17. Without the latter, the `dio_tt_stat` section of `cornerDIO.lib` shipped unloadable from 2025-09 to 2026.09, because `sg13g2_dschottky_nbl1_stat.lib` was never converted, and the MOS capacitor (`cornerMOSCAP.lib`, in the PDK since 2026-07-22) never reached VACASK at all;
+- every converted model file that sets `SWSOA` globally gets that line patched out, for both PDKs, as upstream does for the MOS transistor files only. The MOS capacitor's model files carry the same line, so every `cornerMOSCAP.lib` section of `ihp-sg13cmos5l` failed with "Parameter redefinition." up to 2026.09;
+- the Verilog-A models `sg13g2tovc.py` does not compile are added from the installed PDK, and a subckt default written as a `.param` constant is made literal. The MoM capacitors `cap_cmomi` and `cap_cmomf` (in `ihp-sg13g2` since 2026-07-30 and 2026-08-11) were otherwise converted without their OSDI objects, so every VACASK deck instantiating either failed up to 2026.09, and `cap_cmomi`'s `feed` could not be overridden;
+- after the conversion, every include in the converted model files is resolved (for both PDKs), and for `ihp-sg13cmos5l` every OSDI object the PDK's own `.spiceinit` loads is checked to exist, so an incomplete conversion fails the build instead of shipping;
+- regression test 36 loads every section of every converted corner file of both PDKs in VACASK, which also catches a model line the converter mistranslates (the `stuac 40` typo in `sg13g2_svaricaphv_mod_mismatch.lib` broke all five `cornerMOShv.lib` mismatch sections of both PDKs), and compares the MOS capacitor, the MoM capacitors and the Schottky diode with ngspice;
 - regression test 27 pins the pcell count of every PDK, which turns an inventory change into a failure that has to be looked at rather than a silent drift.
 
 The counts in `_tests/27/check_pcells.py` consequently need updating whenever the PDKs legitimately gain or lose a pcell; the test reports the expected and the actual number so the change can be reviewed.
 
-No further known issues at the moment. However, be warned that building the image is quite involved and may take several hours depending on the host system performance and network connection. For a multi-architecture build (`amd64` + `arm64`) dedicated build servers with sufficient resources are recommended. Cross-architecture builds take ages and are not recommended. Plus, a private Docker registry is currently used by the build system to store intermediate build stages, which requires a fast network connection to the registry server.
+No other known build issues at the moment. However, be warned that building the image is quite involved and may take several hours depending on the host system performance and network connection. For a multi-architecture build (`amd64` + `arm64`) dedicated build servers with sufficient resources are recommended. Cross-architecture builds take ages and are not recommended. Plus, a private Docker registry is currently used by the build system to store intermediate build stages, which requires a fast network connection to the registry server.

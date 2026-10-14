@@ -7,11 +7,13 @@
 # (https://github.com/iic-jku/ihp-sg13g2-ams-chip-template)
 
 if [ -z "${RAND}" ]; then
-    RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
+    RAND=$(hexdump -v -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
 # test output is kept out of the bind-mounted source tree (see run_integration_tests.sh)
 RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
+
+DEBUG=${DEBUG:-0}
 
 TMP=${RUNS_DIR}/${RAND}/20
 LOG=$TMP/ams_chip_sg13g2.log

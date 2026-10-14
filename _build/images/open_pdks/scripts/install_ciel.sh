@@ -145,20 +145,6 @@ PYEOF
 	fi
 fi
 
-if [ -d "$PDK_ROOT/sky130B" ]; then
-	# gzip Liberty (.lib) files
-	bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/sky130B"
-
-    echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/sky130B/libs.tech/magic/sky130B.magicrc"
-    echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/sky130B/libs.tech/magic/sky130B.magicrc"
-
-	sed -i 's/>sky130</>sky130B</g' "$PDK_ROOT/sky130B/libs.tech/klayout/tech/sky130B.lyt"
-	sed -i 's/sky130.lyp/sky130B.lyp/g' "$PDK_ROOT/sky130B/libs.tech/klayout/tech/sky130B.lyt"
-	sed -i '/<base-path>/c\ <base-path/>' "$PDK_ROOT/sky130B/libs.tech/klayout/tech/sky130B.lyt"
-	# shellcheck disable=SC2016
-	sed -i '/<original-base-path>/c\ <original-base-path>$PDK_ROOT/$PDK/libs.tech/klayout</original-base-path>' "$PDK_ROOT/sky130B/libs.tech/klayout/tech/sky130B.lyt"
-fi
-
 ######################
 # INSTALL GF180MCU PDK
 ######################
@@ -198,6 +184,20 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	# Fix missing PDK variant in path definitions for in xschemrc
 	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuD/libs.tech/ngspice|' "$PDK_ROOT/gf180mcuD/libs.tech/xschem/xschemrc"
 
+	# The xschem "Create FET .save file" menu entry runs "mkdir -p $netlist_dir"
+	# -- a shell command -- from Tcl, so clicking it aborts with
+	# `invalid command name "mkdir"` and no .save file is written. Tcl's own
+	# `file mkdir` is the exact equivalent: it creates parent directories and
+	# does not complain about an existing one. The IHP PDKs fixed the same
+	# defect upstream (iic-jku/IHP-Open-PDK#61).
+	XSCHEM_MENU="$PDK_ROOT/gf180mcuD/libs.tech/xschem/xschem-menu"
+	if grep -q '^[[:space:]]*mkdir -p \$netlist_dir[[:space:]]*$' "$XSCHEM_MENU"; then
+		sed -i 's/^\([[:space:]]*\)mkdir -p \$netlist_dir[[:space:]]*$/\1file mkdir $netlist_dir/' "$XSCHEM_MENU"
+		echo "[INFO] Replaced 'mkdir -p' by 'file mkdir' in $XSCHEM_MENU"
+	else
+		echo "[WARN] 'mkdir -p \$netlist_dir' not found in $XSCHEM_MENU (already fixed upstream?)"
+	fi
+
 	# Fix incorrect sky130 model reference in gf180mcuD xschem transistor symbols.
 	# The OP annotation tcleval expressions incorrectly use msky130_fd_pr__@model
 	# instead of m0 (the actual internal MOSFET element name in gf180mcu subcircuits).
@@ -227,6 +227,9 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	#  - it reads efuse.gds from /home/$USER/.klayout/pymacros/cells/efuse,
 	#    where nothing ever installs it -- the GDS ships next to the module.
 	# See patches/gf180mcu-efuse.patch for the full change.
+	# Not reported upstream yet. Drop this once
+	# fossi-foundation/globalfoundries-pdk-libs-gf180mcu_fd_pr fixes it and
+	# open_pdks ships that revision.
 	(
 		cd "$PDK_ROOT/gf180mcuD/libs.tech/klayout/tech/pymacros" || exit 1
 		git apply /images/open_pdks/patches/gf180mcu-efuse.patch

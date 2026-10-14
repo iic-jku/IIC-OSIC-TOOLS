@@ -9,7 +9,6 @@ import cocotb
 import edalize
 import fusesoc
 import gdsfactory
-import gdsfill
 import gdspy
 import najaeda
 import librelane

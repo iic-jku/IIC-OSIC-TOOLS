@@ -53,36 +53,39 @@ pip3 install $PIP_FLAGS --ignore-installed \
 # amaranth deliberately without [builtin-yosys]: that extra pulls in the
 # WASM-based amaranth-yosys + wasmtime (~75 MB); amaranth uses the native
 # yosys from PATH instead
+#
+# cace is held at 2.11.0 and ciel at 2.x: every librelane release (up to
+# 3.0.14 / 3.1.0.dev3) requires ciel<3, while cace>=2.12.0 requires ciel>=3.0.0.
+# Bump cace (and ciel) only once librelane accepts ciel 3.
 pip3 install $PIP_FLAGS \
-	"amaranth==0.5.9" \
+	"amaranth==0.5.10" \
 	cace==2.11.0 \
 	chipify==0.2.2 \
 	ciel==2.6.1 \
-	cocotb==2.0.1 \
+	cocotb==2.1.0 \
 	cocotbext-ams==0.1.0 \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
-	fusesoc==2.4.6 \
-	gds2palace==0.4.0 \
-	gdsfactory==9.48.0 \
-	gdsfill==0.1.8 \
+	fusesoc==2.4.7 \
+	gds2palace==0.8.0 \
+	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.3.15 \
+	klayout-pex==0.6.6 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev3 \
-	najaeda==0.7.20 \
+	najaeda==0.7.29 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
-	pyuvm==4.0.1 \
+	pyuvm==5.0.0 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.1.0 \
-	setupEM==0.3.15 \
-	siliconcompiler==0.38.5 \
-	snp2le==0.1.7 \
-	spicelib==1.6.3 \
+	setupEM==0.12.0 \
+	siliconcompiler==0.38.10 \
+	snp2le==0.1.17 \
+	spicelib==1.6.4 \
 	spyci==1.0.2
 
 # librelane's Toolbox.get_lib_voltage() is the only Liberty reader in the flow
@@ -106,9 +109,11 @@ python3 -m py_compile "$LIBRELANE_TOOLBOX"
 
 # The four packages pulling in PySide6 (chipify, snp2le, gds2palace, setupEM)
 # only use QtWidgets/QtCore/QtGui/QtSvg, all of which live in
-# PySide6-Essentials. The PySide6-Addons half (~340 MB, dominated by a 254 MB
-# embedded Chromium in QtWebEngine, plus Qt3D/Quick3D/Designer/Multimedia) is
-# not imported by anything in the image, so remove it.
+# PySide6-Essentials. The rest is not imported by anything in the image, so
+# remove it: PySide6-Addons (Qt3D/Quick3D/Multimedia/Charts, ...) and, split off
+# from Addons since 6.12, PySide6-WebEngine (~270 MB, an embedded Chromium) and
+# PySide6-Pdf. Before 6.12 Addons held all three, and pip skips the two names
+# that are not installed.
 #
 # Catch: the Essentials and Addons wheels BOTH ship the shared top-level PySide6
 # files (PySide6/__init__.py, _config.py, __feature__.py, _git_pyside_version.py),
@@ -121,14 +126,18 @@ python3 -m py_compile "$LIBRELANE_TOOLBOX"
 #
 # The PySide6 meta-package is kept on purpose: gds2palace and setupEM depend on it
 # by name, so removing it would leave their dependency unsatisfied. pip check will
-# note the meta-package wants Addons, which is harmless at runtime.
-echo "[INFO] Removing unused PySide6-Addons (QtWebEngine, Qt3D, ...)"
+# note the meta-package wants the removed wheels, which is harmless at runtime.
+# Since 6.12 the .pyi stubs of the removed modules (Qt3D*, QtWebEngine*, ...) are
+# shared by the meta-package and the removed wheels only, so the uninstall deletes
+# them too. Reinstall the meta-package as well, or its RECORD lists files that are
+# gone (test 03 checks).
+echo "[INFO] Removing unused PySide6-Addons, -WebEngine and -Pdf"
 # Pin the reinstall to the version already resolved above, so it cannot pull a
 # newer PySide6-Essentials that mismatches the installed shiboken6.
 PYSIDE6_VER=$(pip3 show PySide6-Essentials | awk '/^Version:/{print $2}')
 [ -n "$PYSIDE6_VER" ] || { echo "[ERROR] PySide6-Essentials not installed"; exit 1; }
-pip3 uninstall -y --break-system-packages PySide6-Addons
-pip3 install $PIP_FLAGS --no-deps --force-reinstall "PySide6-Essentials==${PYSIDE6_VER}"
+pip3 uninstall -y --break-system-packages PySide6-Addons PySide6-WebEngine PySide6-Pdf
+pip3 install $PIP_FLAGS --no-deps --force-reinstall "PySide6-Essentials==${PYSIDE6_VER}" "PySide6==${PYSIDE6_VER}"
 
 # What is left of PySide6 is still the largest Qt stack in the image, several
 # times the size of the system Qt6 that the C++ tools share. Two directories of
@@ -152,8 +161,8 @@ rustup default stable
 # Pinned with the crate@version form rather than --version: cargo accepts that
 # flag only for a single crate, so a second one would break the invocation.
 cargo install \
-	gdscheck@0.1.2 \
-	gdsfill@0.1.8 \
+	gdscheck@0.2.0 \
+	gdsfill@0.1.11 \
 	--root "${TOOLS}"
 
 # The venvs use --system-site-packages so large dependencies already in the

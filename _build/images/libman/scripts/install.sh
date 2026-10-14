@@ -16,22 +16,27 @@ qmake6 CONFIG+=no_core ../libman.pro
 export CAPNP_SKIP_CHECK=1
 make -j1 capnp_install
 # This target clones the LStream schemas from codeberg.org, which is markedly
-# less reliable than GitHub (seen in the wild: HTTP 504 after a 30s hang). The
-# upstream script is idempotent -- it skips the clone once .deps/lstream/.git
-# exists and re-checks the target revision -- so retrying is safe.
+# less reliable than GitHub (seen in the wild: HTTP 502, and HTTP 504 after a
+# 30s hang). The upstream script is idempotent -- it skips the clone once
+# .deps/lstream/.git exists and re-checks the target revision -- so retrying is
+# safe. Codeberg outages have outlasted a two-minute window, so back off over
+# roughly ten minutes before giving up on an otherwise hour-long build.
+LSTREAM_ATTEMPTS=5
 lstream_done=0
-for attempt in 1 2 3; do
+for attempt in $(seq 1 "${LSTREAM_ATTEMPTS}"); do
     if make -j1 lstream_schemas; then
         lstream_done=1
         break
     fi
-    if [ "$attempt" -lt 3 ]; then
-        echo "[WARN] lstream_schemas failed (attempt ${attempt}/3), retrying" >&2
-        sleep $((attempt * 15))
+    if [ "$attempt" -lt "${LSTREAM_ATTEMPTS}" ]; then
+        delay=$((attempt * 30))
+        echo "[WARN] lstream_schemas failed (attempt ${attempt}/${LSTREAM_ATTEMPTS}), retrying in ${delay}s" >&2
+        sleep "${delay}"
     fi
 done
 if [ "$lstream_done" -ne 1 ]; then
-    echo "[ERROR] lstream_schemas failed after 3 attempts" >&2
+    echo "[ERROR] lstream_schemas failed after ${LSTREAM_ATTEMPTS} attempts;" >&2
+    echo "[ERROR] check https://status.codeberg.org and rerun the build." >&2
     exit 1
 fi
 unset CAPNP_SKIP_CHECK

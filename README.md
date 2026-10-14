@@ -151,6 +151,13 @@ export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
 ```
 
+The image also ships ETH Zurich's [EZ130 8T](https://iip.ethz.ch/ez-library/ihp130-8t.html)
+8-track standard-cell library (v1.1, 220 cells) next to `sg13g2_stdcell` in
+`$PDK_ROOT/ihp-sg13g2/libs.ref/ez130_8t` (Liberty, LEF, GDS, Verilog, CDL, datasheets).
+Use it together with its own technology LEF `lef/ez130_sg13g2_tech.lef`, not the
+stock `sg13g2_tech.lef`, as the routing pitches differ. There is no LibreLane
+configuration for it yet, so `STD_CELL_LIBRARY=ez130_8t` does not work in LibreLane.
+
 | IHP Microelectronics `ihp-sg13cmos5l` |
 |---|
 
@@ -205,8 +212,9 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [gmsh](https://gmsh.info/) three-dimensional finite element mesh generator
 - [gtkwave](https://github.com/gtkwave/gtkwave) waveform plot tool for digital simulation
 - [hdl21](https://github.com/dan-fritchman/Hdl21) analog hardware description library
+- [icestorm](https://github.com/YosysHQ/icestorm) bitstream tools for Lattice iCE40 FPGAs, providing `icepack` and `iceprog`
 - [ihp-sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130 nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
-- [ihp-sg13cmos5l](https://github.com/IHP-GmbH/ihp-sg13cmos5l) IHP Microelectronics 130 nm CMOS PDK (M1-M4-TM1 metal stack)
+- [ihp-sg13cmos5l](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130 nm CMOS PDK (M1-M4-TM1 metal stack), shipped in the same repository as `ihp-sg13g2`
 - [irsim](https://github.com/rtimothyedwards/irsim) switch-level digital simulator
 - [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
 - [kactus2](https://github.com/kactus2/kactus2dev) Kactus2 is a graphical editor for IP-XACT files, which are used to describe hardware components and their interfaces
@@ -218,10 +226,12 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [magic](https://github.com/rtimothyedwards/magic) layout editor with DRC and PEX
 - [najaeda](https://github.com/najaeda/naja) data structures and APIs for the development of post logic synthesis EDA algorithms
 - [netgen](https://github.com/rtimothyedwards/netgen) netlist comparison (LVS)
+- [nextpnr](https://github.com/YosysHQ/nextpnr) FPGA place-and-route for Lattice iCE40 (`nextpnr-ice40`) and Lattice ECP5 (`nextpnr-ecp5`)
 - [ngspice](http://ngspice.sourceforge.net) SPICE analog and mixed-signal simulator, with OSDI support
 - [ngspyce](https://github.com/ignamv/ngspyce) Python bindings for `ngspice`
 - [nvc](https://github.com/nickg/nvc) VHDL simulator and compiler
 - [open_pdks](https://github.com/RTimothyEdwards/open_pdks) PDK setup scripts
+- [opencdc](https://github.com/Ayoubbelguellaoui/CDC) static clock domain crossing (CDC) checker for Verilog/SystemVerilog RTL
 - [openems](https://github.com/thliebig/openEMS) electromagnetic field solver using the EC-FDTD method
 - [openram](https://github.com/VLSIDA/OpenRAM) OpenRAM Python library
 - [openroad](https://github.com/The-OpenROAD-Project/OpenROAD) RTL2GDS engine used by `librelane`
@@ -230,6 +240,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [osic-multitool](https://github.com/iic-jku/osic-multitool) collection of useful scripts and documentation
 - [padring](https://github.com/donn/padring) padring generation tool
 - [palace](https://github.com/awslabs/palace) 3D finite element solver for computational electromagnetics
+- [prjtrellis](https://github.com/YosysHQ/prjtrellis) bitstream tools and database for Lattice ECP5 FPGAs, providing `ecppack`
 - [pulp-tools](https://github.com/pulp-platform/pulp) PULP platform tools consisting of [bender](https://github.com/pulp-platform/bender), [verible](https://github.com/chipsalliance/verible), and [sv2v](https://github.com/zachjs/sv2v)
 - [pygmid](https://github.com/dreoilin/pygmid) Python version of the gm/Id starter kit from Boris Murmann
 - [pyopus](https://codeberg.org/arpadbuermen/PyOPUS) simulation runner and optimization tool for analog circuits

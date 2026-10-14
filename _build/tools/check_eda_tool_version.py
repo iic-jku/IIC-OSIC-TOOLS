@@ -25,6 +25,13 @@ import argparse
 import sys
 import os
 import re
+import warnings
+
+# The macOS system Python is built against LibreSSL, and urllib3 v2 warns
+# about it on import (urllib3/urllib3#3020). The HTTPS requests below work
+# regardless, so silence that one warning.
+warnings.filterwarnings("ignore", message="urllib3 v2 only supports OpenSSL")
+
 import requests
 
 from packaging import version

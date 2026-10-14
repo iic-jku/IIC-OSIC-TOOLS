@@ -3,11 +3,15 @@
 * verifies that SPICE_USERINIT_DIR points at the cmos5l PDK.
 .lib cornerCAP.lib cap_typ
 
-* w=5u l=5u, Metal1..Metal4 (N=4), feed=double -> 16.2977 fF
+* The bare array of this geometry is 20.3721 fF; each feed mode adds its own
+* feed term on top, so the two values below also pin that the feed parameter
+* still reaches the model (they differ by 0.14 fF, i.e. 14x the tolerance).
+*
+* w=5u l=5u, Metal1..Metal4 (N=4), feed=double -> 21.1123 fF
 V1 a 0 dc 0 ac 1
 X1 a 0 cap_cmomi w=5e-6 l=5e-6 mmin=1 mmax=4 feed=double
 
-* same geometry with the single-side feed -> 21.6737 fF (adds the feed cap)
+* same geometry with the single-side feed -> 21.2551 fF
 V2 b 0 dc 0 ac 1
 X2 b 0 cap_cmomi w=5e-6 l=5e-6 mmin=1 mmax=4 feed=same
 
@@ -18,12 +22,12 @@ let c_double = imag(-i(v1))/(2*pi*f)
 let c_same   = imag(-i(v2))/(2*pi*f)
 * The expected values are the PCell's own C-label formula, so a drift here means
 * layout and model no longer agree.
-if abs(c_double[0] - 16.2977e-15) > 1e-17
+if abs(c_double[0] - 21.1123e-15) > 1e-17
   echo "FAIL cap_cmomi feed=double"
 else
   echo "PASS cap_cmomi feed=double"
 end
-if abs(c_same[0] - 21.6737e-15) > 1e-17
+if abs(c_same[0] - 21.2551e-15) > 1e-17
   echo "FAIL cap_cmomi feed=same"
 else
   echo "PASS cap_cmomi feed=same"

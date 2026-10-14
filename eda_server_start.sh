@@ -84,14 +84,14 @@ while getopts "hcdkp:n:s:f:g:l:m:t:" flag; do
             ;;
         h)
          	echo
-            echo "Spinning up Docker instances for EDA users (ICD@JKU)"
+            echo "Spinning up container instances for EDA users (ICD@JKU)"
             echo
             echo "Usage: $0 [-h] [-d] [-c] [-k] [-p port_number] [-n number_instances] [-g user_group] [-s passwd_digits] [-f credential_file] [-l data_directory] [-m cont_prefix] [-t image_tag]"
             echo
             echo "       -h shows a help screen"
             echo "       -d enables the debug mode"
             echo "       -c cleans the user-file directories"
-            echo "       -k stops and removes running containers"
+            echo "       -k stops and removes existing containers"
             echo "       -p sets the starting port number (default $START_PORT)"
             echo "       -n sets the number of container instances that are generated (default $NUMBER_USERS)"
             echo "       -g sets the used group-ID (default $EDA_USER_GROUP)"
@@ -99,7 +99,7 @@ while getopts "hcdkp:n:s:f:g:l:m:t:" flag; do
             echo "       -f sets the name of the credentials file (default $EDA_CREDENTIAL_FILE)"
             echo "       -l sets the directory of the user homes (default $EDA_USER_HOME)"
             echo "       -m sets the name prefix of the container (default $EDA_CONTAINER_PREFIX)"
-            echo "       -t sets the Docker image tag to use (default $EDA_IMAGE_TAG)"
+            echo "       -t sets the container image tag to use (default $EDA_IMAGE_TAG)"
             echo
             exit 0
             ;;
@@ -113,7 +113,7 @@ shift $((OPTIND-1))
 
 # Print a bit of status information
 [ "$DEBUG" = 1 ] && [ "$DO_CLEAN" = 1 ] && echo "[INFO] Cleaning user directories is selected."
-[ "$DEBUG" = 1 ] && [ "$DO_KILL" = 1 ] && echo "[INFO] Stopping and removing the running containers is selected."
+[ "$DEBUG" = 1 ] && [ "$DO_KILL" = 1 ] && echo "[INFO] Stopping and removing the existing containers is selected."
 [ "$DEBUG" = 1 ] && echo "[INFO] Starting port number is $START_PORT."
 [ "$DEBUG" = 1 ] && echo "[INFO] User group is $EDA_USER_GROUP."
 [ "$DEBUG" = 1 ] && echo "[INFO] User home directories located in $EDA_USER_HOME."
@@ -121,7 +121,7 @@ shift $((OPTIND-1))
 [ "$DEBUG" = 1 ] && echo "[INFO] Number of password digits is $PASSWD_DIGITS."
 [ "$DEBUG" = 1 ] && echo "[INFO] User credentials are stored in $EDA_CREDENTIAL_FILE."
 [ "$DEBUG" = 1 ] && echo "[INFO] Container name prefix is $EDA_CONTAINER_PREFIX."
-[ "$DEBUG" = 1 ] && echo "[INFO] Docker image tag is $EDA_IMAGE_TAG."
+[ "$DEBUG" = 1 ] && echo "[INFO] Container image tag is $EDA_IMAGE_TAG."
 
 # Here is a function for the actual work
 _spin_up_server () {
@@ -133,7 +133,8 @@ _spin_up_server () {
     local passwd="$2"
     local webport="$3"
 
-    DESIGNS=$(realpath "$EDA_USER_HOME/$username") && export DESIGNS
+    # Resolve the existing parent only, macOS realpath fails on missing paths
+    DESIGNS="$(realpath "$EDA_USER_HOME")/$username" && export DESIGNS
     export VNC_PW="$passwd"
     export CONTAINER_NAME="$EDA_CONTAINER_PREFIX-$username"
     export WEBSERVER_PORT="$webport"
@@ -142,12 +143,14 @@ _spin_up_server () {
 
     [ "$DEBUG" = 1 ] && echo "[INFO] Spinning up container $CONTAINER_NAME using data directory $DESIGNS, webserver port $WEBSERVER_PORT, VNC password $VNC_PW, group-ID $CONTAINER_GROUP, container tag $DOCKER_TAG."
 
-    if [ "$(${CONTAINER_ENGINE} ps -q -f name="${CONTAINER_NAME}")" ]; then
+    # Also catch stopped containers (e.g. after a host reboot without
+    # podman-restart.service), for which start_vnc.sh would prompt.
+    if [ "$(${CONTAINER_ENGINE} ps -a -q -f name="${CONTAINER_NAME}")" ]; then
         if [ "$DO_KILL" = 0 ]; then
-            echo "[ERROR] Running container $CONTAINER_NAME detected without the -k option!"
+            echo "[ERROR] Existing container $CONTAINER_NAME detected without the -k option!"
             return 1
         fi
-        [ "$DEBUG" = 1 ] && echo "[INFO] Container $CONTAINER_NAME running, will now stop and remove it!"
+        [ "$DEBUG" = 1 ] && echo "[INFO] Container $CONTAINER_NAME exists, will now stop and remove it!"
         if ! ${CONTAINER_ENGINE} stop "${CONTAINER_NAME}" > /dev/null; then
             echo "[ERROR] Failed to stop container $CONTAINER_NAME"
             return 1
@@ -179,9 +182,10 @@ _spin_up_server () {
         fi
     fi
 
-    # Now spinning up the EDA container using standard scripts
+    # Now spinning up the EDA container using standard scripts, in a
+    # subshell, so that its "exit" on errors does not end this loop
     # shellcheck source=/dev/null
-    if ! source start_vnc.sh; then
+    if ! ( source start_vnc.sh ); then
         echo "[ERROR] Failed to start container for user $username"
         return 1
     fi
@@ -302,6 +306,10 @@ if ! command -v jq >/dev/null 2>&1; then
   echo "[ERROR] The program jq is not installed!"
   exit 1
 fi
+if ! _check_container_engine; then
+    exit 1
+fi
+_hint_other_engine "$EDA_CONTAINER_PREFIX"
 
 # Here is the loop
 if [ -e "$EDA_CREDENTIAL_FILE" ]; then

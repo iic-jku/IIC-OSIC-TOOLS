@@ -1,13 +1,16 @@
 # SPDX-FileCopyrightText: 2022-2026 Harald Pretl and Georg Zachl
 # Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
-# shellcheck shell=bash
+# shellcheck shell=dash
 #
 # Single source of truth for the IIC-OSIC-TOOLS shell environment.
 # This file is sourced from /etc/profile (login shells) and from
 # /headless/.bashrc (interactive shells); a guard prevents double init.
+# Keep it parseable by dash: the login shell can be /bin/sh (Podman adds a
+# passwd entry with /bin/sh for the container UID), and a syntax error aborts
+# `sh -l`, which PyOPUS spawns to read the environment (pyopus/misc/env.py).
 
-function _path_add_tool() {
+_path_add_tool() {
     local tool_name=$1
     local d
     for d in "$TOOLS/$tool_name" ; do
@@ -17,7 +20,7 @@ function _path_add_tool() {
     done
 }
 
-function _path_add_tool_custom() {
+_path_add_tool_custom() {
     local custom_path=$1
     local d
     for d in "$TOOLS/$custom_path/" ; do
@@ -27,7 +30,7 @@ function _path_add_tool_custom() {
     done
 }
 
-function _path_add_tool_python() {
+_path_add_tool_python() {
     local tool_name=$1
     local d
     for d in "$TOOLS/$tool_name"/local/lib/python3*/dist-packages ; do
@@ -37,10 +40,10 @@ function _path_add_tool_python() {
     done
 }
 
-function _add_resolution () {
+_add_resolution() {
     # $1=X, $2=Y
     # Do only in VNC mode
-    if [ -v VNCDESKTOP ]; then
+    if [ -n "${VNCDESKTOP+x}" ]; then
         local x=$1 y=$2
         local mline mline_trim
         # and only when resolution not yet available
@@ -170,5 +173,5 @@ fi
 
 if [ -n "${DESIGNS}" ] && [ -f "$DESIGNS/.designinit" ]; then
     # shellcheck source=/dev/null
-    source "$DESIGNS/.designinit"
+    . "$DESIGNS/.designinit"
 fi

@@ -26,7 +26,7 @@
 # the MIME package nor sak-open.py claims one.
 
 if [ -z "${RAND}" ]; then
-    RAND=$(hexdump -e '/1 "%02x"' -n4 < /dev/urandom)
+    RAND=$(hexdump -v -e '/1 "%02x"' -n4 < /dev/urandom)
 fi
 
 # test output is kept out of the bind-mounted source tree (see run_integration_tests.sh)

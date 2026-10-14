@@ -17,7 +17,15 @@ macOS the podman machine already maps the host user, so nothing is added there.
 
 ## Test output
 
-Logs, work dirs and cloned repositories of a full run add up to several GB, so they are *not* written into this source tree (which is bind-mounted into the container) but into `/tmp/iic-osic-tools-tests/<run-id>`. `run_integration_tests.sh` prints the exact location at the start of the run and keeps it afterwards for post-mortem analysis, so remove old run dirs manually when you no longer need them.
+Logs, work dirs and cloned repositories of a full run add up to several GB, so they are *not* written into this source tree (which is bind-mounted into the container) but into `/tmp/iic-osic-tools-tests/<run-id>`. `run_integration_tests.sh` prints the exact location at the start of the run.
+
+Each test logs to `logs/<NN>_<test>.log` in the run dir and writes its work files below `<NN>/`. When a test passes, both are deleted right away, so after the run the run dir holds the joblog (`joblog.tsv`, runtime and exit status of every test) and the logs and work dirs of the failed tests only. Set `IIC_TEST_KEEP_PASSED=1` to keep the data of the passing tests as well. The run dir itself stays for post-mortem analysis, so remove old run dirs manually when you no longer need them.
+
+## Progress display
+
+On a terminal the runner shows one live status line instead of the output of every test: a progress bar, finished and failed counts, the elapsed time and the tests still running. A failing test is printed above that line as soon as it finishes, with the path to its log and its last `[ERROR]` lines. The container's own output (the summary at the end, parallel messages) goes to `runner.log` in the run dir and is printed when the run is done. Ctrl-C stops the container.
+
+Redirected output (a file, a pipe, CI) keeps the plain output of every test, and `IIC_TEST_PROGRESS=0` selects that on a terminal too.
 
 Set `IIC_TEST_RUNDIR=<path>` to collect the output somewhere else, for example on a larger volume:
 
@@ -37,7 +45,7 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | 01       | LibreLane with sky130A                                                                                                          |
 | 02       | DRC and LVS with sky130A                                                                                                        |
-| 03       | Import of Python packages                                                                                                       |
+| 03       | Import of Python packages (and the `gdsfill` CLI, which is no longer a Python package)                                           |
 | 04       | LibreLane with gf180mcuD                                                                                                        |
 | 05       | ngspice with SG13G2                                                                                                             |
 | 06       | ngspice with sky130A                                                                                                            |
@@ -55,7 +63,7 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 18       | LibreLane with ihp-sg13g2                                                                                                       |
 | 19       | LibreLane with ihp-sg13cmos5l                                                                                                   |
 | 20       | [AMS chip template](https://github.com/iic-jku/ihp-sg13g2-ams-chip-template) with ihp-sg13g2                                    |
-| 21       | [analog circuit design](https://github.com/iic-jku/analog-circuit-design) xschem/ngspice simulation testbenches with ihp-sg13g2 |
+| 21       | [analog circuit design](https://github.com/iic-jku/analog-circuit-design) xschem/ngspice simulation testbenches with ihp-sg13cmos5l |
 | 22       | [SPARX](https://github.com/iic-jku/SG13CMOS_SPARX) six-port receiver with ihp-sg13g2                                            |
 | 23       | Smoke/regression test of sak-lvs.sh (all PDKs, Magic+Netgen and KLayout)                                                        |
 | 24       | Smoke/regression test of sak-drc.sh (all PDKs, Magic and KLayout)                                                               |
@@ -66,3 +74,12 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 29       | cap_cmomi MoM capacitor with ihp-sg13cmos5l (ngspice OSDI and VACASK model conversion)                                          |
 | 30       | xdg-mime defaults (every design file type resolves to its intended application, and covers all of sak-open.py)                  |
 | 31       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) (DRC, LVS, PEX) with ihp-sg13cmos5l         |
+| 32       | [AMS chip template](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template) with ihp-sg13cmos5l                            |
+| 33       | FPGA place-and-route flows (an iCE40 and an ECP5 blinky through synthesis, place-and-route and bitstream packing)               |
+| 34       | KLayout GUI DRC/LVS run directory patch of both IHP PDKs (resolved against the layout file, `%top_cell%` placeholder)           |
+| 35       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) PEX bench (Magic, kpex 2.5D) with all PDKs  |
+| 36       | VACASK model conversion of both IHP PDKs (corner sections and xschem models symbol load, MOSCAP/MoM/Schottky against ngspice)   |
+| 37       | VACASK `absdelay` (OSDI 0.5 compiler and shipped models, compiler found without `$TOOLS/bin` on `PATH`, ideal line delay)       |
+| 38       | KLayout standard-cell libraries of both IHP PDKs (LV and HV cells registered for the Instance dialog)                           |
+| 39       | PyOPUS with ngspice (performance evaluator, cost report, threaded plotter ported to PySide6)                                    |
+| 40       | ngspice mixed-signal co-simulation (`d_cosim` counter with Icarus Verilog through `ivlng` and Verilator through `vlnggen`)      |

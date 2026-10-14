@@ -6,51 +6,44 @@
 set -e
 cd /tmp || exit 1
 
-# OpenROAD needs SWIG >= 4.3, but Ubuntu 24.04 ships 4.2.0
-SWIG_PREFIX="/usr/local"
-SWIG_VERSION=4.3.0
-echo "[INFO] Installing SWIG version $SWIG_VERSION into $SWIG_PREFIX"
-cd /tmp || exit 1
-git clone --depth=1 -b "v${SWIG_VERSION}" https://github.com/swig/swig.git
-cd swig || exit 1
-./autogen.sh
-./configure --prefix="${SWIG_PREFIX}"
-make -j"$(nproc)"
-make install
-
-# OpenROAD needs spdlog 1.15.1, so we update it here (packaged version is 1.8.1 for openroad-librelane)
-SPDLOG_PREFIX="/usr/local"
-SPDLOG_VERSION=1.15.1
-echo "[INFO] Installing SPDLOG version $SPDLOG_VERSION into $SPDLOG_PREFIX"
-cd /tmp || exit 1
-git clone --depth=1 -b "v${SPDLOG_VERSION}" https://github.com/gabime/spdlog.git
-cd spdlog || exit 1
-cmake -DCMAKE_INSTALL_PREFIX="${SPDLOG_PREFIX}" -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DSPDLOG_BUILD_EXAMPLE=OFF -B build .
-cmake --build build -j "$(nproc)" --target install
-
-# --------------------------------------------------------------
-
-cd /tmp || exit 1
+# OpenROAD deprecated its CMake build (removal on Nov. 1, 2026), Bazel is the
+# supported build system. Bazel fetches a hermetic LLVM toolchain and all
+# dependencies (Qt, Tcl, Boost, SWIG, spdlog, ...) itself; bazelisk and the
+# few system libraries it links against come from base-dev.
 git clone --filter=blob:none "${OPENROAD_REPO_URL}" "${OPENROAD_NAME}"
 cd "${OPENROAD_NAME}" || exit 1
 git checkout "${OPENROAD_REPO_COMMIT}"
 git submodule update --init --recursive
-mkdir -p build && cd build
-cmake .. \
-    -DCMAKE_INSTALL_PREFIX="${TOOLS}/${OPENROAD_NAME}" \
-    -DSWIG_EXECUTABLE="${SWIG_PREFIX}/bin/swig" \
-    -DUSE_SYSTEM_BOOST=ON \
-    -DENABLE_TESTS=OFF \
-    -DBUILD_GUI=ON
-make -j"$(nproc)"
-make install
+
+# Same flags as upstream etc/Build.sh: --config=release stamps the real
+# `git describe` version and includes --config=opt (-O3, ThinLTO).
+BAZEL_ARGS=("--jobs=$(nproc)" "--config=release" "--//:platform=gui")
+# On aarch64, qt-bazel links the real system X11/xcb/xkbcommon libraries
+# instead of interface stubs. These need newer glibc symbol versions (e.g.
+# __isoc23_strtol@GLIBC_2.38) than the toolchain's glibc 2.28 link stubs
+# provide, so lld's default --no-allow-shlib-undefined fails the link. The
+# system glibc resolves them at runtime, so let the link through.
+# Qt's qsimd.cpp calls getenv() without <stdlib.h>. On x86 <immintrin.h> pulls
+# it in, on aarch64 nothing does since libc++ 23 (hermetic-llvm 0.8.24,
+# OpenROAD #11699). Force the include for the target and exec (moc) builds
+# until qt_bazel_prebuilts adds it, as c3319f9e did for qxcbatom.cpp.
+if [ "$(arch)" == "aarch64" ]; then
+    BAZEL_ARGS+=("--linkopt=-Wl,--allow-shlib-undefined")
+    BAZEL_ARGS+=("--per_file_copt=qsimd\.cpp@-include,stdlib.h")
+    BAZEL_ARGS+=("--host_per_file_copt=qsimd\.cpp@-include,stdlib.h")
+fi
+bazelisk build "${BAZEL_ARGS[@]}" //:openroad //src/sta:opensta
+bazelisk run "${BAZEL_ARGS[@]}" //:install -- "${TOOLS}/${OPENROAD_NAME}"
+# //:install only ships openroad; add the standalone OpenSTA binary as the
+# CMake build did (used as OPENSTA_EXE by ORFS)
+install -m 755 bazel-bin/src/sta/opensta "${TOOLS}/${OPENROAD_NAME}/bin/sta"
 
 # Get ORFS GitHub hash that works with this OR version
 ORFS_COMMIT=$(git ls-remote https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git HEAD | cut -f 1)
 echo "$ORFS_COMMIT" > "${TOOLS}/${OPENROAD_NAME}/ORFS_COMMIT"
 
-# Remove static link libraries (~90 MB libOpenSTA.a); only needed for
-# linking against OpenSTA, not at runtime
-find "${TOOLS}/${OPENROAD_NAME}" -type f -name "*.a" -delete
+# Drop the Bazel output base and caches (many GB), they are build-time only
+bazelisk shutdown
+rm -rf "${HOME}/.cache/bazel" "${HOME}/.cache/bazel-disk-cache" "${HOME}/.cache/bazel-repository-cache" "${HOME}/.cache/bazelisk"
 
 echo "${OPENROAD_NAME} ${OPENROAD_REPO_COMMIT}" > "${TOOLS}/${OPENROAD_NAME}/SOURCES"

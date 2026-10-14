@@ -43,7 +43,7 @@ while getopts "hdm:" flag; do
 			;;	
 		h)
 			echo
-			echo "Stopping Docker instances for EDA users (ICD@JKU)"
+			echo "Stopping container instances for EDA users (ICD@JKU)"
 			echo
 			echo "Usage: $0 [-h] [-d] [-m cont_prefix]"
 			echo
@@ -61,13 +61,21 @@ shift $((OPTIND-1))
 
 # Snapshot the matching container IDs once, then iterate. This avoids an
 # infinite loop if stop/rm fails for any container (e.g. permission issues).
-echo "[INFO] Stopping and removing EDA containers."
+echo "[INFO] Stopping and removing EDA containers using $CONTAINER_ENGINE."
 NO_INSTANCES=0
 FAILED=0
-mapfile -t CONTAINER_IDS < <(${CONTAINER_ENGINE} ps -a -q -f name="$EDA_CONTAINER_PREFIX")
+# (no mapfile, which the bash 3.2 of macOS lacks)
+CONTAINER_IDS=()
+while IFS= read -r CONTAINER_ID; do
+	[ -n "$CONTAINER_ID" ] && CONTAINER_IDS+=("$CONTAINER_ID")
+done < <(${CONTAINER_ENGINE} ps -a -q -f name="$EDA_CONTAINER_PREFIX")
 
 if [ "${#CONTAINER_IDS[@]}" -eq 0 ]; then
 	echo "[INFO] No matching containers found."
+	_hint_other_engine "$EDA_CONTAINER_PREFIX"
+	if [ "$(_engine_kind "$CONTAINER_ENGINE")" = podman ] && [ "$(id -u)" != 0 ]; then
+		echo "[HINT] Rootless Podman containers are only visible to the user who started them."
+	fi
 	echo "[DONE] Bye!"
 	exit 0
 fi

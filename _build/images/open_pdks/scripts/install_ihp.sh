@@ -13,26 +13,42 @@ if [ ! -d "$PDK_ROOT" ]; then
     mkdir -p "$PDK_ROOT"
 fi
 
-# Install IHP-SG13G2
+# Install the IHP PDKs
+# SG13CMOS5L moved into the SG13G2 repository with IHP-Open-PDK#1124, so both
+# PDKs are fetched here in one clone: one commit, one repo-level versions.txt,
+# and both trees side by side under $PDK_ROOT. What follows below is the
+# SG13G2 post-processing; the CMOS5L one lives in install_ihp_cmos5l.sh.
 PDK="ihp-sg13g2"
+PDK_CMOS5L="ihp-sg13cmos5l"
 IHP_REPO_URL="https://github.com/iic-jku/IHP-Open-PDK.git"
 
-echo "[INFO] Installing IHP SG13G2 PDK."
+echo "[INFO] Installing the IHP PDKs."
 git clone "$IHP_REPO_URL" ihp
 cd ihp || exit 1
 # For now uses branch "dev" to get the latest releases
 git checkout dev
 git submodule update --init --recursive
 
-# Now move to the proper location
-if [ -d "$PDK" ]; then
-	mv "$PDK" "$PDK_ROOT/$PDK"
-else
-	echo "[ERROR] PDK directory '$PDK' not found after clone!"
-	exit 1
-fi
+# Store git hash of installed PDK version for reference. Both PDKs come from
+# this one commit, so both get the same hash.
+PDK_COMMIT=$(git rev-parse HEAD)
 
-# Copy the repo-level `versions.txt` next to the PDK (at $PDK_ROOT) so the KLayout DRC/LVS version check can find it.
+# Now move both PDKs to the proper location. They have to end up side by side:
+# CMOS5L reaches into SG13G2 through relative symlinks (../../ihp-sg13g2/...)
+# that resolve at $PDK_ROOT exactly as they do inside the repository, because
+# a PDK directory sits one level below the repository root in both places.
+for pdk in "$PDK" "$PDK_CMOS5L"; do
+	if [ -d "$pdk" ]; then
+		mv "$pdk" "$PDK_ROOT/$pdk"
+		echo "$PDK_COMMIT" > "$PDK_ROOT/$pdk/COMMIT"
+	else
+		echo "[ERROR] PDK directory '$pdk' not found after clone!"
+		exit 1
+	fi
+done
+
+# Copy the repo-level `versions.txt` next to the PDKs (at $PDK_ROOT) so the KLayout DRC/LVS version check can find it.
+# One file serves both PDKs: run_drc.py resolves it as <PDK_ROOT>/versions.txt (Path(__file__).parents[5]) for either.
 # This is mandatory since commit: https://github.com/IHP-GmbH/IHP-Open-PDK/commit/d54e4a48a3d34c555a038b64a0869cd295134376
 if [ -f "versions.txt" ]; then
 	cp "versions.txt" "$PDK_ROOT/versions.txt"
@@ -41,11 +57,8 @@ else
 	exit 1
 fi
 
-# Store git hash of installed PDK version for reference
-PDK_COMMIT=$(git rev-parse HEAD)
-echo "$PDK_COMMIT" > "${PDK_ROOT}/${PDK}/COMMIT"
-
-# Cleanup cloned repo to save space
+# Cleanup cloned repo to save space. ihp-common/ and the Makefiles that stay
+# behind are the build infrastructure of the PDK repository, not part of a PDK.
 cd /tmp || exit 1
 rm -rf ihp
 
@@ -82,78 +95,29 @@ else
     echo "[WARN] KLayout netlist import templates not found at $TEMPLATES_FILE"
 fi
 
-# The PCell library preprocesses every PCell module into /tmp/<module>_pre.py and
-# deletes it again. The name carries no process identity and both IHP PDKs use
-# the same module names, so two KLayout processes clobber each other's file and
-# the loser fails to register the library at all (0 PCells). CMOS5L ships its own
-# copy of __init__.py, so the fix lives in a shared helper that
-# install_ihp_cmos5l.sh runs as well.
-echo "[INFO] Making the PCell preprocessor temp file per-process."
-PYCELL_INIT="$PDK_ROOT/$PDK/libs.tech/klayout/python/sg13g2_pycell_lib/__init__.py"
-if [ -f "$PYCELL_INIT" ]; then
-    python3 "$PDK_SCRIPT_DIR/fix_pycell_tempfile.py" "$PYCELL_INIT"
-else
-    echo "[WARN] KLayout PCell library not found at $PYCELL_INIT"
-fi
+# Anchor the KLayout GUI DRC/LVS run directory to the layout file. The IHP menu
+# macros expand a relative run_dir against the working directory of the KLayout
+# process, so the same layout writes its reports to a different place depending
+# on how KLayout was started, and by default next to the GDS. The helper also
+# adds a %top_cell% placeholder, so one setting such as
+# ../verification/drc/%top_cell%.klayout.drc serves every cell of a project.
+# CMOS5L ships its own copies of these four macros rather than symlinks, so the
+# fix lives in a shared helper that install_ihp_cmos5l.sh runs as well.
+echo "[INFO] Fixing the KLayout GUI DRC/LVS run directory."
+python3 "$PDK_SCRIPT_DIR/fix_klayout_run_dir.py" "$PDK_ROOT/$PDK/libs.tech/klayout/tech/macros"
 
 # The IHP PDK renamed the IO netlist to libs.ref/sg13g2_io/spice/sg13g2_io.spice,
-# but several consumers still expect the old name sg13g2_io.spi:
-#   - libs.tech/librelane/config.tcl (PAD_SPICE_MODELS)
-#   - libs.tech/xschem/sg13g2_tests/sg13g2_IOPad_tb.sch
-#   - sg13g2tovc.py (VACASK PDK preparation below)
-# Provide the expected name via a symlink until the PDK is consistent again.
+# but libs.tech/xschem/sg13g2_tests/sg13g2_IOPad_tb.sch still includes the old
+# name sg13g2_io.spi. Provide it via a symlink until the PDK is consistent again.
 IO_SPICE_DIR="$PDK_ROOT/$PDK/libs.ref/sg13g2_io/spice"
 if [ ! -e "$IO_SPICE_DIR/sg13g2_io.spi" ] && [ -e "$IO_SPICE_DIR/sg13g2_io.spice" ]; then
 	echo "[INFO] Adding sg13g2_io.spi -> sg13g2_io.spice compatibility symlink."
 	ln -s sg13g2_io.spice "$IO_SPICE_DIR/sg13g2_io.spi"
 fi
 
-# The moscap_n/moscap_p callback entry in the KLayout PCell library is missing
-# the "usePcellParameterAsArgument" key that cni/dlo.py indexes unconditionally
-# in PCellDeclaration.coerce_parameters. The resulting KeyError is swallowed by
-# KLayout, produce() never runs and both PCells come out empty. CbMoscap_wl is
-# declared as `proc CbMoscap_wl {param}`, so the value has to be "true".
-# Remove this once https://github.com/IHP-GmbH/IHP-Open-PDK/issues/1083 is fixed.
-echo "[INFO] Fixing the moscap PCell callback definition."
-CALLBACKS_FILE="$PDK_ROOT/$PDK/libs.tech/klayout/python/sg13g2_pycell_lib/callbacks/callbacks.json"
-if [ -f "$CALLBACKS_FILE" ]; then
-    # Patched textually, not via a JSON round-trip: the file uses repeated "_"
-    # keys to carry its license header, and those collapse when re-serialized.
-    python3 - "$CALLBACKS_FILE" << 'PYEOF'
-import re
-import sys
-
-fname = sys.argv[1]
-with open(fname, 'r') as f:
-    content = f.read()
-
-# Match the pcellParameters line of the CbMoscap_wl callback, unless the key is
-# already there (upstream fix landed), and append it with the same indentation.
-pattern = re.compile(
-    r'("callback":\s*"CbMoscap_wl",\s*\n)'
-    r'(\s*)("pcellParameters":\s*\[[^\]]*\])'
-    r'(?!\s*,\s*\n\s*"usePcellParameterAsArgument")'
-)
-content, count = pattern.subn(
-    lambda m: '%s%s%s,\n%s"usePcellParameterAsArgument": "true"'
-              % (m.group(1), m.group(2), m.group(3), m.group(2)),
-    content
-)
-
-if count:
-    with open(fname, 'w') as f:
-        f.write(content)
-    print("[INFO] Added usePcellParameterAsArgument to the moscap callback in %s" % fname)
-else:
-    print("[WARN] moscap callback not patched in %s (already fixed upstream?)" % fname)
-PYEOF
-else
-    echo "[WARN] KLayout PCell callback definition not found at $CALLBACKS_FILE"
-fi
-
 # The sealring PCell stamps the PDK version into a label and obtains it by
 # shelling out to `git rev-parse` inside the PDK tree. There is no .git there
-# (SG13G2 is moved out of the clone above, CMOS5L deletes its own), so git prints
+# (both PDKs are moved out of the clone above), so git prints
 # "fatal: not a git repository" to stderr on every sealring instantiation and the
 # label ends up as "Unknown (Not a Git repo or Git not installed)". Use
 # the COMMIT file both IHP installers write next to the PDK instead, keep git as
@@ -263,39 +227,6 @@ else
     echo "[WARN] CNI shape classes not found at $CNI_DIR"
 fi
 
-# KLayout 0.30.10 no longer merges the first input of a two-layer DRC check.
-# The NBL rules pass the net-annotated nBuLay region unmerged, so edges that are
-# interior to the nBuLay area become visible to the check and get measured
-# against the second layer, which reports separations that do not exist. A
-# DRC-clean sg13_dnwell_inv (from iic-jku/open-pdks-regression-tests) fails with
-# 2x NBL.e and 1x NBL.f under 0.30.10 and is clean again with the merge back.
-# All three nbl_nets checks are the same construct; NBL.d is patched along with
-# the two that are known to misfire, since it is exposed in exactly the same way.
-# Remove this once https://github.com/KLayout/klayout/issues/2416 is resolved.
-echo "[INFO] Fixing the nBuLay DRC rules for KLayout >= 0.30.10."
-NBULAY_DRC="$PDK_ROOT/$PDK/libs.tech/klayout/tech/drc/rule_decks/feol/5_3_nbulay.drc"
-if [ -f "$NBULAY_DRC" ]; then
-    python3 - "$NBULAY_DRC" << 'PYEOF'
-import sys
-
-fname = sys.argv[1]
-with open(fname, 'r') as f:
-    content = f.read()
-
-# Naturally idempotent: the patched call no longer contains the searched text.
-count = content.count('nbl_nets.sep(')
-if count:
-    content = content.replace('nbl_nets.sep(', 'nbl_nets.merged.sep(')
-    with open(fname, 'w') as f:
-        f.write(content)
-    print("[INFO] Merged the first input of %d nBuLay check(s) in %s" % (count, fname))
-else:
-    print("[WARN] nBuLay checks not patched in %s (already fixed upstream?)" % fname)
-PYEOF
-else
-    echo "[WARN] nBuLay DRC rule deck not found at $NBULAY_DRC"
-fi
-
 # Remove testing folders to save space
 echo "[INFO] Removing unnecessary files to save space."
 cd "$PDK_ROOT/$PDK"
@@ -307,6 +238,10 @@ find . -name "*.mdm" -print0 | xargs -0 rm -rf
 
 # Remove measurement folder to save space
 rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
+
+# Add ETH Zurich's EZ130 8T standard-cell library as libs.ref/ez130_8t. This
+# runs before the Liberty compression below, which then covers it as well.
+bash "$PDK_SCRIPT_DIR/install_ez130.sh"
 
 # gzip Liberty (.lib) files
 bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/$PDK"
@@ -336,9 +271,54 @@ else
 	fi
 fi
 
-OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python \
-    python3 -m sg13g2tovc --openvaf-options --target_cpu generic
+# The converter names the model files it converts in a hardcoded list, while
+# the PDK is installed unpinned and drifts away from it in both directions: it
+# drops files the list still names (sg13g2_hbt_mod_mismatch.lib, folded into
+# sg13g2_hbt_mod.lib in 2026-09) and its corner files include files the list
+# does not name (sg13g2_dschottky_nbl1_stat.lib), up to a whole device
+# (cornerMOSCAP.lib). The list is reconciled with the PDK before the converter
+# runs, and every model file that sets SWSOA globally gets the patch upstream
+# only gives the MOS transistor files (shared with install_ihp_cmos5l.sh).
+# Verilog-A models the PDK ships but the converter does not compile (the MoM
+# capacitors cap_cmomi and cap_cmomf) are added as well.
+echo "[INFO] Checking the VACASK converter against the installed PDK."
+python3 "$PDK_SCRIPT_DIR/fix_sg13g2_vacask_converter.py" \
+	"/tmp/${VACASK_NAME}/python/src/vacask/sg13g2tovc.py" "$PDK_ROOT/$PDK"
+python3 "$PDK_SCRIPT_DIR/fix_vacask_swsoa.py" \
+	"/tmp/${VACASK_NAME}/python/src/vacask/sg13g2tovc.py" "$PDK_ROOT/$PDK"
+python3 "$PDK_SCRIPT_DIR/fix_sg13g2_vacask_va.py" \
+	"/tmp/${VACASK_NAME}/python/src/vacask/sg13g2tovc.py" "$PDK_ROOT/$PDK"
+
+OPENVAF_DIR=${TOOLS}/openvaf/bin PYTHONPATH=/tmp/${VACASK_NAME}/python/src \
+    python3 -m vacask.sg13g2tovc --openvaf-options --target_cpu generic
 cp /tmp/${VACASK_NAME}/demo/ihp-sg13g2/.vacaskrc.toml "$PDK_ROOT/$PDK/libs.tech/vacask/.vacaskrc.toml"
+
+# Every file the converted models include has to exist, or a deck pulling in
+# that section dies on the include even when it uses none of the devices behind
+# it. Same check as in install_ihp_cmos5l.sh, see there.
+echo "[INFO] Verifying the converted VACASK model includes resolve."
+VACASK_MODELS="$PDK_ROOT/$PDK/libs.tech/vacask/models"
+INCLUDE_MISSING=0
+for model in "$VACASK_MODELS"/*.lib; do
+	[ -f "$model" ] || continue
+	for inc in $(sed -n 's/^[[:space:]]*include[[:space:]]*"\([^"]*\)".*/\1/p' "$model" | sort -u); do
+		if [ ! -f "$(dirname "$model")/$inc" ]; then
+			echo "[ERROR] $(basename "$model") includes $inc, which was not converted!"
+			INCLUDE_MISSING=1
+		fi
+	done
+done
+if [ "$INCLUDE_MISSING" -ne 0 ]; then
+	echo "[ERROR] The VACASK model conversion is incomplete."
+	exit 1
+fi
+
+# Add the diode and MOSCAP corners to the "Add VACASK models symbol" menu
+# entry, which upstream limits to MOSlv, MOShv, HBT, RES and CAP. A local
+# addition, not a fix (shared with install_ihp_cmos5l.sh).
+echo "[INFO] Adding the diode and MOSCAP corners to the xschem VACASK menu."
+python3 "$PDK_SCRIPT_DIR/fix_xschem_vacask_menu.py" "$PDK_ROOT/$PDK" \
+	cornerDIO.lib=dio_tt cornerMOSCAP.lib=moscap_tt
 
 cd /tmp || exit 1
 rm -rf "${VACASK_NAME}"
