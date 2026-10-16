@@ -87,7 +87,7 @@ pip3 install $PIP_FLAGS \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.1.0 \
 	setupEM==0.12.0 \
-	siliconcompiler==0.38.10 \
+	siliconcompiler==0.38.11 \
 	snp2le==0.1.17 \
 	spicelib==1.6.4 \
 	spyci==1.0.2
