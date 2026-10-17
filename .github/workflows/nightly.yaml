@@ -14,7 +14,8 @@ name: "Nightly build"
 
 on:
   schedule:
-    - cron: "0 1 * * *"
+    # 23:00 UTC is 00:00 (CET) or 01:00 (CEST) in Linz, leaving the night for a full build and test run
+    - cron: "0 23 * * *"
   workflow_dispatch:
     inputs:
       base_ref:

@@ -100,7 +100,7 @@ DOCKER_USER=registry.iic.jku.at:5000 DOCKER_TAG=next ./start_shell.sh
 
 ### Nightly build
 
-`.github/workflows/nightly.yaml` runs every night at 01:00 UTC on GitHub-hosted runners, and can be started by hand:
+`.github/workflows/nightly.yaml` runs every night at 23:00 UTC on GitHub-hosted runners, and can be started by hand:
 
 ```bash
 gh workflow run nightly.yaml                                          # same as the scheduled run
