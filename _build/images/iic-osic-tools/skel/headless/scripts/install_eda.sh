@@ -72,7 +72,7 @@ pip3 install $PIP_FLAGS \
 	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.6.8 \
+	klayout-pex==0.6.10 \
 	klayout-pex-plugin-elmer==0.1.0 \
 	klayout-pex-plugin-gmsh==0.1.0 \
 	klayout-pex-plugin-palace==0.1.0 \
@@ -86,7 +86,7 @@ pip3 install $PIP_FLAGS \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.1.0 \
-	setupEM==0.12.0 \
+	setupEM==0.13.1 \
 	siliconcompiler==0.38.11 \
 	snp2le==0.1.17 \
 	spicelib==1.6.4 \

@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 1e3c5ab06c9f712a52e343c7eb935a5623d42513
+  commit: e76fc566c17d8b862d640a89fe6df68e5d5d86b9
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 5ec8c1921670588bd8bab4fa664b6f72ecb84016
@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: af348e2a468d3e58bf2aa10a5ae97734b59e48ea
+  commit: f190dbb261acd4d1ea711e836873eb7d05e6b500
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
@@ -51,7 +51,7 @@
   commit: 1.5.325
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 44a6c7399c77a16749d60fbf9e6f60a9ebc3571e
+  commit: 7ba06cae8698fb2d6e96b77927d1f41a463c29fd
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -73,7 +73,7 @@
   commit: 974294ba7d812ef5a46a4760593057aee7ce6866
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 56a272a3a6bfa8b9f23dc5ca67ae73e7b351ff50
+  commit: 06a4d274f3da612c8e65a93e3d5fe380e9302061
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -120,7 +120,7 @@
   commit: 54c19b53a4cc1beb875c4529409d9314ba675b76
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 40dd844c31626bec396a8693844b1a1057a5dabb
+  commit: 8aa302273bb97bd7d839c005f94dab1523f3c432
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: 668b9a6a1b474f7b5181b5caed915e8d0a1505bd
@@ -156,7 +156,7 @@
   commit: eab56ebad351650b4050fcde85cda9919844ed58
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 57075189e391c3f8e395309f3450cdbf62443033
+  commit: 6bbc0e36bc14e4a2d4d5b5b573b0b1655e4edb01
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
