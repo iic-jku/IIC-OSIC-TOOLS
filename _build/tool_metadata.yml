@@ -18,7 +18,7 @@
   commit: e76fc566c17d8b862d640a89fe6df68e5d5d86b9
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
-  commit: 5ec8c1921670588bd8bab4fa664b6f72ecb84016
+  commit: 1537d621f2fbb3185a520cd95606e6f8a7989849
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
   commit: f6d60e01df5bf39d2c9ba46a7b9979cf8ff891cb
@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: f190dbb261acd4d1ea711e836873eb7d05e6b500
+  commit: 7cab2c6e74c7392bbef0a8204208cd06ee42878d
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
@@ -42,7 +42,7 @@
   commit: v0.30.12
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
-  commit: b6609be46da60bb011ea40f18529d65b9d9020ba
+  commit: 27f3a63ffdbc1d57d5b67dddb749d53cb52d82b2
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
   commit: 8.3.685
@@ -51,7 +51,7 @@
   commit: 1.5.325
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 7ba06cae8698fb2d6e96b77927d1f41a463c29fd
+  commit: e677d5c37378daf4e3f1a28145e5cdd086cf091f
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -70,10 +70,10 @@
   commit: 6c6bd44bf2d137e108437bb5a9729c8fd5350886
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: 974294ba7d812ef5a46a4760593057aee7ce6866
+  commit: 0af83bcb15c8025c8c611cc918b17cb1373d29e8
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 06a4d274f3da612c8e65a93e3d5fe380e9302061
+  commit: 0e9ae8c4fd21d43114773dd363f81ddd110a5cb0
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -117,7 +117,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 54c19b53a4cc1beb875c4529409d9314ba675b76
+  commit: b7f11c1f034029b9534444ee9d63090037f23e87
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: 8aa302273bb97bd7d839c005f94dab1523f3c432
