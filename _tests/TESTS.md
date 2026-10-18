@@ -66,7 +66,7 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 21       | [analog circuit design](https://github.com/iic-jku/analog-circuit-design) xschem/ngspice simulation testbenches with ihp-sg13cmos5l |
 | 22       | [SPARX](https://github.com/iic-jku/SG13CMOS_SPARX) six-port receiver with ihp-sg13g2                                            |
 | 23       | Smoke/regression test of sak-lvs.sh (all PDKs, Magic+Netgen and KLayout)                                                        |
-| 24       | Smoke/regression test of sak-drc.sh (all PDKs, Magic and KLayout)                                                               |
+| 24       | Smoke/regression test of sak-drc.sh (all PDKs, Magic, KLayout and gdscheck)                                                     |
 | 25       | Smoke/regression test of sak-pex.sh (all PDKs and PEX modes)                                                                    |
 | 26       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) (DRC, LVS, PEX) with ihp-sg13g2             |
 | 27       | KLayout PCells smoke/regression test (instantiate all PCells of all PDKs, flag empty cells and errors)                          |

@@ -5,11 +5,12 @@
 #
 # Smoke/regression test for sak-drc.sh.
 #
-# Runs Magic and KLayout DRC on a standard cell inverter in all supported
-# PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l), covers the input
-# variants (.gds/.mag/.klay.gds layouts, gzipped layouts, auto-derive), all
-# three -l DRC levels incl. the per-level report gating, and checks that
-# invalid combinations are caught with the documented exit codes.
+# Runs Magic, KLayout and gdscheck DRC on a standard cell inverter in all
+# supported PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l), covers the
+# input variants (.gds/.mag/.klay.gds layouts, gzipped layouts, auto-derive),
+# all three -l DRC levels incl. the per-level report gating, the gdscheck
+# suites and waivers, and checks that invalid combinations are caught with the
+# documented exit codes.
 #
 # Some runs are expected DIRTY (exit 1) because a standard cell in isolation
 # violates chip-level or row-level rules by design (see README.md). These
@@ -122,13 +123,38 @@ check "ihp: -k -l regular reports density" 1 "$SAK" -k -l regular -w "$W" "$D/$C
 check "ihp: -k GDS.GZ"                     0 "$SAK" -k -w "$W/gz" "$W/gz/$CELL.gds.gz"
 check "ihp: -b runs both engines"          0 "$SAK" -b -w "$W" "$D/$CELL.gds"
 
-# engine selection: the last -m/-k/-b flag wins
+# valid gdscheck runs (macro runs the core suite and is clean, the precheck and
+# main suites include the chip-level density rules that a single cell fails)
+check "ihp: -g macro (default level)"      0 "$SAK" -g -w "$W" "$D/$CELL.gds"
+check "ihp: gdscheck report written"       0 bash -c "[ -f '$W/$CELL.gdscheck.drc/$CELL.lyrdb' ]"
+check "ihp: -g -l precheck reports density" 1 "$SAK" -g -l precheck -w "$W" "$D/$CELL.gds"
+check "ihp: -g -l regular reports density" 1 "$SAK" -g -l regular -w "$W" "$D/$CELL.gds"
+check "ihp: -g -s density"                 1 "$SAK" -g -s density -w "$W" "$D/$CELL.gds"
+check "ihp: -g -s antenna"                 0 "$SAK" -g -s antenna -w "$W" "$D/$CELL.gds"
+check "ihp: -g -s runs the given suite"    0 bash -c "grep -q '^Suite: antenna' '$W/$CELL.gdscheck.drc/$CELL.drc.log'"
+check "ihp: -g -s empty derives the suite" 0 "$SAK" -g -s "" -w "$W" "$D/$CELL.gds"
+check "ihp: -g GDS.GZ"                     0 "$SAK" -g -w "$W/gz" "$W/gz/$CELL.gds.gz"
+
+# a violation the PDK waives (V1.c1 in a cell named like an IHP SRAM macro) stays
+# in the report but must not fail the run
+check "ihp: -g passes a waived violation"  0 "$SAK" -g -w "$W" "$D/sg13g2_waived_via.gds"
+check "ihp: waived violation reported"     0 bash -c "grep -q '<tags>waived</tags>' '$W/sg13g2_waived_via.gdscheck.drc/sg13g2_waived_via.lyrdb'"
+
+# -c removes the gdscheck run dirs as well
+W4=$WORKDIR/ihp_clean
+mkdir -p "$W4"
+check "ihp: -g run before -c"              0 "$SAK" -g -w "$W4" "$D/$CELL.gds"
+check "ihp: -c removes gdscheck run dir"   0 bash -c "'$SAK' -m -c -w '$W4' '$D/$CELL.gds' > /dev/null 2>&1 && [ ! -d '$W4/$CELL.gdscheck.drc' ]"
+
+# engine selection: the last -m/-k/-b/-g flag wins
 W2=$WORKDIR/ihp_lastflag
 mkdir -p "$W2"
 check "ihp: last engine flag wins (-k -m)" 0 "$SAK" -k -m -w "$W2" "$D/$CELL.gds"
 check "ihp: (-k -m) ran Magic only"        0 bash -c "[ -f '$W2/$CELL.magic.drc/$CELL.magic.drc.rpt' ] && [ ! -d '$W2/$CELL.klayout.drc' ]"
 check "ihp: last engine flag wins (-m -k)" 0 "$SAK" -m -k -w "$W2/k" "$D/$CELL.gds"
 check "ihp: (-m -k) ran KLayout only"      0 bash -c "[ -d '$W2/k/$CELL.klayout.drc' ] && [ ! -d '$W2/k/$CELL.magic.drc' ]"
+check "ihp: last engine flag wins (-b -g)" 0 "$SAK" -b -g -w "$W2/g" "$D/$CELL.gds"
+check "ihp: (-b -g) ran gdscheck only"     0 bash -c "[ -d '$W2/g/$CELL.gdscheck.drc' ] && [ ! -d '$W2/g/$CELL.magic.drc' ] && [ ! -d '$W2/g/$CELL.klayout.drc' ]"
 
 # positional auto-derive (the cellname is resolved against the current dir only)
 mkdir -p "$W/auto"
@@ -144,6 +170,7 @@ mkdir -p "$W3" "$W3/auto"
 check "ihp: -m on .klay.gds"               0 "$SAK" -m -w "$W3" "$D/$CELL.klay.gds"
 check "ihp: report uses stripped name"     0 bash -c "grep -q 'COUNT: 0' '$W3/$CELL.magic.drc/$CELL.magic.drc.rpt'"
 check "ihp: -k on .klay.gds"               0 "$SAK" -k -w "$W3" "$D/$CELL.klay.gds"
+check "ihp: -g on .klay.gds"               0 "$SAK" -g -w "$W3" "$D/$CELL.klay.gds"
 cp "$D/$CELL.klay.gds" "$W3/auto/$CELL.klay.gds"
 check "ihp: auto-derive finds .klay.gds"   0 bash -c "cd '$W3/auto' && '$SAK' -m '$CELL'"
 
@@ -154,14 +181,40 @@ check "guard: unknown layout file format"  5 "$SAK" -m -w "$W" "$W/bad.xyz"
 check "guard: unknown -l DRC level"        3 "$SAK" -k -l bogus -w "$W" "$D/$CELL.gds"
 check "guard: -k with MAG layout"          5 "$SAK" -k -w "$W" "$D/$CELL.mag"
 check "guard: -b with MAG falls back"      0 "$SAK" -b -w "$W" "$D/$CELL.mag"
+check "guard: -g with MAG layout"          5 "$SAK" -g -w "$W" "$D/$CELL.mag"
+check "guard: unknown -s gdscheck suite"   3 "$SAK" -g -s bogus -w "$W" "$D/$CELL.gds"
 check "guard: GDS top cell mismatch (-m)"  7 "$SAK" -m -w "$W" "$D/${CELL}_wrongtop.gds"
 check "guard: GDS top cell mismatch (-k)"  7 "$SAK" -k -w "$W" "$D/${CELL}_wrongtop.gds"
+check "guard: GDS top cell mismatch (-g)"  7 "$SAK" -g -w "$W" "$D/${CELL}_wrongtop.gds"
 check "guard: PDK_ROOT not set"            8 env PDK_ROOT= "$SAK" -m -w "$W" "$D/$CELL.gds"
 check "guard: PDK not set"                 8 env PDK= "$SAK" -m -w "$W" "$D/$CELL.gds"
 check "guard: PDKPATH not set"             8 env PDKPATH= "$SAK" -m -w "$W" "$D/$CELL.gds"
 check "guard: unsupported PDK"             6 env PDK=nonexistent_pdk "$SAK" -m -w "$W" "$D/$CELL.gds"
 check "guard: magic not in PATH"           4 env PATH=/usr/bin:/bin "$SAK" -m -w "$W" "$D/$CELL.gds"
 check "guard: klayout not in PATH"         4 env PATH=/usr/bin:/bin "$SAK" -k -w "$W" "$D/$CELL.gds"
+check "guard: gdscheck not in PATH"        4 env PATH=/usr/bin:/bin "$SAK" -g -w "$W" "$D/$CELL.gds"
+
+# a stand-in gdscheck covers what a real run on a small cell cannot provoke: exit
+# code 3 of a run that left rules unchecked for lack of memory, and gdscheck 0.1,
+# which exits 0 even on violations
+STUB=$WORKDIR/gdscheck_stub
+mkdir -p "$STUB"
+cat > "$STUB/gdscheck" << 'EOF'
+#!/bin/sh
+case "$1" in
+    --version) echo "gdscheck ${STUB_VERSION:-0.2.0}" ;;
+    list-suites) echo "core  - stub" ;;
+    run)
+        while [ $# -gt 0 ]; do
+            [ "$1" = "--report" ] && echo "<item><tags>skipped</tags></item>" > "$2"
+            shift
+        done
+        exit "${STUB_RC:-0}" ;;
+esac
+EOF
+chmod +x "$STUB/gdscheck"
+check "guard: gdscheck run incomplete"     7 env PATH="$STUB:$PATH" STUB_RC=3 "$SAK" -g -w "$W/stub" "$D/$CELL.gds"
+check "guard: gdscheck 0.1 rejected"       4 env PATH="$STUB:$PATH" STUB_VERSION=0.1.2 "$SAK" -g -w "$W/stub" "$D/$CELL.gds"
 
 # ============================================================================
 # ihp-sg13cmos5l
@@ -180,12 +233,15 @@ check "cmos5l: -k macro (default level)"   0 "$SAK" -k -w "$W" "$D/$CELL.gds"
 check "cmos5l: -k -l precheck"             0 "$SAK" -k -l precheck -w "$W" "$D/$CELL.gds"
 check "cmos5l: -k -l regular density"      1 "$SAK" -k -l regular -w "$W" "$D/$CELL.gds"
 check "cmos5l: -b runs both engines"       0 "$SAK" -b -w "$W" "$D/$CELL.gds"
+check "cmos5l: -g macro (default level)"   0 "$SAK" -g -w "$W" "$D/$CELL.gds"
+check "cmos5l: -g -l regular density"      1 "$SAK" -g -l regular -w "$W" "$D/$CELL.gds"
 
 # ============================================================================
 # gf180mcuD
 # note: the isolated 5V standard cell violates the dualgate rules DF.13_MV
 # and DF.14_MV (satisfied only by row composition), so every KLayout level
-# reports errors. This is expected and proves the violation detection.
+# and every gdscheck suite with the dualgate deck reports errors. This is
+# expected and proves the violation detection.
 # ============================================================================
 
 # shellcheck source=/dev/null
@@ -202,6 +258,12 @@ check "gf180: klayout report written"      0 bash -c "[ -f '$W/$CELL.klayout.drc
 check "gf180: -k -l precheck"              1 "$SAK" -k -l precheck -w "$W" "$D/$CELL.gds"
 check "gf180: -k -l regular"               1 "$SAK" -k -l regular -w "$W" "$D/$CELL.gds"
 check "gf180: -b combines the verdicts"    1 "$SAK" -b -w "$W" "$D/$CELL.gds"
+check "gf180: -g macro reports DF errors"  1 "$SAK" -g -w "$W" "$D/$CELL.gds"
+check "gf180: gdscheck report written"     0 bash -c "[ -f '$W/$CELL.gdscheck.drc/$CELL.lyrdb' ]"
+check "gf180: -g -l precheck"              1 "$SAK" -g -l precheck -w "$W" "$D/$CELL.gds"
+check "gf180: precheck runs the core suite" 0 bash -c "grep -q '^Suite: core' '$W/$CELL.gdscheck.drc/$CELL.drc.log'"
+check "gf180: -g -s antenna"               0 "$SAK" -g -s antenna -w "$W" "$D/$CELL.gds"
+check "gf180: -g -s precheck is unknown"   3 "$SAK" -g -s precheck -w "$W" "$D/$CELL.gds"
 
 # ============================================================================
 # sky130A
@@ -231,6 +293,7 @@ check "sky130: macro gates density"        0 bash -c "[ ! -f '$W/mac/$CELL.klayo
 check "sky130: -k -l regular"              0 "$SAK" -k -l regular -w "$W/reg" "$D/$CELL.gds"
 check "sky130: regular adds density"       0 bash -c "[ -f '$W/reg/$CELL.klayout.drc.density.xml' ]"
 check "sky130: -b combines the verdicts"   1 "$SAK" -b -w "$W" "$D/$CELL.gds"
+check "sky130: -g not supported"           6 "$SAK" -g -w "$W" "$D/$CELL.gds"
 
 # ============================================================================
 # summary

@@ -7,6 +7,7 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] [`opencdc`](https://github.com/Ayoubbelguellaoui/CDC), a static clock domain crossing (CDC) checker for Verilog/SystemVerilog RTL
 * [Adding] ETH Zurich's EZ130 8T standard-cell library `v1.1` as `ihp-sg13g2/libs.ref/ez130_8t` (library views only, no LibreLane configuration yet)
 * [Update] `gdscheck` `v0.2.0`, which adds `gf180mcu` support and runs about 4x faster
+* [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites and `-s` to select a suite directly
 * [Update] various tool and Python package version bumps
 * [Changing] VACASK's Python helpers are now the package `vacask`: postprocess scripts should import `from vacask.rawfile import rawread` (the old `from rawfile import rawread` keeps working through an alias module), and the converters run as `python3 -m vacask.<converter>`
 * [Changing] the `eda_server_*.sh` scripts prefer rootless Podman when it works, check the host setup it needs, and run on macOS
