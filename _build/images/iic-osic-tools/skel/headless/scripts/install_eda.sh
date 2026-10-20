@@ -85,10 +85,10 @@ pip3 install $PIP_FLAGS \
 	pyuvm==5.0.0 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
-	scikit-rf==2.1.0 \
-	setupEM==0.14.0 \
+	scikit-rf==2.2.0 \
+	setupEM==0.14.1 \
 	siliconcompiler==0.38.11 \
-	snp2le==0.1.17 \
+	snp2le==0.1.18 \
 	spicelib==1.6.4 \
 	spyci==1.0.2
 
