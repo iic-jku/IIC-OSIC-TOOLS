@@ -18,12 +18,13 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-drc.sh [-d] [-m|-k|-b] [-c] [-l <level>] [-f <pattern>] [-w <workdir>] <cellname>
+# Usage: sak-drc.sh [-d] [-m|-k|-b] [-c] [-l <level>] [-j <n>] [-f <pattern>] [-w <workdir>] <cellname>
 #        -m  Run Magic DRC (default)
 #        -k  Run KLayout DRC
 #        -b  Run Magic and KLayout DRC
 #        -c  Clean output files before running
 #        -l  KLayout DRC level: precheck|macro|regular (default: macro)
+#        -j  Run at most <n> KLayout processes at once (default: 4, or the CPU count if lower)
 #        -f  Set GDS flatglob pattern for Magic (e.g. '*' to flatten all)
 #        -w  Use <workdir> to store result files (default: current dir)
 #        -d  Enable debug information
@@ -42,7 +43,7 @@ if [ $# -eq 0 ]; then
 	echo
 	echo "DRC script for Magic and KLayout (ICD@JKU)"
 	echo
-	echo "Usage: $0 [-d] [-m|-k|-b] [-c] [-l <level>] [-f <pattern>] [-w <workdir>] <cellname>"
+	echo "Usage: $0 [-d] [-m|-k|-b] [-c] [-l <level>] [-j <n>] [-f <pattern>] [-w <workdir>] <cellname>"
 	echo
 	echo "       -m Run Magic DRC (default)"
 	echo "       -k Run KLayout DRC"
@@ -52,6 +53,10 @@ if [ $# -eq 0 ]; then
 	echo "          precheck: core FEOL and BEOL rules only"
 	echo "          macro: adds off-grid, pin, and zero-area checks, skips chip-level density and antenna"
 	echo "          regular: all checks"
+	echo "       -j Run at most <n> KLayout processes at once (default: 4, or the CPU count if lower)"
+	echo "          without -j the sky130 decks all start at once"
+	echo "          values above 4 only pay off for large layouts (e.g. 8 to 16 for a chip on a server),"
+	echo "          every KLayout process needs about 0.5 GiB RAM plus the layout"
 	echo "       -f Set GDS flatglob pattern for Magic (e.g. '*' to flatten all)"
 	echo "       -w Use <workdir> to store result files (default current dir)"
 	echo "       -d Enable debug information"
@@ -69,11 +74,13 @@ RUN_KLAYOUT=0
 RUN_CLEAN=0
 FLATGLOB=""
 DRC_LEVEL="macro"
+JOBS=""
+JOBS_SET=0
 
 # check flags
 # -----------
 
-while getopts "mkbcl:f:w:d" flag; do
+while getopts "mkbcl:j:f:w:d" flag; do
 	case $flag in
 		m)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -m is set."
@@ -97,6 +104,11 @@ while getopts "mkbcl:f:w:d" flag; do
 		l)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -l is set to <$OPTARG>."
 			DRC_LEVEL="$OPTARG"
+			;;
+		j)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -j is set to <$OPTARG>."
+			JOBS="$OPTARG"
+			JOBS_SET=1
 			;;
 		f)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -f is set to <$OPTARG>."
@@ -126,6 +138,27 @@ case "$DRC_LEVEL" in
 		echo "[ERROR] Unknown KLayout DRC level <$DRC_LEVEL> (expected precheck, macro, or regular)!"
 		exit $ERR_NO_PARAM ;;
 esac
+
+# check the KLayout process limit (-j), the default is 4 or the CPU count if lower
+# --------------------------------------------------------------------------------
+
+# What more processes bring, measured on a 32-thread server (layouts from 0.012 mm2 to a 4 mm2 SoC, details in the pull request that added -j):
+# - ihp regular: the 4 parts (main, extra rules, density, antenna) in parallel are 1.2x to 2.8x faster than one after another. Above 4 only one layout gained (a 1.5 mm2 chip, 22 % at -j 8), elsewhere the extra-rules deck sets the time and it cannot be split.
+# - ihp precheck/macro: above 4 the rule deck is split into its tables, one process each. Small and medium cells get up to 4x slower, layouts whose single run takes minutes get 1.4x to 2x faster at -j 8 and another 20 % to 25 % at -j 32.
+# - gf180mcu: one process with <n> threads. 4 threads are 8 % to 14 % faster than 1, 8 threads help at macro only, 32 threads are slower than 4.
+# - sky130: every deck is its own process (2 to 5 by level), the pin check gains nothing from threads.
+# Every KLayout process needs about 0.5 GiB RAM plus the layout: -j 4 took 0.6 GiB to 9 GiB, -j 32 took 17 GiB to 22 GiB. So -j 8 to 16 suits a large chip on a server with RAM to spare, -j 1 a batch of small cells.
+if [ "$JOBS_SET" -eq 1 ]; then
+	case "$JOBS" in
+		''|*[!0-9]*|0*)
+			echo "[ERROR] -j expects a positive integer (got <$JOBS>)!"
+			exit $ERR_NO_PARAM ;;
+	esac
+else
+	JOBS=$(nproc 2>/dev/null || echo 1)
+	[ "$JOBS" -gt 4 ] && JOBS=4
+fi
+[ $DEBUG -eq 1 ] && echo "[INFO] KLayout DRC runs at most $JOBS processes at once."
 
 # check that the PDK environment is set up
 # ----------------------------------------
@@ -405,6 +438,89 @@ fi
 # KLayout DRC (per PDK deck or run_drc.py wrapper)
 # ============================================================================
 
+# run the given parts in at most <lanes> background lanes, each lane works through its parts one after another. The parts are dealt in snake order (lane 1, 2, ..., n, n, ..., 2, 1, 1, ...), so the long parts listed first land in different lanes.
+run_lanes() {
+	_lanes=$1
+	_func=$2
+	shift 2
+	_l=0
+	while [ "$_l" -lt "$_lanes" ]; do
+		eval "_lane_$_l=''"
+		_l=$((_l + 1))
+	done
+	_i=0
+	for _part in "$@"; do
+		_l=$((_i % (2 * _lanes)))
+		[ "$_l" -ge "$_lanes" ] && _l=$((2 * _lanes - 1 - _l))
+		eval "_lane_$_l=\"\$_lane_$_l $_part\""
+		_i=$((_i + 1))
+	done
+	_l=0
+	while [ "$_l" -lt "$_lanes" ]; do
+		eval "_parts=\$_lane_$_l"
+		if [ -n "$_parts" ]; then
+			# shellcheck disable=SC2086
+			( for _part in $_parts; do "$_func" "$_part"; done ) &
+		fi
+		_l=$((_l + 1))
+	done
+}
+
+# run one sky130 deck in the foreground, report <cell>.klayout.drc.<deck>.xml, the log <cell>.klayout.drc.<deck>.log ends with the KLayout exit status
+sky130_deck() {
+	_base="$RESDIR/$CELL_NAME.klayout.drc.$1"
+	case "$1" in
+		# off-grid is folded into the FEOL pass (on for macro/regular, off for precheck)
+		feol)		set -- -rd feol=true -rd beol=false -rd offgrid="$SKY130_OFFGRID" -r "$PDKPATH/libs.tech/klayout/drc/${PDK}_mr.drc" ;;
+		beol)		set -- -rd feol=false -rd beol=true -rd offgrid=false -r "$PDKPATH/libs.tech/klayout/drc/${PDK}_mr.drc" ;;
+		# chip-level fill check
+		density)	set -- -r "$PDKPATH/libs.tech/klayout/drc/met_min_ca_density.lydrc" ;;
+		# pin/label check, more threads bring no gain here
+		pincheck)	set -- -rd threads=1 -rd flat_mode=true -r "$PDKPATH/libs.tech/klayout/drc/pin_label_purposes_overlapping_drawing.rb.drc" ;;
+		# zero-area geometry
+		zeroarea)	set -- -r "$PDKPATH/libs.tech/klayout/drc/zeroarea.rb.drc" ;;
+	esac
+	klayout -b -rd input="$CELL_LAY" -rd report="$_base.xml" "$@" > "$_base.log" 2>&1
+	echo "[INFO] KLayout exit status: $?" >> "$_base.log"
+}
+
+# run one ihp part in the foreground, its log is <dir>/<cell>.drc.log. main and all write into $KLAYOUT_RUNDIR, the other parts into a subfolder named after them.
+# main, density, antenna, and all go through run_drc.py. maximal runs the extra-rules deck directly with the switches run_drc.py would pass, because run_drc.py can only run it after main, and its log ends with the KLayout exit status.
+# shellcheck disable=SC2086
+ihp_part() {
+	_dir="$KLAYOUT_RUNDIR"
+	case "$1" in
+		main|all)	;;
+		*)		_dir="$KLAYOUT_RUNDIR/$1"; mkdir -p "$_dir" ;;
+	esac
+	case "$1" in
+		maximal)
+			klayout -b \
+				-rd input="$CELL_LAY" \
+				-rd topcell="$CELL_NAME" \
+				-rd report="$_dir/$CELL_NAME.maximal.lyrdb" \
+				-rd log="$_dir/$CELL_NAME.maximal.log" \
+				-rd threads=1 \
+				-rd run_mode=deep \
+				-rd no_recommended=false \
+				-rd no_offgrid=false \
+				-r "$IHP_MAXIMAL" \
+				> "$_dir/$CELL_NAME.drc.log" 2>&1
+			echo "[INFO] KLayout exit status: $?" >> "$_dir/$CELL_NAME.drc.log"
+			return ;;
+		main)		set -- --disable_extra_rules --no_density --mp=1 --density_thr=1 ;;
+		density)	set -- --density_only --mp=1 --density_thr=1 ;;
+		antenna)	set -- --antenna_only --mp=1 --density_thr=1 ;;
+		all)		set -- $DRC_FLAGS --mp="$IHP_MP" --density_thr="$IHP_THR" ;;
+	esac
+	python3 "$PDKPATH/libs.tech/klayout/tech/drc/run_drc.py" \
+		--path="$CELL_LAY" \
+		--topcell="$CELL_NAME" \
+		--run_dir="$_dir" \
+		"$@" \
+		> "$_dir/$CELL_NAME.drc.log" 2>&1
+}
+
 if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	echo "[INFO] Launching KLayout DRC..."
 
@@ -416,7 +532,7 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 		# precheck: core rules only
 		# macro: adds off-grid, pin, and zero-area, skips chip-level density
 		# regular: all checks
-		# SKY130_DENSITY/PIN/ZEROAREA are read again in the evaluate-results section below
+		# SKY130_DENSITY/PIN/ZEROAREA and SKY130_DECKS are read again in the evaluate-results section below
 		SKY130_OFFGRID=true
 		SKY130_DENSITY=1
 		SKY130_PIN=1
@@ -426,53 +542,19 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			macro)		SKY130_DENSITY=0 ;;
 		esac
 
-		# off-grid is folded into the FEOL pass (on for macro/regular, off for precheck)
-		klayout -b \
-			-rd input="$CELL_LAY" \
-			-rd feol=true \
-			-rd beol=false \
-			-rd offgrid="$SKY130_OFFGRID" \
-			-rd report="$RESDIR/$CELL_NAME.klayout.drc.feol.xml" \
-			-r "$PDKPATH/libs.tech/klayout/drc/${PDK}_mr.drc" \
-			> "$RESDIR/$CELL_NAME.klayout.drc.feol.log" 2>&1 &
-
-		klayout -b \
-			-rd input="$CELL_LAY" \
-			-rd feol=false \
-			-rd beol=true \
-			-rd offgrid=false \
-			-rd report="$RESDIR/$CELL_NAME.klayout.drc.beol.xml" \
-			-r "$PDKPATH/libs.tech/klayout/drc/${PDK}_mr.drc" \
-			> "$RESDIR/$CELL_NAME.klayout.drc.beol.log" 2>&1 &
-
-		# density: chip-level fill check, regular only
-		if [ "$SKY130_DENSITY" -eq 1 ]; then
-			klayout -b \
-				-rd input="$CELL_LAY" \
-				-rd report="$RESDIR/$CELL_NAME.klayout.drc.density.xml" \
-				-r "$PDKPATH/libs.tech/klayout/drc/met_min_ca_density.lydrc" \
-				> "$RESDIR/$CELL_NAME.klayout.drc.density.log" 2>&1 &
-		fi
-
-		# pin/label check: macro and regular
-		if [ "$SKY130_PIN" -eq 1 ]; then
-			klayout -b \
-				-rd input="$CELL_LAY" \
-				-rd threads="$(nproc --ignore 5)" \
-				-rd flat_mode=true \
-				-rd report="$RESDIR/$CELL_NAME.klayout.drc.pincheck.xml" \
-				-r "$PDKPATH/libs.tech/klayout/drc/pin_label_purposes_overlapping_drawing.rb.drc" \
-				> "$RESDIR/$CELL_NAME.klayout.drc.pincheck.log" 2>&1 &
-		fi
-
-		# zero-area geometry: macro and regular
-		if [ "$SKY130_ZEROAREA" -eq 1 ]; then
-			klayout -b \
-				-rd input="$CELL_LAY" \
-				-rd report="$RESDIR/$CELL_NAME.klayout.drc.zeroarea.xml" \
-				-r "$PDKPATH/libs.tech/klayout/drc/zeroarea.rb.drc" \
-				> "$RESDIR/$CELL_NAME.klayout.drc.zeroarea.log" 2>&1 &
-		fi
+		# every deck is its own KLayout process, listed longest first (on sky130_sram_1kbyte: BEOL 34 s, FEOL 25 s, pin check 11 s, density 5 s, zero-area 2.5 s)
+		SKY130_DECKS="beol feol"
+		[ "$SKY130_PIN" -eq 1 ] && SKY130_DECKS="$SKY130_DECKS pincheck"
+		[ "$SKY130_DENSITY" -eq 1 ] && SKY130_DECKS="$SKY130_DECKS density"
+		[ "$SKY130_ZEROAREA" -eq 1 ] && SKY130_DECKS="$SKY130_DECKS zeroarea"
+		# without -j all decks start at once as before, on a small cell most of each deck is the 2.5 s KLayout start
+		SKY130_LANES=0
+		for _deck in $SKY130_DECKS; do
+			SKY130_LANES=$((SKY130_LANES + 1))
+		done
+		[ "$JOBS_SET" -eq 1 ] && [ "$JOBS" -lt "$SKY130_LANES" ] && SKY130_LANES=$JOBS
+		# shellcheck disable=SC2086
+		run_lanes "$SKY130_LANES" sky130_deck $SKY130_DECKS
 	elif echo "$PDK" | grep -q -i "gf180mcu"; then
 		# gf180mcu runs the gf180mcu.drc framework deck directly. The scope is selected with -rd decks=<comma-separated tags>, a leading '-' excludes a tag.
 		# precheck: core rules only, drops off-grid, density, and antenna
@@ -485,17 +567,21 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 		esac
 		rm -rf "$KLAYOUT_RUNDIR"
 		mkdir -p "$KLAYOUT_RUNDIR"
-		# variant=$PDK selects the matching gf180mcu stack preset (metal_top/metal_level/mim_option)
-		klayout -b \
-			-rd input="$CELL_LAY" \
-			-rd report="$KLAYOUT_RUNDIR/$CELL_NAME.lyrdb" \
-			-rd topcell="$CELL_NAME" \
-			-rd variant="$PDK" \
-			-rd run_mode=deep \
-			-rd threads="$(nproc --ignore 5)" \
-			-rd decks="$DRC_DECKS" \
-			-r "$PDKPATH/libs.tech/klayout/tech/drc/gf180mcu.drc" \
-			> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
+		KLAYOUT_PARTS="gf180"
+		# a single process with -j threads. variant=$PDK selects the matching gf180mcu stack preset (metal_top/metal_level/mim_option). The log ends with the KLayout exit status.
+		{
+			klayout -b \
+				-rd input="$CELL_LAY" \
+				-rd report="$KLAYOUT_RUNDIR/$CELL_NAME.lyrdb" \
+				-rd topcell="$CELL_NAME" \
+				-rd variant="$PDK" \
+				-rd run_mode=deep \
+				-rd threads="$JOBS" \
+				-rd decks="$DRC_DECKS" \
+				-r "$PDKPATH/libs.tech/klayout/tech/drc/gf180mcu.drc" \
+				> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1
+			echo "[INFO] KLayout exit status: $?" >> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log"
+		} &
 	elif echo "$PDK" | grep -q -i -E "ihp-sg13g2|ihp-sg13cmos5l"; then
 		# the ihp-sg13g2 and ihp-sg13cmos5l wrappers share the same CLI, both write their .lyrdb report(s) into --run_dir
 		# precheck: minimal foundry precheck rule set, drops density, off-grid, angle, extra, and recommended rules
@@ -508,16 +594,25 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 		esac
 		rm -rf "$KLAYOUT_RUNDIR"
 		mkdir -p "$KLAYOUT_RUNDIR"
-		# --mp splits the rule deck for parallel execution, --density_thr sets the thread count of the density run
-		# shellcheck disable=SC2086
-		python3 "$PDKPATH/libs.tech/klayout/tech/drc/run_drc.py" \
-			--path="$CELL_LAY" \
-			--topcell="$CELL_NAME" \
-			--run_dir="$KLAYOUT_RUNDIR" \
-			$DRC_FLAGS \
-			--mp="$(nproc --ignore 5)" \
-			--density_thr="$(nproc --ignore 5)" \
-			> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
+		# the extra-rules deck of this PDK (sg13g2_maximal.drc, sg13cmos5l_maximal.drc)
+		IHP_MAXIMAL="$PDKPATH/libs.tech/klayout/tech/drc/rule_decks/${PDK#ihp-}_maximal.drc"
+		# --mp > 1 starts one KLayout process per rule table (37 in ihp-sg13g2), each reading the layout and deriving its layers again. That only pays off for large layouts, so it is used above -j 4 only. --density_thr reaches every process as its thread count.
+		if [ "$JOBS" -gt 4 ]; then
+			IHP_MP=$JOBS
+			IHP_THR=1
+		else
+			IHP_MP=1
+			IHP_THR=$JOBS
+		fi
+		if [ "$DRC_LEVEL" = "regular" ] && [ "$JOBS" -le 4 ] && [ -f "$IHP_MAXIMAL" ]; then
+			# regular runs four decks, which run_drc.py --mp=1 runs one after another. As separate parts they run in up to 4 lanes, main and the extra rules (the long ones) in different lanes.
+			KLAYOUT_PARTS="main maximal density antenna"
+			# shellcheck disable=SC2086
+			run_lanes "$JOBS" ihp_part $KLAYOUT_PARTS
+		else
+			KLAYOUT_PARTS="all"
+			ihp_part all &
+		fi
 	fi
 fi
 
@@ -563,6 +658,24 @@ fi
 
 if [ "$RUN_KLAYOUT" -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 	# SKY130_DENSITY/PIN/ZEROAREA were set in the KLayout launch section above and gate which per-check reports exist at this level
+	# a deck that crashed may still have left a report. KLayout logs an uncaught error as "ERROR: ...", and sky130_deck ends every log with the KLayout exit status.
+	# The pin check exits 2 to 127 when it finds something (1 is its internal error, 128 and up a signal). The zero-area deck exits with its finding count modulo 256, so its status cannot tell a crash. The other decks exit 0.
+	for _deck in $SKY130_DECKS; do
+		_log="$RESDIR/$CELL_NAME.klayout.drc.$_deck.log"
+		_rc=$(tail -n 1 "$_log" 2>/dev/null | sed -n 's/^\[INFO\] KLayout exit status: \([0-9][0-9]*\)$/\1/p')
+		_failed=0
+		[ -z "$_rc" ] && _failed=1
+		grep -q "^ERROR: " "$_log" 2>/dev/null && _failed=1
+		case "$_deck" in
+			pincheck)	{ [ "${_rc:-1}" -eq 1 ] || [ "${_rc:-1}" -ge 128 ]; } && _failed=1 ;;
+			zeroarea)	;;
+			*)		[ "$_rc" = "0" ] || _failed=1 ;;
+		esac
+		if [ "$_failed" -eq 1 ]; then
+			echo "[ERROR] KLayout $_deck DRC failed, see <$_log>!"
+			exit $ERR_NO_OUTPUT
+		fi
+	done
 	# each KLayout report violation is one <item> regardless of its geometry type (edge pair, polygon, edge, ...), so count the <item> occurrences
 	if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.feol.xml" ]; then
 		echo "[ERROR] KLayout DRC produced no report, see the matching .log in <$RESDIR>!"
@@ -630,11 +743,25 @@ if [ "$RUN_KLAYOUT" -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 		fi
 	fi
 elif [ "$RUN_KLAYOUT" -eq 1 ]; then
-	# gf180mcu/ihp write their .lyrdb report(s) into the run dir. No report means the run itself failed (a DRC run with violations still writes one), the reason is in the log.
-	if ! find "$KLAYOUT_RUNDIR" -name '*.lyrdb' 2>/dev/null | grep -q .; then
-		echo "[ERROR] KLayout DRC run failed (no report produced), see <$KLAYOUT_RUNDIR/$CELL_NAME.drc.log>!"
-		exit $ERR_NO_OUTPUT
-	fi
+	# gf180mcu/ihp write their .lyrdb report(s) into the run dir of each part (main, all, and gf180 use $KLAYOUT_RUNDIR, the other parts a subfolder of it). No report means the part failed (a DRC run with violations still writes one).
+	# run_drc.py exits 1 for violations and for a crash alike. A crashed deck leaves a Python traceback in its log, a crashed table job of --mp > 1 leaves "generated an exception" (run_drc.py then merges the remaining reports and reports success). A deck run directly with klayout -b ends its log with the KLayout exit status.
+	for _part in $KLAYOUT_PARTS; do
+		case "$_part" in
+			main|all|gf180)	_dir="$KLAYOUT_RUNDIR" ;;
+			*)		_dir="$KLAYOUT_RUNDIR/$_part" ;;
+		esac
+		_log="$_dir/$CELL_NAME.drc.log"
+		_failed=0
+		find "$_dir" -maxdepth 1 -name '*.lyrdb' 2>/dev/null | grep -q . || _failed=1
+		case "$_part" in
+			gf180|maximal)	tail -n 1 "$_log" 2>/dev/null | grep -q "exit status: 0$" || _failed=1 ;;
+			*)		grep -q -E "Traceback|generated an exception" "$_log" 2>/dev/null && _failed=1 ;;
+		esac
+		if [ "$_failed" -eq 1 ]; then
+			echo "[ERROR] KLayout DRC run failed (part <$_part>), see <$_log>!"
+			exit $ERR_NO_OUTPUT
+		fi
+	done
 	# one violation is one <item> in the report, regardless of its geometry type
 	DRC_ERRORS=$(find "$KLAYOUT_RUNDIR" -name '*.lyrdb' -exec cat {} + 2>/dev/null | grep -c "<item>")
 	if [ "$DRC_ERRORS" -ne 0 ]; then

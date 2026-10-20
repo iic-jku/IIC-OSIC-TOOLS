@@ -122,6 +122,11 @@ check "ihp: -k -l regular reports density" 1 "$SAK" -k -l regular -w "$W" "$D/$C
 check "ihp: -k GDS.GZ"                     0 "$SAK" -k -w "$W/gz" "$W/gz/$CELL.gds.gz"
 check "ihp: -b runs both engines"          0 "$SAK" -b -w "$W" "$D/$CELL.gds"
 
+# KLayout process limit: -j 1 runs the four regular parts (main, extra rules, density, antenna) one after another, each with its own report. Above -j 4 the rule deck is split into one process per rule table.
+check "ihp: -k -l regular -j 1 density"    1 "$SAK" -k -l regular -j 1 -w "$W/j1" "$D/$CELL.gds"
+check "ihp: -j 1 ran every regular part"   0 bash -c "for p in . maximal density antenna; do ls '$W/j1/$CELL.klayout.drc'/\$p/*.lyrdb > /dev/null 2>&1 || exit 1; done"
+check "ihp: -k -j 8 splits the tables"     0 "$SAK" -k -j 8 -w "$W/j8" "$D/$CELL.gds"
+
 # engine selection: the last -m/-k/-b flag wins
 W2=$WORKDIR/ihp_lastflag
 mkdir -p "$W2"
@@ -152,6 +157,8 @@ check "guard: no arguments"                3 "$SAK"
 check "guard: nonexistent cellname"        2 "$SAK" -m does_not_exist_42
 check "guard: unknown layout file format"  5 "$SAK" -m -w "$W" "$W/bad.xyz"
 check "guard: unknown -l DRC level"        3 "$SAK" -k -l bogus -w "$W" "$D/$CELL.gds"
+check "guard: -j 0"                        3 "$SAK" -k -j 0 -w "$W" "$D/$CELL.gds"
+check "guard: -j not a number"             3 "$SAK" -k -j abc -w "$W" "$D/$CELL.gds"
 check "guard: -k with MAG layout"          5 "$SAK" -k -w "$W" "$D/$CELL.mag"
 check "guard: -b with MAG falls back"      0 "$SAK" -b -w "$W" "$D/$CELL.mag"
 check "guard: GDS top cell mismatch (-m)"  7 "$SAK" -m -w "$W" "$D/${CELL}_wrongtop.gds"
@@ -202,6 +209,7 @@ check "gf180: klayout report written"      0 bash -c "[ -f '$W/$CELL.klayout.drc
 check "gf180: -k -l precheck"              1 "$SAK" -k -l precheck -w "$W" "$D/$CELL.gds"
 check "gf180: -k -l regular"               1 "$SAK" -k -l regular -w "$W" "$D/$CELL.gds"
 check "gf180: -b combines the verdicts"    1 "$SAK" -b -w "$W" "$D/$CELL.gds"
+check "gf180: -k -j 1 reports DF errors"   1 "$SAK" -k -j 1 -w "$W/j1" "$D/$CELL.gds"
 
 # ============================================================================
 # sky130A
@@ -231,6 +239,9 @@ check "sky130: macro gates density"        0 bash -c "[ ! -f '$W/mac/$CELL.klayo
 check "sky130: -k -l regular"              0 "$SAK" -k -l regular -w "$W/reg" "$D/$CELL.gds"
 check "sky130: regular adds density"       0 bash -c "[ -f '$W/reg/$CELL.klayout.drc.density.xml' ]"
 check "sky130: -b combines the verdicts"   1 "$SAK" -b -w "$W" "$D/$CELL.gds"
+check "sky130: -k -l regular -j 1"         0 "$SAK" -k -l regular -j 1 -w "$W/reg1" "$D/$CELL.gds"
+# the pin check exits non-zero when it finds something, that is a finding (exit 1), not a failed run (exit 7)
+check "sky130: -k reports a pin finding"   1 "$SAK" -k -w "$W/pin" "$D/sky130_pin_without_drawing.gds"
 
 # ============================================================================
 # summary
