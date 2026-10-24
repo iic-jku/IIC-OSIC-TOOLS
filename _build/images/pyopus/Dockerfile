@@ -7,7 +7,7 @@
 ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS pyopus
 ARG PYOPUS_REPO_URL="https://codeberg.org/arpadbuermen/PyOPUS.git"
-ARG PYOPUS_REPO_COMMIT="6cb7f309db7e1207dc91cf0ce9910c7e18a157e2"
+ARG PYOPUS_REPO_COMMIT="cef2a3b7e57b7378de56ece03647e1a03d4cb539"
 ARG PYOPUS_NAME="pyopus"
 RUN --mount=type=bind,source=images/pyopus,target=/images/pyopus \
     bash /images/pyopus/scripts/install.sh
