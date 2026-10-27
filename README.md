@@ -445,23 +445,23 @@ SET DOCKER_USER=another_user
 
 #### 4.4.3 Using the Nightly Build
 
-Besides the monthly releases on Docker Hub, a CI workflow builds the image every night from the `next_release` branch with the newest upstream tool versions and publishes it as `ghcr.io/iic-jku/iic-osic-tools:nightly` (for `amd64` and `arm64`). Use it to try a fix or a tool version before the next release, not for tapeout work. The tag can change every night. The workflow runs the regression tests on both architectures against the published tag, so the tag already points to the new build while they run and stays there if they fail. The result of each night is listed under [Actions, Nightly build](https://github.com/iic-jku/IIC-OSIC-TOOLS/actions/workflows/nightly.yaml).
+Besides the monthly releases on Docker Hub, a CI workflow rebuilds the image from the `next_release` branch with the newest upstream tool versions and publishes it as `ghcr.io/iic-jku/iic-osic-tools:nightly` (for `amd64` and `arm64`). It runs every night and skips nights in which nothing changed. Use it to try a fix or a tool version before the next release, not for tapeout work. The tag can change every night. The workflow runs the regression tests on both architectures against the published tag, so the tag already points to the new build while they run and stays there if they fail. The result of each night is listed under [Actions, Nightly build](https://github.com/iic-jku/IIC-OSIC-TOOLS/actions/workflows/nightly.yaml).
 
 The start scripts need no change. Set `DOCKER_USER` to the registry and namespace, `DOCKER_TAG` to `nightly`, and give the container a name of its own (shown for `start_x`, the other start scripts work the same way):
 
 ```bash
-DOCKER_USER=ghcr.io/iic-jku DOCKER_TAG=nightly CONTAINER_NAME=iic-osic-tools_nightly ./start_x.sh
+DOCKER_USER=ghcr.io/iic-jku DOCKER_TAG=nightly CONTAINER_NAME=iic-osic-tools_xserver_nightly ./start_x.sh
 ```
 
 ```batch
 SET DOCKER_USER=ghcr.io/iic-jku
 SET DOCKER_TAG=nightly
-SET CONTAINER_NAME=iic-osic-tools_nightly
+SET CONTAINER_NAME=iic-osic-tools_xserver_nightly
 .\start_x.bat
 ```
 
-- The separate `CONTAINER_NAME` matters: if a container with the default name exists, the start scripts start it again, and it still runs the image it was created from (usually `latest`).
-- Not every start script pulls the image when it creates a container. To move to a newer nightly, run `docker pull ghcr.io/iic-jku/iic-osic-tools:nightly` (or `podman pull`), remove the container with `docker rm iic-osic-tools_nightly`, and start it again.
+- Give each start script a name of its own, as the defaults do (`_xserver`, `_xvnc`, `_shell`, `_jupyter`). If a container of that name exists, the start scripts do not create a new one: the `.sh` scripts offer to restart it, the `.bat` scripts print how to, and it still runs the image it was created from (usually `latest`).
+- Not every start script pulls the image when it creates a container. To move to a newer nightly, run `docker pull ghcr.io/iic-jku/iic-osic-tools:nightly` (or `podman pull`), stop and remove the container (`docker stop iic-osic-tools_xserver_nightly`, then `docker rm iic-osic-tools_xserver_nightly`), and start it again.
 - To stay on one nightly build, pin its digest, e.g. `DOCKER_TAG=nightly@sha256:<digest>`. `docker images --digests` shows the digest of the pulled image.
 
 ### 4.5 Using as devcontainer
