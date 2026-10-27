@@ -72,7 +72,6 @@ apt-get -y install \
 	libjson-glib-dev \
 	libjudy-dev \
 	liblapack-dev \
-	liblz4-dev \
 	liblzma-dev \
 	libmng-dev \
 	libmpc-dev \
