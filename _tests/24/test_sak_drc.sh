@@ -226,7 +226,7 @@ check "guard: gdscheck 0.1 rejected"       4 env PATH="$STUB:$PATH" STUB_VERSION
 check "ihp: -g -j 3 run"                   0 env PATH="$STUB:$PATH" STUB_ARGS="$W/stub/args_j3" "$SAK" -g -j 3 -w "$W/stub" "$D/$CELL.gds"
 check "ihp: -j 3 gives gdscheck 3 threads" 0 grep -q -w -e "--threads 3" "$W/stub/args_j3"
 check "ihp: -g run without -j"             0 env PATH="$STUB:$PATH" STUB_ARGS="$W/stub/args_default" "$SAK" -g -w "$W/stub" "$D/$CELL.gds"
-check "ihp: gdscheck threads default nproc" 0 grep -q -w -e "--threads $(nproc)" "$W/stub/args_default"
+check "ihp: gdscheck counts its threads"   0 grep -q -w -e "--threads 0" "$W/stub/args_default"
 
 # ============================================================================
 # ihp-sg13cmos5l

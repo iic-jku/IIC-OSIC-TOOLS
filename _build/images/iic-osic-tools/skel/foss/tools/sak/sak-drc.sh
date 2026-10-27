@@ -708,12 +708,13 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 	mkdir -p "$GDSCHECK_RUNDIR"
 
 	# gdscheck is one process, its memory hardly grows with threads and it gains up to every CPU (ihp-sg13g2 AMS template chip, core suite: 375 s with 1 thread, 184 s with 4, 99 s with 14, 3.6 to 4.0 GiB each), so without -j it takes one thread per CPU
+	# --threads 0 lets gdscheck count the CPUs itself, which honors a CPU quota (docker --cpus) that nproc ignores: under --cpus 4 on 14 CPUs, 14 threads took 309 s and 4 threads 146 s
 	if [ "$JOBS_SET" -eq 1 ]; then
 		GDSCHECK_THREADS=$JOBS
 	else
-		GDSCHECK_THREADS=$(nproc 2>/dev/null || echo 1)
+		GDSCHECK_THREADS=0
 	fi
-	[ $DEBUG -eq 1 ] && echo "[INFO] gdscheck runs with $GDSCHECK_THREADS threads."
+	[ $DEBUG -eq 1 ] && echo "[INFO] gdscheck runs with $GDSCHECK_THREADS threads (0: one per available CPU)."
 
 	# net extraction is lazy and runs only for net-aware rules (antenna ratios, different-net spacings), so --no-connectivity would only skip those
 	gdscheck run \
