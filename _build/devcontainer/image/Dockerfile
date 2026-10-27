@@ -5,5 +5,8 @@
 ARG VERSION="latest"
 FROM hpretl/iic-osic-tools:${VERSION}
 USER root
-RUN useradd -m -s /bin/bash -G sudo designer
+# designer gets no password, so sudo must not ask for one (issue #389)
+RUN useradd -m -s /bin/bash -G sudo designer && \
+    echo 'designer ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/designer && \
+    chmod 0440 /etc/sudoers.d/designer
 USER designer
