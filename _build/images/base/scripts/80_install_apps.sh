@@ -60,6 +60,7 @@ apt-get install -y \
 	tigervnc-standalone-server \
 	tigervnc-tools \
 	tmux \
+	universal-ctags \
 	vim \
 	vim-gtk3 \
 	websockify \
