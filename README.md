@@ -35,6 +35,7 @@
     - [4.4 Overwriting Shell Variables](#44-overwriting-shell-variables)
       - [4.4.1 For the Linux/macOS Bash Scripts](#441-for-the-linuxmacos-bash-scripts)
       - [4.4.2 For the Windows Batch Scripts](#442-for-the-windows-batch-scripts)
+      - [4.4.3 Using the Nightly Build](#443-using-the-nightly-build)
     - [4.5 Using as devcontainer](#45-using-as-devcontainer)
       - [4.5.1 Add it to project](#451-add-it-to-project)
   - [5. Using the Container with](#5-using-the-container-with)
@@ -331,7 +332,7 @@ Both scripts will use default settings, which you can tweak by settings shell va
 - `DOCKER_REGISTRY="docker.io"` registry prefix used to fully qualify the image name (required for Podman, which does not resolve short names non-interactively). The prefix is skipped automatically when `DOCKER_USER` already names a registry (i.e. it contains a `.` or a `:`, or is `localhost`). Set it to `none` (the `.sh` scripts also accept `""`) to force unqualified names.
 - `DOCKER_USER="hpretl"` username for the Docker Hub repository from which the images are pulled. Usually, no change is required. To pull from a private registry, either set it to the registry (e.g. `DOCKER_USER="myregistry.example.com:5000"`, optionally followed by a namespace such as `ghcr.io/hpretl`), or put the registry in `DOCKER_REGISTRY` and leave `DOCKER_USER` empty, which means the image sits at the root of the registry. Emptying it works as `DOCKER_USER=""` for the `.sh` scripts; for the `.bat` scripts `cmd` treats an empty variable as unset, so the default has to be emptied in the script itself.
 - `DOCKER_IMAGE="iic-osic-tools"` Docker Hub image name to pull. Usually, no change is required.
-- `DOCKER_TAG="latest"` Docker Hub image tag. By default, it pulls the latest version; this might be handy to change if you want to match a specific version set.
+- `DOCKER_TAG="latest"` Docker Hub image tag. By default, it pulls the latest version; this might be handy to change if you want to match a specific version set. For the nightly build, see [Using the Nightly Build](#443-using-the-nightly-build).
 - `CONTAINER_USER=$(id -u)` (the current user's ID, `CONTAINER_USER=1000` for `.bat`) The user ID (and also group ID) is especially important on Linux and macOS because those are the IDs used to write files in the `DESIGNS` directory. For debugging/testing, the user and group ID can be set to `0` to gain root access inside the container.
 - `CONTAINER_GROUP=$(id -g)` (the current user's group ID, `CONTAINER_GROUP=1000` for `.bat`)
 - `CONTAINER_NAME="iic-osic-tools_xvnc_uid_"$(id -u)` (attaches the executing user's ID to the name on Unix, or only `CONTAINER_NAME="iic-osic-tools_xvnc` for `.bat`) is the name that is assigned to the container for easy identification. It is used to identify if a container exists and is running.
@@ -372,7 +373,7 @@ The following environment variables are used for configuration:
 - `DOCKER_REGISTRY="docker.io"` registry prefix used to fully qualify the image name (required for Podman, which does not resolve short names non-interactively). The prefix is skipped automatically when `DOCKER_USER` already names a registry (i.e. it contains a `.` or a `:`, or is `localhost`). Set it to `none` (the `.sh` scripts also accept `""`) to force unqualified names.
 - `DOCKER_USER="hpretl"` username for the Docker Hub repository from which the images are pulled. Usually, no change is required. To pull from a private registry, either set it to the registry (e.g. `DOCKER_USER="myregistry.example.com:5000"`, optionally followed by a namespace such as `ghcr.io/hpretl`), or put the registry in `DOCKER_REGISTRY` and leave `DOCKER_USER` empty, which means the image sits at the root of the registry. Emptying it works as `DOCKER_USER=""` for the `.sh` scripts; for the `.bat` scripts `cmd` treats an empty variable as unset, so the default has to be emptied in the script itself.
 - `DOCKER_IMAGE="iic-osic-tools"` Docker Hub image name to pull. Usually, no change is required.
-- `DOCKER_TAG="latest"` Docker Hub image tag. By default, it pulls the latest version; this might be handy to change if you want to match a specific Version set.
+- `DOCKER_TAG="latest"` Docker Hub image tag. By default, it pulls the latest version; this might be handy to change if you want to match a specific Version set. For the nightly build, see [Using the Nightly Build](#443-using-the-nightly-build).
 - `CONTAINER_USER=$(id -u)` (the current user's ID, `CONTAINER_USER=1000` for `.bat`) The user ID (and also group ID) is especially important on Linux and macOS because those are the IDs used to write files in the `DESIGNS` directory.
 - `CONTAINER_GROUP=$(id -g)` (the current user's group ID, `CONTAINER_GROUP=1000` for `.bat`)
 - `CONTAINER_NAME="iic-osic-tools_xserver_uid_"$(id -u)` (attaches the executing user's ID to the name on Unix, or only `CONTAINER_NAME="iic-osic-tools_xserver` for `.bat`) is the name that is assigned to the container for easy identification. It is used to identify if a container exists and is running.
@@ -441,6 +442,27 @@ SET DESIGNS=\my\design\directory
 SET DOCKER_USER=another_user
 .\start_x.bat
 ```
+
+#### 4.4.3 Using the Nightly Build
+
+Besides the monthly releases on Docker Hub, a CI workflow builds the image every night from the `next_release` branch with the newest upstream tool versions and publishes it as `ghcr.io/iic-jku/iic-osic-tools:nightly` (for `amd64` and `arm64`). Use it to try a fix or a tool version before the next release, not for tapeout work: the tag can change every night, and it is published before the regression tests run, so it can be a build that failed them. The result of each night is listed under [Actions, Nightly build](https://github.com/iic-jku/IIC-OSIC-TOOLS/actions/workflows/nightly.yaml).
+
+The start scripts need no change. Set `DOCKER_USER` to the registry and namespace, `DOCKER_TAG` to `nightly`, and give the container a name of its own (shown for `start_x`, the other start scripts work the same way):
+
+```bash
+DOCKER_USER=ghcr.io/iic-jku DOCKER_TAG=nightly CONTAINER_NAME=iic-osic-tools_nightly ./start_x.sh
+```
+
+```batch
+SET DOCKER_USER=ghcr.io/iic-jku
+SET DOCKER_TAG=nightly
+SET CONTAINER_NAME=iic-osic-tools_nightly
+.\start_x.bat
+```
+
+- The separate `CONTAINER_NAME` matters: if a container with the default name exists, the start scripts start it again, and it still runs the image it was created from (usually `latest`).
+- Not every start script pulls the image when it creates a container. To move to a newer nightly, run `docker pull ghcr.io/iic-jku/iic-osic-tools:nightly` (or `podman pull`), remove the container with `docker rm iic-osic-tools_nightly`, and start it again.
+- To stay on one nightly build, pin its digest, e.g. `DOCKER_TAG=nightly@sha256:<digest>`. `docker images --digests` shows the digest of the pulled image.
 
 ### 4.5 Using as devcontainer
 
