@@ -707,7 +707,7 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 	rm -rf "$GDSCHECK_RUNDIR"
 	mkdir -p "$GDSCHECK_RUNDIR"
 
-	# gdscheck is one process, its memory hardly grows with threads and it gains up to every CPU (ihp-sg13g2 AMS template chip, core suite: 375 s with 1 thread, 184 s with 4, 99 s with 14, 3.8 to 4.2 GB each), so without -j it takes one thread per CPU
+	# gdscheck is one process, its memory hardly grows with threads and it gains up to every CPU (ihp-sg13g2 AMS template chip, core suite: 375 s with 1 thread, 184 s with 4, 99 s with 14, 3.6 to 4.0 GiB each), so without -j it takes one thread per CPU
 	if [ "$JOBS_SET" -eq 1 ]; then
 		GDSCHECK_THREADS=$JOBS
 	else
