@@ -267,7 +267,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [surfer](https://gitlab.com/surfer-project/surfer) waveform viewer with snappy usable interface and extensibility
 - [svck](https://github.com/AsFigo/svck) customizable SystemVerilog linter (uses `verible`)
 - [vacask](https://codeberg.org/arpadbuermen/VACASK) a modern Verilog-A based analog circuit simulator
-- [verilator](https://github.com/verilator/verilator) fast Verilog simulator
+- [verilator](https://github.com/verilator/verilator) fast Verilog simulator, incl. the UVM 2020-3.2 library Verilator is tested against (in `$UVM_HOME`, see `$UVM_HOME/README.md`)
 - [verible](https://github.com/chipsalliance/verible) SystemVerilog parser, style-linter, formatter, and language server
 - [veryl](https://github.com/veryl-lang/veryl) a modern hardware description language, based on SystemVerilog
 - [vlog2verilog](https://github.com/RTimothyEdwards/qflow) Verilog file conversion
