@@ -202,8 +202,8 @@ check "guard: klayout not in PATH"         4 env PATH=/usr/bin:/bin "$SAK" -k -w
 check "guard: gdscheck not in PATH"        4 env PATH=/usr/bin:/bin "$SAK" -g -w "$W" "$D/$CELL.gds"
 
 # a stand-in gdscheck covers what a real run on a small cell cannot provoke: exit
-# code 3 of a run that left rules unchecked for lack of memory, and gdscheck 0.1,
-# which exits 0 even on violations
+# code 3 of a run that left rules unchecked for lack of memory, gdscheck 0.1,
+# which exits 0 even on violations, and the thread count it is given
 STUB=$WORKDIR/gdscheck_stub
 mkdir -p "$STUB"
 cat > "$STUB/gdscheck" << 'EOF'
@@ -212,6 +212,7 @@ case "$1" in
     --version) echo "gdscheck ${STUB_VERSION:-0.2.0}" ;;
     list-suites) echo "core  - stub" ;;
     run)
+        [ -n "$STUB_ARGS" ] && echo "$*" > "$STUB_ARGS"
         while [ $# -gt 0 ]; do
             [ "$1" = "--report" ] && echo "<item><tags>skipped</tags></item>" > "$2"
             shift
@@ -222,6 +223,10 @@ EOF
 chmod +x "$STUB/gdscheck"
 check "guard: gdscheck run incomplete"     7 env PATH="$STUB:$PATH" STUB_RC=3 "$SAK" -g -w "$W/stub" "$D/$CELL.gds"
 check "guard: gdscheck 0.1 rejected"       4 env PATH="$STUB:$PATH" STUB_VERSION=0.1.2 "$SAK" -g -w "$W/stub" "$D/$CELL.gds"
+check "ihp: -g -j 3 run"                   0 env PATH="$STUB:$PATH" STUB_ARGS="$W/stub/args_j3" "$SAK" -g -j 3 -w "$W/stub" "$D/$CELL.gds"
+check "ihp: -j 3 gives gdscheck 3 threads" 0 grep -q -w -e "--threads 3" "$W/stub/args_j3"
+check "ihp: -g run without -j"             0 env PATH="$STUB:$PATH" STUB_ARGS="$W/stub/args_default" "$SAK" -g -w "$W/stub" "$D/$CELL.gds"
+check "ihp: gdscheck threads default nproc" 0 grep -q -w -e "--threads $(nproc)" "$W/stub/args_default"
 
 # ============================================================================
 # ihp-sg13cmos5l

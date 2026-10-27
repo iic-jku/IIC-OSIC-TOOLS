@@ -7,7 +7,7 @@
 - engine selection: `-b`, last-flag-wins, `-b` fallback to Magic for a `.mag` layout
 - gdscheck suites: the `-l` mapping (including `precheck` running `core` on gf180mcuD, which has no precheck suite), `-s` overrides, and a violation the PDK waives, which must not fail the run
 - all three `-l` DRC levels (`precheck`/`macro`/`regular`) incl. asserting which per-level reports are (not) produced
-- the KLayout process limit `-j`: `-j 1` runs the four ihp `regular` parts one after another and each part writes its own report, `-j 8` splits the ihp rule deck into one process per rule table, and the gf180mcuD and sky130A verdicts stay the same under `-j 1`
+- the KLayout process limit `-j`: `-j 1` runs the four ihp `regular` parts one after another and each part writes its own report, `-j 8` splits the ihp rule deck into one process per rule table, and the gf180mcuD and sky130A verdicts stay the same under `-j 1`. For gdscheck, `-j` sets the thread count, without `-j` it gets one thread per CPU.
 - guard checks: every invalid combination (unknown layout format, unknown DRC level or gdscheck suite, invalid `-j` value, `.mag` for KLayout or gdscheck, GDS top cell name mismatch, missing files, unset PDK variables, unsupported PDK, missing tools, gdscheck 0.1, an incomplete gdscheck run) must exit with its documented error code. The last two use a stand-in `gdscheck` script, since a real run on a small cell cannot provoke them.
 
 Set `SAK_DRC=<path>` to test a not-yet-installed version of the script.

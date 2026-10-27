@@ -26,7 +26,7 @@
 #        -c  Clean output files before running
 #        -l  KLayout/gdscheck DRC level: precheck|macro|regular (default: macro)
 #        -s  gdscheck suite, e.g. density or antenna (default: derived from -l)
-#        -j  Run at most <n> KLayout processes at once (default: 4, or the CPU count if lower)
+#        -j  Run at most <n> KLayout processes at once (default: 4, or the CPU count if lower), and gdscheck with <n> threads (default: one per CPU)
 #        -f  Set GDS flatglob pattern for Magic (e.g. '*' to flatten all)
 #        -w  Use <workdir> to store result files (default: current dir)
 #        -d  Enable debug information
@@ -63,6 +63,7 @@ if [ $# -eq 0 ]; then
 	echo "          without -j the sky130 decks all start at once"
 	echo "          values above 4 only pay off for large layouts (e.g. 8 to 16 for a chip on a server),"
 	echo "          every KLayout process needs about 0.5 GiB RAM plus the layout"
+	echo "          gdscheck runs as one process with <n> threads, without -j with one thread per CPU"
 	echo "       -f Set GDS flatglob pattern for Magic (e.g. '*' to flatten all)"
 	echo "       -w Use <workdir> to store result files (default current dir)"
 	echo "       -d Enable debug information"
@@ -679,7 +680,7 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 fi
 
 # ============================================================================
-# gdscheck DRC (standalone engine with built-in ihp rule decks)
+# gdscheck DRC (standalone engine with built-in rule decks)
 # ============================================================================
 
 if [ "$RUN_GDSCHECK" -eq 1 ]; then
@@ -706,14 +707,22 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 	rm -rf "$GDSCHECK_RUNDIR"
 	mkdir -p "$GDSCHECK_RUNDIR"
 
-	# net extraction is lazy and only triggered by the antenna rules (main/antenna suites), so no --no-connectivity switch is needed
+	# gdscheck is one process, its memory hardly grows with threads and it gains up to every CPU (ihp-sg13g2 AMS template chip, core suite: 375 s with 1 thread, 184 s with 4, 99 s with 14, 3.8 to 4.2 GB each), so without -j it takes one thread per CPU
+	if [ "$JOBS_SET" -eq 1 ]; then
+		GDSCHECK_THREADS=$JOBS
+	else
+		GDSCHECK_THREADS=$(nproc 2>/dev/null || echo 1)
+	fi
+	[ $DEBUG -eq 1 ] && echo "[INFO] gdscheck runs with $GDSCHECK_THREADS threads."
+
+	# net extraction is lazy and runs only for net-aware rules (antenna ratios, different-net spacings), so --no-connectivity would only skip those
 	gdscheck run \
 		--input "$CELL_LAY" \
 		--process "$PDK" \
 		--suite "$GDSCHECK_SUITE" \
 		--topcell "$CELL_NAME" \
 		--report "$GDSCHECK_RUNDIR/$CELL_NAME.lyrdb" \
-		--threads "$(nproc --ignore 5)" \
+		--threads "$GDSCHECK_THREADS" \
 		> "$GDSCHECK_RUNDIR/$CELL_NAME.drc.log" 2>&1 &
 	GDSCHECK_PID=$!
 fi
