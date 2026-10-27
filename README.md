@@ -445,7 +445,7 @@ SET DOCKER_USER=another_user
 
 #### 4.4.3 Using the Nightly Build
 
-Besides the monthly releases on Docker Hub, a CI workflow builds the image every night from the `next_release` branch with the newest upstream tool versions and publishes it as `ghcr.io/iic-jku/iic-osic-tools:nightly` (for `amd64` and `arm64`). Use it to try a fix or a tool version before the next release, not for tapeout work: the tag can change every night, and it is published before the regression tests run, so it can be a build that failed them. The result of each night is listed under [Actions, Nightly build](https://github.com/iic-jku/IIC-OSIC-TOOLS/actions/workflows/nightly.yaml).
+Besides the monthly releases on Docker Hub, a CI workflow builds the image every night from the `next_release` branch with the newest upstream tool versions and publishes it as `ghcr.io/iic-jku/iic-osic-tools:nightly` (for `amd64` and `arm64`). Use it to try a fix or a tool version before the next release, not for tapeout work. The tag can change every night. The workflow runs the regression tests on both architectures against the published tag, so the tag already points to the new build while they run and stays there if they fail. The result of each night is listed under [Actions, Nightly build](https://github.com/iic-jku/IIC-OSIC-TOOLS/actions/workflows/nightly.yaml).
 
 The start scripts need no change. Set `DOCKER_USER` to the registry and namespace, `DOCKER_TAG` to `nightly`, and give the container a name of its own (shown for `start_x`, the other start scripts work the same way):
 
