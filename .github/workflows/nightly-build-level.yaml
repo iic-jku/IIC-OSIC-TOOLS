@@ -1,0 +1,112 @@
+# SPDX-FileCopyrightText: 2026 Harald Pretl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+#
+# One build level of the nightly workflow (nightly.yaml): every target of the
+# level is built natively on amd64 and arm64, one bake target per job. Each
+# architecture has its own GHCR package (iic-osic-tools-nightly-<arch>) that
+# holds the intermediate images and the build cache, and with
+# DEPS_FROM_TARGETS=0 a target pulls its dependencies from there.
+
+name: "Nightly build level"
+
+on:
+  workflow_call:
+    inputs:
+      targets:
+        description: "JSON list of bake targets"
+        required: true
+        type: string
+      sha:
+        description: "Commit to build"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    name: ${{ matrix.target }} (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJSON(inputs.targets) }}
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.sha }}
+
+      - name: Free disk space
+        uses: ./.github/actions/free-disk-space
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ matrix.target }}
+        working-directory: _build
+        env:
+          TARGET: ${{ matrix.target }}
+          PLATFORMS: linux/${{ matrix.arch }}
+          IMAGE: iic-osic-tools-nightly-${{ matrix.arch }}
+          DEPS_FROM_TARGETS: "0"
+          CACHE_EXPORT: "1"
+          BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
+        run: |
+          # bake reads REGISTRY, IMAGE, PLATFORMS, DEPS_FROM_TARGETS and
+          # CACHE_EXPORT from the environment. GHCR names must be lower case.
+          export REGISTRY="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}"
+          args=(--progress=plain --push)
+          if [ "$TARGET" = "image-full" ]; then
+            # image-full has no default tag
+            args+=(--set "image-full.tags=${REGISTRY}/${IMAGE}:image-full"
+                   --set "image-full.args.CONTAINER_TAG=nightly")
+          fi
+          docker buildx bake "${args[@]}" "$TARGET" 2>&1 | tee "$RUNNER_TEMP/bake.log"
+
+      - name: Write failure summary
+        if: failure()
+        env:
+          TARGET: ${{ matrix.target }}
+          ARCH: ${{ matrix.arch }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/failure"
+          log="$RUNNER_TEMP/bake.log"
+          touch "$log"
+          cp "$log" "$RUNNER_TEMP/failure/bake-${TARGET}-${ARCH}.log"
+          {
+            echo "#### Build of \`${TARGET}\` (${ARCH}) failed"
+            echo
+            echo '```'
+            grep -E 'ERROR|[Ee]rror:|error\[' "$log" | tail -n 20 || true
+            echo '[...]'
+            tail -n 30 "$log"
+            echo '```'
+          } > "$RUNNER_TEMP/failure/failure-build-${TARGET}-${ARCH}.md"
+          cat "$RUNNER_TEMP/failure/failure-build-${TARGET}-${ARCH}.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload failure summary
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: failure-build-${{ matrix.target }}-${{ matrix.arch }}
+          path: ${{ runner.temp }}/failure/
+          retention-days: 14

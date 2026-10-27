@@ -196,6 +196,9 @@ def check_newer_versions(repos, update_yaml=False, yaml_file=None, tool_filter=N
             continue
         repo_url = repo['repo']
         current_version = str(repo['commit'])
+        # An optional 'hold' key (its value is the reason) keeps the pin
+        # out of --update-yaml, the newer version is still reported
+        held_note = f" (held: {repo['hold']})" if repo.get('hold') else ""
 
         if not repo_url.rstrip('/').endswith('.git'):
             print(f"Skipping non-git repository: {repo_url}")
@@ -210,8 +213,9 @@ def check_newer_versions(repos, update_yaml=False, yaml_file=None, tool_filter=N
                 continue
 
             if current_version != latest_commit:
-                print(f"Repository: {name}, Current Commit: {current_version}, Newer Commit: {latest_commit}")
-                updates[name] = latest_commit
+                print(f"Repository: {name}, Current Commit: {current_version}, Newer Commit: {latest_commit}" + held_note)
+                if not held_note:
+                    updates[name] = latest_commit
 
         else:
             tags = git_ls_remote_tags(repo_url)
@@ -221,8 +225,9 @@ def check_newer_versions(repos, update_yaml=False, yaml_file=None, tool_filter=N
 
             latest_tag = find_latest_tag(tags, current_version)
             if latest_tag:
-                print(f"Repository: {name}, Current Tag: {current_version}, Newer Tag: {latest_tag}")
-                updates[name] = latest_tag
+                print(f"Repository: {name}, Current Tag: {current_version}, Newer Tag: {latest_tag}" + held_note)
+                if not held_note:
+                    updates[name] = latest_tag
 
     if update_yaml and yaml_file and updates:
         write_updates_to_yaml(yaml_file, updates)
@@ -247,7 +252,8 @@ def write_updates_to_yaml(yaml_file, updates):
 
     try:
         with open(yaml_file, 'w') as f:
-            yaml.dump(repos, f, default_flow_style=False, sort_keys=False)
+            # width: never fold long values (e.g. a 'hold' reason) over two lines
+            yaml.dump(repos, f, default_flow_style=False, sort_keys=False, width=float('inf'))
         print(f"\nUpdated {changed} entries in {yaml_file}")
     except IOError as e:
         print(f"Error writing YAML file: {e}")

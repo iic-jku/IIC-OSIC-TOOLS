@@ -42,10 +42,10 @@ host_selinux_enabled() {
 	fi
 }
 
-# Watch a detached container for $1 seconds (default 5) and dump its log if it
+# Watch a detached container for $1 seconds (default 2) and dump its log if it
 # dies, which would otherwise pass unnoticed. Returns 1 if it stopped.
 check_container_alive() {
-	local timeout=${1:-5}
+	local timeout=${1:-2}
 	local i
 	if [ -n "${ECHO_IF_DRY_RUN}" ] || [ -n "${IIC_OSIC_TOOLS_NO_STARTUP_CHECK}" ]; then
 		return 0
@@ -89,6 +89,14 @@ selinux_failure_hint() {
 		echo "[HINT] SELinux is enabled, but the workaround is switched off via IIC_OSIC_TOOLS_SELINUX_LABEL."
 		echo "[HINT] Without it the container cannot access the host X11/Wayland sockets and ${DESIGNS}, see README section 5.1.1."
 	fi
+}
+# Rootless Podman cannot remap file ownership on the fly, so the first container
+# with --userns=keep-id per image makes a chown'ed copy of every layer.
+keep_id_copy_notice() {
+	echo "${DOCKER_EXTRA_PARAMS}" | grep -qE -- "--userns[= ]keep-id" || return 0
+	echo "[INFO] With --userns=keep-id, Podman makes an ID-mapped copy of the image on the first start of each image version."
+	echo "[INFO] This can take several minutes without any progress output and needs about as much disk space as the image. Do not interrupt it."
+	echo "[HINT] CONTAINER_USER=0 CONTAINER_GROUP=0 avoids the copy, see README section 5.1."
 }
 # --- END common startup helpers ---
 
@@ -348,7 +356,7 @@ elif [ "$(${CONTAINER_ENGINE} ps -aq -f name="${CONTAINER_NAME}")" ]; then
 			selinux_failure_hint
 			exit 1
 		fi
-		if ! check_container_alive 3; then
+		if ! check_container_alive; then
 			selinux_failure_hint
 			exit 1
 		fi
@@ -357,6 +365,7 @@ elif [ "$(${CONTAINER_ENGINE} ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	fi
 else
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container does not exist, creating ${CONTAINER_NAME} ..."
+	keep_id_copy_notice
 	# Finally, run the container, and sets DISPLAY to the local display number
 	#${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" pull "${IMAGE_NAME}"
 	# Disable SC2086, $PARAMS must be globbed and splitted.
@@ -371,7 +380,7 @@ else
 		exit 1
 	fi
 	# Do not advertise a URL for a container that already died.
-	if ! check_container_alive 3; then
+	if ! check_container_alive; then
 		selinux_failure_hint
 		exit 1
 	fi

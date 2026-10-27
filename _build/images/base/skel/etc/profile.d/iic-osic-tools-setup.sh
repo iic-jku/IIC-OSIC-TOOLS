@@ -89,6 +89,7 @@ if [ -z "${FOSS_INIT_DONE+x}" ]; then
     export PYTHONPYCACHEPREFIX="/tmp/pycache"
     export KLAYOUT_HOME="/headless/.klayout"
     export SHELL=/bin/bash
+    export UVM_HOME="${TOOLS}/verilator/share/uvm"
 
     # Enable ngspice co-simulation with VHDL
     export CPATH="${TOOLS}/ghdl/include:${TOOLS}/ghdl/include/ghdl:${CPATH}"

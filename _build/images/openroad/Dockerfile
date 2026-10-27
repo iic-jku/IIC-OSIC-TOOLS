@@ -7,7 +7,7 @@
 ARG BASE_IMAGE_BUILD="registry.iic.jku.at:5000/iic-osic-tools:base-dev"
 FROM ${BASE_IMAGE_BUILD} AS openroad
 ARG OPENROAD_REPO_URL="https://github.com/The-OpenROAD-Project/OpenROAD.git"
-ARG OPENROAD_REPO_COMMIT="eb14e40b7b9527a642a07548ed1dc39c4c611cb3"
+ARG OPENROAD_REPO_COMMIT="0a0d0440377e8acfa630be47dd823f208456db4d"
 ARG OPENROAD_NAME="openroad"
 RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
     bash /images/openroad/scripts/install.sh

@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: 2026 Harald Pretl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+#
+# Makes room on a GitHub-hosted runner for the image builds and the test
+# runs. Must run before docker/setup-buildx-action, since it can restart the
+# Docker daemon with a new data root.
+
+name: "Free disk space"
+description: "Remove preinstalled toolchains and move the Docker data root to the largest disk"
+
+outputs:
+  scratch:
+    description: "A writable directory on the disk with the most free space"
+    value: ${{ steps.scratch.outputs.dir }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Remove unused toolchains
+      shell: bash
+      run: |
+        echo "[INFO] Free disk space before cleanup:"
+        df -h / /mnt 2>/dev/null || df -h /
+        # Not used by any job of the nightly workflow (setup-python is only
+        # used by jobs that do not call this action)
+        sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup \
+          /opt/hostedtoolcache /usr/local/share/boost /usr/share/swift /opt/az \
+          /usr/local/share/powershell /usr/local/share/chromium /opt/microsoft
+        docker system prune --all --force > /dev/null
+
+    - name: Move the Docker data root to the larger disk
+      shell: bash
+      run: |
+        # The x86_64 runners have a second, larger disk at /mnt
+        root_free=$(df --output=avail -B1G / | tail -1)
+        mnt_free=$(df --output=avail -B1G /mnt 2>/dev/null | tail -1 || echo 0)
+        if [ "${mnt_free:-0}" -gt "$((root_free + 10))" ]; then
+          echo "[INFO] Moving the Docker data root to /mnt/docker (${mnt_free} GB free vs. ${root_free} GB on /)."
+          sudo systemctl stop docker docker.socket
+          sudo mkdir -p /mnt/docker
+          [ -s /etc/docker/daemon.json ] || echo '{}' | sudo tee /etc/docker/daemon.json > /dev/null
+          sudo jq '. + {"data-root": "/mnt/docker"}' /etc/docker/daemon.json | sudo tee /etc/docker/daemon.json.new > /dev/null
+          sudo mv /etc/docker/daemon.json.new /etc/docker/daemon.json
+          sudo systemctl start docker
+          docker info --format '[INFO] Docker data root: {{.DockerRootDir}}'
+        else
+          echo "[INFO] Keeping the Docker data root on / (${root_free} GB free, /mnt: ${mnt_free:-0} GB)."
+        fi
+
+    - name: Pick a scratch directory
+      id: scratch
+      shell: bash
+      run: |
+        root_free=$(df --output=avail -B1G / | tail -1)
+        mnt_free=$(df --output=avail -B1G /mnt 2>/dev/null | tail -1 || echo 0)
+        if [ "${mnt_free:-0}" -gt "$root_free" ]; then
+          dir=/mnt/scratch
+        else
+          dir="$RUNNER_TEMP/scratch"
+        fi
+        sudo mkdir -p "$dir"
+        sudo chown "$(id -u):$(id -g)" "$dir"
+        echo "dir=$dir" >> "$GITHUB_OUTPUT"
+        echo "[INFO] Free disk space after cleanup:"
+        df -h / /mnt 2>/dev/null || df -h /

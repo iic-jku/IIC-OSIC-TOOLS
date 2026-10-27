@@ -169,7 +169,9 @@ fi
 
 wait_for_x() {
     local display=${DISPLAY:-:1}
-    local retries=50
+    # Kept short so a failed X11 start ends the container within the 2s
+    # startup check of the start_*.sh scripts.
+    local retries=10
 
     [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Waiting for X server on $display..."
 

@@ -11,7 +11,7 @@ FROM ${TOOL_IMAGE_SLANG} AS slang
 FROM ${BASE_IMAGE_BUILD} AS opencdc
 
 ARG OPENCDC_REPO_URL="https://github.com/Ayoubbelguellaoui/CDC.git"
-ARG OPENCDC_REPO_COMMIT="6c6bd44bf2d137e108437bb5a9729c8fd5350886"
+ARG OPENCDC_REPO_COMMIT="18e04d8ab4160afe4d61a61c1bb41e136b52d242"
 ARG OPENCDC_NAME="opencdc"
 
 COPY --from=slang	${TOOLS}/slang    ${TOOLS}/slang

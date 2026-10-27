@@ -267,7 +267,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [surfer](https://gitlab.com/surfer-project/surfer) waveform viewer with snappy usable interface and extensibility
 - [svck](https://github.com/AsFigo/svck) customizable SystemVerilog linter (uses `verible`)
 - [vacask](https://codeberg.org/arpadbuermen/VACASK) a modern Verilog-A based analog circuit simulator
-- [verilator](https://github.com/verilator/verilator) fast Verilog simulator
+- [verilator](https://github.com/verilator/verilator) fast Verilog simulator, incl. the UVM 2020-3.2 library Verilator is tested against (in `$UVM_HOME`, see `$UVM_HOME/README.md`)
 - [verible](https://github.com/chipsalliance/verible) SystemVerilog parser, style-linter, formatter, and language server
 - [veryl](https://github.com/veryl-lang/veryl) a modern hardware description language, based on SystemVerilog
 - [vlog2verilog](https://github.com/RTimothyEdwards/qflow) Verilog file conversion
@@ -396,6 +396,10 @@ For Linux, the local X11 server is accessed through a Unix socket. There are mul
 - `DISP` has the same function as macOS and Windows. It is copied to the container's `DISPLAY` variable. If it is not set, the value of `DISPLAY` from the host is copied.
 - `XAUTH` defines the file that holds the cookies for authentication through the socket. If it is unset, the host's `XAUTHORITY` contents are used. If those are unset too, it will use `$HOME/.Xauthority`.
 
+When the display is SSH X11 forwarding (`ssh -X`, so `DISPLAY=localhost:N`), sshd offers it only on TCP port 6000+N of the host loopback and creates no socket in `/tmp/.X11-unix`. The script then starts the container with `--net=host` so it can reach that port. A network option already present in `DOCKER_EXTRA_PARAMS` is kept.
+
+Docker installed as a snap (offered by the Ubuntu Server installer) runs its daemon with a private `/tmp`, so it cannot see the X11 sockets or the cookie file under the host's `/tmp`. The script detects this and writes the cookie file to `$HOME/eda` instead, which makes SSH X11 forwarding work. A local display still needs the socket in `/tmp`, so with the snap only SSH forwarding works. Install Docker CE from Docker's apt repository instead (e.g. with `install.sh`).
+
 The defaults for these variables are tested on native X11 servers, X2Go sessions, and Wayland. The script copies and modifies the cookie from the`.Xauthority` file into a separate, temporary file. This file is then mounted into the container.
 
 #### 4.3.4 Installing X11-Server
@@ -470,6 +474,7 @@ For container experts, there is also support for other container engines and add
 The start scripts automatically handle the classic Podman pitfalls:
 
 - In rootless mode on Linux, they add `--userns=keep-id` (unless a `--userns` option is already given via `DOCKER_EXTRA_PARAMS`), so the host user launching the container is mapped to the same UID/GID inside the container, preventing access issues between the container and mounted directories from the host. On macOS and Windows the bind mount passes through the Podman machine VM, which does the ID mapping itself, so `keep-id` is not added there.
+- With `keep-id`, rootless Podman cannot remap file ownership on the fly, so the first container of each image version gets an ID-mapped copy of every image layer. This copy runs without progress output, takes several minutes (5 min 24 s on an Ubuntu 24.04 host with an NVMe disk for image `latest` in 2026-10) and needs about as much disk space as the image again. Later containers of the same image reuse it. The start scripts print a notice before this step, do not interrupt it. Starting with `CONTAINER_USER=0 CONTAINER_GROUP=0` skips `keep-id` and the copy: in rootless Podman, root inside the container is the host user, so files in `DESIGNS` still belong to you, but all tools then run as root inside the container.
 - Since rootless mode cannot bind host ports below 1024, `start_vnc.sh` defaults the webserver port to `8080` instead of `80` (an explicitly set `WEBSERVER_PORT` below 1024 produces a warning). This also applies on macOS and Windows, where the Podman machine VM runs rootless by default and its `rootlessport` helper enforces the same limit.
 - `start_vnc.sh` passes `--sysctl net.ipv4.ip_unprivileged_port_start=0` to Podman (rootful and rootless). Docker sets this namespaced sysctl in every container by default, Podman does not — without it, the noVNC webserver (which runs as a non-root user) cannot bind port 80 *inside* the container and the VNC mode fails.
 - On SELinux hosts they add `--security-opt label=disable`, see [5.1.1 SELinux (Fedora, RHEL and Clones)](#511-selinux-fedora-rhel-and-clones).

@@ -1,0 +1,393 @@
+# SPDX-FileCopyrightText: 2026 Harald Pretl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+#
+# Nightly build: bump every pin that is not held, build the image for amd64
+# and arm64 on GitHub-hosted runners, publish it as
+# ghcr.io/<owner>/iic-osic-tools:nightly, run the regression tests on both
+# architectures, and report. The branch `nightly` is reset from BASE_REF every
+# night. A green night opens or refreshes the PR nightly -> BASE_REF, a red
+# night opens or updates the issue labelled `nightly-failure`. Nothing is
+# merged automatically. See the "Nightly build" section of _build/README.md.
+#
+# A scheduled run builds nothing when the nightly tree and the head of the IHP
+# PDK branch dev (cloned unpinned by install_ihp.sh) match the last run that
+# passed the tests, recorded in the branch nightly-tested. It still builds when
+# that pass is 6 days or older, to pick up base image and other unpinned
+# updates. A manual run always builds.
+
+name: "Nightly build"
+
+on:
+  schedule:
+    # 23:00 UTC is 00:00 (CET) or 01:00 (CEST) in Linz, leaving the night for a full build and test run
+    # Monday, Wednesday and Friday nights only, to limit the runner time
+    - cron: "0 23 * * 1,3,5"
+  workflow_dispatch:
+    inputs:
+      base_ref:
+        description: "Branch to reset nightly from"
+        default: "next_release"
+        type: string
+      skip_bump:
+        description: "Build base_ref as it is, without version bumps"
+        default: false
+        type: boolean
+      skip_tests:
+        description: "Skip the regression tests (no PR is opened or refreshed)"
+        default: false
+        type: boolean
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+  issues: write
+
+env:
+  BASE_REF: ${{ inputs.base_ref || 'next_release' }}
+
+jobs:
+  bump:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+      changed: ${{ steps.commit.outputs.changed }}
+      skip: ${{ steps.skip.outputs.skip }}
+      fingerprint: ${{ steps.skip.outputs.fingerprint }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.BASE_REF }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install the helper dependencies
+        run: python3 -m pip install --quiet pyyaml requests packaging
+
+      - name: Bump versions
+        if: ${{ !inputs.skip_bump }}
+        working-directory: _build
+        run: |
+          log="$RUNNER_TEMP"
+          # The EDA checker exits 1 when a registry lookup failed, after
+          # writing every bump it could resolve. That is not worth a red night.
+          if ! python3 tools/check_eda_tool_version.py -u 2>&1 | tee "$log/eda.log"; then
+            echo "::warning::check_eda_tool_version.py reported errors, see the log of this step."
+          fi
+          python3 tools/check_yaml_tool_version.py -u 2>&1 | tee "$log/yaml.log"
+          if grep -q '^Error\|^Warning' "$log/yaml.log"; then
+            echo "::warning::check_yaml_tool_version.py could not query every repository, see the log of this step."
+          fi
+          python3 tools/rev_from_yaml.py
+
+          eda=$(grep -E '^  [^ ]+ \([a-z]+\): .* -> ' "$log/eda.log" | sed 's/^  /- /' || true)
+          tools=$(grep '^Repository: ' "$log/yaml.log" | grep -v '(held: ' | sed 's/^Repository: /- /' || true)
+          held=$({ grep -E '^  [^ ]+ \([a-z]+\): .* held ' "$log/eda.log" | sed 's/^  /- /'
+                   grep '^Repository: .*(held: ' "$log/yaml.log" | sed 's/^Repository: /- /'; } || true)
+          printf '%s\n\n%s\n\n%s\n\n%s\n\n%s\n\n%s\n' \
+            "### pip, cargo and gem packages (install_eda.sh)" "${eda:-- no change}" \
+            "### Tools (tool_metadata.yml)" "${tools:-- no change}" \
+            "### Held pins with a newer upstream version" "${held:-- none}" > "$log/bump-summary.md"
+
+      - name: Commit and push the nightly branch
+        id: commit
+        run: |
+          base_sha=$(git rev-parse HEAD)
+          git switch -C nightly
+          git add -u
+          if ! git diff --cached --quiet; then
+            git -c user.name="github-actions[bot]" \
+                -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+                commit --quiet -m "Nightly version bumps $(date -u +%Y-%m-%d)" \
+                -m "Written by the nightly workflow: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          fi
+          git push --force origin HEAD:refs/heads/nightly
+          if [ "$(git rev-parse HEAD)" = "$base_sha" ]; then changed=false; else changed=true; fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+          [ -f "$RUNNER_TEMP/bump-summary.md" ] || echo "No version bumps (skip_bump)." > "$RUNNER_TEMP/bump-summary.md"
+          cat "$RUNNER_TEMP/bump-summary.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Skip a scheduled night without changes
+        id: skip
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          ihp=$(git ls-remote https://github.com/iic-jku/IHP-Open-PDK.git refs/heads/dev | cut -f1 || true)
+          fp="tree=$(git rev-parse 'HEAD^{tree}') ihp=${ihp:-unknown}"
+          echo "fingerprint=$fp" >> "$GITHUB_OUTPUT"
+          skip=false
+          if [ "$EVENT" = "schedule" ] && [ -n "$ihp" ] && git fetch --quiet origin nightly-tested 2>/dev/null; then
+            age=$(( $(date +%s) - $(git log -1 --format=%ct FETCH_HEAD) ))
+            if [ "$(git log -1 --format=%s FETCH_HEAD)" = "$fp" ] && [ "$age" -lt $((6 * 86400)) ]; then
+              skip=true
+              echo "Nothing changed since the last tested night ($(git log -1 --format=%cs FETCH_HEAD)), the build is skipped." >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
+
+      - name: Upload bump summary
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: bump-summary
+          path: ${{ runner.temp }}/bump-summary.md
+          retention-days: 14
+
+  plan:
+    needs: bump
+    if: ${{ needs.bump.outputs.skip != 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      base: ${{ steps.levels.outputs.base }}
+      base_dev: ${{ steps.levels.outputs.base-dev }}
+      tools_1: ${{ steps.levels.outputs.tools-1 }}
+      tools_2: ${{ steps.levels.outputs.tools-2 }}
+      tools_3: ${{ steps.levels.outputs.tools-3 }}
+      tools_4: ${{ steps.levels.outputs.tools-4 }}
+      image_full: ${{ steps.levels.outputs.image-full }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.bump.outputs.sha }}
+
+      - name: Split the bake targets into levels
+        id: levels
+        working-directory: _build
+        run: |
+          # DEPS_FROM_TARGETS=1 (the default) prints the dependencies as
+          # target:<name> contexts, which is what bake_levels.py reads
+          docker buildx bake --print all > "$RUNNER_TEMP/bake.json"
+          python3 tools/bake_levels.py "$RUNNER_TEMP/bake.json" | tee -a "$GITHUB_OUTPUT"
+
+  base:
+    needs: [bump, plan]
+    uses: ./.github/workflows/nightly-build-level.yaml
+    with:
+      targets: ${{ needs.plan.outputs.base }}
+      sha: ${{ needs.bump.outputs.sha }}
+
+  base-dev:
+    needs: [bump, plan, base]
+    uses: ./.github/workflows/nightly-build-level.yaml
+    with:
+      targets: ${{ needs.plan.outputs.base_dev }}
+      sha: ${{ needs.bump.outputs.sha }}
+
+  # A level runs only when the levels before it passed. An empty level is
+  # skipped, and the later ones still run, hence !failure() instead of the
+  # default success() (which treats a skipped dependency as not successful).
+  tools-1:
+    needs: [bump, plan, base-dev]
+    if: ${{ !cancelled() && !failure() && needs.bump.outputs.skip != 'true' && needs.plan.outputs.tools_1 != '[]' }}
+    uses: ./.github/workflows/nightly-build-level.yaml
+    with:
+      targets: ${{ needs.plan.outputs.tools_1 }}
+      sha: ${{ needs.bump.outputs.sha }}
+
+  tools-2:
+    needs: [bump, plan, tools-1]
+    if: ${{ !cancelled() && !failure() && needs.bump.outputs.skip != 'true' && needs.plan.outputs.tools_2 != '[]' }}
+    uses: ./.github/workflows/nightly-build-level.yaml
+    with:
+      targets: ${{ needs.plan.outputs.tools_2 }}
+      sha: ${{ needs.bump.outputs.sha }}
+
+  tools-3:
+    needs: [bump, plan, tools-2]
+    if: ${{ !cancelled() && !failure() && needs.bump.outputs.skip != 'true' && needs.plan.outputs.tools_3 != '[]' }}
+    uses: ./.github/workflows/nightly-build-level.yaml
+    with:
+      targets: ${{ needs.plan.outputs.tools_3 }}
+      sha: ${{ needs.bump.outputs.sha }}
+
+  tools-4:
+    needs: [bump, plan, tools-3]
+    if: ${{ !cancelled() && !failure() && needs.bump.outputs.skip != 'true' && needs.plan.outputs.tools_4 != '[]' }}
+    uses: ./.github/workflows/nightly-build-level.yaml
+    with:
+      targets: ${{ needs.plan.outputs.tools_4 }}
+      sha: ${{ needs.bump.outputs.sha }}
+
+  image-full:
+    needs: [bump, plan, tools-4]
+    if: ${{ !cancelled() && !failure() && needs.bump.outputs.skip != 'true' }}
+    uses: ./.github/workflows/nightly-build-level.yaml
+    with:
+      targets: ${{ needs.plan.outputs.image_full }}
+      sha: ${{ needs.bump.outputs.sha }}
+
+  publish:
+    needs: image-full
+    if: ${{ !cancelled() && needs.image-full.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Log in to the Container registry
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish the multi-arch nightly tag
+        run: |
+          pkg="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}"
+          docker buildx imagetools create --tag "${pkg}/iic-osic-tools:nightly" \
+            "${pkg}/iic-osic-tools-nightly-amd64:image-full" \
+            "${pkg}/iic-osic-tools-nightly-arm64:image-full"
+          docker buildx imagetools inspect "${pkg}/iic-osic-tools:nightly" | tee -a "$GITHUB_STEP_SUMMARY"
+
+  test:
+    needs: [bump, publish]
+    if: ${{ !cancelled() && needs.publish.result == 'success' && !inputs.skip_tests }}
+    name: test (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.bump.outputs.sha }}
+
+      - name: Free disk space
+        id: disk
+        uses: ./.github/actions/free-disk-space
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run the regression tests
+        working-directory: _tests
+        env:
+          CONTAINER_ENGINE: docker
+          IIC_TEST_PROGRESS: "0"
+          IIC_TEST_RUNDIR: ${{ steps.disk.outputs.scratch }}/iic-tests
+        run: |
+          ./run_integration_tests.sh "ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/iic-osic-tools:nightly" 2>&1 \
+            | tee "$RUNNER_TEMP/test-output.log"
+
+      - name: Write failure summary
+        if: failure()
+        env:
+          ARCH: ${{ matrix.arch }}
+          RUNDIR: ${{ steps.disk.outputs.scratch }}/iic-tests
+        run: |
+          out="$RUNNER_TEMP/failure"
+          mkdir -p "$out"
+          run=$(find "$RUNDIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | head -n 1)
+          {
+            echo "#### Regression tests failed on ${ARCH}"
+            echo
+            if [ -n "$run" ] && [ -s "$run/joblog.tsv" ]; then
+              # joblog columns: Seq Host Starttime JobRuntime Send Receive Exitval Signal Command
+              awk -F'\t' 'NR > 1 && ($7 != 0 || $8 != 0) {
+                n = split($NF, p, "/")
+                printf "- `%s/%s`: exit %s, signal %s, %.0f s\n", p[n-1], p[n], $7, $8, $4 }' "$run/joblog.tsv"
+              for log in "$run"/logs/*.log; do
+                [ -f "$log" ] || continue
+                echo
+                echo "\`$(basename "$log")\`:"
+                echo '```'
+                grep '\[ERROR\]' "$log" | tail -n 10 || tail -n 10 "$log"
+                echo '```'
+              done
+              cp -r "$run/logs" "$run/joblog.tsv" "$out/" 2>/dev/null || true
+            else
+              echo "The test run did not produce a joblog. Last lines of its output:"
+              echo '```'
+              tail -n 40 "$RUNNER_TEMP/test-output.log" 2>/dev/null
+              echo '```'
+            fi
+          } > "$out/failure-test-${ARCH}.md"
+          cat "$out/failure-test-${ARCH}.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload failure summary and logs
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: failure-test-${{ matrix.arch }}
+          path: ${{ runner.temp }}/failure/
+          retention-days: 14
+
+  # Records what passed, for the skip check of the next scheduled night. The
+  # commit carries the tree of nightly and the fingerprint as its subject.
+  mark-tested:
+    needs: [bump, test]
+    if: ${{ !cancelled() && needs.test.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.bump.outputs.sha }}
+
+      - name: Push the branch nightly-tested
+        env:
+          FINGERPRINT: ${{ needs.bump.outputs.fingerprint }}
+        run: |
+          commit=$(git -c user.name="github-actions[bot]" \
+                       -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+                       commit-tree 'HEAD^{tree}' -p HEAD -m "$FINGERPRINT" -m "Tested by ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}")
+          git push --force origin "${commit}:refs/heads/nightly-tested"
+
+  report:
+    needs: [bump, plan, base, base-dev, tools-1, tools-2, tools-3, tools-4, image-full, publish, test]
+    if: ${{ !cancelled() && needs.bump.outputs.skip != 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: .github/scripts
+
+      - name: Download bump summary
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        continue-on-error: true
+        with:
+          name: bump-summary
+          path: ${{ runner.temp }}/artifacts
+
+      - name: Download failure summaries
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        continue-on-error: true
+        with:
+          pattern: failure-*
+          path: ${{ runner.temp }}/artifacts/failures
+          merge-multiple: true
+
+      - name: Open or update the issue or the PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NEEDS_JSON: ${{ toJSON(needs) }}
+          CHANGED: ${{ needs.bump.outputs.changed }}
+          ARTIFACT_DIR: ${{ runner.temp }}/artifacts
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: .github/scripts/nightly-report.sh

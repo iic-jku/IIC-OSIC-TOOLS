@@ -158,6 +158,20 @@ def get_installed_packages(shell_script):
     return _parse_pip(content) + _parse_cargo(content) + _parse_gem(content)
 
 
+def get_held_packages(shell_script):
+    """Return the package names listed on `# version-hold:` lines.
+
+    A held package is still checked, but never written by --update. The
+    reason for a hold belongs in the comment next to the marker.
+    """
+    with open(shell_script, 'r') as file:
+        content = file.read()
+    held = set()
+    for names in re.findall(r'^\s*#\s*version-hold:(.*)$', content, re.MULTILINE):
+        held.update(names.split())
+    return held
+
+
 def _is_prerelease(ver):
     """Return True if the version string denotes a pre-release (rc/alpha/dev)."""
     if not ver:
@@ -272,7 +286,7 @@ def is_newer(latest_version, current_version):
         return current_version != latest_version
 
 
-def check_newer_versions(packages):
+def check_newer_versions(packages, held=frozenset()):
     """Query each registry and report newer (or, for unpinned gems, available) versions."""
     for ecosystem, package, current_version in packages:
         latest_version = get_latest_version(ecosystem, package, current_version)
@@ -285,7 +299,8 @@ def check_newer_versions(packages):
                   f"Latest Version: {latest_version}")
         elif is_newer(latest_version, current_version):
             print(f"Package: {package} ({ecosystem}), Current Version: "
-                  f"{current_version}, Newer Version: {latest_version}")
+                  f"{current_version}, Newer Version: {latest_version}"
+                  + (" (held)" if package in held else ""))
 
 
 def _update_pattern(ecosystem, package):
@@ -343,11 +358,13 @@ def update_version_in_file(file_path, ecosystem, package, new_version, dry_run=F
     return True
 
 
-def update_versions(shell_script, packages, tool_filter=None, dry_run=False):
+def update_versions(shell_script, packages, tool_filter=None, dry_run=False,
+                    held=frozenset()):
     """Check each registry and update pinned versions in the shell script.
 
     If tool_filter is given (list of package names), only those packages
-    are considered for updating.
+    are considered for updating. Packages in held are reported but never
+    written.
     """
     errors = 0
     updated = 0
@@ -367,6 +384,10 @@ def update_versions(shell_script, packages, tool_filter=None, dry_run=False):
             continue
 
         if is_newer(latest_version, current_version):
+            if package in held:
+                print(f"  {package} ({ecosystem}): {current_version} held "
+                      f"({latest_version} available)")
+                continue
             if update_version_in_file(shell_script, ecosystem, package,
                                       latest_version, dry_run=dry_run):
                 updated += 1
@@ -405,12 +426,14 @@ if __name__ == "__main__":
     args = prs.parse_args()
 
     installed_packages = get_installed_packages(args.script)
+    held_packages = get_held_packages(args.script)
 
     if args.update:
         print(f'Updating versions in: "{args.script}"')
         if args.tools:
             print(f"Filtering packages: {', '.join(args.tools)}")
         update_versions(args.script, installed_packages,
-                        tool_filter=args.tools, dry_run=args.dry_run)
+                        tool_filter=args.tools, dry_run=args.dry_run,
+                        held=held_packages)
     else:
-        check_newer_versions(installed_packages)
+        check_newer_versions(installed_packages, held=held_packages)

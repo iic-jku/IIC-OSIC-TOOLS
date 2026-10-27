@@ -98,6 +98,28 @@ To test locally stored images, the following command can be used:
 DOCKER_USER=registry.iic.jku.at:5000 DOCKER_TAG=next ./start_shell.sh
 ```
 
+### Nightly build
+
+`.github/workflows/nightly.yaml` runs every night at 23:00 UTC on GitHub-hosted runners, and can be started by hand:
+
+```bash
+gh workflow run nightly.yaml                                          # same as the scheduled run
+gh workflow run nightly.yaml -f skip_tests=true                       # build and publish only
+gh workflow run nightly.yaml -f base_ref=my-branch -f skip_bump=true  # build another branch as it is
+```
+
+What one run does:
+
+1. Resets branch `nightly` from `next_release` (input `base_ref`), runs `check_eda_tool_version.py -u`, `check_yaml_tool_version.py -u` and `rev_from_yaml.py`, commits the bumps and force-pushes `nightly`. Held pins stay (see "Version bumps" in `AGENTS.md`).
+2. Builds every bake target natively on `ubuntu-24.04` (amd64) and `ubuntu-24.04-arm` (arm64), one target per job, level by level. `_build/tools/bake_levels.py` derives the levels from the named contexts of `docker-bake.hcl`. Each architecture has its own GHCR package, `ghcr.io/iic-jku/iic-osic-tools-nightly-<arch>`, holding the intermediate images and the build cache (`REGISTRY`, `IMAGE`, `PLATFORMS` and `DEPS_FROM_TARGETS=0` set through the environment).
+3. Publishes both `image-full` images as the multi-arch tag `ghcr.io/iic-jku/iic-osic-tools:nightly`.
+4. Runs `_tests/run_integration_tests.sh` on that tag on both architectures.
+5. Reports. A failure opens the issue labelled `nightly-failure`, or comments on the open one, and turns the nightly PR into a draft. A green night with bumps opens or refreshes the PR `nightly` -> `next_release` and closes the failure issue. The workflow never merges.
+
+The workflow file has to be on `main`, because GitHub runs scheduled and dispatched workflows from the default branch. It checks out `next_release` itself, so the helpers it calls come from there.
+
+One-time setup: under Settings, Actions, General, set the workflow permissions to "Read and write" and allow GitHub Actions to create pull requests. After the first run, make the three GHCR packages public (the intermediates are tens of GB, public packages do not count against storage).
+
 ### Prerequisites
 
 * [Docker](https://docs.docker.com/engine/install/)

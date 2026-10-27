@@ -32,6 +32,8 @@ apt-get -y install openjdk-17-jdk
 # libllvm18 for nvc/ghdl/openvaf and libgnat-13 for ghdl (written in Ada).
 # mold must stay as well: verilator bakes "-fuse-ld=mold" into verilated.mk at
 # build time, so every user model build links with it.
+# liblz4-dev must stay too: since Verilator 5.052 verilated_fst_c.cpp includes
+# <lz4.h>, so every user model built with --trace-fst needs the header.
 #
 # The Qt5 and Qt6 runtimes both have to stay: the CMake-built OpenROAD for
 # LibreLane has a Qt5-only GUI (src/gui/CMakeLists.txt does find_package(Qt5
@@ -138,6 +140,7 @@ apt-get -y install \
 	libklu2 \
 	liblapack3 \
 	libllvm18 \
+	liblz4-dev \
 	liblzma5 \
 	libmng2 \
 	libmpc3 \

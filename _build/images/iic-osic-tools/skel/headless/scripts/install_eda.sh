@@ -57,6 +57,7 @@ pip3 install $PIP_FLAGS --ignore-installed \
 # cace is held at 2.11.0 and ciel at 2.x: every librelane release (up to
 # 3.0.14 / 3.1.0.dev3) requires ciel<3, while cace>=2.12.0 requires ciel>=3.0.0.
 # Bump cace (and ciel) only once librelane accepts ciel 3.
+# version-hold: cace ciel
 pip3 install $PIP_FLAGS \
 	"amaranth==0.5.10" \
 	cace==2.11.0 \
@@ -67,24 +68,27 @@ pip3 install $PIP_FLAGS \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.7 \
-	gds2palace==0.8.0 \
+	gds2palace==0.9.2 \
 	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.6.6 \
+	klayout-pex==0.6.12 \
+	klayout-pex-plugin-elmer==0.1.0 \
+	klayout-pex-plugin-gmsh==0.1.0 \
+	klayout-pex-plugin-palace==0.1.0 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
-	librelane==3.1.0.dev3 \
-	najaeda==0.7.29 \
+	librelane==3.1.0.dev4 \
+	najaeda==0.7.32 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
 	pyuvm==5.0.0 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
-	scikit-rf==2.1.0 \
-	setupEM==0.12.0 \
-	siliconcompiler==0.38.10 \
-	snp2le==0.1.17 \
+	scikit-rf==2.2.0 \
+	setupEM==0.14.2 \
+	siliconcompiler==0.38.11 \
+	snp2le==0.1.18 \
 	spicelib==1.6.4 \
 	spyci==1.0.2
 

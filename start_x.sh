@@ -70,10 +70,10 @@ host_selinux_enabled() {
 	fi
 }
 
-# Watch a detached container for $1 seconds (default 5) and dump its log if it
+# Watch a detached container for $1 seconds (default 2) and dump its log if it
 # dies, which would otherwise pass unnoticed. Returns 1 if it stopped.
 check_container_alive() {
-	local timeout=${1:-5}
+	local timeout=${1:-2}
 	local i
 	if [ -n "${ECHO_IF_DRY_RUN}" ] || [ -n "${IIC_OSIC_TOOLS_NO_STARTUP_CHECK}" ]; then
 		return 0
@@ -117,6 +117,14 @@ selinux_failure_hint() {
 		echo "[HINT] SELinux is enabled, but the workaround is switched off via IIC_OSIC_TOOLS_SELINUX_LABEL."
 		echo "[HINT] Without it the container cannot access the host X11/Wayland sockets and ${DESIGNS}, see README section 5.1.1."
 	fi
+}
+# Rootless Podman cannot remap file ownership on the fly, so the first container
+# with --userns=keep-id per image makes a chown'ed copy of every layer.
+keep_id_copy_notice() {
+	echo "${DOCKER_EXTRA_PARAMS}" | grep -qE -- "--userns[= ]keep-id" || return 0
+	echo "[INFO] With --userns=keep-id, Podman makes an ID-mapped copy of the image on the first start of each image version."
+	echo "[INFO] This can take several minutes without any progress output and needs about as much disk space as the image. Do not interrupt it."
+	echo "[HINT] CONTAINER_USER=0 CONTAINER_GROUP=0 avoids the copy, see README section 5.1."
 }
 # --- END common startup helpers ---
 
@@ -285,6 +293,34 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 			fi
 		fi
 
+		# The Docker snap runs its daemon with a private /tmp, so host files under
+		# /tmp (the X11 sockets, the cookie file below) are invisible to it, and
+		# bind-mounting them silently yields empty directories.
+		if [ -z "${ENGINE_IS_PODMAN}" ] && ${CONTAINER_ENGINE} info --format '{{.DockerRootDir}}' 2>/dev/null | grep -q "^/var/snap/docker/"; then
+			DOCKER_IS_SNAP=1
+			[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Docker snap detected, keeping the Xauthority file out of /tmp."
+		fi
+
+		# A display on localhost:N comes from SSH X11 forwarding. sshd listens on
+		# TCP port 6000+N on the host loopback only and creates no socket in XSOCK,
+		# so the container has to share the host network to reach it.
+		case "${DISP}" in
+			localhost:* | 127.0.0.1:*)
+				if echo "${DOCKER_EXTRA_PARAMS}" | grep -qE -- "--net(work)?[= ]"; then
+					[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] SSH X11 forwarding detected, keeping the network option from DOCKER_EXTRA_PARAMS."
+				else
+					[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] SSH X11 forwarding detected (DISPLAY=${DISP}), adding --net=host."
+					DOCKER_EXTRA_PARAMS="${DOCKER_EXTRA_PARAMS} --net=host"
+				fi
+				;;
+			*)
+				if [ -n "${DOCKER_IS_SNAP}" ]; then
+					echo "[WARNING] The Docker snap cannot see the X11 sockets in /tmp, so DISPLAY=${DISP} will most likely not be reachable from the container."
+					echo "[HINT] Install Docker CE from Docker's apt repository instead of the snap (e.g. with install.sh)."
+				fi
+				;;
+		esac
+
 		PARAMS="$PARAMS -v $XSOCK:/tmp/.X11-unix:rw"
 
 		# Auto-detect XDG_RUNTIME_DIR if not set (e.g., when running with sudo or in some rootless setups)
@@ -335,7 +371,13 @@ if [[ "$OSTYPE" == "linux"* ]]; then
 				XAUTH=$XAUTHORITY
 			fi
 			# Thanks to https://stackoverflow.com/a/25280523
-			if ! XAUTH_TMP=$(mktemp "/tmp/.${CONTAINER_NAME}_xauthority.XXXXXX"); then
+			XAUTH_TMP_TEMPLATE="/tmp/.${CONTAINER_NAME}_xauthority.XXXXXX"
+			if [ -n "${DOCKER_IS_SNAP}" ]; then
+				# The snap can only read non-hidden paths below $HOME.
+				mkdir -p "$HOME/eda"
+				XAUTH_TMP_TEMPLATE="$HOME/eda/${CONTAINER_NAME}_xauthority.XXXXXX"
+			fi
+			if ! XAUTH_TMP=$(mktemp "${XAUTH_TMP_TEMPLATE}"); then
 				echo "[ERROR] Failed to create temporary Xauthority file."
 				exit 1
 			fi
@@ -484,7 +526,15 @@ if [ "$(${CONTAINER_ENGINE} ps -aq -f name="${CONTAINER_NAME}")" ]; then
 		echo "[HINT] Press \"r\" to remove it, then run this script again to re-create it."
 	fi
 	# --- END common create-time option check ---
-	echo	
+	CREATED_DISP=$(${CONTAINER_ENGINE} inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "${CONTAINER_NAME}" 2>/dev/null | sed -n 's/^DISPLAY=//p')
+	if [ -n "${CREATED_DISP}" ] && [ "${CREATED_DISP}" != "${DISP}" ]; then
+		echo "[WARNING] The existing container was created with DISPLAY=${CREATED_DISP}, but the current display is ${DISP}."
+		echo "[HINT] Press \"r\" to remove it, then run this script again to re-create it."
+	elif echo "${DOCKER_EXTRA_PARAMS}" | grep -q -- "--net=host" && [ "$(${CONTAINER_ENGINE} inspect -f '{{.HostConfig.NetworkMode}}' "${CONTAINER_NAME}" 2>/dev/null)" != "host" ]; then
+		echo "[WARNING] The existing container was created without --net=host and cannot reach the SSH-forwarded display ${DISP}."
+		echo "[HINT] Press \"r\" to remove it, then run this script again to re-create it."
+	fi
+	echo
 	echo -n "Press \"s\" to start, and \"r\" to remove: "
 	read -r -n 1 k </dev/tty
 	echo
@@ -515,7 +565,7 @@ if [ "$(${CONTAINER_ENGINE} ps -aq -f name="${CONTAINER_NAME}")" ]; then
 			selinux_failure_hint
 			exit 1
 		fi
-		if ! check_container_alive 8; then
+		if ! check_container_alive; then
 			selinux_failure_hint
 			exit 1
 		fi
@@ -525,6 +575,7 @@ if [ "$(${CONTAINER_ENGINE} ps -aq -f name="${CONTAINER_NAME}")" ]; then
 	fi
 else
 	[ -z "${IIC_OSIC_TOOLS_QUIET}" ] && echo "[INFO] Container does not exist, creating ${CONTAINER_NAME}. Please be patient, this can take a few minutes ..."
+	keep_id_copy_notice
 	# Finally, run the container, and set DISPLAY to the local display number
 	${ECHO_IF_DRY_RUN} "${CONTAINER_ENGINE}" pull "${IMAGE_NAME}" > /dev/null
 	# Disable SC2086, $PARAMS must be globbed and splitted.
@@ -535,7 +586,7 @@ else
 		selinux_failure_hint
 		exit 1
 	fi
-	if ! check_container_alive 8; then
+	if ! check_container_alive; then
 		selinux_failure_hint
 		exit 1
 	fi

@@ -77,6 +77,7 @@ python3 tools/check_eda_tool_version.py -u -t cocotb --dry-run   # preview, then
 - Commit pins move to the head of the upstream default branch (or of the branch named by an optional `branch:` key, e.g. `openvaf`), tag pins to the newest tag with the same prefix. The helpers need PyYAML, and `check_eda_tool_version.py` also needs `requests` and `packaging`.
 - pip, cargo and gem packages: pinned in `install_eda.sh`, checked and bumped with `check_eda_tool_version.py` (commands above). Its default input `_build/tool_eda.sh` is a git symlink to `install_eda.sh`. On a checkout without symlink support, pass `images/iic-osic-tools/skel/headless/scripts/install_eda.sh` explicitly.
 - Comments next to a pin record why it is held (e.g. `cace` in `install_eda.sh`). Read them before bumping.
+- A held pin also carries a marker that keeps it out of `-u`: a `# version-hold: <pkg> ...` line in `install_eda.sh`, a `hold: <reason>` key on the entry in `tool_metadata.yml`. Check mode still lists the newer version, marked held. Remove the marker together with the hold.
 - The IHP PDKs are not pinned: `_build/images/open_pdks/scripts/install_ihp.sh` checks out branch `dev` of `iic-jku/IHP-Open-PDK`, so a rebuild can change them with no diff in this repo. sky130A and gf180mcuD follow `OPEN_PDKS_REPO_COMMIT` in `_build/images/open_pdks/Dockerfile`.
 
 ## Testing
@@ -99,6 +100,7 @@ IIC_TEST_NO_PULL=1 ./run_integration_tests.sh <registry>/iic-osic-tools:<tag>   
 ## Conventions
 
 - Work lands on `next_release`, and `main` receives it at the monthly release (tags `YYYY.MM`).
+- The nightly workflow (`.github/workflows/nightly.yaml`, section "Nightly build" of `_build/README.md`) force-resets branch `nightly` from `next_release` every night. Never commit to `nightly`.
 - Scripts and Dockerfiles start with the SPDX block used throughout the repo (`SPDX-FileCopyrightText`, `SPDX-License-Identifier: Apache-2.0`). Copy it from a neighboring file. Markdown files carry none.
 - Build and install scripts use `set -e`. Messages start with `[INFO]`, `[WARNING]` or `[ERROR]`.
 - The start scripts share most of their logic. A fix in one usually belongs in all four `.sh` scripts, and in the `.bat` twins where Windows behaves the same (e.g. `33a07842`). `DRY_RUN=1` prints their container commands instead of running them. Do not run the start or build scripts as root (README section 4).
