@@ -5,6 +5,8 @@ This document summarizes the most important changes of the individual releases o
 ## 2026.11
 
 * [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites and `-s` to select a suite directly
+* [Fix] `run_palace -np N` runs Palace on N MPI processes, where every N above 1 aborted with "mpirun does not support recursive calls"
+* [Build] new regression test 43 (`run_palace` with two MPI processes)
 
 ## 2026.10
 
