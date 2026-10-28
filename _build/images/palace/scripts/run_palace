@@ -28,8 +28,5 @@ if [ -z "$CONFIG" ]; then
 	exit 1
 fi
 
-if [ "$NP" -gt 1 ]; then
-	exec mpirun -np "$NP" palace "$CONFIG"
-else
-	exec palace "$CONFIG"
-fi
+# palace is Palace's own launcher and calls mpirun itself, so wrapping it in mpirun nests two launchers and Open MPI aborts with "mpirun does not support recursive calls".
+exec palace -np "$NP" "$CONFIG"

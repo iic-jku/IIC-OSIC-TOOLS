@@ -85,3 +85,5 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 40       | ngspice mixed-signal co-simulation (`d_cosim` counter with Icarus Verilog through `ivlng` and Verilator through `vlnggen`)      |
 | 41       | Verilator FST tracing (`--binary --trace-fst` model build, run and dump read-back with `fst2vcd`)                               |
 | 42       | Verilator with UVM (`--binary` hello-world `uvm_test` against `$UVM_HOME`, package with and without DPI)                        |
+| 43       | `run_palace` with two MPI processes (ihp-sg13g2 inductor example meshed by gds2palace, one frequency at order 1)                |
+| 44       | `USER` in a login shell started like a `docker exec`, without nss_wrapper (one line, matches `getpass.getuser()`)               |

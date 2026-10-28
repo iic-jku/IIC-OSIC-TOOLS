@@ -140,7 +140,11 @@ fi
 # Ensure USER is set — gdsfactory's pydantic-settings reads it at startup.
 # When the container is run with a numeric UID (--user UID:GID) without a matching
 # /etc/passwd entry, the shell may not populate USER automatically.
-[ -z "${USER}" ] && USER=$(id -un 2>/dev/null || echo designer) && export USER
+# Without that entry (a docker exec does not inherit the entrypoint's nss_wrapper), id -un still prints the numeric UID before it fails, so the fallback stays outside the command substitution (inside it, USER became "1000\ndesigner").
+if [ -z "${USER}" ]; then
+    USER=$(id -un 2>/dev/null) || USER=designer
+    export USER
+fi
 
 # First, check if XDG_RUNTIME_DIR is set. If not (or if it still points at
 # the legacy shared /tmp/runtime-default), use a per-user directory: the XDG
