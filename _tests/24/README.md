@@ -5,10 +5,10 @@
 - Magic (`-m`), KLayout (`-k`) and gdscheck (`-g`) DRC on a standard cell inverter in all supported PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l, gdscheck without sky130A)
 - input variants: `.gds`/`.mag`/`.klay.gds` layouts, gzipped layouts, positional auto-derive (resolved against the current dir), multi-level `-w` work dirs, `-c` clean, `-f` flatglob, `-d` debug
 - engine selection: `-b`, last-flag-wins, `-b` fallback to Magic for a `.mag` layout
-- gdscheck suites: the `-l` mapping (including `precheck` running `core` on gf180mcuD, which has no precheck suite), `-s` overrides, and a violation the PDK waives, which must not fail the run
+- gdscheck suites: the `-l` mapping (including `precheck` running `core` on gf180mcuD, which has no precheck suite), `-s` overrides, `-D` rule decks instead of a suite, and a violation the PDK waives, which must not fail the run
 - all three `-l` DRC levels (`precheck`/`macro`/`regular`) incl. asserting which per-level reports are (not) produced
 - the KLayout process limit `-j`: `-j 1` runs the four ihp `regular` parts one after another and each part writes its own report, `-j 8` splits the ihp rule deck into one process per rule table, and the gf180mcuD and sky130A verdicts stay the same under `-j 1`. For gdscheck, `-j` sets the thread count, without `-j` it gets one thread per CPU.
-- guard checks: every invalid combination (unknown layout format, unknown DRC level or gdscheck suite, invalid `-j` value, `.mag` for KLayout or gdscheck, GDS top cell name mismatch, missing files, unset PDK variables, unsupported PDK, missing tools, gdscheck 0.1, an incomplete gdscheck run) must exit with its documented error code. The last two use a stand-in `gdscheck` script, since a real run on a small cell cannot provoke them.
+- guard checks: every invalid combination (unknown layout format, unknown DRC level, gdscheck suite or deck, `-s` together with `-D`, invalid `-j` value, `.mag` for KLayout or gdscheck, GDS top cell name mismatch, missing files, unset PDK variables, unsupported PDK, missing tools, gdscheck 0.1, an incomplete gdscheck run) must exit with its documented error code. The last two use a stand-in `gdscheck` script, since a real run on a small cell cannot provoke them.
 
 Set `SAK_DRC=<path>` to test a not-yet-installed version of the script.
 
@@ -34,9 +34,10 @@ Some runs are pinned to exit 1 on purpose. A standard cell in isolation violates
 
 - **sky130A `-m`**: magic flags the missing-tap rules (`nwell.4`, `LU.2`, `LU.3`) because taps sit in separate tap cells
 - **gf180mcuD `-k` (all levels)**: the isolated 5V cell violates the dualgate rules `DF.13_MV`/`DF.14_MV`, which are satisfied only by row composition
-- **gf180mcuD `-g` (`core` and `main` suites)**: the same dualgate rules as for KLayout
+- **gf180mcuD `-g` (`core` and `main` suites, `-D comp`)**: the same dualgate rules as for KLayout
 - **sky130A `sky130_pin_without_drawing` `-k`**: the pin check flags the pin shape without drawing below it. The deck exits non-zero when it finds something, so this case also proves that such a status is not mistaken for a crashed deck
 - **ihp-sg13g2 / ihp-sg13cmos5l `-k -l regular`**: the chip-level density/fill rules (`M*.j`, `TM*.c`, `GFil.g`, `AFil.g`) fail on a single cell, while `precheck` and `macro` skip density and are clean
 - **ihp-sg13g2 / ihp-sg13cmos5l `-g -l precheck`, `-g -l regular`, `-g -s density`**: the same density/fill rules. Unlike the KLayout `precheck` level, gdscheck's `precheck` suite includes them, so only `macro` (`core`) is clean
+- **ihp-sg13g2 `-g -D activ,gatpoly`**: `AFil.g` and `GFil.g`, because the `activ` and `gatpoly` decks carry their own fill and density rules
 
 If a PDK or tool update changes one of these verdicts, the test flags it so the baseline can be reviewed (and relaxed or tightened deliberately).

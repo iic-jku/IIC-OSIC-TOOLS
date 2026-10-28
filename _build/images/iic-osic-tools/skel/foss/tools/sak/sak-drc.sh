@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-drc.sh [-d] [-m|-k|-b|-g] [-c] [-l <level>] [-s <suite>] [-j <n>] [-f <pattern>] [-w <workdir>] <cellname>
+# Usage: sak-drc.sh [-d] [-m|-k|-b|-g] [-c] [-l <level>] [-s <suite>|-D <decks>] [-j <n>] [-f <pattern>] [-w <workdir>] <cellname>
 #        -m  Run Magic DRC (default)
 #        -k  Run KLayout DRC
 #        -b  Run Magic and KLayout DRC
@@ -26,6 +26,7 @@
 #        -c  Clean output files before running
 #        -l  KLayout/gdscheck DRC level: precheck|macro|regular (default: macro)
 #        -s  gdscheck suite, e.g. density or antenna (default: derived from -l)
+#        -D  gdscheck rule decks instead of a suite, comma-separated, e.g. activ,gatpoly
 #        -j  Run at most <n> KLayout processes at once (default: 4, or the CPU count if lower), and gdscheck with <n> threads (default: one per CPU)
 #        -f  Set GDS flatglob pattern for Magic (e.g. '*' to flatten all)
 #        -w  Use <workdir> to store result files (default: current dir)
@@ -45,7 +46,7 @@ if [ $# -eq 0 ]; then
 	echo
 	echo "DRC script for Magic, KLayout, and gdscheck (ICD@JKU)"
 	echo
-	echo "Usage: $0 [-d] [-m|-k|-b|-g] [-c] [-l <level>] [-s <suite>] [-j <n>] [-f <pattern>] [-w <workdir>] <cellname>"
+	echo "Usage: $0 [-d] [-m|-k|-b|-g] [-c] [-l <level>] [-s <suite>|-D <decks>] [-j <n>] [-f <pattern>] [-w <workdir>] <cellname>"
 	echo
 	echo "       -m Run Magic DRC (default)"
 	echo "       -k Run KLayout DRC"
@@ -59,6 +60,8 @@ if [ $# -eq 0 ]; then
 	echo "          gdscheck: macro runs the core suite, regular runs main, precheck runs IHP's precheck suite"
 	echo "          (density rules included) or core on gf180mcu, which has no precheck suite"
 	echo "       -s gdscheck suite, overrides the -l mapping (e.g. density or antenna, 'gdscheck list-suites -p \$PDK' lists them)"
+	echo "       -D gdscheck rule decks instead of a suite, comma-separated (e.g. activ,gatpoly, 'gdscheck list-decks -p \$PDK' lists them)"
+	echo "          decks include their fill and density rules (e.g. AFil.g in activ, M1.j in metal1), which a single cell can fail although it passes macro"
 	echo "       -j Run at most <n> KLayout processes at once (default: 4, or the CPU count if lower)"
 	echo "          without -j the sky130 decks all start at once"
 	echo "          values above 4 only pay off for large layouts (e.g. 8 to 16 for a chip on a server),"
@@ -83,13 +86,14 @@ RUN_CLEAN=0
 FLATGLOB=""
 DRC_LEVEL="macro"
 GDSCHECK_SUITE=""
+GDSCHECK_DECKS=""
 JOBS=""
 JOBS_SET=0
 
 # check flags
 # -----------
 
-while getopts "mkbgcl:s:j:f:w:d" flag; do
+while getopts "mkbgcl:s:D:j:f:w:d" flag; do
 	case $flag in
 		m)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -m is set."
@@ -126,6 +130,10 @@ while getopts "mkbgcl:s:j:f:w:d" flag; do
 		s)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -s is set to <$OPTARG>."
 			GDSCHECK_SUITE="$OPTARG"
+			;;
+		D)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -D is set to <$OPTARG>."
+			GDSCHECK_DECKS="$OPTARG"
 			;;
 		j)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -j is set to <$OPTARG>."
@@ -330,6 +338,21 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 	if [ -n "$GDSCHECK_SUITE" ] && ! echo "$GDSCHECK_SUITES" | grep -q -x -F -e "$GDSCHECK_SUITE"; then
 		echo "[ERROR] Unknown gdscheck suite <$GDSCHECK_SUITE> for $PDK (expected one of $(echo "$GDSCHECK_SUITES" | awk '{printf "%s%s", sep, $1; sep=", "}'))!"
 		exit $ERR_NO_PARAM
+	fi
+	if [ -n "$GDSCHECK_DECKS" ]; then
+		if [ -n "$GDSCHECK_SUITE" ]; then
+			echo "[ERROR] gdscheck runs either a suite (-s) or rule decks (-D), not both!"
+			exit $ERR_NO_PARAM
+		fi
+		# one deck per line, so a space after a comma or a doubled comma does no harm
+		GDSCHECK_DECKS=$(echo "$GDSCHECK_DECKS" | tr ',' ' ' | awk '{for (i = 1; i <= NF; i++) print $i}')
+		GDSCHECK_DECK_LIST=$(gdscheck list-decks --process "$PDK" 2>/dev/null | awk '{print $1}')
+		GDSCHECK_UNKNOWN=$(echo "$GDSCHECK_DECKS" | grep -v -x -F -e "$GDSCHECK_DECK_LIST")
+		if [ -n "$GDSCHECK_UNKNOWN" ]; then
+			echo "[ERROR] Unknown gdscheck deck <$(echo "$GDSCHECK_UNKNOWN" | awk '{printf "%s%s", sep, $1; sep=","}')> for $PDK (expected one of $(echo "$GDSCHECK_DECK_LIST" | awk '{printf "%s%s", sep, $1; sep=", "}'))!"
+			exit $ERR_NO_PARAM
+		fi
+		GDSCHECK_DECKS=$(echo "$GDSCHECK_DECKS" | awk '{printf "%s%s", sep, $1; sep=","}')
 	fi
 fi
 
@@ -686,11 +709,11 @@ fi
 if [ "$RUN_GDSCHECK" -eq 1 ]; then
 	echo "[INFO] Launching gdscheck DRC..."
 
-	# map the DRC level onto the gdscheck suites unless -s selected one directly
+	# map the DRC level onto the gdscheck suites unless -s selected one or -D selected decks
 	# precheck: IHP's published open-source precheck subset, which includes the density/fill rules unlike the KLayout precheck level
 	# macro: core suite, all geometric rules minus density/fill and antenna
 	# regular: main suite, every per-layer deck including density and antenna
-	if [ -z "$GDSCHECK_SUITE" ]; then
+	if [ -z "$GDSCHECK_SUITE" ] && [ -z "$GDSCHECK_DECKS" ]; then
 		case "$DRC_LEVEL" in
 			precheck)	GDSCHECK_SUITE="precheck" ;;
 			macro)		GDSCHECK_SUITE="core" ;;
@@ -701,7 +724,14 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 			GDSCHECK_SUITE="core"
 		fi
 	fi
-	[ $DEBUG -eq 1 ] && echo "[INFO] Using gdscheck suite <$GDSCHECK_SUITE>."
+	if [ -n "$GDSCHECK_DECKS" ]; then
+		GDSCHECK_SELECT="--deck"
+		GDSCHECK_RULES=$GDSCHECK_DECKS
+	else
+		GDSCHECK_SELECT="--suite"
+		GDSCHECK_RULES=$GDSCHECK_SUITE
+	fi
+	[ $DEBUG -eq 1 ] && echo "[INFO] Using gdscheck ${GDSCHECK_SELECT#--} <$GDSCHECK_RULES>."
 
 	# the run dir is wiped so its contents only reflect this run
 	rm -rf "$GDSCHECK_RUNDIR"
@@ -720,7 +750,7 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 	gdscheck run \
 		--input "$CELL_LAY" \
 		--process "$PDK" \
-		--suite "$GDSCHECK_SUITE" \
+		"$GDSCHECK_SELECT" "$GDSCHECK_RULES" \
 		--topcell "$CELL_NAME" \
 		--report "$GDSCHECK_RUNDIR/$CELL_NAME.lyrdb" \
 		--threads "$GDSCHECK_THREADS" \

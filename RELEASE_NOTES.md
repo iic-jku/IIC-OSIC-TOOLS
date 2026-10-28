@@ -4,7 +4,7 @@ This document summarizes the most important changes of the individual releases o
 
 ## 2026.11
 
-* [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites and `-s` to select a suite directly
+* [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites, `-s` to select a suite directly, and `-D` to run single rule decks (e.g. `activ,gatpoly`)
 
 ## 2026.10
 

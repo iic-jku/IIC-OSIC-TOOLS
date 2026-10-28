@@ -9,7 +9,7 @@
 # supported PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l), covers the
 # input variants (.gds/.mag/.klay.gds layouts, gzipped layouts, auto-derive),
 # all three -l DRC levels incl. the per-level report gating, the gdscheck
-# suites and waivers, and checks that invalid combinations are caught with the
+# suites, decks and waivers, and checks that invalid combinations are caught with the
 # documented exit codes.
 #
 # Some runs are expected DIRTY (exit 1) because a standard cell in isolation
@@ -140,6 +140,14 @@ check "ihp: -g -s runs the given suite"    0 bash -c "grep -q '^Suite: antenna' 
 check "ihp: -g -s empty derives the suite" 0 "$SAK" -g -s "" -w "$W" "$D/$CELL.gds"
 check "ihp: -g GDS.GZ"                     0 "$SAK" -g -w "$W/gz" "$W/gz/$CELL.gds.gz"
 
+# -D runs rule decks instead of a suite, activ and gatpoly carry the fill and
+# density rules a single cell fails, and a space after a comma is dropped
+check "ihp: -g -D cont"                    0 "$SAK" -g -D cont -w "$W" "$D/$CELL.gds"
+check "ihp: -D runs the given deck"        0 bash -c "grep -q -x 'Deck: cont' '$W/$CELL.gdscheck.drc/$CELL.drc.log'"
+check "ihp: -g -D activ,gatpoly density"   1 "$SAK" -g -D "activ, gatpoly" -w "$W" "$D/$CELL.gds"
+check "ihp: -D joins the deck list"        0 bash -c "grep -q -x 'Deck: activ,gatpoly' '$W/$CELL.gdscheck.drc/$CELL.drc.log'"
+check "ihp: -g -D empty derives the suite" 0 "$SAK" -g -D "" -w "$W" "$D/$CELL.gds"
+
 # a violation the PDK waives (V1.c1 in a cell named like an IHP SRAM macro) stays
 # in the report but must not fail the run
 check "ihp: -g passes a waived violation"  0 "$SAK" -g -w "$W" "$D/sg13g2_waived_via.gds"
@@ -190,6 +198,8 @@ check "guard: -k with MAG layout"          5 "$SAK" -k -w "$W" "$D/$CELL.mag"
 check "guard: -b with MAG falls back"      0 "$SAK" -b -w "$W" "$D/$CELL.mag"
 check "guard: -g with MAG layout"          5 "$SAK" -g -w "$W" "$D/$CELL.mag"
 check "guard: unknown -s gdscheck suite"   3 "$SAK" -g -s bogus -w "$W" "$D/$CELL.gds"
+check "guard: unknown -D gdscheck deck"    3 "$SAK" -g -D cont,bogus -w "$W" "$D/$CELL.gds"
+check "guard: -s and -D together"          3 "$SAK" -g -s core -D cont -w "$W" "$D/$CELL.gds"
 check "guard: GDS top cell mismatch (-m)"  7 "$SAK" -m -w "$W" "$D/${CELL}_wrongtop.gds"
 check "guard: GDS top cell mismatch (-k)"  7 "$SAK" -k -w "$W" "$D/${CELL}_wrongtop.gds"
 check "guard: GDS top cell mismatch (-g)"  7 "$SAK" -g -w "$W" "$D/${CELL}_wrongtop.gds"
@@ -277,6 +287,8 @@ check "gf180: -g -l precheck"              1 "$SAK" -g -l precheck -w "$W" "$D/$
 check "gf180: precheck runs the core suite" 0 bash -c "grep -q '^Suite: core' '$W/$CELL.gdscheck.drc/$CELL.drc.log'"
 check "gf180: -g -s antenna"               0 "$SAK" -g -s antenna -w "$W" "$D/$CELL.gds"
 check "gf180: -g -s precheck is unknown"   3 "$SAK" -g -s precheck -w "$W" "$D/$CELL.gds"
+check "gf180: -g -D comp DF errors"        1 "$SAK" -g -D comp -w "$W" "$D/$CELL.gds"
+check "gf180: -g -D poly2"                 0 "$SAK" -g -D poly2 -w "$W" "$D/$CELL.gds"
 
 # ============================================================================
 # sky130A
