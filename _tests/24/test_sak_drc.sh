@@ -111,8 +111,15 @@ check "ihp: -m MAG.GZ"                     0 "$SAK" -m -w "$W/gz" "$W/gz/$CELL.m
 check "ihp: gz temp files cleaned up"      0 bash -c "! ls '$W/gz'/*.drctmp.* 2>/dev/null"
 check "ihp: -w creates multi-level dir"    0 "$SAK" -m -w "$W/deep/a/b" "$D/$CELL.gds"
 check "ihp: -d debug run"                  0 "$SAK" -d -m -w "$W" "$D/$CELL.gds"
-check "ihp: -f flatglob run"               0 "$SAK" -m -f '*' -w "$W" "$D/$CELL.gds"
+check "ihp: -f subcell pattern run"        0 "$SAK" -m -f 'via*' -w "$W" "$D/$CELL.gds"
 check "ihp: -c clean rerun"                0 "$SAK" -m -c -w "$W" "$D/$CELL.gds"
+
+# a layout with known errors, two Metal2 spacing violations (M2.b) in its top cell and two in a subcell: every engine has to fail it, so a clean verdict here means the check did not run
+check "ihp: -m finds known errors"         1 "$SAK" -m -w "$W/err" "$D/drc_errors.gds"
+check "ihp: magic report counts them"      0 bash -c "grep -q 'COUNT: [1-9]' '$W/err/drc_errors.magic.drc/drc_errors.magic.drc.rpt'"
+check "ihp: -m -f on the subcell finds them" 1 "$SAK" -m -f 'drc_errors_sub' -w "$W/err_f" "$D/drc_errors.gds"
+check "ihp: -k finds known errors"         1 "$SAK" -k -w "$W/err" "$D/drc_errors.gds"
+check "ihp: -g finds known errors"         1 "$SAK" -g -w "$W/err" "$D/drc_errors.gds"
 
 # valid KLayout runs (macro and precheck are clean, regular adds the
 # chip-level density checks that a single standard cell fails by design)
@@ -196,6 +203,8 @@ check "guard: -j 0"                        3 "$SAK" -k -j 0 -w "$W" "$D/$CELL.gd
 check "guard: -j not a number"             3 "$SAK" -k -j abc -w "$W" "$D/$CELL.gds"
 check "guard: -k with MAG layout"          5 "$SAK" -k -w "$W" "$D/$CELL.mag"
 check "guard: -b with MAG falls back"      0 "$SAK" -b -w "$W" "$D/$CELL.mag"
+check "guard: -f pattern '*' (top cell)"   3 "$SAK" -m -f '*' -w "$W" "$D/$CELL.gds"
+check "guard: -f pattern on the top cell"  3 "$SAK" -m -f 'sg13g2_inv*' -w "$W" "$D/$CELL.gds"
 check "guard: -g with MAG layout"          5 "$SAK" -g -w "$W" "$D/$CELL.mag"
 check "guard: unknown -s gdscheck suite"   3 "$SAK" -g -s bogus -w "$W" "$D/$CELL.gds"
 check "guard: unknown -D gdscheck deck"    3 "$SAK" -g -D cont,bogus -w "$W" "$D/$CELL.gds"

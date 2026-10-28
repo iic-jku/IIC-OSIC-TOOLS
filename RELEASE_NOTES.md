@@ -7,6 +7,7 @@ This document summarizes the most important changes of the individual releases o
 * [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites, `-s` to select a suite directly, and `-D` to run single rule decks (e.g. `activ,gatpoly`)
 * [Fix] `run_palace -np N` runs Palace on N MPI processes, where every N above 1 aborted with "mpirun does not support recursive calls"
 * [Fix] a login shell in `docker exec` sets `USER` to `designer` when the container UID has no passwd entry, instead of the two lines `1000` and `designer`
+* [Fix] `sak-drc.sh -f` refuses a pattern that matches the top cell (such as the `'*'` its help suggested), with which Magic checked an empty cell and reported any layout clean
 * [Build] new regression tests 43 (`run_palace` with two MPI processes) and 44 (`USER` in a `docker exec` login shell)
 
 ## 2026.10
