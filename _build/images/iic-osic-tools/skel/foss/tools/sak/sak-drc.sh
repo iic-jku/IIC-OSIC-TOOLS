@@ -61,7 +61,7 @@ if [ $# -eq 0 ]; then
 	echo "          (density rules included) or core on gf180mcu, which has no precheck suite"
 	echo "       -s gdscheck suite, overrides the -l mapping (e.g. density or antenna, 'gdscheck list-suites -p \$PDK' lists them)"
 	echo "       -D gdscheck rule decks instead of a suite, comma-separated (e.g. activ,gatpoly, 'gdscheck list-decks -p \$PDK' lists them)"
-	echo "          decks include their fill and density rules (e.g. AFil.g in activ, M1.j in metal1), which a single cell can fail although it passes macro"
+	echo "          the ihp layer decks include their fill and density rules (e.g. AFil.g in activ, M1.j in metal1), which a single cell can fail although it passes macro"
 	echo "       -j Run at most <n> KLayout processes at once (default: 4, or the CPU count if lower)"
 	echo "          without -j the sky130 decks all start at once"
 	echo "          values above 4 only pay off for large layouts (e.g. 8 to 16 for a chip on a server),"
