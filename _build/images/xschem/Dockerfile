@@ -7,7 +7,7 @@
 ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS xschem
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
-ARG XSCHEM_REPO_COMMIT="41fc7a41a3beb632e9c564340ab9eedfa4215f06"
+ARG XSCHEM_REPO_COMMIT="e29af39c6133c36bdaf66603fd663231e75517f1"
 ARG XSCHEM_NAME="xschem"
 RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
     bash /images/xschem/scripts/install.sh

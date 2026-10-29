@@ -7,7 +7,7 @@
 ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS ghdl
 ARG GHDL_REPO_URL="https://github.com/ghdl/ghdl.git"
-ARG GHDL_REPO_COMMIT="a977191e75d345ee30a936279f425265e52b37b3"
+ARG GHDL_REPO_COMMIT="1c0029e72dee4c6a7c80d94cae2ee84f60e25a5e"
 ARG GHDL_NAME="ghdl"
 RUN --mount=type=bind,source=images/ghdl,target=/images/ghdl \
     bash /images/ghdl/scripts/install.sh

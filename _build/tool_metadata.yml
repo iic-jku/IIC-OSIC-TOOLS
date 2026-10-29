@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: a977191e75d345ee30a936279f425265e52b37b3
+  commit: 1c0029e72dee4c6a7c80d94cae2ee84f60e25a5e
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 6a145898ea21c558b9c1da0c13ac82c91e0c69a7
@@ -30,22 +30,22 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 879c653dd82e078faa814fd24f79f265bda444d3
+  commit: fd8759f680e5edcee95c0f2521f6867045e6bbf8
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: a64adfafe9c55779515760ed06d26c6a44f99fa8
+  commit: ea1a782468ec0fe51445202c8346fddace8e6ff8
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.12
 - name: libman
   repo: https://github.com/IHP-GmbH/LibMan.git
-  commit: 24b2161411a2399d73781e4bffac318765c91c96
+  commit: 32b9de429dec5d7782d5b0027d65caf46af89eca
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.686
+  commit: 8.3.688
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.325
@@ -60,20 +60,20 @@
   commit: 154a2724080e3bf15827549bba9f315cd11984fe
 - name: nvc
   repo: https://github.com/nickg/nvc.git
-  commit: r1.23.0
+  commit: r1.23.1
 - name: open_pdks
   repo: https://github.com/RTimothyEdwards/open_pdks.git
   commit: 1689ac3f2dc763876eaf967227c7dfe831b031ae
   hold: sky130A and gf180mcuD are installed through ciel, bump together with the PDK versions LibreLane expects
 - name: opencdc
   repo: https://github.com/Ayoubbelguellaoui/CDC.git
-  commit: 18e04d8ab4160afe4d61a61c1bb41e136b52d242
+  commit: 3daba681f902b2c2c66bc40894c5ff93c9ec9375
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
   commit: 38da98d592f6f9b772cf984a411470e0feb9a114
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 0a0d0440377e8acfa630be47dd823f208456db4d
+  commit: c0ba224d229d0a4bde3c0f676932f529dd4600f6
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -90,7 +90,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: ef7fbc30d9ffc7614d0ade1bce4b0ee2027dfae2
+  commit: 9432d76d9bb56a067d9153d74bbc7b3a2d09be25
 - name: prjtrellis
   repo: https://github.com/YosysHQ/prjtrellis.git
   commit: a31ff7042e712c0e2ad217054116ce2c4995f5c7
@@ -117,7 +117,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: e2d1021661f78b3f17d1edf7ea17f9d6f95fb168
+  commit: 8529f872e6802eb852cf49d659c0ef243eb2aec4
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: dab821430d6403d0de80d08f49714c644cc60ce6
@@ -126,7 +126,7 @@
   commit: 668b9a6a1b474f7b5181b5caed915e8d0a1505bd
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: f2207b5a7dc83a4695b019b8e95080de047a81cc
+  commit: 4c6a9bc79dab80616932949707e7c0471d8e9e54
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.87
@@ -156,7 +156,7 @@
   commit: eab56ebad351650b4050fcde85cda9919844ed58
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: 41fc7a41a3beb632e9c564340ab9eedfa4215f06
+  commit: e29af39c6133c36bdaf66603fd663231e75517f1
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
