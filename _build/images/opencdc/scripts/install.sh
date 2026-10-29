@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${OPENCDC_REPO_URL}" "${OPENCDC_NAME}"
+git clone --filter=blob:none --no-checkout "${OPENCDC_REPO_URL}" "${OPENCDC_NAME}"
 cd "${OPENCDC_NAME}" || exit 1
 git checkout "${OPENCDC_REPO_COMMIT}"
 

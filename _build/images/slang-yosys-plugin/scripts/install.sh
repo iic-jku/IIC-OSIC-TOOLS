@@ -9,10 +9,10 @@ cd /tmp || exit 1
 export PATH="$PATH:$TOOLS/yosys/bin:$TOOLS/ghdl/bin"
 echo "[INFO] PATH=$PATH"
 
-git clone --filter=blob:none "${SLANG_YOSYS_PLUGIN_REPO_URL}" "${SLANG_YOSYS_PLUGIN_NAME}"
+git clone --filter=blob:none --no-checkout "${SLANG_YOSYS_PLUGIN_REPO_URL}" "${SLANG_YOSYS_PLUGIN_NAME}"
 cd "${SLANG_YOSYS_PLUGIN_NAME}" || exit 1
 git checkout "${SLANG_YOSYS_PLUGIN_REPO_COMMIT}"
-git submodule update --init --recursive
+git submodule update --init --recursive --filter=blob:none
 cmake -B build -DCMAKE_BUILD_TYPE=Release .
 make -C build -j"$(nproc)"
 

@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${MAGIC_REPO_URL}" "${MAGIC_NAME}"
+git clone --filter=blob:none --no-checkout "${MAGIC_REPO_URL}" "${MAGIC_NAME}"
 cd "${MAGIC_NAME}" || exit 1
 git checkout "${MAGIC_REPO_COMMIT}"
 

@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${GDS3D_REPO_URL}" "${GDS3D_NAME}"
+git clone --filter=blob:none --no-checkout "${GDS3D_REPO_URL}" "${GDS3D_NAME}"
 cd "${GDS3D_NAME}" || exit 1
 git checkout "${GDS3D_REPO_COMMIT}"
 # force C++11; newer g++ (e.g. 13) defaults to gnu++17, which breaks the build

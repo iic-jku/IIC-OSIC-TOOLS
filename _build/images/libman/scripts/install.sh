@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1 
 
-git clone --filter=blob:none "${LIBMAN_REPO_URL}" "${LIBMAN_NAME}"
+git clone --filter=blob:none --no-checkout "${LIBMAN_REPO_URL}" "${LIBMAN_NAME}"
 cd "${LIBMAN_NAME}" || exit 1
 git checkout "${LIBMAN_REPO_COMMIT}"
 mkdir -p build

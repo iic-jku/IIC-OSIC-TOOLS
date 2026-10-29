@@ -7,7 +7,7 @@ set -e
 
 cd /tmp || exit 1
 echo "[INFO] Installing SVCK"
-git clone --filter=blob:none "${SVCK_REPO_URL}" "${SVCK_NAME}"
+git clone --filter=blob:none --no-checkout "${SVCK_REPO_URL}" "${SVCK_NAME}"
 cd "${SVCK_NAME}" || exit 1
 git checkout "${SVCK_REPO_COMMIT}"
 mkdir -p "${TOOLS}/${SVCK_NAME}/lib/${SVCK_NAME}" "${TOOLS}/${SVCK_NAME}/bin"

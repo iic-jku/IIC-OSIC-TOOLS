@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${QFLOW_REPO_URL}" "${QFLOW_NAME}"
+git clone --filter=blob:none --no-checkout "${QFLOW_REPO_URL}" "${QFLOW_NAME}"
 cd "${QFLOW_NAME}" || exit 1
 git checkout "${QFLOW_REPO_COMMIT}"
 ./configure

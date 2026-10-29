@@ -6,7 +6,7 @@
 set -e
 
 mkdir -p "$TOOLS"
-git clone --filter=blob:none "$NGSPYCE_REPO_URL" "${TOOLS}/$NGSPYCE_NAME"
+git clone --filter=blob:none --no-checkout "$NGSPYCE_REPO_URL" "${TOOLS}/$NGSPYCE_NAME"
 cd "${TOOLS}/$NGSPYCE_NAME" || exit 1
 git checkout "$NGSPYCE_REPO_COMMIT"
 

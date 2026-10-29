@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "$QUCS_S_REPO_URL" "$QUCS_S_NAME"
+git clone --filter=blob:none --no-checkout "$QUCS_S_REPO_URL" "$QUCS_S_NAME"
 cd "$QUCS_S_NAME" || exit 1
 git checkout "$QUCS_S_REPO_COMMIT"
 mkdir build && cd build

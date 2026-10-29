@@ -10,10 +10,10 @@ set -e
 # As of v0.67 yosys uses a CMake build system (replacing the old Makefile flow).
 # Requires CMake >= 3.28, GCC >= 13 / Clang >= 16, and Python >= 3.11.
 cd /tmp || exit 1
-git clone --filter=blob:none "${YOSYS_REPO_URL}" "${YOSYS_NAME}"
+git clone --filter=blob:none --no-checkout "${YOSYS_REPO_URL}" "${YOSYS_NAME}"
 cd "${YOSYS_NAME}" || exit 1
 git checkout "${YOSYS_REPO_COMMIT}"
-git submodule update --init
+git submodule update --init --filter=blob:none
 cmake -B build . --fresh \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX="${TOOLS}/${YOSYS_NAME}" \
@@ -27,7 +27,7 @@ export PATH=$PATH:${TOOLS}/${YOSYS_NAME}/bin
 # Build yosys eqy
 # ---------------
 cd /tmp || exit 1
-git clone --filter=blob:none "${YOSYS_EQY_REPO_URL}" "${YOSYS_EQY_NAME}"
+git clone --filter=blob:none --no-checkout "${YOSYS_EQY_REPO_URL}" "${YOSYS_EQY_NAME}"
 cd "${YOSYS_EQY_NAME}" || exit 1
 git checkout "${YOSYS_EQY_REPO_COMMIT}"
 sed -i "s#^PREFIX.*#PREFIX=${TOOLS}/${YOSYS_NAME}#g" Makefile
@@ -36,7 +36,7 @@ make install -j"$(nproc)"
 # Build yosys sby
 # ---------------
 cd /tmp || exit 1
-git clone --filter=blob:none "${YOSYS_SBY_REPO_URL}" "${YOSYS_SBY_NAME}"
+git clone --filter=blob:none --no-checkout "${YOSYS_SBY_REPO_URL}" "${YOSYS_SBY_NAME}"
 cd "${YOSYS_SBY_NAME}" || exit 1
 git checkout "${YOSYS_SBY_REPO_COMMIT}"
 sed -i "s#^PREFIX.*#PREFIX=${TOOLS}/${YOSYS_NAME}#g" Makefile
@@ -45,7 +45,7 @@ make install -j"$(nproc)"
 # Install yosys mcy
 # -----------------
 cd /tmp || exit 1
-git clone --filter=blob:none "${YOSYS_MCY_REPO_URL}" "${YOSYS_MCY_NAME}"
+git clone --filter=blob:none --no-checkout "${YOSYS_MCY_REPO_URL}" "${YOSYS_MCY_NAME}"
 cd "${YOSYS_MCY_NAME}" || exit 1
 git checkout "${YOSYS_MCY_REPO_COMMIT}"
 sed -i "s#^PREFIX.*#PREFIX=${TOOLS}/${YOSYS_NAME}#g" Makefile
@@ -54,7 +54,7 @@ make install -j"$(nproc)"
 # Install solver for sby
 # ----------------------
 cd /tmp || exit 1
-git clone --filter=blob:none "${YICES2_REPO_URL}" "${YICES2_NAME}"
+git clone --filter=blob:none --no-checkout "${YICES2_REPO_URL}" "${YICES2_NAME}"
 cd "${YICES2_NAME}" || exit 1
 git checkout "${YICES2_REPO_COMMIT}"
 

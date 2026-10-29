@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${GTKWAVE_REPO_URL}" "${GTKWAVE_NAME}"
+git clone --filter=blob:none --no-checkout "${GTKWAVE_REPO_URL}" "${GTKWAVE_NAME}"
 cd "${GTKWAVE_NAME}" || exit 1
 git checkout "${GTKWAVE_REPO_COMMIT}"
 

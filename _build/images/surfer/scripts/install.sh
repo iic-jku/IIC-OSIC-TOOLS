@@ -12,7 +12,7 @@ rustup default stable
 
 git clone --filter=blob:none --branch "${SURFER_REPO_COMMIT}" "${SURFER_REPO_URL}" "${SURFER_NAME}"
 cd "${SURFER_NAME}" || exit 1
-git submodule update --init --recursive
+git submodule update --init --recursive --filter=blob:none
 cargo build --release -j"$(nproc)"
 strip target/release/surfer
 strip target/release/surver

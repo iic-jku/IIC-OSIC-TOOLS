@@ -6,10 +6,10 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${KEPLER_FORMAL_REPO_URL}" "${KEPLER_FORMAL_NAME}"
+git clone --filter=blob:none --no-checkout "${KEPLER_FORMAL_REPO_URL}" "${KEPLER_FORMAL_NAME}"
 cd "${KEPLER_FORMAL_NAME}" || exit 1
 git checkout "${KEPLER_FORMAL_REPO_COMMIT}"
-git submodule update --init --recursive
+git submodule update --init --recursive --filter=blob:none
 mkdir -p build && cd build
 cmake .. \
     -DCMAKE_INSTALL_PREFIX="${TOOLS}/${KEPLER_FORMAL_NAME}" \

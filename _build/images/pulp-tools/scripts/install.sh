@@ -67,7 +67,7 @@ fetch_dep () {
 # ------------
 cd /tmp || exit 1
 echo "[INFO] Building Bender"
-git clone --filter=blob:none "${BENDER_REPO_URL}" bender
+git clone --filter=blob:none --no-checkout "${BENDER_REPO_URL}" bender
 cd bender || exit 1
 git checkout "${BENDER_REPO_COMMIT}"
 
@@ -107,7 +107,7 @@ echo "[INFO] Building SV2V"
 # be on PATH, which made `stack install` fail with "command not found").
 wget -qO- https://get.haskellstack.org/ | sh -s - -d /usr/local/bin
 # now build SV2V using Haskell and Stack
-git clone --filter=blob:none "${SV2V_REPO_URL}" sv2v
+git clone --filter=blob:none --no-checkout "${SV2V_REPO_URL}" sv2v
 cd sv2v || exit 1
 git checkout "${SV2V_REPO_COMMIT}"
 stack install --install-ghc --local-bin-path bin --stack-root /tmp/stack

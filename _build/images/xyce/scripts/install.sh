@@ -6,12 +6,12 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${XYCE_REPO_URL}" "${XYCE_NAME}"
+git clone --filter=blob:none --no-checkout "${XYCE_REPO_URL}" "${XYCE_NAME}"
 cd "${XYCE_NAME}" || exit 1
 git checkout "${XYCE_REPO_COMMIT}"
 ./bootstrap
 
-git clone --filter=blob:none "${XYCE_TRILINOS_REPO_URL}" "${XYCE_TRILINOS_NAME}"
+git clone --filter=blob:none --no-checkout "${XYCE_TRILINOS_REPO_URL}" "${XYCE_TRILINOS_NAME}"
 cd "${XYCE_TRILINOS_NAME}" || exit 1
 git checkout "${XYCE_TRILINOS_REPO_COMMIT}"
 mkdir -p parallel_build && cd parallel_build

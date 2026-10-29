@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${SPIKE_REPO_URL}" "${SPIKE_NAME}"
+git clone --filter=blob:none --no-checkout "${SPIKE_REPO_URL}" "${SPIKE_NAME}"
 cd "${SPIKE_NAME}" || exit 1
 git checkout "${SPIKE_REPO_COMMIT}"
 mkdir build && cd build
@@ -23,7 +23,7 @@ make install
 export PATH="$RISCV/bin:$PATH"
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${RISCV_PK_REPO_URL}" "riscv-pk"
+git clone --filter=blob:none --no-checkout "${RISCV_PK_REPO_URL}" "riscv-pk"
 cd "riscv-pk" || exit 1
 git checkout "${RISCV_PK_REPO_COMMIT}"
 mkdir build && cd build

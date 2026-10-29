@@ -5,7 +5,7 @@
 
 set -e
 cd /tmp || exit 1
-git clone --filter=blob:none "${PALACE_REPO_URL}" "${PALACE_NAME}"
+git clone --filter=blob:none --no-checkout "${PALACE_REPO_URL}" "${PALACE_NAME}"
 cd "${PALACE_NAME}" || exit 1
 git checkout "${PALACE_REPO_COMMIT}"
 mkdir -p build && cd build

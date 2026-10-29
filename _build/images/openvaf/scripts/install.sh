@@ -24,7 +24,7 @@ export CARGO_HOME=/tmp/cargo
 export PATH=$CARGO_HOME/bin:$PATH
 rustup default stable
 
-git clone --filter=blob:none "${OPENVAF_REPO_URL}" "${OPENVAF_NAME}"
+git clone --filter=blob:none --no-checkout "${OPENVAF_REPO_URL}" "${OPENVAF_NAME}"
 cd "${OPENVAF_NAME}" || exit 1
 git checkout "${OPENVAF_REPO_COMMIT}"
 

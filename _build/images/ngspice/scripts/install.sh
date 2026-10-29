@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${NGSPICE_REPO_URL}" "${NGSPICE_NAME}"
+git clone --filter=blob:none --no-checkout "${NGSPICE_REPO_URL}" "${NGSPICE_NAME}"
 cd "${NGSPICE_NAME}" || exit 1
 git checkout "${NGSPICE_REPO_COMMIT}"
 ./autogen.sh

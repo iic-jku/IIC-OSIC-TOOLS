@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${GHDL_REPO_URL}" "${GHDL_NAME}"
+git clone --filter=blob:none --no-checkout "${GHDL_REPO_URL}" "${GHDL_NAME}"
 cd "${GHDL_NAME}" || exit 1
 git checkout "${GHDL_REPO_COMMIT}"
 

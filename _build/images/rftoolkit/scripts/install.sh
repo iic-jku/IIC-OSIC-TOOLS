@@ -9,7 +9,7 @@ mkdir -p "${TOOLS}/${RFTK_NAME}"
 # FastHenry2 for inductance extractions
 # -------------------------------------
 cd /tmp || exit 1
-git clone --filter=blob:none "${RFTK_FASTHENRY_REPO_URL}" "${RFTK_NAME}_fh"
+git clone --filter=blob:none --no-checkout "${RFTK_FASTHENRY_REPO_URL}" "${RFTK_NAME}_fh"
 cd "${RFTK_NAME}_fh" || exit 1
 git checkout "${RFTK_FASTHENRY_REPO_COMMIT}"
 
@@ -31,16 +31,16 @@ cp -R examples "${TOOLS}/${RFTK_NAME}"
 # FasterCap for capacitance extractions
 # -------------------------------------
 cd /tmp || exit 1
-git clone --filter=blob:none "${RFTK_FASTERCAP_REPO_URL}" "${RFTK_NAME}_fc"
+git clone --filter=blob:none --no-checkout "${RFTK_FASTERCAP_REPO_URL}" "${RFTK_NAME}_fc"
 # get additional libs (LinAlgebra and Geometry), which CMake expects next to the
 # FasterCap directory. They come from the IIC-JKU forks too. FasterCap follows its
 # release tags, the libs follow their master branch, which is what the FasterCap
 # fork's CI builds against.
-git clone --filter=blob:none "${RFTK_LINALGEBRA_REPO_URL}" LinAlgebra
+git clone --filter=blob:none --no-checkout "${RFTK_LINALGEBRA_REPO_URL}" LinAlgebra
 cd LinAlgebra || exit 1
 git checkout "${RFTK_LINALGEBRA_REPO_COMMIT}"
 cd ..
-git clone --filter=blob:none "${RFTK_GEOMETRY_REPO_URL}" Geometry
+git clone --filter=blob:none --no-checkout "${RFTK_GEOMETRY_REPO_URL}" Geometry
 cd Geometry || exit 1
 git checkout "${RFTK_GEOMETRY_REPO_COMMIT}"
 cd ..

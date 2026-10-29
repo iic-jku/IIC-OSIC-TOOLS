@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${SPICEBIND_REPO_URL}" "${SPICEBIND_NAME}"
+git clone --filter=blob:none --no-checkout "${SPICEBIND_REPO_URL}" "${SPICEBIND_NAME}"
 cd "${SPICEBIND_NAME}" || exit 1
 git checkout "${SPICEBIND_REPO_COMMIT}"
 

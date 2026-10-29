@@ -11,7 +11,7 @@ set -e
 mkdir -p "$TOOLS"
 cd /tmp || exit 1
 # No --depth: setuptools_scm derives the package version from the nearest tag.
-git clone --filter=blob:none "${PYOPUS_REPO_URL}" "${PYOPUS_NAME}"
+git clone --filter=blob:none --no-checkout "${PYOPUS_REPO_URL}" "${PYOPUS_NAME}"
 cd "${PYOPUS_NAME}" || exit 1
 git checkout "${PYOPUS_REPO_COMMIT}"
 # Release that the pinned commit descends from (v0.12 -> 0.12), names the doc download below

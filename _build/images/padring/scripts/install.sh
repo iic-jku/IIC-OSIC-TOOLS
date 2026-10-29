@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${PADRING_REPO_URL}" "${PADRING_NAME}"
+git clone --filter=blob:none --no-checkout "${PADRING_REPO_URL}" "${PADRING_NAME}"
 cd "${PADRING_NAME}" || exit 1
 git checkout "${PADRING_REPO_COMMIT}"
 bash ./bootstrap.sh

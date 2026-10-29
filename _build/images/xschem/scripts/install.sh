@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${XSCHEM_REPO_URL}" "${XSCHEM_NAME}"
+git clone --filter=blob:none --no-checkout "${XSCHEM_REPO_URL}" "${XSCHEM_NAME}"
 cd "${XSCHEM_NAME}" || exit 1
 git checkout "${XSCHEM_REPO_COMMIT}"
 

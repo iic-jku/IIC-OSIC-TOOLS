@@ -21,7 +21,7 @@ bazel --version
 
 # Clone and build Verible from source
 echo "[INFO] Building Verible ${VERIBLE_REPO_COMMIT}"
-git clone --filter=blob:none "${VERIBLE_REPO_URL}" "${VERIBLE_NAME}"
+git clone --filter=blob:none --no-checkout "${VERIBLE_REPO_URL}" "${VERIBLE_NAME}"
 cd "${VERIBLE_NAME}" || exit 1
 git checkout "${VERIBLE_REPO_COMMIT}"
 bazel build -c opt :install-binaries

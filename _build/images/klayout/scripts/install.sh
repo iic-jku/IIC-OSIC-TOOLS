@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${KLAYOUT_REPO_URL}" "${KLAYOUT_NAME}"
+git clone --filter=blob:none --no-checkout "${KLAYOUT_REPO_URL}" "${KLAYOUT_NAME}"
 cd "${KLAYOUT_NAME}" || exit 1
 git checkout "${KLAYOUT_REPO_COMMIT}"
 prefix=${TOOLS}/${KLAYOUT_NAME}

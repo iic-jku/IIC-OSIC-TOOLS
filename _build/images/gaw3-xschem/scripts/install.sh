@@ -6,7 +6,7 @@
 set -e
 cd /tmp || exit 1
 
-git clone --filter=blob:none "${GAW3_XSCHEM_REPO_URL}" "${GAW3_XSCHEM_NAME}"
+git clone --filter=blob:none --no-checkout "${GAW3_XSCHEM_REPO_URL}" "${GAW3_XSCHEM_NAME}"
 cd "${GAW3_XSCHEM_NAME}" || exit 1
 git checkout "${GAW3_XSCHEM_REPO_COMMIT}"
 chmod +x configure

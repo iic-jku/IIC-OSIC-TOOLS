@@ -19,10 +19,10 @@ cmake --build build -j "$(nproc)" --target install
 # --------------------------------------------------------------
 
 cd /tmp || exit 1
-git clone --filter=blob:none "${OPENROAD_LIBRELANE_REPO_URL}" "${OPENROAD_LIBRELANE_NAME}"
+git clone --filter=blob:none --no-checkout "${OPENROAD_LIBRELANE_REPO_URL}" "${OPENROAD_LIBRELANE_NAME}"
 cd "${OPENROAD_LIBRELANE_NAME}" || exit 1
 git checkout "${OPENROAD_LIBRELANE_REPO_COMMIT}"
-git submodule update --init --recursive
+git submodule update --init --recursive --filter=blob:none
 # LibreLane's nix build applies this patch on top of its pinned OpenROAD revision
 # (vendored from librelane 3.1.0.dev2, nix/patches/openroad/grt_pin_layers.patch);
 # apply it here as well so our binary matches the official LibreLane one. Re-check

@@ -9,7 +9,7 @@ cd /tmp || exit 1
 export PATH="$PATH:$TOOLS/yosys/bin:$TOOLS/ghdl/bin"
 echo "[INFO] PATH=$PATH"
 
-git clone --filter=blob:none "${GHDL_YOSYS_PLUGIN_REPO_URL}" "${GHDL_YOSYS_PLUGIN_NAME}"
+git clone --filter=blob:none --no-checkout "${GHDL_YOSYS_PLUGIN_REPO_URL}" "${GHDL_YOSYS_PLUGIN_NAME}"
 cd "${GHDL_YOSYS_PLUGIN_NAME}" || exit 1
 git checkout "${GHDL_YOSYS_PLUGIN_REPO_COMMIT}"
 make -j"$(nproc)"

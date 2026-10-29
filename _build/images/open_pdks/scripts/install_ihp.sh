@@ -23,11 +23,10 @@ PDK_CMOS5L="ihp-sg13cmos5l"
 IHP_REPO_URL="https://github.com/iic-jku/IHP-Open-PDK.git"
 
 echo "[INFO] Installing the IHP PDKs."
-git clone "$IHP_REPO_URL" ihp
-cd ihp || exit 1
 # For now uses branch "dev" to get the latest releases
-git checkout dev
-git submodule update --init --recursive
+git clone --filter=blob:none --branch dev "$IHP_REPO_URL" ihp
+cd ihp || exit 1
+git submodule update --init --recursive --filter=blob:none
 
 # Store git hash of installed PDK version for reference. Both PDKs come from
 # this one commit, so both get the same hash.
