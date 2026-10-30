@@ -372,10 +372,16 @@ case "$CELL_NAME" in
 	*.gds)		CELL_NAME=${CELL_NAME%.gds} ;;
 esac
 
-# Magic's "gds flatglob" flattens every cell whose name matches the pattern into the cells that instantiate it. The top cell has no parent, so a pattern that matches it (e.g. '*') leaves the loaded top cell empty, and the DRC reports any layout clean. Refuse such a pattern.
+# Magic's "gds flatglob" paints a matching cell only into the cells that instantiate it, so a pattern that matches the top cell leaves it empty and the DRC reads clean.
+# The shell matches like Magic, except for a negated set [!...], which Magic reads as a plain list of characters.
 if [ "$RUN_MAGIC" -eq 1 ] && [ -n "$FLATGLOB" ]; then
 	case "$CELL_LAY" in
 		*.gds|*.gds.gz)
+			case "$FLATGLOB" in
+				*\[!*)
+					echo "[ERROR] The -f pattern <$FLATGLOB> has a negated set [!...], which Magic reads as a plain list of characters!"
+					exit $ERR_NO_PARAM ;;
+			esac
 			# shellcheck disable=SC2254
 			case "$CELL_NAME" in
 				$FLATGLOB)
@@ -385,6 +391,7 @@ if [ "$RUN_MAGIC" -eq 1 ] && [ -n "$FLATGLOB" ]; then
 			;;
 	esac
 fi
+
 # run dir holding the Magic DRC report, log, and generated extract script. It is wiped at the start of each Magic run.
 MAGIC_RUNDIR="$RESDIR/${CELL_NAME}.magic.drc"
 EXT_SCRIPT="$MAGIC_RUNDIR/drc_$CELL_NAME.tcl"
@@ -457,7 +464,8 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 			[ $DEBUG -eq 1 ] && echo "[INFO] Magic runs DRC on the .gds file."
 			{
 				echo "crashbackups stop"
-				[ -n "$FLATGLOB" ] && echo "gds flatglob $FLATGLOB"
+				# braces keep Tcl from substituting [...] and \ in the pattern, printf keeps dash's echo from rewriting \
+				[ -n "$FLATGLOB" ] && printf 'gds flatglob {%s}\n' "$FLATGLOB"
 				echo "gds read $CELL_LAY"
 				# Magic loads the cell named $CELL_NAME. If the GDS has no such top cell it would silently load an empty cell and report a clean DRC. So check for it first and, if missing, write the found top cells to a marker and quit.
 				echo "if {[lsearch [cellname list topcells] {${CELL_NAME}}] < 0} {"

@@ -3,13 +3,13 @@
 `test_sak_drc.sh` runs `sak-drc.sh` through its full input matrix:
 
 - Magic (`-m`), KLayout (`-k`) and gdscheck (`-g`) DRC on a standard cell inverter in all supported PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l, gdscheck without sky130A)
-- input variants: `.gds`/`.mag`/`.klay.gds` layouts, gzipped layouts, positional auto-derive (resolved against the current dir), multi-level `-w` work dirs, `-c` clean, `-f` flatglob on subcells, `-d` debug
+- input variants: `.gds`/`.mag`/`.klay.gds` layouts, gzipped layouts, positional auto-derive (resolved against the current dir), multi-level `-w` work dirs, `-c` clean, `-f` flatglob on subcells (ignored for a `.mag` layout), `-d` debug
 - engine selection: `-b`, last-flag-wins, `-b` fallback to Magic for a `.mag` layout
 - gdscheck suites: the `-l` mapping (including `precheck` running `core` on gf180mcuD, which has no precheck suite), `-s` overrides, `-D` rule decks instead of a suite, and a violation the PDK waives, which must not fail the run
 - all three `-l` DRC levels (`precheck`/`macro`/`regular`) incl. asserting which per-level reports are (not) produced
 - the KLayout process limit `-j`: `-j 1` runs the four ihp `regular` parts one after another and each part writes its own report, `-j 8` splits the ihp rule deck into one process per rule table, and the gf180mcuD and sky130A verdicts stay the same under `-j 1`. For gdscheck, `-j` sets the thread count, without `-j` it gets one thread per CPU.
-- a layout with known errors that Magic (also with `-f` on its subcell), KLayout and gdscheck must fail, so a check that silently does not run is caught
-- guard checks: every invalid combination (unknown layout format, unknown DRC level, gdscheck suite or deck, `-s` together with `-D`, invalid `-j` value, `.mag` for KLayout or gdscheck, GDS top cell name mismatch, an `-f` pattern that matches the top cell, missing files, unset PDK variables, unsupported PDK, missing tools, gdscheck 0.1, an incomplete gdscheck run) must exit with its documented error code. The last two use a stand-in `gdscheck` script, since a real run on a small cell cannot provoke them.
+- a layout with known errors that Magic (also with `-f` on its subcell), KLayout and gdscheck must fail, so a check that silently does not run is caught. The `-f` runs also check that Magic flattened the subcell, that a `[...]` set in the pattern reaches Magic as a glob, and that an escaped `*` stays literal.
+- guard checks: every invalid combination (unknown layout format, unknown DRC level, gdscheck suite or deck, `-s` together with `-D`, invalid `-j` value, `.mag` for KLayout or gdscheck, GDS top cell name mismatch, an `-f` pattern that matches the top cell (also of a gzipped GDS) or holds a negated set `[!...]`, missing files, unset PDK variables, unsupported PDK, missing tools, gdscheck 0.1, an incomplete gdscheck run) must exit with its documented error code. The last two use a stand-in `gdscheck` script, since a real run on a small cell cannot provoke them.
 
 Set `SAK_DRC=<path>` to test a not-yet-installed version of the script.
 
