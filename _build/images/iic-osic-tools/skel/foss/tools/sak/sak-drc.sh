@@ -28,7 +28,8 @@
 #        -s  gdscheck suite, e.g. density or antenna (default: derived from -l)
 #        -D  gdscheck rule decks instead of a suite, comma-separated, e.g. activ,gatpoly
 #        -j  Run at most <n> KLayout processes at once (default: 4, or the CPU count if lower), and gdscheck with <n> threads (default: one per CPU)
-#        -f  Set GDS flatglob pattern for Magic (e.g. '*' to flatten all)
+#        -f  Flatten the GDS subcells matching <pattern> when Magic reads them (e.g. 'via*').
+#            A pattern that matches the top cell is refused: Magic would flatten it away and check an empty cell.
 #        -w  Use <workdir> to store result files (default: current dir)
 #        -d  Enable debug information
 # ========================================================================
@@ -67,7 +68,8 @@ if [ $# -eq 0 ]; then
 	echo "          values above 4 only pay off for large layouts (e.g. 8 to 16 for a chip on a server),"
 	echo "          every KLayout process needs about 0.5 GiB RAM plus the layout"
 	echo "          gdscheck runs as one process with <n> threads, without -j with one thread per CPU"
-	echo "       -f Set GDS flatglob pattern for Magic (e.g. '*' to flatten all)"
+	echo "       -f Flatten the GDS subcells matching <pattern> when Magic reads them (e.g. 'via*')"
+	echo "          a pattern that matches the top cell is refused, Magic would check an empty cell"
 	echo "       -w Use <workdir> to store result files (default current dir)"
 	echo "       -d Enable debug information"
 	echo
@@ -369,6 +371,27 @@ case "$CELL_NAME" in
 	*.mag)		CELL_NAME=${CELL_NAME%.mag} ;;
 	*.gds)		CELL_NAME=${CELL_NAME%.gds} ;;
 esac
+
+# Magic's "gds flatglob" paints a matching cell only into the cells that instantiate it, so a pattern that matches the top cell leaves it empty and the DRC reads clean.
+# The shell matches like Magic, except for a negated set [!...], which Magic reads as a plain list of characters.
+if [ "$RUN_MAGIC" -eq 1 ] && [ -n "$FLATGLOB" ]; then
+	case "$CELL_LAY" in
+		*.gds|*.gds.gz)
+			case "$FLATGLOB" in
+				*\[!*)
+					echo "[ERROR] The -f pattern <$FLATGLOB> has a negated set [!...], which Magic reads as a plain list of characters!"
+					exit $ERR_NO_PARAM ;;
+			esac
+			# shellcheck disable=SC2254
+			case "$CELL_NAME" in
+				$FLATGLOB)
+					echo "[ERROR] The -f pattern <$FLATGLOB> matches the top cell <$CELL_NAME>: Magic would flatten it away and check an empty cell! Use a pattern that matches subcells only."
+					exit $ERR_NO_PARAM ;;
+			esac
+			;;
+	esac
+fi
+
 # run dir holding the Magic DRC report, log, and generated extract script. It is wiped at the start of each Magic run.
 MAGIC_RUNDIR="$RESDIR/${CELL_NAME}.magic.drc"
 EXT_SCRIPT="$MAGIC_RUNDIR/drc_$CELL_NAME.tcl"
@@ -441,7 +464,8 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 			[ $DEBUG -eq 1 ] && echo "[INFO] Magic runs DRC on the .gds file."
 			{
 				echo "crashbackups stop"
-				[ -n "$FLATGLOB" ] && echo "gds flatglob $FLATGLOB"
+				# braces keep Tcl from substituting [...] and \ in the pattern, printf keeps dash's echo from rewriting \
+				[ -n "$FLATGLOB" ] && printf 'gds flatglob {%s}\n' "$FLATGLOB"
 				echo "gds read $CELL_LAY"
 				# Magic loads the cell named $CELL_NAME. If the GDS has no such top cell it would silently load an empty cell and report a clean DRC. So check for it first and, if missing, write the found top cells to a marker and quit.
 				echo "if {[lsearch [cellname list topcells] {${CELL_NAME}}] < 0} {"

@@ -3,12 +3,13 @@
 `test_sak_drc.sh` runs `sak-drc.sh` through its full input matrix:
 
 - Magic (`-m`), KLayout (`-k`) and gdscheck (`-g`) DRC on a standard cell inverter in all supported PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l, gdscheck without sky130A)
-- input variants: `.gds`/`.mag`/`.klay.gds` layouts, gzipped layouts, positional auto-derive (resolved against the current dir), multi-level `-w` work dirs, `-c` clean, `-f` flatglob, `-d` debug
+- input variants: `.gds`/`.mag`/`.klay.gds` layouts, gzipped layouts, positional auto-derive (resolved against the current dir), multi-level `-w` work dirs, `-c` clean, `-f` flatglob on subcells (ignored for a `.mag` layout), `-d` debug
 - engine selection: `-b`, last-flag-wins, `-b` fallback to Magic for a `.mag` layout
 - gdscheck suites: the `-l` mapping (including `precheck` running `core` on gf180mcuD, which has no precheck suite), `-s` overrides, `-D` rule decks instead of a suite, and a violation the PDK waives, which must not fail the run
 - all three `-l` DRC levels (`precheck`/`macro`/`regular`) incl. asserting which per-level reports are (not) produced
 - the KLayout process limit `-j`: `-j 1` runs the four ihp `regular` parts one after another and each part writes its own report, `-j 8` splits the ihp rule deck into one process per rule table, and the gf180mcuD and sky130A verdicts stay the same under `-j 1`. For gdscheck, `-j` sets the thread count, without `-j` it gets one thread per CPU.
-- guard checks: every invalid combination (unknown layout format, unknown DRC level, gdscheck suite or deck, `-s` together with `-D`, invalid `-j` value, `.mag` for KLayout or gdscheck, GDS top cell name mismatch, missing files, unset PDK variables, unsupported PDK, missing tools, gdscheck 0.1, an incomplete gdscheck run) must exit with its documented error code. The last two use a stand-in `gdscheck` script, since a real run on a small cell cannot provoke them.
+- a layout with known errors that Magic (also with `-f` on its subcell), KLayout and gdscheck must fail, so a check that silently does not run is caught. The `-f` runs also check that Magic flattened the subcell, that a `[...]` set in the pattern reaches Magic as a glob, and that an escaped `*` stays literal.
+- guard checks: every invalid combination (unknown layout format, unknown DRC level, gdscheck suite or deck, `-s` together with `-D`, invalid `-j` value, `.mag` for KLayout or gdscheck, GDS top cell name mismatch, an `-f` pattern that matches the top cell (also of a gzipped GDS) or holds a negated set `[!...]`, missing files, unset PDK variables, unsupported PDK, missing tools, gdscheck 0.1, an incomplete gdscheck run) must exit with its documented error code. The last two use a stand-in `gdscheck` script, since a real run on a small cell cannot provoke them.
 
 Set `SAK_DRC=<path>` to test a not-yet-installed version of the script.
 
@@ -23,8 +24,9 @@ The data files are the same standard cell inverters as in test 23, extracted fro
 - `<cell>_wrongtop.gds` (ihp-sg13g2): top cell renamed so it does not match the file name, triggers the top cell guard
 - `<cell>.klay.gds` (ihp-sg13g2): the inverter saved by KLayout with library context (the `.klay.klib` file is KLayout's library reference belonging to it). The file carries an extra `$$$CONTEXT_INFO$$$` top cell that the GDS top cell guard must tolerate, and the `.klay` marker in the file name is stripped when deriving the cell name. Magic logs a harmless unknown-layer complaint for the context cell and reads on.
 
-Two more cells are not inverters but generated with KLayout:
+Three more cells are not inverters but generated with KLayout:
 
+- `drc_errors.gds` (ihp-sg13g2): top cell `drc_errors` with two Metal2 boxes 0.10 um apart twice (two `M2.b` violations, the rule asks for 0.21 um), plus an instance of the subcell `drc_errors_sub` that holds the same two pairs. Magic, KLayout and gdscheck must all report them. Before the guard, `-f '*'` made Magic flatten the top cell away and report this layout clean.
 - `sky130_pin_without_drawing.gds` (sky130A): a met1 box and next to it a met1.pin box (68/16) without met1 drawing below. The sky130 pin check flags the pin and exits with status 2, which `sak-drc.sh` must report as a finding (exit 1), not as a failed run (exit 7).
 - `sg13g2_waived_via.gds` (ihp-sg13g2): a Via1 whose Metal1 endcap is 0.01 um, which violates `V1.c1` and nothing else, inside a cell named `RM_IHPSG13_waived_via`. gdscheck's ihp-sg13g2 PDK waives `V1.c1` in cells named `RM_IHPSG13_*` (the IHP SRAM macros), so the violation is reported as waived and the run passes.
 
