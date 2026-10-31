@@ -15,7 +15,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 1c0029e72dee4c6a7c80d94cae2ee84f60e25a5e
+  commit: 5f232e8942b2c28a8188e771675270788d9b7b68
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 6a145898ea21c558b9c1da0c13ac82c91e0c69a7
@@ -30,7 +30,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: fd8759f680e5edcee95c0f2521f6867045e6bbf8
+  commit: 5d04888549a177bd49b2a0ee4effcb1337fb0613
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
@@ -45,13 +45,13 @@
   commit: 32b9de429dec5d7782d5b0027d65caf46af89eca
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.688
+  commit: 8.3.689
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: 1.5.325
+  commit: 1.5.326
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: 9691ce8c43fa49cfa38c68778fdeb14bf7e4ca82
+  commit: 5e1b0f15fe6fa167af21f071f7e249b5fa3554a1
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -67,13 +67,13 @@
   hold: sky130A and gf180mcuD are installed through ciel, bump together with the PDK versions LibreLane expects
 - name: opencdc
   repo: https://github.com/Ayoubbelguellaoui/CDC.git
-  commit: 3daba681f902b2c2c66bc40894c5ff93c9ec9375
+  commit: 16be223c535013b5f4be90e0885b16d67228e15e
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
   commit: 38da98d592f6f9b772cf984a411470e0feb9a114
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: c0ba224d229d0a4bde3c0f676932f529dd4600f6
+  commit: bcc715a6ea39ea1c51c35c732a5275d4ef7d5728
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
@@ -90,7 +90,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 9432d76d9bb56a067d9153d74bbc7b3a2d09be25
+  commit: 8874e6cf8f3c6111867cb0c01cb7efacd73fd48c
 - name: prjtrellis
   repo: https://github.com/YosysHQ/prjtrellis.git
   commit: a31ff7042e712c0e2ad217054116ce2c4995f5c7
@@ -105,28 +105,28 @@
   commit: 26.1.1
 - name: rftk-fastercap
   repo: https://github.com/iic-jku/FasterCap.git
-  commit: v6.1.1
+  commit: v6.2.1
 - name: rftk-fasthenry
   repo: https://github.com/ediloren/FastHenry2.git
   commit: 363e43ed57ad3b9affa11cba5a86624fad0edaa9
 - name: rftk-geometry
   repo: https://github.com/iic-jku/Geometry.git
-  commit: d85b854c20c4089028c3da104c99bcfdfccad957
+  commit: 426c1970ab71a4a1cf75bc15ff55d28b6281dde6
 - name: rftk-linalgebra
   repo: https://github.com/iic-jku/LinAlgebra.git
-  commit: c240583108de50758eb9eaa561ad8b6a734f0e08
+  commit: 381258c7229315f16611b5912414632ffa9f548a
 - name: riscv-gnu-toolchain
   repo: https://github.com/riscv-collab/riscv-gnu-toolchain.git
-  commit: 2026.10.26
+  commit: 2026.10.29
 - name: riscv-pk
   repo: https://github.com/riscv-software-src/riscv-pk.git
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 8529f872e6802eb852cf49d659c0ef243eb2aec4
+  commit: 82ed79add4bdc3bc730c00b8fe0c04b1a7714fdb
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: dab821430d6403d0de80d08f49714c644cc60ce6
+  commit: 4a77e391c2a66bf1caec5e076b7e29609123985b
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: 668b9a6a1b474f7b5181b5caed915e8d0a1505bd
@@ -150,19 +150,19 @@
   commit: 0.13.6
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 9ca4982a3d199005fbb40179d75a40de6ea00db0
+  commit: d7b4db43b4534cbe92de4c12e25d33019acd5b01
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.052
 - name: verible
   repo: https://github.com/chipsalliance/verible.git
-  commit: v0.0-4296-g0f262651
+  commit: v0.0-4298-g085eef05
 - name: xcircuit
   repo: https://github.com/RTimothyEdwards/XCircuit.git
   commit: eab56ebad351650b4050fcde85cda9919844ed58
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: e29af39c6133c36bdaf66603fd663231e75517f1
+  commit: 7811010c934a93b14ed07cbf2afd217fb2058ee6
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
