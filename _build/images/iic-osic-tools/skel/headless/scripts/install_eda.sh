@@ -53,24 +53,17 @@ pip3 install $PIP_FLAGS --ignore-installed \
 # amaranth deliberately without [builtin-yosys]: that extra pulls in the
 # WASM-based amaranth-yosys + wasmtime (~75 MB); amaranth uses the native
 # yosys from PATH instead
-#
-# cace is held at 2.11.0 and ciel at 2.x: librelane up to 3.0.14 / 3.1.0.dev3
-# requires ciel<3, while cace>=2.12.0 requires ciel>=3.0.0.
-# librelane is held at 3.1.0.dev3: 3.1.0.dev4 requires ciel>=3.2.0, which
-# conflicts with the ciel hold (issue #408). Lift all three holds together,
-# once ciel 3 is checked against the PDKs installed in the image.
-# version-hold: cace ciel librelane
 pip3 install $PIP_FLAGS \
 	"amaranth==0.5.10" \
-	cace==2.11.0 \
+	cace==2.13.0 \
 	chipify==0.2.2 \
-	ciel==2.6.1 \
+	ciel==3.2.0 \
 	cocotb==2.1.0 \
 	cocotbext-ams==0.1.0 \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.7 \
-	gds2palace==0.9.2 \
+	gds2palace==0.9.3 \
 	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
@@ -80,15 +73,15 @@ pip3 install $PIP_FLAGS \
 	klayout-pex-plugin-palace==0.1.0 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
-	librelane==3.1.0.dev3 \
-	najaeda==0.7.33 \
+	librelane==3.1.0.dev4 \
+	najaeda==0.7.34 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
 	pyuvm==5.0.0 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.2.0 \
-	setupEM==0.15.0 \
+	setupEM==0.16.0 \
 	siliconcompiler==0.38.12 \
 	snp2le==0.1.18 \
 	spicelib==1.6.4 \
