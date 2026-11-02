@@ -11,17 +11,10 @@ The test:
   submodules) into the run dir and marks it a `safe.directory`, since the
   container user is usually not the owner of the checkout;
 - switches to the PDK with `source sak-pdk-script.sh ihp-sg13cmos5l sg13cmos5l_stdcell`;
-- runs `make regression` in `ihp-sg13cmos5l/`, which iterates over **every**
-  `.gds` in `layout/` (26 cells at the time of writing) and runs, per cell:
-  KLayout DRC, KLayout LVS (schematic netlist exported from Xschem), Magic DRC,
-  Magic + Netgen LVS, and Magic PEX in all three modes (`EXT_MODE=1/2/3`).
-  KPEX is currently commented out in the regression target upstream;
+- runs `make regression` in `ihp-sg13cmos5l/`, which takes every `.gds` in
+  `layout/` through the steps in `REGRESSION_STEPS` (DRC, LVS and PEX with
+  KLayout and Magic, see the `README.md` of that directory);
 - passes when the Makefile's regression summary reports no unexpected failure.
-
-The cell inventory covers the LV and HV device flavors (`nmos`/`pmos` as tap,
-ring-device and ring-PCell variants, RF MOS), the passives (`rhigh`, `rppd`,
-`rsil`, MOM caps), the antenna diodes, and `sg13_combined` as a multi-device
-cell.
 
 Only the verdict goes to the console; the clone output and the full
 `make regression` transcript are in
@@ -31,17 +24,15 @@ for progress messages while debugging.
 
 ## Known failures
 
-The regression target tolerates a pinned `KNOWN_FAILS` list (defined in the
-regression repo's `ihp-sg13cmos5l/Makefile`, one entry per cell or
-`<cell>:<tool>`); they are reported as `KNOWN FAIL (ignored)` and do not fail
-the test, while any *other* failure does. A pinned failure that starts passing
-is therefore not flagged as a failure here; it only shows up in the regression
-summary in the log.
+The verdict is the summary of `make regression`. Which steps may fail, and
+which have to, is listed in `ihp-sg13cmos5l/Makefile` of the regression
+repository and explained next to it, in `KNOWN_ISSUES.md` and
+`EXPECTED_FAILS.md` (PDK quirks and work-arounds are in `FINDINGS.md`). A listed
+failure that starts passing is an `UNEXPECTED PASS` and fails the test, so a
+tool fix shows up here and the entry can be removed.
 
-The baseline itself is deliberately **not** duplicated here: it is maintained in
-the regression repository next to the `KNOWN_FAILS` variable it documents, see
-`ihp-sg13cmos5l/KNOWN_ISSUES.md` (what is pinned and why) and
-`ihp-sg13cmos5l/FINDINGS.md` (PDK quirks and work-arounds) there.
+The lists are deliberately **not** duplicated here, so that they have only one
+place to be kept up to date.
 
 ## Differences to test 26
 
