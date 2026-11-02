@@ -41,7 +41,7 @@
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.12
 - name: libman
-  repo: https://github.com/IHP-GmbH/LibMan.git
+  repo: https://github.com/IHP-GmbH/Door.git
   commit: 32b9de429dec5d7782d5b0027d65caf46af89eca
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git

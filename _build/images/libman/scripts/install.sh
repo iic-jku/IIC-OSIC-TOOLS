@@ -12,7 +12,8 @@ git checkout "${LIBMAN_REPO_COMMIT}"
 mkdir -p build
 cd build || exit 1
 # CommonDB (CORE) is a private IHP repo we have no token for; build without it.
-qmake6 CONFIG+=no_core ../libman.pro
+# Upstream renamed LibMan to DOOR, libman.pro is a deprecated shim for door.pro.
+qmake6 CONFIG+=no_core ../door.pro
 export CAPNP_SKIP_CHECK=1
 make -j1 capnp_install
 # This target clones the LStream schemas from codeberg.org, which is markedly
@@ -42,20 +43,21 @@ fi
 unset CAPNP_SKIP_CHECK
 make -j"$(nproc)"
 mkdir -p "${TOOLS}/${LIBMAN_NAME}/bin"
-# binary may be named libman or LibMan depending on Qt version
 binary=""
-for p in libman LibMan release/libman release/LibMan; do
+for p in door release/door; do
     if [ -f "$p" ]; then
         binary="$p"
         break
     fi
 done
 if [ -z "$binary" ]; then
-    echo "ERROR: libman binary not found after build" >&2
+    echo "[ERROR] door binary not found after build" >&2
     ls -la
     exit 1
 fi
-mv "$binary" "${TOOLS}/${LIBMAN_NAME}/bin/libman"
+mv "$binary" "${TOOLS}/${LIBMAN_NAME}/bin/door"
+# Keep the pre-rename command name working
+ln -s door "${TOOLS}/${LIBMAN_NAME}/bin/libman"
 
 # Copy the capnp shared libraries that libman was linked against so the
 # binary can find them at runtime (capnp is built from source into
@@ -69,6 +71,6 @@ fi
 # Fix the binary RPATH so it resolves the capnp libraries relative to its
 # own location (works regardless of the value of LD_LIBRARY_PATH).
 apt-get -y install --no-install-recommends patchelf
-patchelf --set-rpath '$ORIGIN/../lib' "${TOOLS}/${LIBMAN_NAME}/bin/libman"
+patchelf --set-rpath '$ORIGIN/../lib' "${TOOLS}/${LIBMAN_NAME}/bin/door"
 
 echo "${LIBMAN_NAME} ${LIBMAN_REPO_COMMIT}" > "${TOOLS}/${LIBMAN_NAME}/SOURCES"

@@ -222,7 +222,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [kepler-formal](https://github.com/keplertech/kepler-formal) logic equivalence checking (LEC) tool for `openroad`
 - [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS, with packages: [klayout-pex](https://github.com/iic-jku/klayout-pex), [klive](https://github.com/KLayout/klive), [xsection](https://github.com/KLayout/xsection), and [klayout-productivity-suite](https://github.com/iic-jku/klayout-productivity-suite) with various iic-jku KLayout plugins
 - [lctime](https://codeberg.org/librecell/lctime) Characterization kit for CMOS cells
-- [libman](https://github.com/IHP-GmbH/LibMan) design library manager to manage cells and views
+- [libman](https://github.com/IHP-GmbH/Door) DOOR (formerly LibMan) design library manager to manage cells and views, started with `door` (or `libman`)
 - [librelane](https://github.com/librelane/librelane) successor of OpenLane(2), RTL2GDS flow scripts
 - [magic](https://github.com/rtimothyedwards/magic) layout editor with DRC and PEX
 - [najaeda](https://github.com/najaeda/naja) data structures and APIs for the development of post logic synthesis EDA algorithms
