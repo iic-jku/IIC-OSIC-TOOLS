@@ -14,7 +14,9 @@ step then dies with
 
 right after synthesis, in every PDK of the image.
 
-Not reported upstream yet, librelane main reads stat.json the same way.
+Reported upstream as https://github.com/librelane/librelane/issues/1064
+Only the dev branch is affected (since 17e98cad1). main still writes the
+uncompressed copies.
 Against librelane 3.1.0.dev4. Drop this once the pinned release carries a fix.
 ---
 --- librelane/steps/pyosys.py

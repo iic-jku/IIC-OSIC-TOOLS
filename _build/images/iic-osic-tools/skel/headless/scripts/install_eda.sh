@@ -109,8 +109,8 @@ python3 -m py_compile "$LIBRELANE_TOOLBOX"
 # Since librelane 3.1.0.dev4, Yosys reads the .lib.gz itself and logs
 # "Found gzip magic in file ..." into every `tee -o` stat report, so
 # Yosys.Synthesis fails to parse reports/stat.json (JSONDecodeError) in every
-# PDK. The patch skips to the JSON object. Not reported upstream yet, see the
-# patch header. Strict like the patch above.
+# PDK. The patch skips to the JSON object. Reported as
+# librelane/librelane#1064. Strict like the patch above.
 echo "[INFO] Patching librelane Yosys.Synthesis to parse stat.json after a gzip log line"
 LIBRELANE_PYOSYS="${LIBRELANE_SITE}/librelane/steps/pyosys.py"
 [ -f "$LIBRELANE_PYOSYS" ] || { echo "[ERROR] librelane pyosys.py not found"; exit 1; }
