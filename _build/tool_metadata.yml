@@ -7,6 +7,9 @@
 - name: cvc_rv
   repo: https://github.com/d-m-bailey/cvc.git
   commit: 23c3867bb9c227ec395e2812b318379ffb9a0df9
+- name: door
+  repo: https://github.com/IHP-GmbH/Door.git
+  commit: 32b9de429dec5d7782d5b0027d65caf46af89eca
 - name: gaw3-xschem
   repo: https://github.com/StefanSchippers/xschem-gaw.git
   commit: 6b8fa4ab007e88b3129381e0479737ae014a8b51
@@ -40,9 +43,6 @@
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.12
-- name: libman
-  repo: https://github.com/IHP-GmbH/Door.git
-  commit: 32b9de429dec5d7782d5b0027d65caf46af89eca
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
   commit: 8.3.691

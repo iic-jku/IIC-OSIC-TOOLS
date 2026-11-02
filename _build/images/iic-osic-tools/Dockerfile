@@ -8,6 +8,7 @@ ARG BASE_IMAGE=registry.iic.jku.at:5000/iic-osic-tools:base
 
 ARG TOOL_IMAGE_COVERED="registry.iic.jku.at:5000/iic-osic-tools:tool-covered-latest"
 ARG TOOL_IMAGE_CVC_RV="registry.iic.jku.at:5000/iic-osic-tools:tool-cvc_rv-latest"
+ARG TOOL_IMAGE_DOOR="registry.iic.jku.at:5000/iic-osic-tools:tool-door-latest"
 ARG TOOL_IMAGE_FPGA="registry.iic.jku.at:5000/iic-osic-tools:tool-fpga-latest"
 ARG TOOL_IMAGE_GAW3_XSCHEM="registry.iic.jku.at:5000/iic-osic-tools:tool-gaw3-xschem-latest"
 ARG TOOL_IMAGE_GDS3D="registry.iic.jku.at:5000/iic-osic-tools:tool-gds3d-latest"
@@ -19,7 +20,6 @@ ARG TOOL_IMAGE_IVERILOG="registry.iic.jku.at:5000/iic-osic-tools:tool-iverilog-l
 ARG TOOL_IMAGE_KACTUS2="registry.iic.jku.at:5000/iic-osic-tools:tool-kactus2-latest"
 ARG TOOL_IMAGE_KEPLER_FORMAL="registry.iic.jku.at:5000/iic-osic-tools:tool-kepler-formal-latest"
 ARG TOOL_IMAGE_KLAYOUT="registry.iic.jku.at:5000/iic-osic-tools:tool-klayout-latest"
-ARG TOOL_IMAGE_LIBMAN="registry.iic.jku.at:5000/iic-osic-tools:tool-libman-latest"
 ARG TOOL_IMAGE_MAGIC="registry.iic.jku.at:5000/iic-osic-tools:tool-magic-latest"
 ARG TOOL_IMAGE_NETGEN="registry.iic.jku.at:5000/iic-osic-tools:tool-netgen-latest"
 ARG TOOL_IMAGE_NGSPICE="registry.iic.jku.at:5000/iic-osic-tools:tool-ngspice-latest"
@@ -59,6 +59,7 @@ ARG TOOL_IMAGE_YOSYS="registry.iic.jku.at:5000/iic-osic-tools:tool-yosys-latest"
 
 FROM ${TOOL_IMAGE_COVERED} AS covered
 FROM ${TOOL_IMAGE_CVC_RV} AS cvc_rv
+FROM ${TOOL_IMAGE_DOOR} AS door
 FROM ${TOOL_IMAGE_FPGA} AS fpga
 FROM ${TOOL_IMAGE_GAW3_XSCHEM} AS gaw3-xschem
 FROM ${TOOL_IMAGE_GDS3D} AS gds3d
@@ -70,7 +71,6 @@ FROM ${TOOL_IMAGE_IVERILOG} AS iverilog
 FROM ${TOOL_IMAGE_KACTUS2} AS kactus2
 FROM ${TOOL_IMAGE_KEPLER_FORMAL} AS kepler-formal
 FROM ${TOOL_IMAGE_KLAYOUT} AS klayout
-FROM ${TOOL_IMAGE_LIBMAN} AS libman
 FROM ${TOOL_IMAGE_MAGIC} AS magic
 FROM ${TOOL_IMAGE_NETGEN} AS netgen
 FROM ${TOOL_IMAGE_NGSPICE} AS ngspice
@@ -118,6 +118,7 @@ ENV IIC_OSIC_TOOLS_VERSION=${CONTAINER_TAG}
 # Copy all layers into the final container
 COPY --link --from=covered                      ${TOOLS}/covered                ${TOOLS}/covered/
 COPY --link --from=cvc_rv                       ${TOOLS}/cvc_rv                 ${TOOLS}/cvc_rv/
+COPY --link --from=door                         ${TOOLS}/door                   ${TOOLS}/door/
 COPY --link --from=fpga                         ${TOOLS}/fpga                   ${TOOLS}/fpga/
 COPY --link --from=gaw3-xschem                  ${TOOLS}/gaw3-xschem            ${TOOLS}/gaw3-xschem/
 COPY --link --from=gds3d                        ${TOOLS}/gds3d                  ${TOOLS}/gds3d/
@@ -132,7 +133,6 @@ COPY --link --from=iverilog                     ${TOOLS}/iverilog               
 COPY --link --from=kactus2                      ${TOOLS}/kactus2                ${TOOLS}/kactus2/
 COPY --link --from=kepler-formal                ${TOOLS}/kepler-formal          ${TOOLS}/kepler-formal/
 COPY --link --from=klayout                      ${TOOLS}/klayout                ${TOOLS}/klayout/
-COPY --link --from=libman                       ${TOOLS}/libman                 ${TOOLS}/libman/
 COPY --link --from=magic                        ${TOOLS}/magic                  ${TOOLS}/magic/
 COPY --link --from=netgen                       ${TOOLS}/netgen                 ${TOOLS}/netgen/
 COPY --link --from=ngspice                      ${TOOLS}/ngspice                ${TOOLS}/ngspice/

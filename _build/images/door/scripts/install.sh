@@ -6,9 +6,9 @@
 set -e
 cd /tmp || exit 1 
 
-git clone --filter=blob:none --no-checkout "${LIBMAN_REPO_URL}" "${LIBMAN_NAME}"
-cd "${LIBMAN_NAME}" || exit 1
-git checkout "${LIBMAN_REPO_COMMIT}"
+git clone --filter=blob:none --no-checkout "${DOOR_REPO_URL}" "${DOOR_NAME}"
+cd "${DOOR_NAME}" || exit 1
+git checkout "${DOOR_REPO_COMMIT}"
 mkdir -p build
 cd build || exit 1
 # CommonDB (CORE) is a private IHP repo we have no token for; build without it.
@@ -42,7 +42,7 @@ if [ "$lstream_done" -ne 1 ]; then
 fi
 unset CAPNP_SKIP_CHECK
 make -j"$(nproc)"
-mkdir -p "${TOOLS}/${LIBMAN_NAME}/bin"
+mkdir -p "${TOOLS}/${DOOR_NAME}/bin"
 binary=""
 for p in door release/door; do
     if [ -f "$p" ]; then
@@ -55,22 +55,22 @@ if [ -z "$binary" ]; then
     ls -la
     exit 1
 fi
-mv "$binary" "${TOOLS}/${LIBMAN_NAME}/bin/door"
-# Keep the pre-rename command name working
-ln -s door "${TOOLS}/${LIBMAN_NAME}/bin/libman"
+mv "$binary" "${TOOLS}/${DOOR_NAME}/bin/door"
+# Keep the pre-rename command name (LibMan) working
+ln -s door "${TOOLS}/${DOOR_NAME}/bin/libman"
 
-# Copy the capnp shared libraries that libman was linked against so the
+# Copy the capnp shared libraries that door was linked against so the
 # binary can find them at runtime (capnp is built from source into
 # capnp-install/ and is NOT part of the base runtime image).
-CAPNP_LIB_DIR="/tmp/${LIBMAN_NAME}/capnp-install/lib"
-mkdir -p "${TOOLS}/${LIBMAN_NAME}/lib"
+CAPNP_LIB_DIR="/tmp/${DOOR_NAME}/capnp-install/lib"
+mkdir -p "${TOOLS}/${DOOR_NAME}/lib"
 if [ -d "${CAPNP_LIB_DIR}" ]; then
-    find "${CAPNP_LIB_DIR}" \( -name "*.so" -o -name "*.so.*" \) -exec cp -a {} "${TOOLS}/${LIBMAN_NAME}/lib/" \;
+    find "${CAPNP_LIB_DIR}" \( -name "*.so" -o -name "*.so.*" \) -exec cp -a {} "${TOOLS}/${DOOR_NAME}/lib/" \;
 fi
 
 # Fix the binary RPATH so it resolves the capnp libraries relative to its
 # own location (works regardless of the value of LD_LIBRARY_PATH).
 apt-get -y install --no-install-recommends patchelf
-patchelf --set-rpath '$ORIGIN/../lib' "${TOOLS}/${LIBMAN_NAME}/bin/door"
+patchelf --set-rpath '$ORIGIN/../lib' "${TOOLS}/${DOOR_NAME}/bin/door"
 
-echo "${LIBMAN_NAME} ${LIBMAN_REPO_COMMIT}" > "${TOOLS}/${LIBMAN_NAME}/SOURCES"
+echo "${DOOR_NAME} ${DOOR_REPO_COMMIT}" > "${TOOLS}/${DOOR_NAME}/SOURCES"

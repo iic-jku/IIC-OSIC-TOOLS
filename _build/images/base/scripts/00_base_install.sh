@@ -38,7 +38,7 @@ apt-get -y install openjdk-17-jdk
 # The Qt5 and Qt6 runtimes both have to stay: the CMake-built OpenROAD for
 # LibreLane has a Qt5-only GUI (src/gui/CMakeLists.txt does find_package(Qt5
 # ...), no Qt6 path) and openEMS links libvtk9-qt, which Ubuntu builds against
-# Qt5; klayout, kactus2, qucs-s, libman and mcy-gui are Qt6. The Bazel-built
+# Qt5; klayout, kactus2, qucs-s, door and mcy-gui are Qt6. The Bazel-built
 # OpenROAD links its own Qt6 statically, but loads the X11/xcb/xkbcommon,
 # dbus and fontconfig libraries listed below from the system at runtime. The Python side is consolidated on PySide6
 # (installed by install_eda.sh, required by chipify/snp2le/gds2palace/setupEM),

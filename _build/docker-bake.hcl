@@ -159,6 +159,20 @@ target "cvc_rv" {
   cache-to   = cache_to("cvc_rv")
 }
 
+target "door" {
+  inherits   = ["base-tool"]
+  dockerfile = "images/door/Dockerfile"
+  tags       = [img("tool-door-latest")]
+  contexts = {
+    "ctx-base-dev"  = basedep("base-dev")
+  }
+  args = {
+    BASE_IMAGE_BUILD = "ctx-base-dev"
+  }
+  cache-from = tool_cache_from("door")
+  cache-to   = cache_to("door")
+}
+
 target "fpga" {
   inherits   = ["base-tool"]
   dockerfile = "images/fpga-tools/Dockerfile"
@@ -283,20 +297,6 @@ target "klayout" {
   }
   cache-from = tool_cache_from("klayout")
   cache-to   = cache_to("klayout")
-}
-
-target "libman" {
-  inherits   = ["base-tool"]
-  dockerfile = "images/libman/Dockerfile"
-  tags       = [img("tool-libman-latest")]
-  contexts = {
-    "ctx-base-dev"  = basedep("base-dev")
-  }
-  args = {
-    BASE_IMAGE_BUILD = "ctx-base-dev"
-  }
-  cache-from = tool_cache_from("libman")
-  cache-to   = cache_to("libman")
 }
 
 target "magic" {
@@ -857,6 +857,7 @@ target "image-full" {
     "ctx-base"                 = basedep("base")
     "ctx-covered"              = tooldep("covered")
     "ctx-cvc_rv"               = tooldep("cvc_rv")
+    "ctx-door"                 = tooldep("door")
     "ctx-fpga"                 = tooldep("fpga")
     "ctx-gaw3-xschem"          = tooldep("gaw3-xschem")
     "ctx-gds3d"                = tooldep("gds3d")
@@ -868,7 +869,6 @@ target "image-full" {
     "ctx-kactus2"              = tooldep("kactus2")
     "ctx-kepler-formal"        = tooldep("kepler-formal")
     "ctx-klayout"              = tooldep("klayout")
-    "ctx-libman"               = tooldep("libman")
     "ctx-magic"                = tooldep("magic")
     "ctx-netgen"               = tooldep("netgen")
     "ctx-ngspice"              = tooldep("ngspice")
@@ -910,6 +910,7 @@ target "image-full" {
     BASE_IMAGE                     = "ctx-base"
     TOOL_IMAGE_COVERED             = "ctx-covered"
     TOOL_IMAGE_CVC_RV              = "ctx-cvc_rv"
+    TOOL_IMAGE_DOOR                = "ctx-door"
     TOOL_IMAGE_FPGA                = "ctx-fpga"
     TOOL_IMAGE_GAW3_XSCHEM         = "ctx-gaw3-xschem"
     TOOL_IMAGE_GDS3D               = "ctx-gds3d"
@@ -921,7 +922,6 @@ target "image-full" {
     TOOL_IMAGE_KACTUS2             = "ctx-kactus2"
     TOOL_IMAGE_KEPLER_FORMAL       = "ctx-kepler-formal"
     TOOL_IMAGE_KLAYOUT             = "ctx-klayout"
-    TOOL_IMAGE_LIBMAN              = "ctx-libman"
     TOOL_IMAGE_MAGIC               = "ctx-magic"
     TOOL_IMAGE_NETGEN              = "ctx-netgen"
     TOOL_IMAGE_NGSPICE             = "ctx-ngspice"
@@ -980,6 +980,7 @@ group "tools" {
   targets = [
     "covered",
     "cvc_rv",
+    "door",
     "fpga",
     "gaw3-xschem",
     "gds3d",
@@ -991,7 +992,6 @@ group "tools" {
     "kactus2",
     "kepler-formal",
     "klayout",
-    "libman",
     "magic",
     "netgen",
     "ngspice",
@@ -1040,6 +1040,7 @@ group "tools-level-1" {
   targets = [
     "covered",
     "cvc_rv",
+    "door",
     "fpga",
     "gaw3-xschem",
     "ghdl",
@@ -1049,7 +1050,6 @@ group "tools-level-1" {
     "kactus2",
     "kepler-formal",
     "klayout",
-    "libman",
     "magic",
     "netgen",
     "ngspyce",
