@@ -21,7 +21,9 @@ The test:
 - runs, per PDK in `<pdk>/pex_bench/`:
   - `make layouts`, which regenerates the layouts from `scripts/gen_*.py`, so
     the extraction runs on what the generators produce;
-  - `make pex-bench-magic`, Magic PEX in all three modes on every layout;
+  - `make pex-bench-magic`, Magic PEX in all three modes on every layout
+    (extractions the bench lists in `KNOWN_FAILS` may fail, a listed one that
+    passes fails the step);
   - `make pex-bench-2.5d`, the kpex 2.5D engine on the comparison cells, if the
     bench lists `kpex25` in `PEX_ENGINES` (see below);
   - `make pex-bench-compare`, which builds the comparison tables and writes
@@ -34,16 +36,6 @@ The bench switches the PDK itself (its `Makefile` sets `EXPECTED_PDK`, and
 `common.mk` calls `sak-pdk` with it), so unlike test 25 this test does not source
 `sak-pdk-script.sh`.
 
-| PDK              | Layouts | Pinned values | Engines          |
-| ---------------- | ------- | ------------- | ---------------- |
-| ihp-sg13g2       | 63      | 208           | Magic, kpex 2.5D |
-| ihp-sg13cmos5l   | 54      | 126           | Magic            |
-| gf180mcuD        | 50      | 145           | Magic, kpex 2.5D |
-| sky130A          | 58      | 156           | Magic, kpex 2.5D |
-
-The numbers are those at the time of writing; the bench repository is the
-reference.
-
 ## Engines per PDK
 
 Which engines a PDK runs is the bench's own statement, in `PEX_ENGINES` in
@@ -51,11 +43,8 @@ Which engines a PDK runs is the bench's own statement, in `PEX_ENGINES` in
 the PDK's tooling cannot run on an unmodified image is not called at all rather
 than failing on every run.
 
-`ihp-sg13cmos5l` currently lists only `magic`: the kpex wheel ships the
-`sg13cmos5l` LVS deck without the rule decks it includes, so kpex fails before
-it extracts anything. The PDK is reported as `pass (no kpex)`, and its deck and
-Magic values are still checked in full. Once kpex is fixed, `kpex25` goes back
-into `PEX_ENGINES` in the bench repository; nothing changes here.
+A PDK whose bench does not list `kpex25` is reported as `pass (no kpex)`, and
+its deck and Magic values are still checked in full.
 
 The FasterCap field solve of the bench (`make pex-bench FASTERCAP=1`) is not
 run. It takes minutes per cell, and the value check treats its column as
@@ -67,7 +56,7 @@ Only the verdict goes to the console. It names the outcome of every PDK, for
 example:
 
 ```text
-[INFO] Test <PEX bench, all PDKs> passed. ihp-sg13g2 pass, ihp-sg13cmos5l pass (no kpex), gf180mcuD pass, sky130A pass (19 checks).
+[INFO] Test <PEX bench, all PDKs> passed. ihp-sg13g2 pass, ihp-sg13cmos5l pass, gf180mcuD pass, sky130A pass (20 checks).
 ```
 
 A failing case prints its own `[FAIL]` line, followed by the few output lines
@@ -103,6 +92,5 @@ commit. Re-blessing to make a failing run pass defeats the test.
 
 ## Runtime
 
-Between about 600 s and 1200 s standalone for all four PDKs, in three runs on a
-laptop with `iic-osic-tools:next` 2026.09. Its runtime under contention is not
-measured yet.
+Every run lists its slowest tests at the end and keeps the runtime of every test
+in `joblog.tsv` in its run dir.

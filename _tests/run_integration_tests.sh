@@ -122,13 +122,11 @@ mkdir -p "$HOST_RUNDIR"
 # Test 28 alone defines the wall clock of the whole suite, so it must start
 # first. Note these are runtimes *under full contention*; standalone they are
 # considerably shorter (21: 108 s, 27: 78 s).
-# Test 31 measured about 1800 s standalone (it does the same per-cell DRC/LVS/PEX
-# work as 26, on 25 instead of 30 cells), so it is queued right next to it. Its
-# runtime under contention is not measured yet.
+# Test 31 does the same per-cell DRC/LVS/PEX work as 26, on the cells of
+# ihp-sg13cmos5l, so it is queued right next to it.
 # Test 32 runs the same kind of template regression as 20, on the
 # ihp-sg13cmos5l sibling of that template, so it is queued right next to it.
-# Test 35 measured 600 to 1200 s standalone (Magic PEX of four PDK benches), so
-# it is queued after 31. Its runtime under contention is not measured yet.
+# Test 35 runs the PEX benches of four PDKs, so it is queued after 31.
 SLOW_TESTS="28 26 31 35 24 20 32 21 01 10 07 18 22 19 04 15"
 
 # The current directory is bind-mounted at $WORKDIR in the container, so the
