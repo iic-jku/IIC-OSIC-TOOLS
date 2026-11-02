@@ -54,10 +54,12 @@ pip3 install $PIP_FLAGS --ignore-installed \
 # WASM-based amaranth-yosys + wasmtime (~75 MB); amaranth uses the native
 # yosys from PATH instead
 #
-# cace is held at 2.11.0 and ciel at 2.x: every librelane release (up to
-# 3.0.14 / 3.1.0.dev3) requires ciel<3, while cace>=2.12.0 requires ciel>=3.0.0.
-# Bump cace (and ciel) only once librelane accepts ciel 3.
-# version-hold: cace ciel
+# cace is held at 2.11.0 and ciel at 2.x: librelane up to 3.0.14 / 3.1.0.dev3
+# requires ciel<3, while cace>=2.12.0 requires ciel>=3.0.0.
+# librelane is held at 3.1.0.dev3: 3.1.0.dev4 requires ciel>=3.2.0, which
+# conflicts with the ciel hold (issue #408). Lift all three holds together,
+# once ciel 3 is checked against the PDKs installed in the image.
+# version-hold: cace ciel librelane
 pip3 install $PIP_FLAGS \
 	"amaranth==0.5.10" \
 	cace==2.11.0 \
@@ -78,7 +80,7 @@ pip3 install $PIP_FLAGS \
 	klayout-pex-plugin-palace==0.1.0 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
-	librelane==3.1.0.dev4 \
+	librelane==3.1.0.dev3 \
 	najaeda==0.7.33 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
