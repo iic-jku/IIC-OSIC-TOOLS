@@ -4,8 +4,11 @@ This document summarizes the most important changes of the individual releases o
 
 ## 2026.11
 
-* [Update] FasterCap `6.1.1` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS-accelerated matrix products, a fixed hang of the `-pb` block preconditioner, and exit code 75 with the last iteration's result when `-a` does not converge (6.0.7 reported success with an unset matrix)
+* [Update] FasterCap `6.2.1` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS-accelerated matrix products and a fixed hang of the `-pb` block preconditioner
 * [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites, `-s` to select a suite directly, and `-D` to run single rule decks (e.g. `activ,gatpoly`)
+* [Changing] FasterCap results change for inputs with dielectrics (6.0.7 gave values up to 21 % too high in 3D and 24 % in 2D), and can also change on `arm64` for runs with `-a`
+* [Changing] FasterCap exits with 75 when GMRES does not converge (the last matrix is still printed) and with 65 for NaN or infinite entries, where 6.0.7 exited with 0, and `kpex` stops on both
+* [Remove] FasterCap's undocumented options `-s`, `-kc`, `-km` and `-ph`, which had no effect or hung
 * [Fix] `run_palace -np N` runs Palace on N MPI processes, where every N above 1 aborted with "mpirun does not support recursive calls"
 * [Fix] a login shell in `docker exec` sets `USER` to `designer` when the container UID has no passwd entry, instead of the two lines `1000` and `designer`
 * [Fix] `sak-drc.sh -f` refuses a pattern that matches the top cell (such as the `'*'` its help suggested), with which Magic checked an empty cell and reported any layout clean
