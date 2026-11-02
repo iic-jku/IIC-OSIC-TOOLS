@@ -5,7 +5,7 @@
 #
 # Test PyOPUS: compiled extensions, an ngspice run through the performance
 # evaluator and the cost aggregator report, the measure fix of commit
-# 3ee2f57 and a plot saved through the plotter ported to PySide6 at install time.
+# 3ee2f57, a plot saved through the PySide6 plotter, and an import of the GUI.
 
 if [ -z "${RAND}" ]; then
     RAND=$(hexdump -v -e '/1 "%02x"' -n4 < /dev/urandom)
@@ -45,6 +45,9 @@ from pyopus.evaluator.performance import PerformanceEvaluator
 for mod in ("pyopus.simulator._rawfile", "pyopus.simulator._hspice_read",
             "pyopus.misc._ghalton", "pyopus.misc._sobol", "pyopus.problems._lvu"):
     importlib.import_module(mod)
+
+# The GUI (pyog) must load with the image's trimmed PySide6-Essentials
+importlib.import_module("pyopus.gui.mainwindow")
 
 # PyOPUS 0.12 raised NameError here (undefined np, fixed upstream in 3ee2f57)
 assert np.allclose(XatIrange(np.array([0.0, 1.0, 2.0, 3.0]), 1.5, 1.5), [1.5])
@@ -89,7 +92,7 @@ finally:
     pe.finalize()
 
 # The plotter runs Qt in a thread started at import, every call below crosses
-# into it through the PySide6 signal patched in by the install script
+# into it through a PySide6 signal (upstream 92a5ab0)
 from pyopus.plotter import interface as pyopl  # noqa: E402
 
 fig = pyopl.figure(windowTitle="dc", show=False, figpx=(400, 300), dpi=100)
