@@ -51,6 +51,12 @@ permissions:
 env:
   BASE_REF: ${{ inputs.base_ref || 'next_release' }}
 
+# An explicit shell adds -o pipefail, so a failing command piped into tee fails
+# its step. Without it, failed builds and test runs were reported as green.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   bump:
     runs-on: ubuntu-24.04

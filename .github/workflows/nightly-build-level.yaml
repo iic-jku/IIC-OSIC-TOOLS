@@ -26,6 +26,12 @@ permissions:
   contents: read
   packages: write
 
+# An explicit shell adds -o pipefail, so a failing command piped into tee fails
+# its step. A called workflow does not inherit the defaults of nightly.yaml.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     name: ${{ matrix.target }} (${{ matrix.arch }})
