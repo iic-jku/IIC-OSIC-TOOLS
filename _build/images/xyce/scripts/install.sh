@@ -32,6 +32,14 @@ cd src/DeviceModelPKG/ADMS
 make -j"$(nproc)"
 cd ../../..
 
+# user_plugin runs admsXml on rlc.va from two rules, and the two-target rule
+# can run once per target. Parallel admsXml runs share the preprocessed
+# .rlc.va.adms in the build dir and truncate it for each other ("rlc.va:
+# during lexical analysis syntax error at line 0"). Generate these sources
+# serially first. Drop with the move off autotools (removed upstream in
+# Xyce 23c80684, after Release-7.10.0).
+make -C user_plugin -j1 N_DEV_ADMSrlc.C N_DEV_ADMSrlc_bootstrap.C
+
 # build Xyce
 make -j"$(nproc)"
 make install
