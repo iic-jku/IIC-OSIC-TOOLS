@@ -15,14 +15,15 @@ cd "${OPENROAD_NAME}" || exit 1
 git checkout "${OPENROAD_REPO_COMMIT}"
 git submodule update --init --recursive --filter=blob:none
 
-# The DEF lexer stores GETC() (an int) in `char fc` and then tests fc == EOF.
-# char is unsigned on aarch64, so the test is always false there and clang
-# fails the build under the -Werror that .bazelrc sets for src/. Widen fc to
-# int, which also makes EOF inside a DEF comment terminate on aarch64. Not
-# reported upstream yet, drop once def_keywords.cpp declares fc as int.
-DEF_KEYWORDS=src/odb/src/def/def/def_keywords.cpp
-sed -i 's/^  char fc;$/  int fc;/' "$DEF_KEYWORDS"
-grep -q '^  int fc;$' "$DEF_KEYWORDS" || { echo "[ERROR] char fc not found in $DEF_KEYWORDS, check whether the patch is still needed"; exit 1; }
+# The DEF and LEF lexers store GETC()/lefGetc() (an int) in `char fc` and then
+# test fc == EOF. char is unsigned on aarch64, so the test is always false
+# there and clang fails the build under the -Werror that .bazelrc sets for
+# src/. Widen fc to int, which also makes EOF inside a comment terminate on
+# aarch64. Not reported upstream yet, drop once both files declare fc as int.
+for KEYWORDS in src/odb/src/def/def/def_keywords.cpp src/odb/src/lef/lef/lef_keywords.cpp; do
+    sed -i 's/^  char fc;$/  int fc;/' "$KEYWORDS"
+    grep -q '^  int fc;$' "$KEYWORDS" || { echo "[ERROR] char fc not found in $KEYWORDS, check whether the patch is still needed"; exit 1; }
+done
 
 # Same flags as upstream etc/Build.sh: --config=release stamps the real
 # `git describe` version and includes --config=opt (-O3, ThinLTO).
