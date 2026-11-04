@@ -29,4 +29,5 @@ import PySide6
 assert PySide6.__version__, "PySide6/__init__.py missing (PySide6-Addons uninstall?)"
 
 import chipify.gui_qt.app  # noqa: E402,F401
+import prep_ic.gui.app  # noqa: E402,F401
 import snp2le.app  # noqa: E402,F401

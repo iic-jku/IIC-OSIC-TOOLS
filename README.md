@@ -241,6 +241,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [osic-multitool](https://github.com/iic-jku/osic-multitool) collection of useful scripts and documentation
 - [padring](https://github.com/donn/padring) padring generation tool
 - [palace](https://github.com/awslabs/palace) 3D finite element solver for computational electromagnetics
+- [prep-ic](https://github.com/iic-jku/prep-ic) plans the pad ring, pinout and early floorplan of an IC and exports the LibreLane pad ring files
 - [prjtrellis](https://github.com/YosysHQ/prjtrellis) bitstream tools and database for Lattice ECP5 FPGAs, providing `ecppack`
 - [pulp-tools](https://github.com/pulp-platform/pulp) PULP platform tools consisting of [bender](https://github.com/pulp-platform/bender), [verible](https://github.com/chipsalliance/verible), and [sv2v](https://github.com/zachjs/sv2v)
 - [pygmid](https://github.com/dreoilin/pygmid) Python version of the gm/Id starter kit from Boris Murmann

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=PREP-IC
+Exec=prep-ic
+Type=Application
+Icon=prep-ic
+Categories=Development;Electronics;
+Comment=Plan the pad ring, pinout and early floorplan of an IC

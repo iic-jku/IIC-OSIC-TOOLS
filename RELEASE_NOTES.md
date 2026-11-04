@@ -4,6 +4,7 @@ This document summarizes the most important changes of the individual releases o
 
 ## 2026.11
 
+* [Adding] [`prep-ic`](https://github.com/iic-jku/prep-ic), a GUI and Python API that plans the pad ring, pinout and early floorplan of an IC and exports the LibreLane pad ring files
 * [Update] FasterCap `6.2.1` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS-accelerated matrix products and a fixed hang of the `-pb` block preconditioner
 * [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites, `-s` to select a suite directly, and `-D` to run single rule decks (e.g. `activ,gatpoly`)
 * [Changing] FasterCap results change for inputs with dielectrics (6.0.7 gave values up to 21 % too high in 3D and 24 % in 2D), and can also change on `arm64` for runs with `-a`
