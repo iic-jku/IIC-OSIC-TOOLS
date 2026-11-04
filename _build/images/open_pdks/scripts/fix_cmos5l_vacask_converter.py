@@ -42,7 +42,8 @@ here.
 The same drift hits the netlist names in tech_files: when the PDK switches a
 standard-cell or I/O netlist between .spi and .spice (sg13cmos5l_io.spi became
 .spice in 2026-09), the entry is repointed to the file that exists, see
-fix_netlist_names().
+fix_netlist_names(). And it hits the model files: when the PDK drops one the
+list still names, the entry is commented out, see drop_stale_models().
 
 Devices the converter already lists are left alone, so this is a no-op once
 VACASK catches up, and it is idempotent. If either list cannot be found the
@@ -67,6 +68,9 @@ import sys
 # __XYCE__, so the define is inert -- it is kept for consistency with the
 # neighbouring entry rather than for effect.
 VA_OPTIONS = '[ "-D__NGSPICE" ]'
+
+# A tech_files entry for a model file. Group 1 is the indentation before "(".
+MODEL_ENTRY = re.compile(r'^(\s*)\(\s*"([^"]+\.lib)"', re.MULTILINE)
 
 
 def find_list(content: str, name: str) -> tuple:
@@ -122,6 +126,19 @@ def own_va_modules(pdk_dir: str) -> list:
     return modules
 
 
+def source_dirs(pdk_dir: str) -> list:
+    """The PDK directories the converter searches for a tech_files entry."""
+    return [
+        os.path.join(pdk_dir, "libs.tech", "ngspice", "models"),
+        os.path.join(pdk_dir, "libs.ref", "sg13cmos5l_stdcell", "spice"),
+        os.path.join(pdk_dir, "libs.ref", "sg13cmos5l_io", "spice"),
+    ]
+
+
+def in_pdk(pdk_dir: str, name: str) -> bool:
+    return any(os.path.isfile(os.path.join(d, name)) for d in source_dirs(pdk_dir))
+
+
 def fix_netlist_names(content: str, tech_span: tuple, pdk_dir: str) -> tuple:
     """Repoint tech_files netlist entries the PDK renamed between .spi and .spice.
 
@@ -137,23 +154,14 @@ def fix_netlist_names(content: str, tech_span: tuple, pdk_dir: str) -> tuple:
 
     Returns the updated content and a list of (old, new) names.
     """
-    src_dirs = [
-        os.path.join(pdk_dir, "libs.tech", "ngspice", "models"),
-        os.path.join(pdk_dir, "libs.ref", "sg13cmos5l_stdcell", "spice"),
-        os.path.join(pdk_dir, "libs.ref", "sg13cmos5l_io", "spice"),
-    ]
-
-    def exists(name):
-        return any(os.path.isfile(os.path.join(d, name)) for d in src_dirs)
-
     tech_body = content[tech_span[0]:tech_span[1]]
     renames = []
     for name in sorted(set(re.findall(r'\(\s*"([^"]+\.spi(?:ce)?)"', tech_body))):
-        if exists(name):
+        if in_pdk(pdk_dir, name):
             continue
         stem, ext = os.path.splitext(name)
         alt = stem + (".spice" if ext == ".spi" else ".spi")
-        if exists(alt):
+        if in_pdk(pdk_dir, alt):
             tech_body = tech_body.replace('"%s"' % name, '"%s"' % alt)
             renames.append((name, alt))
         else:
@@ -161,6 +169,53 @@ def fix_netlist_names(content: str, tech_span: tuple, pdk_dir: str) -> tuple:
                   % name, file=sys.stderr)
     content = content[:tech_span[0]] + tech_body + content[tech_span[1]:]
     return content, renames
+
+
+def included_by(models_dir: str, name: str) -> list:
+    """Model files in models_dir that still .include (or .lib) `name`."""
+    pattern = re.compile(r'^\s*\.(?:include|inc|lib)\s+"?%s"?(\s|$)' % re.escape(name),
+                         re.MULTILINE | re.IGNORECASE)
+    users = []
+    for entry in sorted(os.listdir(models_dir)):
+        path = os.path.join(models_dir, entry)
+        if os.path.isfile(path):
+            with open(path, 'r', errors='replace') as f:
+                if pattern.search(f.read()):
+                    users.append(entry)
+    return users
+
+
+def drop_stale_models(content: str, tech_span: tuple, pdk_dir: str) -> tuple:
+    """Comment out the tech_files model entries the PDK no longer ships.
+
+    IHP folded resistors_mod_mismatch.lib into resistors_mod.lib
+    (IHP-Open-PDK#1286, merged 2026-10-19), and the converter then dies on
+    "ConverterError: File resistors_mod_mismatch.lib not found", as sg13g2tovc.py
+    did on sg13g2_hbt_mod_mismatch.lib (see fix_sg13g2_vacask_converter.py). An
+    entry is dropped only when no model file of the PDK still includes it.
+    Otherwise the conversion would be incomplete anyway, so this fails instead.
+
+    Returns the updated content and the dropped names, or None for the content
+    if a dropped file is still included.
+    """
+    models_dir = source_dirs(pdk_dir)[0]
+    tech_body = content[tech_span[0]:tech_span[1]]
+    dropped = []
+    # Back to front, so the offsets of the entries still to come stay valid.
+    for match in reversed(list(MODEL_ENTRY.finditer(tech_body))):
+        name = match.group(2)
+        if in_pdk(pdk_dir, name):
+            continue
+        users = included_by(models_dir, name)
+        if users:
+            print("[ERROR] %s is listed in tech_files and included by %s, "
+                  "but the PDK does not ship it." % (name, ", ".join(users)),
+                  file=sys.stderr)
+            return None, dropped
+        tech_body = tech_body[:match.end(1)] + "# " + tech_body[match.end(1):]
+        dropped.append(name)
+    content = content[:tech_span[0]] + tech_body + content[tech_span[1]:]
+    return content, list(reversed(dropped))
 
 
 def main() -> int:
@@ -182,10 +237,15 @@ def main() -> int:
               "fix_cmos5l_vacask_converter.py needs updating.", file=sys.stderr)
         return 1
 
-    # Rename first: it shifts the offsets, so both spans are taken again.
+    # Rename and drop first: both shift the offsets, so the spans are taken again.
     content, renames = fix_netlist_names(content, tech_span, pdk_dir)
     for old, new in renames:
         print("[INFO] Repointed the VACASK converter from %s to %s." % (old, new))
+    content, dropped = drop_stale_models(content, find_list(content, "tech_files"), pdk_dir)
+    if content is None:
+        return 1
+    for name in dropped:
+        print("[INFO] Dropped %s from the VACASK converter (no longer in the PDK)." % name)
     tech_span = find_list(content, "tech_files")
     va_span = find_list(content, "included_va_files")
 
@@ -210,7 +270,7 @@ def main() -> int:
     if not new_tech and not new_va:
         print("[INFO] The VACASK converter already covers every CMOS5L-own "
               "device, nothing to add.")
-        if renames:
+        if renames or dropped:
             with open(converter, 'w') as f:
                 f.write(content)
         return 0
