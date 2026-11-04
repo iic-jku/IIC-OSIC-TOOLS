@@ -160,7 +160,7 @@ else
 fi
 cd /tmp || exit 1
 
-# Complete the converter's device lists from the PDK before running it. The
+# Reconcile the converter's lists with the PDK before running it. The
 # MOS capacitor's model files set SWSOA globally like the MOS transistors' do,
 # but upstream only patches that out of the latter, which leaves every
 # cornerMOSCAP.lib section failing with "Parameter redefinition." (shared helper,
