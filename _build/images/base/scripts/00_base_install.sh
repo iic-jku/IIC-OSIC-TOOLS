@@ -34,6 +34,10 @@ apt-get -y install openjdk-17-jdk
 # build time, so every user model build links with it.
 # liblz4-dev must stay too: since Verilator 5.052 verilated_fst_c.cpp includes
 # <lz4.h>, so every user model built with --trace-fst needs the header.
+# libopenmpi-dev must stay as well: Xyce is built with MPI, so its installed
+# headers include <mpi.h>, and buildxyceplugin (also behind the IHP PDKs'
+# adms-compile-va.sh) compiles a user Verilog-A model with mpicxx against them.
+# It depends on gfortran, which therefore reaches the runtime image after all.
 #
 # The Qt5 and Qt6 runtimes both have to stay: the CMake-built OpenROAD for
 # LibreLane has a Qt5-only GUI (src/gui/CMakeLists.txt does find_package(Qt5
@@ -151,6 +155,7 @@ apt-get -y install \
 	libomp5-18 \
 	libopenblas0 \
 	libopenblas0-pthread \
+	libopenmpi-dev \
 	libopenmpi3 \
 	libpcre2-8-0 \
 	libpcre3 \
