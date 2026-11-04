@@ -14,7 +14,8 @@ apt-get -y upgrade
 # image: clang/LLVM (openvaf links LLVM statically, ghdl configures with
 # llvm-config), gnat (ghdl is written in Ada) and gfortran (Xyce/Trilinos).
 # The base image ships GCC plus only the matching runtime libraries
-# (libllvm18, libgnat-13).
+# (libllvm18, libgnat-13). gfortran reaches base as well, as a dependency of
+# libopenmpi-dev (see base/scripts/00_base_install.sh).
 #
 # python3-pyqt5 is build-only as well: the PyOPUS sdist does not build on
 # aarch64 without it, but the installed sources are ported to PySide6 right
@@ -80,7 +81,6 @@ apt-get -y install \
 	libomp-dev \
 	libopenblas-dev \
 	libopenblas-pthread-dev \
-	libopenmpi-dev \
 	libpcre2-dev \
 	libpcre3-dev \
 	libpolly-18-dev \
