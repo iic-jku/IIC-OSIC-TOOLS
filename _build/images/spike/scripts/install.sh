@@ -9,6 +9,8 @@ cd /tmp || exit 1
 git clone --filter=blob:none --no-checkout "${SPIKE_REPO_URL}" "${SPIKE_NAME}"
 cd "${SPIKE_NAME}" || exit 1
 git checkout "${SPIKE_REPO_COMMIT}"
+# softfloat is built from the berkeley-softfloat-3 submodule since a194bae
+git submodule update --init --filter=blob:none
 mkdir build && cd build
 ../configure --prefix="${TOOLS}/${SPIKE_NAME}"
 # Upstream builds with -Werror since cae2943; -Os triggers false-positive
