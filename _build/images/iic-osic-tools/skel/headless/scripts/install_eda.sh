@@ -75,6 +75,7 @@ pip3 install $PIP_FLAGS \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev4 \
 	najaeda==0.7.34 \
+	prep-ic==0.1.1 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
 	pyuvm==5.0.0 \
@@ -117,7 +118,7 @@ LIBRELANE_PYOSYS="${LIBRELANE_SITE}/librelane/steps/pyosys.py"
 patch -p0 --batch -r - -d "$LIBRELANE_SITE" < /headless/scripts/patches/librelane-synthesis-stat-json-gzip.patch
 python3 -m py_compile "$LIBRELANE_PYOSYS"
 
-# The four packages pulling in PySide6 (chipify, snp2le, gds2palace, setupEM)
+# The five packages pulling in PySide6 (chipify, prep-ic, snp2le, gds2palace, setupEM)
 # only use QtWidgets/QtCore/QtGui/QtSvg, all of which live in
 # PySide6-Essentials. The rest is not imported by anything in the image, so
 # remove it: PySide6-Addons (Qt3D/Quick3D/Multimedia/Charts, ...) and, split off
