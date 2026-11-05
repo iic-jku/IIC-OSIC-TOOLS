@@ -11,7 +11,7 @@ ARG OPENVAF_REPO_URL="https://github.com/arpadbuermen/OpenVAF.git"
 # drops absdelay(), so every delay in VACASK is silently zero (see
 # https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/375). Return to master once
 # it emits OSDI 0.5, and drop the branch key in tool_metadata.yml with it.
-ARG OPENVAF_REPO_COMMIT="cca18ef704b47d406aa672414f66f59dbd31d3f2"
+ARG OPENVAF_REPO_COMMIT="96b3322cedd9c8b56de4ca009cdeccda6f1ae571"
 ARG OPENVAF_NAME="openvaf"
 ENV OPENVAF_NAME=${OPENVAF_NAME}
 RUN --mount=type=bind,source=images/openvaf,target=/images/openvaf \
