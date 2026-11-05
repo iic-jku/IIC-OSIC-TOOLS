@@ -21,7 +21,8 @@
   commit: 51cfedebb0a67538aebb70ff982563d9955d2927
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
-  commit: c21051d6e5a18b70d0ef7ce398758d7fbec5068e
+  commit: 1537d621f2fbb3185a520cd95606e6f8a7989849
+  hold: Later commits need the TwinePool API of Yosys main, bump with the first Yosys release that has it (v0.70 does not)
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
   commit: 06a0d4418d1706453b36396ca9340597e90cde18
