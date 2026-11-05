@@ -10,6 +10,7 @@ This document summarizes the most important changes of the individual releases o
 * [Changing] FasterCap results change for inputs with dielectrics (6.0.7 gave values up to 21 % too high in 3D and 24 % in 2D), and can also change on `arm64` for runs with `-a`
 * [Changing] FasterCap exits with 75 when GMRES does not converge (the last matrix is still printed) and with 65 for NaN or infinite entries, where 6.0.7 exited with 0, and `kpex` stops on both
 * [Remove] FasterCap's undocumented options `-s`, `-kc`, `-km` and `-ph`, which had no effect or hung
+* [Remove] the `vtk` and `pyvista` Python packages, which saves about 600 MB on disk: `setupEM` keeps working, but its 3D field viewer (`fieldViewer`) needs them installed by hand (see [KNOWN_ISSUES.md](KNOWN_ISSUES.md))
 * [Fix] `run_palace -np N` runs Palace on N MPI processes, where every N above 1 aborted with "mpirun does not support recursive calls"
 * [Fix] a login shell in `docker exec` sets `USER` to `designer` when the container UID has no passwd entry, instead of the two lines `1000` and `designer`
 * [Fix] `sak-drc.sh -f` refuses a pattern that matches the top cell (such as the `'*'` its help suggested), with which Magic checked an empty cell and reported any layout clean

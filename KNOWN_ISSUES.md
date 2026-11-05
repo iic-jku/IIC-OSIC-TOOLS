@@ -168,6 +168,16 @@ Running Docker in rootless mode with X11/Wayland forwarding (`start_x.sh`) is no
 
 At least since tag `2025.12` GDS3D is crashing with an error message. Unfortunately, there is no known fix at the moment, and upstream GDS3D has seen no changes since 2024. See <https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/220> (closed without a fix).
 
+### The setupEM 3D Field Viewer Needs Extra Packages
+
+The image does not ship the `vtk` and `pyvista` Python packages (about 600 MB on disk). `setupEM` itself works, but `fieldViewer` and the field viewer buttons in `setupEM` and `setupThermal` stop with `ModuleNotFoundError: No module named 'pyvista'`.
+
+**Workaround:** Install the packages into the user site of the running container:
+
+```bash
+pip3 install --user --break-system-packages pyvista pyvistaqt
+```
+
 ## Build
 
 ### The IHP PDKs Are Built from a Branch, Not from a Pinned Commit

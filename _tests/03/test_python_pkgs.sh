@@ -75,6 +75,18 @@ else
     echo "[INFO] Test <Loading hdl21> passed."
 fi
 
+# install_eda.sh removes the vtk wheel, which setupEM declares but needs only
+# for its field viewer. setupEM itself must still import without it.
+if ! QT_QPA_PLATFORM=offscreen python -c \
+    "import importlib.util, setupEM.setupEM
+assert importlib.util.find_spec('vtkmodules') is None, 'vtk wheel is installed'"
+then
+    echo "[ERROR] Test <setupEM without vtk> FAILED."
+    ERR=1
+else
+    echo "[INFO] Test <setupEM without vtk> passed."
+fi
+
 # Clean up log file created by najaeda import
 rm -f naja_perf.log
 

@@ -162,6 +162,16 @@ echo "[INFO] Pruning PySide6 translations and QML modules"
 PYSIDE6_DIR=$(python3 -c 'import os, PySide6; print(os.path.dirname(PySide6.__file__))')
 rm -rf "${PYSIDE6_DIR}/Qt/translations" "${PYSIDE6_DIR}/Qt/qml"
 
+# setupEM requires pyvista and pyvistaqt unconditionally, but only its optional
+# 3D field viewer (setupEM/field_viewer.py, the fieldViewer command) imports
+# them, and only when it is opened. Their vtk wheel is ~590 MB on disk and
+# ~150 MB compressed in the image. Remove the stack, KNOWN_ISSUES.md describes
+# how a user gets the viewer back. pip check will report the two requirements
+# of setupEM as missing. Drop this block if setupEM moves them to an extra (no
+# upstream issue yet): the pip install above then no longer pulls them in.
+echo "[INFO] Removing vtk and pyvista, used only by the setupEM field viewer"
+pip3 uninstall -y --break-system-packages vtk pyvista pyvistaqt pyvista-validation
+
 echo "[INFO] Install EDA packages via Cargo"
 
 export RUSTUP_HOME=/tmp/rustup
