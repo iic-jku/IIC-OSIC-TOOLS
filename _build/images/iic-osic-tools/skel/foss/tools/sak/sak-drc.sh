@@ -667,12 +667,13 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 		run_lanes "$SKY130_LANES" sky130_deck $SKY130_DECKS
 	elif echo "$PDK" | grep -q -i "gf180mcu"; then
 		# gf180mcu runs the gf180mcu.drc framework deck directly. The scope is selected with -rd decks=<comma-separated tags>, a leading '-' excludes a tag.
-		# precheck: core rules only, drops off-grid, density, and antenna
-		# macro: skips chip-level density and antenna
+		# precheck: core rules only, drops off-grid, density, dummy COMP and antenna
+		# macro: skips chip-level density, dummy COMP and antenna
 		# regular: all checks
+		# dummy COMP is chip fill like density: DCF.1a fires on any block over 40 um without COMP
 		case "$DRC_LEVEL" in
-			precheck)	DRC_DECKS="all,-offgrid,-density,-antenna" ;;
-			macro)		DRC_DECKS="all,-density,-antenna" ;;
+			precheck)	DRC_DECKS="all,-offgrid,-density,-dummy_comp,-antenna" ;;
+			macro)		DRC_DECKS="all,-density,-dummy_comp,-antenna" ;;
 			regular)	DRC_DECKS="all" ;;
 		esac
 		rm -rf "$KLAYOUT_RUNDIR"
