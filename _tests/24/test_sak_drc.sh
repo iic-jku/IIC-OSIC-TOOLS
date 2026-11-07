@@ -306,6 +306,12 @@ check "gf180: -g -s antenna"               0 "$SAK" -g -s antenna -w "$W" "$D/$C
 check "gf180: -g -s precheck is unknown"   3 "$SAK" -g -s precheck -w "$W" "$D/$CELL.gds"
 check "gf180: -g -D comp DF errors"        1 "$SAK" -g -D comp -w "$W" "$D/$CELL.gds"
 check "gf180: -g -D poly2"                 0 "$SAK" -g -D poly2 -w "$W" "$D/$CELL.gds"
+# a block without COMP: DCF.1a is chip fill, so only regular reports it
+check "gf180: no COMP, -k macro"            0 "$SAK" -k -w "$W" "$D/no_comp.gds"
+check "gf180: no COMP, -k -l precheck"      0 "$SAK" -k -l precheck -w "$W" "$D/no_comp.gds"
+check "gf180: no COMP, -k -l regular"       1 "$SAK" -k -l regular -w "$W" "$D/no_comp.gds"
+# every report lists the rule name, only a finding has it as its category
+check "gf180: no COMP, regular has DCF.1a"  0 bash -c "grep -Eq \"<category>'?DCF\\.1a'?</category>\" '$W/no_comp.klayout.drc/no_comp.lyrdb'"
 
 # ============================================================================
 # sky130A
