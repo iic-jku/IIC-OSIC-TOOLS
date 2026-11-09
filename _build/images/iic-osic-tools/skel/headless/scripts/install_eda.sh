@@ -205,8 +205,9 @@ python3 -m venv --system-site-packages /foss/tools/vlsirtools
 # system Python (no upstream issue yet).
 echo "[INFO] Installing Fault (fault-dft) in a Python 3.12 venv"
 UV=/foss/tools/uv/bin/uv
-UV_PYTHON_INSTALL_DIR=/foss/tools/fault-dft/python "$UV" venv --python 3.12 /foss/tools/fault-dft
-"$UV" pip install --no-cache --python /foss/tools/fault-dft/bin/python fault-dft==0.9.4
+UV_PYTHON_INSTALL_DIR=/foss/tools/fault-dft/python "$UV" venv --python 3.12 /foss/tools/fault-dft/venv
+# A PYTHONPATH of the system Python would break the 3.12 builds of the dependencies.
+env -u PYTHONPATH "$UV" pip install --no-cache --python /foss/tools/fault-dft/venv/bin/python fault-dft==0.9.4
 
 # Setup Qucs-S for IHP SG13G2
 echo "[INFO] Setting up Qucs-S for IHP SG13G2"
