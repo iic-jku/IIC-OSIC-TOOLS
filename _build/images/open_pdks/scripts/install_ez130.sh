@@ -10,6 +10,10 @@
 # the Dockerfile), so a re-published or renamed file fails the build instead
 # of silently changing the image. Landing page: https://iip.ethz.ch/ez-library/
 #
+# EZ130_MIRROR_URL is tried only when the download from EZ130_URL fails, because
+# the ETH server is a single host and a nightly failed on its outage (issue 420).
+# A checksum mismatch does not switch to the mirror, it fails the build.
+#
 # The archive ships its own technology LEFs (ez130_sg13g2_tech.lef and
 # ez130_sg13cmos5l_tech.lef, derived from the IHP ones with changed routing
 # pitches/offsets). Use those with the cell LEF, not the stock sg13g2_tech.lef.
@@ -23,6 +27,7 @@ set -o pipefail
 PDK="ihp-sg13g2"
 LIB_NAME="ez130_8t"
 EZ130_URL="${EZ130_URL:-https://iis-people.ee.ethz.ch/~iisdatasets/iip/ezlib/ihp130_8t/v1p1/ez130_8t_v1p1.zip}"
+EZ130_MIRROR_URL="${EZ130_MIRROR_URL:-https://github.com/osic-tools/ez130-mirror/releases/download/v1p1/ez130_8t_v1p1.zip}"
 EZ130_SHA256="${EZ130_SHA256:-4c072bae2089f13d258f7c8a9b2bdb4e74002791cc30be89f6d2beac3069d517}"
 TARGET_DIR="$PDK_ROOT/$PDK/libs.ref/$LIB_NAME"
 
@@ -34,8 +39,19 @@ fi
 WORK_DIR=$(mktemp -d)
 trap 'rm -rf "$WORK_DIR"' EXIT
 
-echo "[INFO] Downloading the EZ130 8T library from $EZ130_URL"
-wget --no-verbose --tries=3 --timeout=60 -O "$WORK_DIR/ez130.zip" "$EZ130_URL"
+DOWNLOADED=0
+for URL in "$EZ130_URL" "$EZ130_MIRROR_URL"; do
+	echo "[INFO] Downloading the EZ130 8T library from $URL"
+	if wget --no-verbose --tries=3 --timeout=60 -O "$WORK_DIR/ez130.zip" "$URL"; then
+		DOWNLOADED=1
+		break
+	fi
+	echo "[WARNING] Download from $URL failed."
+done
+if [ "$DOWNLOADED" -ne 1 ]; then
+	echo "[ERROR] Could not download the EZ130 8T library from any source."
+	exit 1
+fi
 echo "$EZ130_SHA256  $WORK_DIR/ez130.zip" | sha256sum -c -
 
 unzip -q "$WORK_DIR/ez130.zip" -d "$WORK_DIR/extract"
