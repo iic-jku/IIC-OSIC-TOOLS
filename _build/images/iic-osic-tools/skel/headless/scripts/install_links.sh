@@ -107,3 +107,11 @@ for venvbin in charlib cir2py; do
         "${TOOLS}/charlib/bin/${venvbin}" > "${TOOLS}/bin/${venvbin}"
     chmod +x "${TOOLS}/bin/${venvbin}"
 done
+
+# fault runs in its own Python 3.12 venv (see install_eda.sh). The system
+# PYTHONPATH points at 3.14 site-packages and must not leak into it.
+rm -f "${TOOLS}/bin/fault"
+# shellcheck disable=SC2016
+printf '#!/bin/bash\nunset PYTHONPATH\nexec -a "$0" "%s" "$@"\n' \
+    "${TOOLS}/fault-dft/bin/fault" > "${TOOLS}/bin/fault"
+chmod +x "${TOOLS}/bin/fault"
