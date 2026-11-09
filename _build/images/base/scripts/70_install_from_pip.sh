@@ -37,7 +37,7 @@ pip3 install $PIP_FLAGS \
 	prettytable \
 	psutil \
 	pybind11 \
-	pygame \
+	pygame-ce \
 	pygmid \
 	pytest \
 	python_string_utils \
