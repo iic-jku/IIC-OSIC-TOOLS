@@ -471,19 +471,25 @@ This is a new usage mode, that might fit your needs. [Devcontainers](https://cod
 
 #### 4.5.1 Add it to project
 
-Option 1: In Visual Studio Code, click the remote window icon on the left and then "Reopen in Container", "Add configuration to workspace". Enter "hpretl/iic-osic-tools-devcontainer" as template and add more features (probably not needed). It will then restart the IDE, download the image and start a terminal and mount the work folder into the image.
-
-Option 2: Alternatively you can directly just create the configuration file `.devcontainer/devcontainer.json`:
+Create the configuration file `.devcontainer/devcontainer.json`:
 
 ```json
 {
  "name": "IIC-OSIC-TOOLS",
  "image": "hpretl/iic-osic-tools-devcontainer:latest",
- "pullPolicy": "always"
+ "pullPolicy": "always",
+ "customizations": {
+  "vscode": {
+   "extensions": [
+    "mshr-h.veriloghdl",
+    "surfer-project.surfer"
+   ]
+  }
+ }
 }
 ```
 
-Either way, the great thing is that you can now commit the file to repository and all developers will be asked if they want to reopen their development in this container, all they need is Docker and VS Code.
+You can now commit the file to the repository, and all developers will be asked if they want to reopen their development in this container, all they need is Docker and VS Code.
 
 ## 5. Using the Container with
 
