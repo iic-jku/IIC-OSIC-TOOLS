@@ -6,18 +6,6 @@
 set -e
 cd /tmp || exit 1
 
-# OpenROAD needs spdlog >= 1.15, so we update it here
-SPDLOG_PREFIX="/usr/local"
-SPDLOG_VERSION=1.15.1
-echo "[INFO] Installing SPDLOG version $SPDLOG_VERSION into $SPDLOG_PREFIX"
-cd /tmp || exit 1
-git clone --depth=1 -b "v${SPDLOG_VERSION}" https://github.com/gabime/spdlog.git
-cd spdlog || exit 1
-cmake -DCMAKE_INSTALL_PREFIX="${SPDLOG_PREFIX}" -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DSPDLOG_BUILD_EXAMPLE=OFF -B build .
-cmake --build build -j "$(nproc)" --target install
-
-# --------------------------------------------------------------
-
 cd /tmp || exit 1
 git clone --filter=blob:none --no-checkout "${OPENROAD_LIBRELANE_REPO_URL}" "${OPENROAD_LIBRELANE_NAME}"
 cd "${OPENROAD_LIBRELANE_NAME}" || exit 1
@@ -28,7 +16,7 @@ git submodule update --init --recursive --filter=blob:none
 # apply it here as well so our binary matches the official LibreLane one. Re-check
 # whether it is still carried when bumping the librelane or OpenROAD pin.
 git apply /images/openroad-librelane/patches/grt_pin_layers.patch
-# Fix Tcl_Size compatibility: SWIG 4.2 generates Tcl_Size (Tcl 9.0) but we have Tcl 8.6.
+# Fix Tcl_Size compatibility: SWIG >= 4.2 generates Tcl_Size (Tcl 9.0) but we have Tcl 8.6.
 # Patch system tcl.h so ALL compilation units see it (including SWIG-generated wrappers).
 # OpenROAD ships the fallback typedef itself since b59f6331 (PR #10061, 2026-04-06), but
 # the LibreLane-pinned revision predates that, so the patch is still needed here. Drop it
