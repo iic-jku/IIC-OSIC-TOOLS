@@ -11,13 +11,10 @@ UBUNTU_CODENAME=$(awk -F= '/^VERSION_CODENAME/{print $2}' /etc/os-release | sed 
 echo "[INFO] Adding repositories and installing misc. packages"
 
 echo "[INFO] Adding Mozilla PPA"
-GNUPG_PROXY_OPTION=""
-if [[ ${http_proxy:-"unset"} != "unset" ]]; then
-    GNUPG_PROXY_OPTION="--keyserver-options http-proxy=$http_proxy"
-elif [[ ${https_proxy:-"unset"} != "unset" ]]; then
-    GNUPG_PROXY_OPTION="--keyserver-options http-proxy=$https_proxy"
-fi
-GNUPGHOME="/tmp" gpg --no-default-keyring $GNUPG_PROXY_OPTION --keyring /etc/apt/keyrings/mozillateam.gpg --keyserver keyserver.ubuntu.com --recv-keys 0AB215679C571D1C8325275B9BDB3D89CE49EC21
+# apt on Ubuntu 26.04 needs a binary key file (no keybox) and rejects the old PPA
+# key as too weak. This is the fingerprint Launchpad publishes for the PPA.
+mkdir -p /etc/apt/keyrings
+wget -qO- "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x738BEB9321D1AAEC13EA9391AEBDF4819BE21867" | gpg --dearmor > /etc/apt/keyrings/mozillateam.gpg
 
 cat <<EOF >> /etc/apt/sources.list
 deb [signed-by=/etc/apt/keyrings/mozillateam.gpg] http://ppa.launchpad.net/mozillateam/ppa/ubuntu $UBUNTU_CODENAME main
