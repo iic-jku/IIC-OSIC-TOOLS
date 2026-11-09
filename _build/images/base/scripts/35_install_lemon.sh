@@ -12,7 +12,10 @@ echo "[INFO] Installing LEMON version $LEMON_VERSION into $LEMON_PREFIX"
 cd /tmp || exit 1
 git clone --depth=1 -b "${LEMON_VERSION}" https://github.com/The-OpenROAD-Project/lemon-graph.git
 cd lemon-graph || exit 1
+# CMake 4 rejects the cmake_minimum_required(VERSION < 3.5) of lemon-graph 1.3.1.
+# Drop the policy flag once The-OpenROAD-Project/lemon-graph raises it.
 cmake \
+    -D CMAKE_POLICY_VERSION_MINIMUM=3.5 \
     -D CMAKE_INSTALL_PREFIX="${LEMON_PREFIX}" \
     -D LEMON_ENABLE_GLPK=NO \
     -D LEMON_ENABLE_COIN=NO \
