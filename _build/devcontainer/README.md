@@ -1,10 +1,6 @@
-# Devcontainer image and template
+# Devcontainer image
 
-In the subfolders you can find support for the
-[devcontainers](https://containers.dev/) infrastructure:
-
-- The Docker image variant prepared for devcontainers
-- The template for Visual Studio Code to add it easily
+The subfolder `image/` holds the Docker image variant prepared for the [devcontainers](https://containers.dev/) infrastructure.
 
 ## Docker Image
 
@@ -24,8 +20,3 @@ in `build-all.sh`):
 cd _build
 ./build-devcontainer.sh
 ```
-
-## Template
-
-This is the devcontainer template for Visual Studio Code. It references
-the `hpretl/iic-osic-tools-devcontainer:latest` image from Docker Hub.

@@ -23,7 +23,7 @@ This file holds the essentials. The detail lives in existing docs, read the one 
 - `_build/images/open_pdks/`: PDK installation (sky130A and gf180mcuD through ciel, both IHP PDKs from git) and the install-time PDK fixups in `scripts/` and `patches/`.
 - `_build/images/iic-osic-tools/`: the final image. Its `Dockerfile` copies `$TOOLS/<tool>` out of every tool image, and `skel/` is copied to `/` (SAK scripts in `skel/foss/tools/sak/`, pip, cargo and gem installs in `skel/headless/scripts/install_eda.sh`).
 - `_build/tool_metadata.yml`: repo URL and pinned commit or tag per tool, shipped in the image as `/tool_metadata.yml`.
-- `_build/tools/`: version helper scripts (see Version bumps). `_build/devcontainer/`: devcontainer image and template.
+- `_build/tools/`: version helper scripts (see Version bumps). `_build/devcontainer/`: devcontainer image.
 - `_tests/NN/`: one regression test per numbered directory, runner `_tests/run_integration_tests.sh`.
 - Repo root: `start_{vnc,x,shell,jupyter}.{sh,bat}` (start a container on a user's machine), `install.{sh,ps1,bat}` (prerequisites installer), `eda_server_*.sh` (multi-user server), `RELEASE_NOTES.md`, `KNOWN_ISSUES.md`.
 
@@ -109,7 +109,7 @@ IIC_TEST_NO_PULL=1 ./run_integration_tests.sh <registry>/iic-osic-tools:<tag>   
 
 ## Do not
 
-- Do not push or retag images, and do not run the workflows in `.github/workflows/` (both publish devcontainer artifacts), unless asked. Check a build command with `DRY_RUN=1` first.
+- Do not push or retag images, and do not run the workflows in `.github/workflows/` (the nightly build publishes images), unless asked. Check a build command with `DRY_RUN=1` first.
 - Do not change a pin in only one of `tool_metadata.yml` and the Dockerfiles.
 - Do not drop a workaround because an upstream issue is closed. The fix must be in the revision the image builds (see the release procedure file).
 - Do not commit test leftovers. An aborted run can leave `_run_tests_<id>.sh` in the directory the runner was started from.
