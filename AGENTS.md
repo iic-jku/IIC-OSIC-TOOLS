@@ -100,7 +100,7 @@ IIC_TEST_NO_PULL=1 ./run_integration_tests.sh <registry>/iic-osic-tools:<tag>   
 ## Conventions
 
 - Work lands on `next_release`, and `main` receives it at the monthly release (tags `YYYY.MM`).
-- The nightly workflow (`.github/workflows/nightly.yaml`, section "Nightly build" of `_build/README.md`) force-resets branch `nightly` from `next_release` every night. Never commit to `nightly`.
+- The nightly workflow (`.github/workflows/nightly.yaml`, section "Nightly build" of `_build/README.md`) force-resets branch `nightly` from `next_release` on each scheduled run (Sunday to Thursday nights). Never commit to `nightly`.
 - Scripts and Dockerfiles start with the SPDX block used throughout the repo (`SPDX-FileCopyrightText`, `SPDX-License-Identifier: Apache-2.0`). Copy it from a neighboring file. Markdown files carry none.
 - Build and install scripts use `set -e`. Messages start with `[INFO]`, `[WARNING]` or `[ERROR]`.
 - Clone only what the build needs. A pinned commit gets `git clone --filter=blob:none --no-checkout`, then `git checkout <commit>`: this keeps the commits that `git describe` and version scripts read, but fetches file contents only for the pinned commit. Without `--no-checkout`, the clone first checks out the default branch and fetches its file contents too. A tag or branch whose history nothing reads gets `git clone --depth 1 --branch <ref>`. `git submodule update --init` gets `--filter=blob:none` too. A plain full clone needs a comment saying why.
