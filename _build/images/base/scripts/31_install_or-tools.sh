@@ -29,7 +29,7 @@ cmake -B build . \
 cmake --build build --config Release -j "$(nproc)" --target install
 
 # Remove Boost artifacts installed by OR-Tools (static-only Boost 1.87)
-# to prevent conflicts with the system Boost 1.88.
+# to prevent conflicts with the system Boost 1.90.
 # OR-Tools statically links Boost, so these are not needed at build/runtime.
 echo "[INFO] Removing OR-Tools Boost artifacts to avoid version conflicts"
 rm -rf /opt/or-tools/lib/cmake/Boost-* /opt/or-tools/lib/cmake/boost_*
