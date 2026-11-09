@@ -60,7 +60,7 @@ pip3 install $PIP_FLAGS --ignore-installed \
 pip3 install $PIP_FLAGS \
 	"amaranth==0.5.10" \
 	cace==2.11.0 \
-	chipify==0.2.2 \
+	chipify==0.2.3 \
 	ciel==2.6.1 \
 	cocotb==2.1.0 \
 	cocotbext-ams==0.1.0 \
