@@ -12,6 +12,10 @@ cd /tmp || exit 1
 wget --no-verbose "https://github.com/google/or-tools/archive/refs/tags/v$ORTOOLS_VERSION.tar.gz"
 tar -xf "v$ORTOOLS_VERSION.tar.gz"
 cd "or-tools-$ORTOOLS_VERSION" || exit 1
+# -std=gnu17: GCC 15 defaults to C23, where glibc 2.42+ declares once_flag and
+# call_once itself. The tinycthread copy bundled in SCIP (10.0.0) then redefines
+# them (conflicting types for pthread_once_t). Drop this once SCIP's tinycthread
+# handles C23.
 cmake -B build . \
     -DCMAKE_INSTALL_PREFIX=/opt/or-tools \
     -DBUILD_DEPS:BOOL=ON \
@@ -19,7 +23,7 @@ cmake -B build . \
     -DBUILD_SAMPLES:BOOL=OFF \
     -DBUILD_TESTING:BOOL=OFF \
     -DCMAKE_CXX_FLAGS="-w" \
-    -DCMAKE_C_FLAGS="-w"
+    -DCMAKE_C_FLAGS="-w -std=gnu17"
 cmake --build build --config Release -j "$(nproc)" --target install
 
 # Remove Boost artifacts installed by OR-Tools (static-only Boost 1.87)
