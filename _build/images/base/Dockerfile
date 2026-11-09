@@ -46,11 +46,9 @@ COPY images/base/skel /
 RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/00_base_install.sh && \
     bash /images/base/scripts/01_base_setup.sh && \
-    bash /images/base/scripts/30_install_boost.sh && \
     bash /images/base/scripts/31_install_or-tools.sh && \
     bash /images/base/scripts/32_install_cudd.sh && \
     bash /images/base/scripts/33_install_gtest.sh && \
-    bash /images/base/scripts/34_install_spdlog.sh && \
     bash /images/base/scripts/35_install_lemon.sh && \
     bash /images/base/scripts/70_install_from_pip.sh && \
     bash /images/base/scripts/72_install_adms.sh && \
