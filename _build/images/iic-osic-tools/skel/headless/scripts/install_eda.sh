@@ -61,7 +61,6 @@ pip3 install $PIP_FLAGS \
 	cocotb==2.1.0 \
 	cocotbext-ams==0.1.0 \
 	edalize==0.6.8 \
-	fault-dft==0.9.4 \
 	fusesoc==2.4.7 \
 	gds2palace==0.9.3 \
 	gdsfactory==9.51.0 \
@@ -198,6 +197,16 @@ echo "[INFO] Installing Hdl21/vlsirtools"
 python3 -m venv --system-site-packages /foss/tools/vlsirtools
 /foss/tools/vlsirtools/bin/pip install --no-cache-dir \
 	git+https://github.com/dan-fritchman/Hdl21
+
+# fault-dft only ships CPython 3.12 wheels (0.9.4: compiled Swift parts, no sdist),
+# so it cannot go into the system Python 3.14 of Ubuntu 26.04. Keep it in its own
+# venv: uv fetches a managed 3.12 interpreter into the tool tree, where every
+# user can read it. Drop this block once fault-dft publishes a wheel for the
+# system Python (no upstream issue yet).
+echo "[INFO] Installing Fault (fault-dft) in a Python 3.12 venv"
+UV=/foss/tools/uv/bin/uv
+UV_PYTHON_INSTALL_DIR=/foss/tools/fault-dft/python "$UV" venv --python 3.12 /foss/tools/fault-dft
+"$UV" pip install --no-cache --python /foss/tools/fault-dft/bin/python fault-dft==0.9.4
 
 # Setup Qucs-S for IHP SG13G2
 echo "[INFO] Setting up Qucs-S for IHP SG13G2"
