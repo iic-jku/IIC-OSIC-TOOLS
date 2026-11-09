@@ -87,7 +87,6 @@ apt-get -y install \
 	git-lfs \
 	gnupg2 \
 	gobject-introspection \
-	google-perftools \
 	gperf \
 	gpg \
 	graphviz \
@@ -98,18 +97,17 @@ apt-get -y install \
 	lcov \
 	libasound2t64 \
 	libblas3 \
-	libboost-filesystem1.83.0 \
-	libboost-iostreams1.83.0 \
-	libboost-program-options1.83.0 \
-	libboost-python1.83.0 \
-	libboost-serialization1.83.0 \
-	libboost-system1.83.0 \
-	libboost-test1.83.0 \
-	libboost-thread1.83.0 \
+	libboost-filesystem1.90.0 \
+	libboost-iostreams1.90.0 \
+	libboost-program-options1.90.0 \
+	libboost-python1.90.0 \
+	libboost-serialization1.90.0 \
+	libboost-test1.90.0 \
+	libboost-thread1.90.0 \
 	libbz2-1.0 \
 	libc6 \
 	libcairo2 \
-	libcapnp-1.0.1 \
+	libcapnp-1.1.0 \
 	libcurl4 \
 	libdbus-1-3 \
 	libdw1 \
@@ -127,16 +125,16 @@ apt-get -y install \
 	libgcc-s1 \
 	libgettextpo0 \
 	libgirepository-1.0-1 \
-	libgit2-1.7 \
+	libgit2-1.9 \
 	libgl1 \
 	libglu1-mesa \
 	libgmp10 \
 	libgnat-13 \
 	libgomp1 \
-	libgoogle-perftools4 \
+	libgoogle-perftools4t64 \
 	libgtk-3-0 \
 	libgtk-4-1 \
-	libhdf5-103-1 \
+	libhdf5-310 \
 	libice6 \
 	libjpeg-turbo8 \
 	libjson-glib-1.0-0 \
@@ -156,9 +154,8 @@ apt-get -y install \
 	libopenblas0 \
 	libopenblas0-pthread \
 	libopenmpi-dev \
-	libopenmpi3 \
+	libopenmpi40 \
 	libpcre2-8-0 \
-	libpcre3 \
 	libqhull-r8.0 \
 	libqt5charts5 \
 	libqt5sql5t64 \
@@ -168,26 +165,26 @@ apt-get -y install \
 	libqt6core6t64 \
 	libqt6help6 \
 	libqt6multimedia6 \
-	libqt6openglwidgets6t64 \
-	libqt6printsupport6t64 \
+	libqt6openglwidgets6 \
+	libqt6printsupport6 \
 	libqt6svg6 \
 	libqt6svgwidgets6 \
 	libqt6uitools6 \
-	libqt6xml6t64 \
-	libre2-10 \
+	libqt6xml6 \
+	libre2-11 \
 	libreadline8 \
 	libsm6 \
-	libspdlog1.12 \
+	libspdlog1.15 \
 	libsqlite3-0 \
 	libssl3 \
 	libsuitesparse-mongoose3 \
 	libtcl8.6 \
 	libtinyxml2.6.2v5 \
-	libtomlplusplus3 \
+	libtomlplusplus3t64 \
 	libtool \
-	libvtk9.1t64 \
-	libvtk9.1t64-qt \
-	libwxgtk3.2-1 \
+	libvtk9.5 \
+	libvtk9.5-qt \
+	libwxgtk3.2-1t64 \
 	libx11-6 \
 	libx11-xcb1 \
 	libxaw7 \
@@ -210,14 +207,14 @@ apt-get -y install \
 	libxft2 \
 	libxkbcommon-x11-0 \
 	libxkbcommon0 \
-	libxml2 \
+	libxml2-16 \
 	libxpm4 \
 	libxrender1 \
 	libxslt1.1 \
 	libyaml-0-2 \
 	libyaml-cpp0.8 \
 	libz3-4 \
-	libzip4 \
+	libzip5 \
 	libzstd1 \
 	lsof \
 	make \

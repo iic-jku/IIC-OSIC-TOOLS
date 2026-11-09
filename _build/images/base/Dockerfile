@@ -4,7 +4,7 @@
 #######################################################################
 # Setup base image
 #######################################################################
-ARG BASE_IMAGE=ubuntu:noble
+ARG BASE_IMAGE=ubuntu:resolute
 FROM ${BASE_IMAGE} AS base
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -36,9 +36,9 @@ ENV HOME=/headless \
 # OpenMPI (used by palace and Xyce) defaults to CMA for shared-memory transfers,
 # which needs the SYS_PTRACE capability the container does not have; without
 # this it prints errors on every run. Not a defect, a permanent container
-# constraint. Note: the "vader" BTL is OpenMPI 4.x (noble ships 4.1.6); with
-# OpenMPI >= 5 the knob is called OMPI_MCA_btl_sm_single_copy_mechanism.
-ENV OMPI_MCA_btl_vader_single_copy_mechanism=none
+# constraint. Note: up to OpenMPI 4.x (noble) the BTL was called "vader" and the
+# knob OMPI_MCA_btl_vader_single_copy_mechanism; resolute ships OpenMPI 5 (btl_sm).
+ENV OMPI_MCA_btl_sm_single_copy_mechanism=none
 
 # Copy base skeleton into image
 COPY images/base/skel /
@@ -53,7 +53,6 @@ RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/scripts/34_install_spdlog.sh && \
     bash /images/base/scripts/35_install_lemon.sh && \
     bash /images/base/scripts/70_install_from_pip.sh && \
-    bash /images/base/scripts/71_fix_gobject_introspection.sh && \
     bash /images/base/scripts/72_install_adms.sh && \
     bash /images/base/scripts/80_install_apps.sh && \
     bash /images/base/scripts/99_base_finalize.sh && \
