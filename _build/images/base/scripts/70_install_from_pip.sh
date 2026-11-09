@@ -19,6 +19,7 @@ pip3 install $PIP_FLAGS \
 	gobject \
 	h5py \
 	ipympl \
+	libparse \
 	matplotlib \
 	matplotlib-inline \
 	maturin \
