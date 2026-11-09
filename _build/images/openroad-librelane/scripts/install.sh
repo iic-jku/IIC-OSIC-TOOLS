@@ -11,15 +11,6 @@ cd /tmp || exit 1
 # `openroad -python`. LibreLane's own nix build uses CMake for the same reason.
 # Switch to Bazel once the pinned revision drops CMake, if Bazel builds Python
 # by then.
-
-# OpenROAD needs spdlog >= 1.15, so we update it here
-SPDLOG_PREFIX="/usr/local"
-SPDLOG_VERSION=1.15.1
-echo "[INFO] Installing SPDLOG version $SPDLOG_VERSION into $SPDLOG_PREFIX"
-git clone --depth=1 -b "v${SPDLOG_VERSION}" https://github.com/gabime/spdlog.git
-cd spdlog || exit 1
-cmake -DCMAKE_INSTALL_PREFIX="${SPDLOG_PREFIX}" -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DSPDLOG_BUILD_EXAMPLE=OFF -B build .
-cmake --build build -j "$(nproc)" --target install
 cd /tmp || exit 1
 
 # OpenROAD 26Q4 requires SWIG >= 4.3, Ubuntu 24.04 ships 4.2. Build the version
@@ -72,6 +63,6 @@ cmake --build build -j "$(nproc)" --target install
 
 # Drop the CMake build tree (several GB), it is build-time only
 cd /tmp || exit 1
-rm -rf "${OPENROAD_LIBRELANE_NAME}" spdlog swig
+rm -rf "${OPENROAD_LIBRELANE_NAME}" swig
 
 echo "${OPENROAD_LIBRELANE_NAME} ${OPENROAD_LIBRELANE_REPO_COMMIT}" > "${TOOLS}/${OPENROAD_LIBRELANE_NAME}/SOURCES"
