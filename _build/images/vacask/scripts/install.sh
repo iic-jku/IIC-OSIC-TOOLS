@@ -15,11 +15,12 @@ else
 fi
 OPENVAF_OPTIONS="--target_cpu generic"
 
-# Install custom libboost since stock libboost version is too old.
+# Build our own static Boost: the distro's Boost is new enough since Ubuntu 26.04,
+# but it is compiled without the macro below, and the macro must match on both sides.
 #
 # BOOST_PROCESS_V2_DISABLE_PIDFD_OPEN: Boost.Process v2 picks its process handle
 # at compile time, from whether the *build* host's headers define SYS_pidfd_open
-# (they always do on Ubuntu 24.04). It then constructs an asio descriptor from
+# (they always do on Ubuntu). It then constructs an asio descriptor from
 # syscall(SYS_pidfd_open, ...) with no runtime fallback, so on a host kernel
 # older than 5.3 -- RHEL/Rocky/Alma 8 ship 4.18 -- the syscall returns ENOSYS and
 # assign(-1) throws "assign: Bad file descriptor" out of a constructor, which
