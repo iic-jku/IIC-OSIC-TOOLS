@@ -14,6 +14,20 @@
 > lists grew, so the 2026-09-08 resolute verification does **not** cover them: Phase 0
 > must be re-run.
 
+## Execution status (2026-11-09)
+
+Work happens in the worktree `iic-osic-tools-resolute`, branch `ubuntu-26.04-upgrade`, because the main checkout changes branches. Commit only there, and sync to the hosts from there (`rsync --exclude .git --exclude .claude`). Build hosts: `pretl@lana` (amd64), `pretl@gigaarm` (arm64), shared home with the tree in `~/osic-resolute` and logs in `~/osic-resolute-logs`. Trial images go to `IMAGE=iic-osic-tools-resolute`.
+
+- Phase 0 and A: done. The apt sets resolve on both arches. Renames this plan missed: `libxml2` to `libxml2-16`, `libgoogle-perftools4` to `libgoogle-perftools4t64`, `google-perftools` removed.
+- Phase B: the arm64 base without OR-Tools builds, the gate checks and `pip3 check` pass, and the pip block of `install_eda.sh` installs on 3.14. The full amd64 base and base-dev build was still running in `phaseB10.log` when work paused, so check it first. OR-Tools on arm64 is untested.
+- Phase C: done, except that the VACASK Boost build stays. `BOOST_PROCESS_V2_DISABLE_PIDFD_OPEN` must be set for the Boost build too, and the distro Boost does not set it. Ignore the Phase C row that says to drop it.
+- Phase D and E, resolute regression: not started.
+- Fixes needed beyond this plan: OR-Tools `-include stdlib.h` (glibc 2.42 `once_flag`, `-std=gnu17` does not help), LEMON and ADMS for CMake 4 (`CMP0048 OLD` must be removed too), ADMS `-std=gnu17`, a new Mozilla PPA key in binary format, `pygame-ce` for `pygame`, `libparse` dropped (LibreLane uses `lln-libparse`).
+
+**Open problem:** `fault-dft` has only cp312 wheels, so it sits in its own venv (`$TOOLS/fault-dft/venv`, Python 3.12 through uv). The install works, but `fault --version` exits with 69, `No module named 'pyverilog'`: its embedded Python does not see the venv. Next step is to read `fault/__main__.py` and compare with the noble image. `install_links.sh` does not fail on this, so `image-full` would ship a broken `fault`.
+
+Noble baseline (`hpretl/iic-osic-tools:latest` of 2026-10-15, tests from `main`): 41 passed, 4 failed on both arches: 20 and 32 (AMS chip), 28 (TinyWhisper), all in `gdscheck-drc`, and 22 (SPARX, `kpex` arguments). The likely cause is that image's older `gdscheck` and `klayout-pex`, not verified. Run dirs are in `/tmp/osic-baseline` on each host.
+
 ## Context
 
 The image has been on Ubuntu 24.04 LTS ("noble") since release `2025.01` (`RELEASE_NOTES.md:292`).
