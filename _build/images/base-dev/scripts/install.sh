@@ -40,7 +40,6 @@ apt-get -y install \
 	libboost-program-options-dev \
 	libboost-python-dev \
 	libboost-serialization-dev \
-	libboost-system-dev \
 	libboost-test-dev \
 	libboost-thread-dev \
 	libbz2-dev \
@@ -82,7 +81,6 @@ apt-get -y install \
 	libopenblas-dev \
 	libopenblas-pthread-dev \
 	libpcre2-dev \
-	libpcre3-dev \
 	libpolly-18-dev \
 	libqhull-dev \
 	libqt5charts5-dev \
