@@ -113,5 +113,5 @@ done
 rm -f "${TOOLS}/bin/fault"
 # shellcheck disable=SC2016
 printf '#!/bin/bash\nunset PYTHONPATH\nexec -a "$0" "%s" "$@"\n' \
-    "${TOOLS}/fault-dft/bin/fault" > "${TOOLS}/bin/fault"
+    "${TOOLS}/fault-dft/venv/bin/fault" > "${TOOLS}/bin/fault"
 chmod +x "${TOOLS}/bin/fault"
