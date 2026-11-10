@@ -108,10 +108,14 @@ for venvbin in charlib cir2py; do
     chmod +x "${TOOLS}/bin/${venvbin}"
 done
 
-# fault runs in its own Python 3.12 venv (see install_eda.sh). The system
-# PYTHONPATH points at 3.14 site-packages and must not leak into it.
+# fault runs in its own Python 3.12 venv (see install_eda.sh). fault.exe embeds
+# that Python through libpython, which starts from the uv-managed interpreter
+# and neither sees the venv nor finds its own lib-dynload. PYTHONHOME and
+# PYTHONPATH point it at both, and replace the system PYTHONPATH (3.14).
+FAULT_VENV="${TOOLS}/fault-dft/venv"
+FAULT_HOME=$("${FAULT_VENV}/bin/python" -c 'import sys; print(sys.base_prefix)')
 rm -f "${TOOLS}/bin/fault"
 # shellcheck disable=SC2016
-printf '#!/bin/bash\nunset PYTHONPATH\nexec -a "$0" "%s" "$@"\n' \
-    "${TOOLS}/fault-dft/venv/bin/fault" > "${TOOLS}/bin/fault"
+printf '#!/bin/bash\nexport PYTHONHOME="%s"\nexport PYTHONPATH="%s"\nexec -a "$0" "%s" "$@"\n' \
+    "${FAULT_HOME}" "${FAULT_VENV}/lib/python3.12/site-packages" "${FAULT_VENV}/bin/fault" > "${TOOLS}/bin/fault"
 chmod +x "${TOOLS}/bin/fault"
