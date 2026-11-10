@@ -498,6 +498,7 @@ fi
 # ============================================================================
 
 MAGIC_OK=1
+MAGIC_PROPERR=0
 if [ "$RUN_MAGIC" -eq 1 ]; then
 
 	# remove old result files so the run dir only reflects this run
@@ -601,17 +602,37 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 	# now run the LVS using netgen
 	# ----------------------------
 
+	NETGEN_SETUP="$PDK_ROOT/$PDK/libs.tech/netgen/${PDK}_setup.tcl"
+	# The IHP xschem symbols write the Monte Carlo mismatch switch mm_ok=1 into the SPICE netlist, and the IHP netgen setups
+	# compare it as a device property, so Netgen reports property errors on almost every IHP cell (IHP-Open-PDK #1327). The
+	# CDL netlist (lvs_netlist 1) has no mm_ok, but Magic+Netgen cannot use it: it has M elements where Magic extracts
+	# subcircuit calls (IHP-Open-PDK #1008). mm_ok does not describe the layout, so netgen runs a setup file that sources
+	# the PDK setup and then deletes mm_ok from every cell of both netlists, as the PDK setup does for other parameters.
+	# The netlists stay as they are. For a device without mm_ok netgen logs "No property mm_ok found for device <dev>",
+	# the result is not affected. Once the PDK setup deletes mm_ok itself, this has no effect.
+	if echo "$PDK" | grep -q -i "^ihp-sg13"; then
+		NETGEN_SETUP_PDK="$NETGEN_SETUP"
+		NETGEN_SETUP="$MAGIC_RUNDIR/netgen_setup_${FBASENAME}.tcl"
+		{
+			echo "# Written by sak-lvs.sh: the PDK setup, then mm_ok deleted from every cell (IHP-Open-PDK #1327)."
+			echo "source {$NETGEN_SETUP_PDK}"
+			echo 'foreach c [cells list -all -circuit1] { catch {property "-circuit1 $c" delete mm_ok} }'
+			echo 'foreach c [cells list -all -circuit2] { catch {property "-circuit2 $c" delete mm_ok} }'
+		} > "$NETGEN_SETUP"
+		echo "[INFO] Netgen ignores mm_ok, the IHP netgen setups compare it as a property (setup <$NETGEN_SETUP>)."
+	fi
+
 	echo "[INFO] Run netgen..."
 	if [ "$VERILOG_MODE" -eq 0 ]; then
 		netgen -batch lvs "$NETLIST_LAY $TOPCELL" "$NETLIST_SCH $TOPCELL" \
-			"$PDK_ROOT/$PDK/libs.tech/netgen/${PDK}_setup.tcl" \
+			"$NETGEN_SETUP" \
 			"$LVS_REPORT" > "$LVS_LOG"
 	else
 		# MAGIC_EXT_USE_GDS=1 makes the netgen PDK setup (${PDK}_setup.tcl) do GDS/device-level LVS and ignore the physical-only tap/fill cells (present in the layout, absent from the .v netlist).
 		# It is read by the netgen setup, not magic. On PDKs whose setup ignores it, it has no effect.
 		export MAGIC_EXT_USE_GDS=1
 		netgen -batch lvs "$NETLIST_LAY $TOPCELL" "$CELL_V $TOPCELL" \
-			"$PDK_ROOT/$PDK/libs.tech/netgen/${PDK}_setup.tcl" \
+			"$NETGEN_SETUP" \
 			"$LVS_REPORT" > "$LVS_LOG"
 	fi
 
@@ -624,7 +645,17 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 		[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
 		exit $ERR_NO_RESULT
 	fi
-	grep -i -q "Circuits match uniquely" "$LVS_REPORT" || MAGIC_OK=0
+	# netgen exits with 0 even on a mismatch, so the verdict is read from the report. The report also logs the comparison of
+	# each subcell ("Netlists match uniquely ...", "Netlists do not match."), only the line after "Final result:" judges the
+	# top cell. It reads "Circuits match uniquely." on a match, any other text there (e.g. "... with port errors.", "Netlists
+	# do not match.", "Top level cell failed pin matching.") is a failure. A topology match can still have differing device
+	# parameters (W, L, ...): netgen then adds "Property errors were found.", and "The following cells had property errors:"
+	# lists every such cell, subcells included.
+	grep -q "^Final result: Circuits match uniquely\.$" "$LVS_REPORT" || MAGIC_OK=0
+	if grep -q -e "^Property errors were found\." -e "^The following cells had property errors:" "$LVS_REPORT"; then
+		MAGIC_OK=0
+		MAGIC_PROPERR=1
+	fi
 fi
 
 # ============================================================================
@@ -638,7 +669,11 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	mkdir -p "$KLAYOUT_RUNDIR"
 	# sky130 and gf180mcu run their LVS deck directly. The IHP PDKs use their run_lvs.py wrapper under klayout/tech/lvs.
 	if echo "$PDK" | grep -q -i "sky130"; then
-		# The sky130 run_lvs.py wrapper is not used because it resolves its deck as $PDK_ROOT/$PDK/sky130.lvs, which does not exist in this installation. The switches below match what the wrapper would pass.
+		# The sky130 run_lvs.py wrapper is not used because it resolves its deck as $PDK_ROOT/$PDK/sky130.lvs, which does not exist in this installation.
+		# The xschem sky130_fd_pr symbols write each device as a subcircuit call with W and L in micrometers, meant for
+		# .option scale=1e-6 (e.g. "XM1 D G S S sky130_fd_pr__nfet_01v8 L=0.15 W=0.42 nf=1"). convert_subckts=true makes the
+		# deck read these calls as devices, scale=true scales the extracted W and L to the same micrometer values. Without both,
+		# no device matches. A CDL netlist given with -s has to follow the same convention. The wrapper cannot pass convert_subckts.
 		klayout -b -r "$PDKPATH/libs.tech/klayout/lvs/sky130.lvs" \
 			-rd input="$CELL_LAY" \
 			-rd top_cell="$TOPCELL" \
@@ -646,6 +681,8 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			-rd report="$KLAYOUT_RUNDIR/$FBASENAME.lvsdb" \
 			-rd target_netlist="$KLAYOUT_RUNDIR/${FBASENAME}_extracted.cir" \
 			-rd run_mode=deep \
+			-rd convert_subckts=true \
+			-rd scale=true \
 			> "$KLAYOUT_LOG" 2>&1
 	elif echo "$PDK" | grep -q -i "gf180mcu"; then
 		# The gf180mcu run_lvs.py wrapper is not used because it cannot pass check_ports. The deck turns that check on by
@@ -714,6 +751,7 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 		echo "[INFO] Magic+Netgen LVS is OK, schematic/netlist and layout match!"
 	else
 		echo "[INFO] Magic+Netgen LVS errors found! Please check <$LVS_REPORT>!"
+		[ "$MAGIC_PROPERR" -eq 1 ] && echo "[INFO] Netgen found property errors: device parameters (W, L, ...) differ between schematic/netlist and layout."
 		LVS_CLEAN=0
 	fi
 fi
