@@ -51,6 +51,8 @@ apt-get -y install openjdk-17-jdk
 # explicit below: they are linked by klayout/qucs-s/kactus2, but dpkg cannot see
 # binaries under ${TOOLS}, so without a direct request they would only have been
 # present as python3-pyqt6 dependencies.
+# gv (PostScript viewer, the xdg-open default for .ps/.eps in mimeapps.list) is
+# explicit too: on noble it arrived only as a dependency of google-perftools.
 apt-get -y install \
 	autoconf \
 	automake \
@@ -90,6 +92,7 @@ apt-get -y install \
 	gperf \
 	gpg \
 	graphviz \
+	gv \
 	gvfs \
 	gzip \
 	help2man \
