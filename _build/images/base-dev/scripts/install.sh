@@ -17,6 +17,10 @@ apt-get -y upgrade
 # (libllvm18, libgnat-13). gfortran reaches base as well, as a dependency of
 # libopenmpi-dev (see base/scripts/00_base_install.sh).
 #
+# libstdc++-16-dev: clang-18 (ghdl) selects the newest GCC installation, which is
+# 16 (libgcc-16-dev comes with gfortran) while g++ is 15, and finds no <optional>
+# without the matching headers. The runtime libstdc++6 is from GCC 16 as well.
+#
 # python3-pyqt5 is build-only as well: the PyOPUS sdist does not build on
 # aarch64 without it, but the installed sources are ported to PySide6 right
 # after (see images/pyopus/scripts/install.sh), so the runtime image needs no
@@ -59,6 +63,7 @@ apt-get -y install \
 	libfmt-dev \
 	libftdi-dev \
 	libgcc-13-dev \
+	libstdc++-16-dev \
 	libgettextpo-dev \
 	libgirepository1.0-dev \
 	libgit2-dev \
