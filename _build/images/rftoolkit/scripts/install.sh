@@ -17,8 +17,9 @@ git checkout "${RFTK_FASTHENRY_REPO_COMMIT}"
 # -std=gnu17: FastHenry declares functions without prototypes, an error in the
 # C23 default of GCC 15. -fpermissive: it also relies on implicit int and on
 # implicit function declarations, both errors since GCC 14.
-sed -i '/^CFLAGS/ s/$/ -fcommon -w -std=gnu17 -fpermissive/' src/fasthenry/Makefile
-sed -i '/^CFLAGS/ s/$/ -fcommon -w -std=gnu17 -fpermissive/' src/fasthenry/sparse/Makefile
+for mk in src/fasthenry/Makefile src/fasthenry/sparse/Makefile src/misc/Makefile src/zbuf/Makefile; do
+    sed -i '/^CFLAGS/ s/$/ -fcommon -w -std=gnu17 -fpermissive/' "$mk"
+done
 
 # remove option -m64 from Makefiles (otherwise fail on aarch64)
 sed -i 's/-m64//g' src/fasthenry/Makefile
