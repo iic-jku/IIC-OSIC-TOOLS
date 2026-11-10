@@ -14,19 +14,22 @@
 > lists grew, so the 2026-09-08 resolute verification does **not** cover them: Phase 0
 > must be re-run.
 
-## Execution status (2026-11-09)
+## Execution status (2026-11-11)
 
-Work happens in the worktree `iic-osic-tools-resolute`, branch `ubuntu-26.04-upgrade`, because the main checkout changes branches. Commit only there, and sync to the hosts from there (`rsync --exclude .git --exclude .claude`). Build hosts: `pretl@lana` (amd64), `pretl@gigaarm` (arm64), shared home with the tree in `~/osic-resolute` and logs in `~/osic-resolute-logs`. Trial images go to `IMAGE=iic-osic-tools-resolute`.
+Work happens in the worktree `iic-osic-tools-resolute`, branch `ubuntu-26.04-upgrade`, because the main checkout changes branches. Commit only there, and sync to the hosts from there (`rsync --exclude .git --exclude .claude`). Build hosts: `pretl@lana` (amd64), `pretl@gigaarm` (arm64), shared home with the tree in `~/osic-resolute` and logs in `~/osic-resolute-logs`. Trial images go to `IMAGE=iic-osic-tools-resolute`, the assembled image is `registry.iic.jku.at:5000/iic-osic-tools-resolute:resolute-test`. Run the regression from a copy of `_tests` (e.g. `~/osic-resolute-tests-r2`), as a sync with `--delete` removes the runner's `_run_tests_*` files.
 
-- Phase 0 and A: done. The apt sets resolve on both arches. Renames this plan missed: `libxml2` to `libxml2-16`, `libgoogle-perftools4` to `libgoogle-perftools4t64`, `google-perftools` removed.
-- Phase B: the arm64 base without OR-Tools builds, the gate checks and `pip3 check` pass, and the pip block of `install_eda.sh` installs on 3.14. The full amd64 base and base-dev build was still running in `phaseB10.log` when work paused, so check it first. OR-Tools on arm64 is untested.
-- Phase C: done, except that the VACASK Boost build stays. `BOOST_PROCESS_V2_DISABLE_PIDFD_OPEN` must be set for the Boost build too, and the distro Boost does not set it. Ignore the Phase C row that says to drop it.
-- Phase D and E, resolute regression: not started.
-- Fixes needed beyond this plan: OR-Tools `-include stdlib.h` (glibc 2.42 `once_flag`, `-std=gnu17` does not help), LEMON and ADMS for CMake 4 (`CMP0048 OLD` must be removed too), ADMS `-std=gnu17`, a new Mozilla PPA key in binary format, `pygame-ce` for `pygame`, `libparse` dropped (LibreLane uses `lln-libparse`).
-
-**Open problem:** `fault-dft` has only cp312 wheels, so it sits in its own venv (`$TOOLS/fault-dft/venv`, Python 3.12 through uv). The install works, but `fault --version` exits with 69, `No module named 'pyverilog'`: its embedded Python does not see the venv. Next step is to read `fault/__main__.py` and compare with the noble image. `install_links.sh` does not fail on this, so `image-full` would ship a broken `fault`.
-
-Noble baseline (`hpretl/iic-osic-tools:latest` of 2026-10-15, tests from `main`): 41 passed, 4 failed on both arches: 20 and 32 (AMS chip), 28 (TinyWhisper), all in `gdscheck-drc`, and 22 (SPARX, `kpex` arguments). The likely cause is that image's older `gdscheck` and `klayout-pex`, not verified. Run dirs are in `/tmp/osic-baseline` on each host.
+- Phases 0 to E: done. base, base-dev, all tools and the image build on both arches, the docs and `RELEASE_NOTES.md` (section `2027.01`) are updated.
+- Fixes needed beyond this plan, all committed with a reason in the code:
+  - Base: OR-Tools `-include stdlib.h` (glibc 2.42 `once_flag`), LEMON and ADMS for CMake 4, ADMS `-std=gnu17`, a new Mozilla PPA key in binary format, `pygame-ce`, `libparse` dropped, `libgnat-14` (base-dev's `gnat` is GNAT 14), `gv` and `zstd` explicit (they came in through `google-perftools` on noble).
+  - Tools: `-std=gnu17` for gaw3-xschem, magic, irsim, covered (plus `-fpermissive`), FastHenry in rftoolkit and netgen. `CMAKE_POLICY_VERSION_MINIMUM=3.5` for surelog and xyce. `Boost_DIR` for vacask. `--gcc-install-dir` for ghdl's clang-18. `chmod +x` of covered's `install-sh`.
+  - netgen's `make` continues past compile errors, so its build now checks that `tclnetgen.so` exists. No other tool log showed compile errors.
+  - `install_eda.sh`: `fault-dft` in a uv venv with Python 3.12 (wrapper sets `PYTHONHOME` and `PYTHONPATH`), Hdl21 with `--ignore-requires-python` and `protobuf>=6` in the vlsirtools venv.
+- Image checks (amd64): no missing libraries in `ldd`, `fault --version` gives 0.9.4, `pip3 check` lists the same pyside6 and mpi4py gaps as noble, size 13.7 GB (noble `latest` 12.5 GB).
+- Resolute regression: 45 passed, 6 failed, the same set on amd64 and arm64.
+  - 20, 32 (AMS chip, `librelane-magicdrc`), 28 (TinyWhisper, `librelane-nodrc`) and 35 (PEX bench, Magic leaves a port unconnected) fail the same way with the noble nightly of 2026-11-02 (run in `/tmp/osic-nightly` on lana).
+  - 27 (KLayout PCells): ihp-sg13cmos5l now has 29 PCells, the test expects 27. The IHP PDKs follow branch `dev`, so this is PDK drift.
+  - 22 (SPARX): `iic-jku/IHP-GDSFactory-Addon` declares `requires-python <3.14`. This is the one resolute regression left, and the fix belongs in that repo.
+- Build host notes: GitHub rate-limits commit `.diff` downloads (palace) from both hosts at times, a retry later works. Builder containers that ran for months kept the cache pinned, a restart let BuildKit's GC shrink it.
 
 ## Context
 
