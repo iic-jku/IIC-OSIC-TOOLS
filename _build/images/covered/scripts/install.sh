@@ -13,6 +13,9 @@ git checkout "${COVERED_REPO_COMMIT}"
 # parameters and bool, true and false are keywords. The sources rely on the old
 # meaning. Drop it once upstream builds as C23. -fpermissive: the sources also
 # call functions without a declaration, an error since GCC 14.
+# install-sh and missing are committed without the executable bit. configure
+# picks ./install-sh as mkdir -p when it does not trust the system mkdir.
+chmod +x install-sh missing
 CFLAGS="-O2 -std=gnu17 -fpermissive" ./configure --prefix="${TOOLS}/${COVERED_NAME}"
 make # -j$(nproc) Using the -j option leads to random fails on many-core machines
 make install
