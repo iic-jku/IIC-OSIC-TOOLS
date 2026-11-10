@@ -29,7 +29,7 @@ apt-get -y install openjdk-17-jdk
 # gfortran) live in base-dev only. The runtime image ships GCC for user
 # compiles (verilator models, cocotb; RISC-V firmware uses the separate cross
 # toolchain) plus the shared runtime libraries the built tools link against:
-# libllvm18 for nvc/ghdl/openvaf and libgnat-13 for ghdl (written in Ada).
+# libllvm18 for nvc/ghdl/openvaf and libgnat-14 for ghdl (written in Ada, gnat is GNAT 14 on resolute).
 # mold must stay as well: verilator bakes "-fuse-ld=mold" into verilated.mk at
 # build time, so every user model build links with it.
 # liblz4-dev must stay too: since Verilator 5.052 verilated_fst_c.cpp includes
@@ -129,7 +129,7 @@ apt-get -y install \
 	libgl1 \
 	libglu1-mesa \
 	libgmp10 \
-	libgnat-13 \
+	libgnat-14 \
 	libgomp1 \
 	libgoogle-perftools4t64 \
 	libgtk-3-0 \
