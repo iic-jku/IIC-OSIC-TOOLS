@@ -244,7 +244,7 @@ still need it.
 
 | File / lines | Action |
 |---|---|
-| `_build/images/openroad-librelane/scripts/install.sh:8-17` | drop the spdlog 1.15.1 source build (system `libspdlog-dev` is 1.15). **Keep** the `Tcl_Size` shim at `:31-40` — grep-guarded and keyed to the pinned OpenROAD revision, not the distro |
+| `_build/images/openroad-librelane/scripts/install.sh:8-17` | drop the spdlog 1.15.1 source build (system `libspdlog-dev` is 1.15). (The `Tcl_Size` shim already went with the bump to OpenROAD 26Q4.) |
 | `_build/images/slang/scripts/install.sh:9-31` | drop the Boost 1.88 source build and `-DBoost_ROOT` / `-DBoost_NO_SYSTEM_PATHS` |
 | `_build/images/vacask/scripts/install.sh:18-43`, `:74` | drop the Boost source build and `-DBoost_ROOT`. **Keep** `BOOST_PROCESS_V2_DISABLE_PIDFD_OPEN` — a container/pidfd constraint, not a Boost-version workaround; re-verify the macro name against Boost 1.90 Process v2 |
 | `_build/images/base/scripts/30_install_boost.sh`, `34_install_spdlog.sh` + `base/Dockerfile:49,53` | both files are entirely commented out — delete the files and their Dockerfile lines |

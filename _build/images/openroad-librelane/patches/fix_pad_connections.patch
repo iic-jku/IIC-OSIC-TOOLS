@@ -1,0 +1,160 @@
+From 9b59dfb5af159855ac7fb9e96b390ac736161784 Mon Sep 17 00:00:00 2001
+From: Peter Gadfort <gadfort@zeroasic.com>
+Date: Wed, 7 Oct 2026 16:19:17 -0400
+Subject: [PATCH 1/2] pdn: handle padring with obs covering pins
+
+Signed-off-by: Peter Gadfort <gadfort@zeroasic.com>
+
+diff --git a/src/pdn/src/shape.h b/src/pdn/src/shape.h
+index e80666e83cb..4fa63d530f5 100644
+--- a/src/pdn/src/shape.h
++++ b/src/pdn/src/shape.h
+@@ -204,6 +204,10 @@ class Shape
+   virtual bool cut(const ObstructionTree& obstructions,
+                    const Grid* ignore_grid,
+                    std::vector<std::unique_ptr<Shape>>& replacements) const;
++  // cut against only the obstructions obs_filter accepts
++  bool cut(const ObstructionTree& obstructions,
++           std::vector<std::unique_ptr<Shape>>& replacements,
++           const std::function<bool(const ShapePtr&)>& obs_filter) const;
+ 
+   // return a copy of the shape
+   virtual std::unique_ptr<Shape> copy() const;
+@@ -241,11 +245,6 @@ class Shape
+   static ShapeTreeMap convertVectorToTree(ShapeVectorMap& vec);
+   static ObstructionTreeMap convertVectorToObstructionTree(ShapeVectorMap& vec);
+ 
+- protected:
+-  bool cut(const ObstructionTree& obstructions,
+-           std::vector<std::unique_ptr<Shape>>& replacements,
+-           const std::function<bool(const ShapePtr&)>& obs_filter) const;
+-
+  private:
+   odb::dbTechLayer* layer_;
+   odb::dbNet* net_;
+diff --git a/src/pdn/src/straps.cpp b/src/pdn/src/straps.cpp
+index d3c7bfeae9b..03dd6259e25 100644
+--- a/src/pdn/src/straps.cpp
++++ b/src/pdn/src/straps.cpp
+@@ -1826,15 +1826,69 @@ void PadDirectConnectionStraps::getConnectableShapes(
+ void PadDirectConnectionStraps::cutShapes(
+     const Shape::ObstructionTreeMap& obstructions)
+ {
++  odb::dbInst* inst = iterm_->getInst();
++  const odb::Rect inst_shape = inst->getBBox()->getBox();
++
++  if (type_ == ConnectionType::kEdge) {
++    // An edge connection is its pin carried straight out of the pad and is no
++    // wider than the pin, so it comes no closer to anything behind the edge it
++    // leaves through than the pin already does.  The padframe there has
++    // nothing to say about it: its pins are drawn to be reached and its cells
++    // to abut.  It has to be left out rather than tolerated, since pads
++    // commonly draw one obstruction over the whole cell with the pins carved
++    // out of it, and the spacing owed to that, by the pad or by its
++    // neighbour, cuts the connection off its pin.
++    const auto is_behind_edge = [this, &inst_shape](const odb::Rect& rect) {
++      switch (pad_edge_) {
++        case odb::dbDirection::NORTH:
++          return rect.yMin() >= inst_shape.yMin();
++        case odb::dbDirection::SOUTH:
++          return rect.yMax() <= inst_shape.yMax();
++        case odb::dbDirection::EAST:
++          return rect.xMin() >= inst_shape.xMin();
++        case odb::dbDirection::WEST:
++          return rect.xMax() <= inst_shape.xMax();
++        default:
++          return false;
++      }
++    };
++    const Grid* grid = getGrid();
++    const auto obs_filter = [&is_behind_edge, grid](const ShapePtr& other) {
++      switch (other->shapeType()) {
++        case Shape::kPadObs:
++          return !is_behind_edge(other->getRect());
++        case Shape::kGridObs:
++          return !static_cast<GridObsShape*>(other.get())->belongsTo(grid);
++        default:
++          return true;
++      }
++    };
++
++    std::map<Shape*, std::vector<std::unique_ptr<Shape>>> replacement_shapes;
++    for (const auto& [layer, layer_shapes] : getShapes()) {
++      if (!obstructions.contains(layer)) {
++        continue;
++      }
++      const auto& obs = obstructions.at(layer);
++      for (const auto& shape : layer_shapes) {
++        std::vector<std::unique_ptr<Shape>> replacements;
++        if (shape->cut(obs, replacements, obs_filter)) {
++          replacement_shapes[shape.get()] = std::move(replacements);
++        }
++      }
++    }
++    for (auto& [shape, replacements] : replacement_shapes) {
++      replaceShape(shape, replacements);
++    }
++    return;
++  }
++
+   Straps::cutShapes(obstructions);
+ 
+   if (type_ != ConnectionType::kOverPads) {
+     return;
+   }
+ 
+-  odb::dbInst* inst = iterm_->getInst();
+-  const odb::Rect inst_shape = inst->getBBox()->getBox();
+-
+   // filter out segments that are full enclosed by the pin shape (ie doesnt
+   // connect to ring)
+   std::vector<Shape*> remove_shapes;
+
+From bc7d4854328a30588c43203a9ab07bddd3ae205e Mon Sep 17 00:00:00 2001
+From: Peter Gadfort <gadfort@zeroasic.com>
+Date: Thu, 8 Oct 2026 08:22:15 -0400
+Subject: [PATCH 2/2] pdn: remove useless call to contains
+
+Signed-off-by: Peter Gadfort <gadfort@zeroasic.com>
+---
+ src/pdn/src/grid_component.cpp | 5 +++--
+ src/pdn/src/straps.cpp         | 5 +++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/src/pdn/src/grid_component.cpp b/src/pdn/src/grid_component.cpp
+index f734dd54f73..68642818dd0 100644
+--- a/src/pdn/src/grid_component.cpp
++++ b/src/pdn/src/grid_component.cpp
+@@ -338,10 +338,11 @@ void GridComponent::cutShapes(const Shape::ObstructionTreeMap& obstructions)
+              getShapeCount());
+ 
+   for (const auto& [layer, shapes] : shapes_) {
+-    if (!obstructions.contains(layer)) {
++    auto it = obstructions.find(layer);
++    if (it == obstructions.end()) {
+       continue;
+     }
+-    const auto& obs = obstructions.at(layer);
++    const auto& obs = it->second;
+     std::map<Shape*, std::vector<std::unique_ptr<Shape>>> replacement_shapes;
+     for (const auto& shape : shapes) {
+       std::vector<std::unique_ptr<Shape>> replacements;
+diff --git a/src/pdn/src/straps.cpp b/src/pdn/src/straps.cpp
+index 1717b9b59c3..2b0256f9ae0 100644
+--- a/src/pdn/src/straps.cpp
++++ b/src/pdn/src/straps.cpp
+@@ -1869,10 +1869,11 @@ void PadDirectConnectionStraps::cutShapes(
+ 
+     std::map<Shape*, std::vector<std::unique_ptr<Shape>>> replacement_shapes;
+     for (const auto& [layer, layer_shapes] : getShapes()) {
+-      if (!obstructions.contains(layer)) {
++      auto it = obstructions.find(layer);
++      if (it == obstructions.end()) {
+         continue;
+       }
+-      const auto& obs = obstructions.at(layer);
++      const auto& obs = it->second;
+       for (const auto& shape : layer_shapes) {
+         std::vector<std::unique_ptr<Shape>> replacements;
+         if (shape->cut(obs, replacements, obs_filter)) {
+
