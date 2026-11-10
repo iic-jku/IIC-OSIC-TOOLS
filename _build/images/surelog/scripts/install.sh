@@ -10,6 +10,9 @@ git clone --filter=blob:none --no-checkout "${SURELOG_REPO_URL}" "${SURELOG_NAME
 cd "${SURELOG_NAME}" || exit 1
 git checkout "${SURELOG_REPO_COMMIT}"
 git submodule update --init --recursive --filter=blob:none
+# CMake 4 rejects cmake_minimum_required below 3.5 in the bundled capnproto. The environment
+# variable also reaches the nested CMake runs. Drop it once upstream raises it.
+export CMAKE_POLICY_VERSION_MINIMUM=3.5
 make -j"$(nproc)"
 make install PREFIX="${TOOLS}/${SURELOG_NAME}"
 
