@@ -7,8 +7,12 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] [`prep-ic`](https://github.com/iic-jku/prep-ic), a GUI and Python API that plans the pad ring, pinout and early floorplan of an IC and exports the LibreLane pad ring files
 * [Update] FasterCap `6.2.1` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS-accelerated matrix products and a fixed hang of the `-pb` block preconditioner
 * [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites, `-s` to select a suite directly, and `-D` to run single rule decks (e.g. `activ,gatpoly`)
+* [Changing] the image is based on Ubuntu 26.04 LTS (was 24.04), with Python 3.14 (was 3.12), GCC 15, CMake 4, Boost 1.90 and OpenMPI 5: Python virtual environments and compiled extensions made for the previous image need to be recreated
+* [Changing] `pygame` is now `pygame-ce`, which keeps the import name `pygame`
+* [Changing] Fault (`fault-dft`) runs in its own Python 3.12 environment, as it ships no wheel for Python 3.14
 * [Changing] FasterCap results change for inputs with dielectrics (6.0.7 gave values up to 21 % too high in 3D and 24 % in 2D), and can also change on `arm64` for runs with `-a`
 * [Changing] FasterCap exits with 75 when GMRES does not converge (the last matrix is still printed) and with 65 for NaN or infinite entries, where 6.0.7 exited with 0, and `kpex` stops on both
+* [Remove] the `libparse` Python package, which no longer installs on the new base
 * [Remove] FasterCap's undocumented options `-s`, `-kc`, `-km` and `-ph`, which had no effect or hung
 * [Remove] the `vtk` and `pyvista` Python packages, which saves about 600 MB on disk: `setupEM` keeps working, but its 3D field viewer (`fieldViewer`) needs them installed by hand (see [KNOWN_ISSUES.md](KNOWN_ISSUES.md))
 * [Fix] `run_palace -np N` runs Palace on N MPI processes, where every N above 1 aborted with "mpirun does not support recursive calls"

@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-IIC-OSIC-TOOLS is a comprehensive Docker/Podman-based container distribution for open-source IC design tools, supporting both analog and digital flows. It packages 80+ EDA tools with multiple Process Development Kits (PDKs) for both x86_64/amd64 and aarch64/arm64 architectures, based on Ubuntu 24.04 LTS.
+IIC-OSIC-TOOLS is a comprehensive Docker/Podman-based container distribution for open-source IC design tools, supporting both analog and digital flows. It packages 80+ EDA tools with multiple Process Development Kits (PDKs) for both x86_64/amd64 and aarch64/arm64 architectures, based on Ubuntu 26.04 LTS.
 
 **Key directories:**
 - `_build/`: Multi-stage Docker build system with tool images and build orchestration
@@ -120,7 +120,7 @@ Each tool's `_build/images/<tool>/scripts/install.sh`:
 
 ### Python Environment
 
-- System Python 3.12 with extensive EDA packages (see `_build/images/base/Dockerfile`)
+- System Python 3.14 with extensive EDA packages (see `_build/images/base/Dockerfile`)
 - Tools with Python bindings: ngspyce, pyopus, gdsfactory, cocotb, amaranth, etc.
 - `PYTHONPATH` includes Yosys, KLayout, OpenEMS python modules
 
