@@ -8,8 +8,9 @@
 # Runs Magic+Netgen and KLayout LVS on a known-good standard cell inverter in
 # all supported PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l), covers
 # the input variants (SPICE/CDL netlist, .gds/.mag/.klay.gds layout, gzipped
-# layouts, positional auto-derive), and checks that invalid combinations are caught
-# with the documented exit codes.
+# layouts, positional auto-derive), checks that wrong connections and wrong device
+# parameters are reported, and that invalid combinations are caught with the
+# documented exit codes.
 #
 # The test data in this directory is derived from the standard cell libraries
 # of the installed PDKs (see README.md for how to regenerate it).
@@ -143,6 +144,18 @@ check "ihp: -s reuses netlist in workdir"  0 "$SAK" -m -s "$W/${CELL}_magic.spic
 check "ihp: -m broken SPICE reports mismatch" 1 "$SAK" -m -s "$D/${CELL}_broken.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 check "ihp: -k broken CDL reports mismatch"   1 "$SAK" -k -s "$D/${CELL}_broken.cdl"   -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 
+# property errors: only the width of the NMOS differs (0.74u in the layout, 1.48u in the netlist), the topology matches.
+# Netgen then still reports "Circuits match uniquely." and adds "Property errors were found.", which must fail with exit 1.
+W6=$WORKDIR/ihp_prop
+mkdir -p "$W6"
+check "ihp: -m wider NMOS reports property error" 1 "$SAK" -m -s "$D/${CELL}_wide.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W6"
+check "ihp: wider NMOS matches in topology"       0 bash -c "grep -q '^Final result: Circuits match uniquely\.\$' '$W6/$CELL.magic.lvs/$CELL.lvs.out' && grep -q '^Property errors were found\.' '$W6/$CELL.magic.lvs/$CELL.lvs.out'"
+check "ihp: -k wider NMOS reports mismatch"       1 "$SAK" -k -s "$D/${CELL}_wide.cdl"   -l "$D/$CELL.gds" -c "$CELL" -w "$W6"
+
+# the IHP xschem symbols write the Monte Carlo mismatch switch mm_ok=1 into the SPICE netlist; it does not describe the
+# layout, so it must not cause a property error
+check "ihp: -m SPICE with mm_ok=1"                0 "$SAK" -m -s "$D/${CELL}_mm_ok.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
+
 # guard checks (invalid input combinations a designer should not use)
 check "guard: no arguments"                3 "$SAK"
 check "guard: nonexistent cellname"        2 "$SAK" -m does_not_exist_42
@@ -176,6 +189,7 @@ mkdir -p "$W"
 
 check "cmos5l: -m SPICE + GDS"             0 "$SAK" -m -s "$D/$CELL.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 check "cmos5l: -k CDL + GDS"               0 "$SAK" -k -s "$D/$CELL.cdl"   -l "$D/$CELL.gds" -c "$CELL" -w "$W"
+check "cmos5l: -m SPICE with mm_ok=1"      0 "$SAK" -m -s "$D/${CELL}_mm_ok.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 
 # ============================================================================
 # gf180mcuD
@@ -191,6 +205,10 @@ mkdir -p "$W"
 
 check "gf180: -m SPICE + GDS"              0 "$SAK" -m -s "$D/$CELL.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 check "gf180: -k CDL + GDS"                0 "$SAK" -k -s "$D/$CELL.cdl"   -l "$D/$CELL.gds" -c "$CELL" -w "$W"
+W6=$WORKDIR/gf180_prop
+mkdir -p "$W6"
+check "gf180: -m wider NMOS reports property error" 1 "$SAK" -m -s "$D/${CELL}_wide.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W6"
+check "gf180: wider NMOS matches in topology"       0 bash -c "grep -q '^Final result: Circuits match uniquely\.\$' '$W6/$CELL.magic.lvs/$CELL.lvs.out' && grep -q '^Property errors were found\.' '$W6/$CELL.magic.lvs/$CELL.lvs.out'"
 
 # ============================================================================
 # sky130A
@@ -206,6 +224,14 @@ W=$WORKDIR/sky130
 mkdir -p "$W"
 
 check "sky130: -m SPICE + GDS"             0 "$SAK" -m -s "$D/$CELL.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
+W6=$WORKDIR/sky130_prop
+mkdir -p "$W6"
+check "sky130: -m wider NMOS reports property error" 1 "$SAK" -m -s "$D/${CELL}_wide.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W6"
+check "sky130: wider NMOS matches in topology"       0 bash -c "grep -q '^Final result: Circuits match uniquely\.\$' '$W6/$CELL.magic.lvs/$CELL.lvs.out' && grep -q '^Property errors were found\.' '$W6/$CELL.magic.lvs/$CELL.lvs.out'"
+
+# KLayout with a netlist as xschem writes it for the sky130_fd_pr symbols: subcircuit calls with W and L in micrometers
+check "sky130: -k xschem-style CDL + GDS"            0 "$SAK" -k -s "$D/${CELL}_xschem.cdl"      -l "$D/$CELL.gds" -c "$CELL" -w "$W"
+check "sky130: -k xschem-style wider NMOS mismatch"  1 "$SAK" -k -s "$D/${CELL}_xschem_wide.cdl" -l "$D/$CELL.gds" -c "$CELL" -w "$W6"
 
 # KNOWN ISSUE: the sky130.lvs KLayout deck reads all schematic device classes
 # upper-case while the layout classes are lower-case, so the compare never
