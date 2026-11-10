@@ -12,7 +12,7 @@ This file holds the essentials. The detail lives in existing docs, read the one 
 
 ## What the repo builds
 
-- One multi-arch image (`linux/amd64`, `linux/arm64`) on Ubuntu 24.04 (`ubuntu:noble` in `_build/images/base/Dockerfile`), published as `hpretl/iic-osic-tools` with the tags `latest` and `YYYY.MM`.
+- One multi-arch image (`linux/amd64`, `linux/arm64`) on Ubuntu 26.04 (`ubuntu:resolute` in `_build/images/base/Dockerfile`), published as `hpretl/iic-osic-tools` with the tags `latest` and `YYYY.MM`.
 - The repo holds no tool sources. Each tool is fetched at a pinned revision (mostly a git commit, a few release downloads such as `uv`) and built in its own image, and the final image copies the results together.
 
 ## Layout

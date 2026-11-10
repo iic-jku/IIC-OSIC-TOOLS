@@ -30,12 +30,16 @@ This document summarizes the most important changes of the individual releases o
 * [Update] `librelane` `3.1.0.dev6` with OpenROAD `26Q4`, `cace` `2.13.0` and `ciel` `3.2.0`
 * [Update] `gdscheck` `v0.2.1`, which adds ASAP7 support
 * [Update] various tool and Python package version bumps
+* [Changing] the image is based on Ubuntu 26.04 LTS (was 24.04), with Python 3.14 (was 3.12), GCC 15, CMake 4, Boost 1.90 and OpenMPI 5: Python virtual environments and compiled extensions made for the previous image need to be recreated
+* [Changing] `pygame` is now `pygame-ce`, which keeps the import name `pygame`
+* [Changing] Fault (`fault-dft`) runs in its own Python 3.12 environment, as it ships no wheel for Python 3.14
 * [Changing] FasterCap's corrected dielectric and conductor calculations can change results, refinement and convergence decisions, including compared with `6.3.0`
 * [Changing] FasterCap exits with 75 when GMRES does not converge and with 65 on NaN or infinite entries (was 0), and `kpex` stops on both
 * [Changing] the uncompressed Liberty `.lib` files in `libs.ref` of all PDKs are removed to save space, only the gzipped `.lib.gz` files ship (announced in 2026.08), so flows and scripts that name a `.lib` path need `.lib.gz`
 * [Changing] IHP's LibMan is now DOOR and starts as `door`, `libman` still works
 * [Changing] `start_x.sh` adds `--net=host` with SSH X11 forwarding (`ssh -X`), and keeps the Xauthority file out of `/tmp` with Docker installed as a snap
 * [Changing] the `.sh` start scripts announce the image copy of the first rootless Podman start, which takes minutes
+* [Remove] the `libparse` Python package, which no longer installs on the new base
 * [Remove] FasterCap's undocumented options `-s`, `-kc`, `-km` and `-ph`
 * [Remove] the `vtk` and `pyvista` Python packages (about 600 MB), which the 3D field viewer of `setupEM` needs installed by hand (see [KNOWN_ISSUES.md](KNOWN_ISSUES.md))
 * [Fix] `sak-lvs.sh` fails on Netgen property errors (e.g. a differing W or L), which passed before

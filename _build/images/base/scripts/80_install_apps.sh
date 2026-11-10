@@ -92,8 +92,9 @@ apt-get autoremove -y
 
 /bin/dbus-uuidgen > /etc/machine-id
 
-# noVNC is installed from upstream rather than from the `novnc` apt package, which on
-# noble is 1.3.0 (October 2021).
+# noVNC is installed from upstream rather than from the `novnc` apt package. On noble
+# that was 1.3.0 (October 2021). resolute ships 1.6.0, which has the fix described
+# below, so the upstream install now only keeps the pinned release.
 #
 # Up to 1.5.0 the client tracks the pressed mouse buttons as incremental state: the mask
 # it sends to the VNC server is OR-ed with the button on `mousedown` and cleared again on
