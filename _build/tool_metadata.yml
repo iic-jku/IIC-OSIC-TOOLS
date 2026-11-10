@@ -77,7 +77,7 @@
   commit: f3d27840b65a9571a808a19b06dc0b93b9d4423d
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: dcf36133a369abc8f3c5e5738cd4d82e4903c0e0
+  commit: c4d317e4fa2398b9880920a1411c20258a2175a9
   hold: OpenROAD revision that the pinned LibreLane release is tested against, bump together with librelane
 - name: openvaf
   repo: https://github.com/arpadbuermen/OpenVAF.git

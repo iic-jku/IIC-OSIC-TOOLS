@@ -73,7 +73,7 @@ pip3 install $PIP_FLAGS \
 	klayout-pex-plugin-palace==0.1.0 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
-	librelane==3.1.0.dev4 \
+	librelane==3.1.0.dev6 \
 	najaeda==0.7.34 \
 	prep-ic==0.1.1 \
 	pygmid==1.2.12 \
@@ -106,17 +106,6 @@ LIBRELANE_TOOLBOX="${LIBRELANE_SITE}/librelane/common/toolbox.py"
 [ -f "$LIBRELANE_TOOLBOX" ] || { echo "[ERROR] librelane toolbox.py not found"; exit 1; }
 patch -p0 --batch -r - -d "$LIBRELANE_SITE" < /headless/scripts/patches/librelane-get-lib-voltage-gzip.patch
 python3 -m py_compile "$LIBRELANE_TOOLBOX"
-
-# Since librelane 3.1.0.dev4, Yosys reads the .lib.gz itself and logs
-# "Found gzip magic in file ..." into every `tee -o` stat report, so
-# Yosys.Synthesis fails to parse reports/stat.json (JSONDecodeError) in every
-# PDK. The patch skips to the JSON object. Reported as
-# librelane/librelane#1064. Strict like the patch above.
-echo "[INFO] Patching librelane Yosys.Synthesis to parse stat.json after a gzip log line"
-LIBRELANE_PYOSYS="${LIBRELANE_SITE}/librelane/steps/pyosys.py"
-[ -f "$LIBRELANE_PYOSYS" ] || { echo "[ERROR] librelane pyosys.py not found"; exit 1; }
-patch -p0 --batch -r - -d "$LIBRELANE_SITE" < /headless/scripts/patches/librelane-synthesis-stat-json-gzip.patch
-python3 -m py_compile "$LIBRELANE_PYOSYS"
 
 # The five packages pulling in PySide6 (chipify, prep-ic, snp2le, gds2palace, setupEM)
 # only use QtWidgets/QtCore/QtGui/QtSvg, all of which live in
