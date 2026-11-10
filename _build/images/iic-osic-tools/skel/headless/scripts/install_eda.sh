@@ -195,8 +195,13 @@ python3 -m venv --system-site-packages /foss/tools/charlib
 
 echo "[INFO] Installing Hdl21/vlsirtools"
 python3 -m venv --system-site-packages /foss/tools/vlsirtools
-/foss/tools/vlsirtools/bin/pip install --no-cache-dir \
+# Hdl21 declares requires-python <3.13 and vlsir pins protobuf~=4.23. Both are
+# untested caps: protobuf 4 crashes on import under Python 3.14 (Metaclasses with
+# custom tp_new), while Hdl21 netlists fine on 3.14 with protobuf 7. Drop both
+# overrides once Hdl21 and vlsir allow Python 3.14 (no upstream issue yet).
+/foss/tools/vlsirtools/bin/pip install --no-cache-dir --ignore-requires-python \
 	git+https://github.com/dan-fritchman/Hdl21
+/foss/tools/vlsirtools/bin/pip install --no-cache-dir "protobuf>=6"
 
 # fault-dft only ships CPython 3.12 wheels (0.9.4: compiled Swift parts, no sdist),
 # so it cannot go into the system Python 3.14 of Ubuntu 26.04. Keep it in its own
