@@ -53,6 +53,7 @@ apt-get -y install openjdk-17-jdk
 # present as python3-pyqt6 dependencies.
 # gv (PostScript viewer, the xdg-open default for .ps/.eps in mimeapps.list) is
 # explicit too: on noble it arrived only as a dependency of google-perftools.
+# The same holds for the zstd command line tool.
 apt-get -y install \
 	autoconf \
 	automake \
@@ -278,7 +279,8 @@ apt-get -y install \
 	xserver-xorg-video-all \
 	xvfb \
 	zip \
-	zlib1g
+	zlib1g \
+	zstd
 
 git lfs install --system
 
