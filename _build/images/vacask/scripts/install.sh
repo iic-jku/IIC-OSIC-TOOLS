@@ -72,7 +72,8 @@ cmake -G Ninja -S .. -B . \
     -DCMAKE_C_FLAGS="${MARCH_FLAGS}" \
     -DOPENVAF_OPTIONS="${OPENVAF_OPTIONS}" \
     -DOPENVAF_DIR="${TOOLS}/openvaf/bin" \
-    -DBoost_ROOT="/tmp/${BOOST_DIR}"
+    -DBoost_ROOT="/tmp/${BOOST_DIR}" \
+    -DBoost_DIR="/tmp/${BOOST_DIR}/stage/lib/cmake/Boost-${BOOST_VERSION}"
 cmake --build . -j "$(nproc)"
 cmake --install . --prefix "${TOOLS}/${VACASK_NAME}" --strip
 
