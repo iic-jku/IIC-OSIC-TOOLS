@@ -15,6 +15,9 @@ git clone --filter=blob:none --no-checkout "${XYCE_TRILINOS_REPO_URL}" "${XYCE_T
 cd "${XYCE_TRILINOS_NAME}" || exit 1
 git checkout "${XYCE_TRILINOS_REPO_COMMIT}"
 mkdir -p parallel_build && cd parallel_build
+# CMake 4 rejects cmake_minimum_required below 3.5 in Trilinos. The environment
+# variable also reaches the nested CMake runs. Drop it once upstream raises it.
+export CMAKE_POLICY_VERSION_MINIMUM=3.5
 cp /images/xyce/scripts/trilinos.reconfigure.sh ./reconfigure.sh
 chmod +x reconfigure.sh
 ./reconfigure.sh
