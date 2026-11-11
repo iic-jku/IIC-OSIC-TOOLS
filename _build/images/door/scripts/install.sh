@@ -11,7 +11,7 @@ cd "${DOOR_NAME}" || exit 1
 git checkout "${DOOR_REPO_COMMIT}"
 # src/layoutedit.cpp declares the result of QXmlStreamReader::name() as
 # QStringRef, which Qt6 removed (it returns QStringView there). auto builds
-# with both. Not reported upstream yet, drop once the file has no QStringRef.
+# with both. Reported as IHP-GmbH/Door#6, drop once the file has no QStringRef.
 sed -i 's/const QStringRef tag = xml.name();/const auto tag = xml.name();/' src/layoutedit.cpp
 if grep -q QStringRef src/layoutedit.cpp; then
     echo "[ERROR] QStringRef left in src/layoutedit.cpp, adapt the Qt6 fix" >&2
