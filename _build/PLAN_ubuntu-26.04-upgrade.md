@@ -11,7 +11,7 @@ Ubuntu 26.04 LTS ("resolute", Resolute Raccoon) was released 2026-04-23 and has 
 point release, so the archive is settled.
 
 24.04 is supported until 2029, so this is not urgent — the payoff is toolchain freshness and
-debt removal. Five workarounds in this repo exist only because 24.04 was too old, and the
+debt removal. Six workarounds in this repo exist only because 24.04 was too old, and the
 distro now ships adequate versions of all of them:
 
 | Workaround | Reason it exists | Status on 26.04 |
@@ -19,6 +19,7 @@ distro now ships adequate versions of all of them:
 | `71_fix_gobject_introspection.sh` | g-i 1.80 imports `distutils.msvccompiler` | g-i 1.86 — **must** be deleted, script hard-fails by design |
 | Boost 1.88 source build ×2 (slang, vacask) | noble's 1.83 lacks `concurrent_flat_set.hpp` | default Boost is 1.90 |
 | spdlog 1.15.1 source build (openroad-librelane) | noble ships 1.12 | archive ships 1.15 |
+| SWIG 4.3.0 source build (openroad-librelane) | OpenROAD 26Q4 needs SWIG ≥ 4.3, noble ships 4.2 | archive ships 4.4 |
 | `OMPI_MCA_btl_vader_*` | OpenMPI 4.1.6 | OpenMPI 5.0.10, knob renamed `..._btl_sm_...` |
 | `30_install_boost.sh`, `34_install_spdlog.sh` | — | already 100 % commented out, dead files |
 
@@ -245,6 +246,7 @@ still need it.
 | File / lines | Action |
 |---|---|
 | `_build/images/openroad-librelane/scripts/install.sh:8-17` | drop the spdlog 1.15.1 source build (system `libspdlog-dev` is 1.15). (The `Tcl_Size` shim already went with the bump to OpenROAD 26Q4.) |
+| `_build/images/openroad-librelane/scripts/install.sh:25-37`, `:61`, `:67`, `:75` | drop the SWIG 4.3.0 source build, the `FindSWIG` comment, `-DSWIG_EXECUTABLE` and `swig` in the final `rm -rf` (system `swig` is 4.4, check that FindSWIG picks it over any leftover `swig4.0` name) |
 | `_build/images/slang/scripts/install.sh:9-31` | drop the Boost 1.88 source build and `-DBoost_ROOT` / `-DBoost_NO_SYSTEM_PATHS` |
 | `_build/images/vacask/scripts/install.sh:18-43`, `:74` | drop the Boost source build and `-DBoost_ROOT`. **Keep** `BOOST_PROCESS_V2_DISABLE_PIDFD_OPEN` — a container/pidfd constraint, not a Boost-version workaround; re-verify the macro name against Boost 1.90 Process v2 |
 | `_build/images/base/scripts/30_install_boost.sh`, `34_install_spdlog.sh` + `base/Dockerfile:49,53` | both files are entirely commented out — delete the files and their Dockerfile lines |
