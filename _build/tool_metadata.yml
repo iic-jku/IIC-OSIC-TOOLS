@@ -12,20 +12,20 @@
   commit: 5b9c203657ba973eeb6445f7a08632e35801009e
 - name: gaw3-xschem
   repo: https://github.com/StefanSchippers/xschem-gaw.git
-  commit: 6b8fa4ab007e88b3129381e0479737ae014a8b51
+  commit: 731be0d9c99e33d66ab6ba074fcf598c940fa02d
 - name: gds3d
   repo: https://github.com/trilomix/GDS3D.git
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 51cfedebb0a67538aebb70ff982563d9955d2927
+  commit: 9cc54bbc189d28d42aec14e046aec7590ae6bad8
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: 1537d621f2fbb3185a520cd95606e6f8a7989849
   hold: Later commits need the TwinePool API of Yosys main, bump with the first Yosys release that has it (v0.70 does not)
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
-  commit: 06a0d4418d1706453b36396ca9340597e90cde18
+  commit: e40ba7937336824f12f7db870ea36f6f090dd90d
 - name: icestorm
   repo: https://github.com/YosysHQ/icestorm.git
   commit: 00da9c3e6ceff056248e3451dd6fd3210d6ceec9
@@ -34,25 +34,25 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 61dbc3c28110ddb4979f831337e129ec26961586
+  commit: 3c970ad81a04a3d6431c8ac341db486a901603be
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: 46113b2f6d295e4771623e48b754b6f8fd95efae
+  commit: 56c9e1de77a204e37742ebbc9f55315bbcdfa9bb
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
-  commit: v0.30.12
+  commit: v0.30.13
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.691
+  commit: 8.3.697
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: 1.5.327
+  commit: 1.5.328
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: a2c6479977d64d312686d853a93941744fdbeacf
+  commit: b9c719481de1b2e7586bfc6fe4ad277d1a55be10
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -71,17 +71,17 @@
   commit: 4101730f63ccd687354ad6316566c9e77b5f1f80
 - name: openems
   repo: https://github.com/thliebig/openEMS-Project.git
-  commit: 38da98d592f6f9b772cf984a411470e0feb9a114
+  commit: 622ac90e3f37700445df424779465e6a25d3c155
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: f3d27840b65a9571a808a19b06dc0b93b9d4423d
+  commit: eba208b8ee384c719e503d07dacf24dfdf924f44
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: c4d317e4fa2398b9880920a1411c20258a2175a9
   hold: OpenROAD revision that the pinned LibreLane release is tested against, bump together with librelane
 - name: openvaf
   repo: https://github.com/arpadbuermen/OpenVAF.git
-  commit: cca18ef704b47d406aa672414f66f59dbd31d3f2
+  commit: 96b3322cedd9c8b56de4ca009cdeccda6f1ae571
   branch: mb-experimental
 - name: osic-multitool
   repo: https://github.com/iic-jku/osic-multitool.git
@@ -91,13 +91,13 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: 8874e6cf8f3c6111867cb0c01cb7efacd73fd48c
+  commit: cf6462f2f476cafb98c639015c40887ddca3c65c
 - name: prjtrellis
   repo: https://github.com/YosysHQ/prjtrellis.git
   commit: 2d12005ab9703ff60603d7ae91dca254939e671f
 - name: pyopus
   repo: https://codeberg.org/arpadbuermen/PyOPUS.git
-  commit: cef2a3b7e57b7378de56ece03647e1a03d4cb539
+  commit: f4f793c7387b248ceca9b5fc81b41bc5499a8626
 - name: qflow
   repo: https://github.com/RTimothyEdwards/qflow.git
   commit: 52ecda1053bcbd2f6ec88b8379c8179e2a849f7a
@@ -124,16 +124,16 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 00b7cbfeaa67b0969890040801925f5646c56b3f
+  commit: 734c25ca7c2687f5e4a05672af3f8adb4bd4fbf1
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: 4a77e391c2a66bf1caec5e076b7e29609123985b
+  commit: adce24f69c19a82e99923053d9f90d8899b04440
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: 668b9a6a1b474f7b5181b5caed915e8d0a1505bd
 - name: spike
   repo: https://github.com/riscv-software-src/riscv-isa-sim.git
-  commit: 5ef276637ac0f634753b0973d069c8405d685eb6
+  commit: 020edce6535c7056702a6579595e218fba2ab0bf
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
   commit: v1.87
@@ -148,10 +148,10 @@
   commit: 997b49c20705ca3d99e8c0ebe57d6a7840513bb4
 - name: uv
   repo: https://github.com/astral-sh/uv.git
-  commit: 0.13.6
+  commit: 0.13.7
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: d7b4db43b4534cbe92de4c12e25d33019acd5b01
+  commit: f29d2b0ea571654f4f6805350b5f1eb364ab10ab
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.054
@@ -163,7 +163,7 @@
   commit: eab56ebad351650b4050fcde85cda9919844ed58
 - name: xschem
   repo: https://github.com/StefanSchippers/xschem.git
-  commit: d0f691a20107256a4044731070db0d4096d9223d
+  commit: 4b037ce1bd75307c1fa01d7f03098f0d1b79ec9b
 - name: xyce
   repo: https://github.com/Xyce/Xyce.git
   commit: Release-7.10.0
@@ -173,7 +173,7 @@
   hold: Xyce builds against the Trilinos 12.12 series
 - name: yices2
   repo: https://github.com/SRI-CSL/yices2.git
-  commit: 560f3b375840560a3decaa27c1d2f2e6503c0ab2
+  commit: 948a30febdca52376bd9519e4c3786cc27d925bc
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
   commit: v0.70

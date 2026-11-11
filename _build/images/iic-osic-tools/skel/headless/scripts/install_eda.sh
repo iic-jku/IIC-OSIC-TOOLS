@@ -56,35 +56,35 @@ pip3 install $PIP_FLAGS --ignore-installed \
 pip3 install $PIP_FLAGS \
 	"amaranth==0.5.10" \
 	cace==2.13.0 \
-	chipify==0.2.2 \
+	chipify==0.2.3 \
 	ciel==3.2.0 \
 	cocotb==2.1.0 \
 	cocotbext-ams==0.1.0 \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.7 \
-	gds2palace==0.9.3 \
+	gds2palace==0.10.0 \
 	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.6.15 \
-	klayout-pex-plugin-elmer==0.1.0 \
-	klayout-pex-plugin-gmsh==0.1.0 \
-	klayout-pex-plugin-palace==0.1.0 \
+	klayout-pex==0.8.1 \
+	klayout-pex-plugin-elmer==0.1.1 \
+	klayout-pex-plugin-gmsh==0.1.1 \
+	klayout-pex-plugin-palace==0.1.1 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev6 \
-	najaeda==0.7.34 \
-	prep-ic==0.1.1 \
+	najaeda==0.7.35 \
+	prep-ic==0.1.2 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
 	pyuvm==5.0.0 \
 	pyverilog==1.3.0 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.2.0 \
-	setupEM==0.16.0 \
+	setupEM==0.18.0 \
 	siliconcompiler==0.38.12 \
-	snp2le==0.1.18 \
+	snp2le==0.1.20 \
 	spicelib==1.6.4 \
 	spyci==1.0.2
 
