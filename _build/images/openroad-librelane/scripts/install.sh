@@ -22,6 +22,20 @@ cmake -DCMAKE_INSTALL_PREFIX="${SPDLOG_PREFIX}" -DCMAKE_POSITION_INDEPENDENT_COD
 cmake --build build -j "$(nproc)" --target install
 cd /tmp || exit 1
 
+# OpenROAD 26Q4 requires SWIG >= 4.3, Ubuntu 24.04 ships 4.2. Build the version
+# that OpenROAD's etc/DependencyInstaller.sh installs. Drop once the base image
+# ships SWIG >= 4.3.
+SWIG_PREFIX="/usr/local"
+SWIG_VERSION=4.3.0
+echo "[INFO] Installing SWIG version $SWIG_VERSION into $SWIG_PREFIX"
+git clone --depth=1 -b "v${SWIG_VERSION}" https://github.com/swig/swig.git
+cd swig || exit 1
+./autogen.sh
+./configure --prefix="${SWIG_PREFIX}"
+make -j"$(nproc)"
+make install
+cd /tmp || exit 1
+
 git clone --filter=blob:none --no-checkout "${OPENROAD_LIBRELANE_REPO_URL}" "${OPENROAD_LIBRELANE_NAME}"
 cd "${OPENROAD_LIBRELANE_NAME}" || exit 1
 git checkout "${OPENROAD_LIBRELANE_REPO_COMMIT}"
@@ -44,11 +58,13 @@ for KEYWORDS in src/odb/src/def/def/def_keywords.cpp src/odb/src/lef/lef/lef_key
     grep -q '^  int fc;$' "$KEYWORDS" || { echo "[ERROR] char fc not found in $KEYWORDS, check whether the patch is still needed"; exit 1; }
 done
 
+# FindSWIG tries the name swig4.0 before swig and would pick /usr/bin/swig4.0
 cmake -B build \
     -DCMAKE_INSTALL_PREFIX="${TOOLS}/${OPENROAD_LIBRELANE_NAME}" \
     -DUSE_SYSTEM_BOOST=ON \
     -DENABLE_TESTS=OFF \
-    -DBUILD_GUI=ON
+    -DBUILD_GUI=ON \
+    -DSWIG_EXECUTABLE="${SWIG_PREFIX}/bin/swig"
 cmake --build build -j "$(nproc)" --target install
 # LibreLane's STA steps call the standalone `sta`. The CMake install ships it
 # from the OpenSTA submodule (images/openroad adds it by hand after Bazel).
@@ -56,6 +72,6 @@ cmake --build build -j "$(nproc)" --target install
 
 # Drop the CMake build tree (several GB), it is build-time only
 cd /tmp || exit 1
-rm -rf "${OPENROAD_LIBRELANE_NAME}" spdlog
+rm -rf "${OPENROAD_LIBRELANE_NAME}" spdlog swig
 
 echo "${OPENROAD_LIBRELANE_NAME} ${OPENROAD_LIBRELANE_REPO_COMMIT}" > "${TOOLS}/${OPENROAD_LIBRELANE_NAME}/SOURCES"

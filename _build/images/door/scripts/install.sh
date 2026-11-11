@@ -9,6 +9,14 @@ cd /tmp || exit 1
 git clone --filter=blob:none --no-checkout "${DOOR_REPO_URL}" "${DOOR_NAME}"
 cd "${DOOR_NAME}" || exit 1
 git checkout "${DOOR_REPO_COMMIT}"
+# src/layoutedit.cpp declares the result of QXmlStreamReader::name() as
+# QStringRef, which Qt6 removed (it returns QStringView there). auto builds
+# with both. Not reported upstream yet, drop once the file has no QStringRef.
+sed -i 's/const QStringRef tag = xml.name();/const auto tag = xml.name();/' src/layoutedit.cpp
+if grep -q QStringRef src/layoutedit.cpp; then
+    echo "[ERROR] QStringRef left in src/layoutedit.cpp, adapt the Qt6 fix" >&2
+    exit 1
+fi
 mkdir -p build
 cd build || exit 1
 # CommonDB (CORE) is a private IHP repo we have no token for; build without it.

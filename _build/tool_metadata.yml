@@ -9,7 +9,7 @@
   commit: 23c3867bb9c227ec395e2812b318379ffb9a0df9
 - name: door
   repo: https://github.com/IHP-GmbH/Door.git
-  commit: 32b9de429dec5d7782d5b0027d65caf46af89eca
+  commit: 5b9c203657ba973eeb6445f7a08632e35801009e
 - name: gaw3-xschem
   repo: https://github.com/StefanSchippers/xschem-gaw.git
   commit: 6b8fa4ab007e88b3129381e0479737ae014a8b51
@@ -180,6 +180,7 @@
 - name: yosys-eqy
   repo: https://github.com/YosysHQ/eqy.git
   commit: v0.70
+  hold: eqy v0.71 needs the TwinePool API of Yosys v0.71, bump together with yosys
 - name: yosys-mcy
   repo: https://github.com/YosysHQ/mcy.git
   commit: v0.70
