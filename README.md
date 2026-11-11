@@ -221,7 +221,9 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
 - [kactus2](https://github.com/kactus2/kactus2dev) Kactus2 is a graphical editor for IP-XACT files, which are used to describe hardware components and their interfaces
 - [kepler-formal](https://github.com/keplertech/kepler-formal) logic equivalence checking (LEC) tool for `openroad`
-- [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS, with packages: [klayout-pex](https://github.com/iic-jku/klayout-pex), [klive](https://github.com/KLayout/klive), [xsection](https://github.com/KLayout/xsection), and [klayout-productivity-suite](https://github.com/iic-jku/klayout-productivity-suite) with various iic-jku KLayout plugins
+- [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS, with packages: [klive](https://github.com/KLayout/klive), [xsection](https://github.com/KLayout/xsection), and [klayout-productivity-suite](https://github.com/iic-jku/klayout-productivity-suite) with various iic-jku KLayout plugins
+- [klayout-pex](https://iic-jku.github.io/klayout-pex-website/) parasitic resistance and capacitance extraction, with `gmsh`, `elmer` and `palace` exporter plugins
+- [klayout-pex-plugin-kqcircuits](https://github.com/iic-jku/klayout-pex-plugin-kqcircuits) development scaffold for a KQCircuits exporter, without export support yet
 - [lctime](https://codeberg.org/librecell/lctime) Characterization kit for CMOS cells
 - [librelane](https://github.com/librelane/librelane) successor of OpenLane(2), RTL2GDS flow scripts
 - [magic](https://github.com/rtimothyedwards/magic) layout editor with DRC and PEX
@@ -279,6 +281,8 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [xyce](https://github.com/Xyce/Xyce) fast parallel SPICE simulator
 - [yosys](https://github.com/YosysHQ/yosys) Verilog synthesis tool (with GHDL plugin for VHDL synthesis and Slang plugin for SystemVerilog synthesis), incl. `eqy` (equivalence checker), `sby` (formal verification), and `mcy` (mutation coverage)
 - RF toolkit with [FastHenry2](https://github.com/ediloren/FastHenry2), [FasterCap](https://github.com/iic-jku/FasterCap), [openEMS](https://github.com/thliebig/openEMS), and [scikit-rf](https://github.com/scikit-rf/scikit-rf).
+
+The KPEX exporter plugins write inputs for external tools. The KQCircuits toolkit and the Elmer solver executables are not installed in this image.
 
 The tool versions used for `librelane` (and other tools) are documented in `tool_metadata.yml`. In addition to the EDA tools above, further valuable tools (like `git`) and editors (like `gvim`) are installed. If something useful is missing, please let us know!
 
