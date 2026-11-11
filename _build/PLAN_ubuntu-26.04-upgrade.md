@@ -245,7 +245,7 @@ still need it.
 
 | File / lines | Action |
 |---|---|
-| `_build/images/openroad-librelane/scripts/install.sh:8-17` | drop the spdlog 1.15.1 source build (system `libspdlog-dev` is 1.15). (The `Tcl_Size` shim already went with the bump to OpenROAD 26Q4.) |
+| `_build/images/openroad-librelane/scripts/install.sh:15-23`, `:75` | drop the spdlog 1.15.1 source build and `spdlog` in the final `rm -rf` (system `libspdlog-dev` is 1.15). (The `Tcl_Size` shim already went with the bump to OpenROAD 26Q4.) |
 | `_build/images/openroad-librelane/scripts/install.sh:25-37`, `:61`, `:67`, `:75` | drop the SWIG 4.3.0 source build, the `FindSWIG` comment, `-DSWIG_EXECUTABLE` and `swig` in the final `rm -rf` (system `swig` is 4.4, check that FindSWIG picks it over any leftover `swig4.0` name) |
 | `_build/images/slang/scripts/install.sh:9-31` | drop the Boost 1.88 source build and `-DBoost_ROOT` / `-DBoost_NO_SYSTEM_PATHS` |
 | `_build/images/vacask/scripts/install.sh:18-43`, `:74` | drop the Boost source build and `-DBoost_ROOT`. **Keep** `BOOST_PROCESS_V2_DISABLE_PIDFD_OPEN` — a container/pidfd constraint, not a Boost-version workaround; re-verify the macro name against Boost 1.90 Process v2 |
