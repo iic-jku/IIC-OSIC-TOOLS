@@ -221,7 +221,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
 - [kactus2](https://github.com/kactus2/kactus2dev) Kactus2 is a graphical editor for IP-XACT files, which are used to describe hardware components and their interfaces
 - [kepler-formal](https://github.com/keplertech/kepler-formal) logic equivalence checking (LEC) tool for `openroad`
-- [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS, with packages: [klayout-pex](https://github.com/iic-jku/klayout-pex), [klive](https://github.com/KLayout/klive), [xsection](https://github.com/KLayout/xsection), and [klayout-productivity-suite](https://github.com/iic-jku/klayout-productivity-suite) with various iic-jku KLayout plugins
+- [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS, with packages: [klayout-pex](https://github.com/iic-jku/klayout-pex), [klive](https://github.com/KLayout/klive), [xsection](https://github.com/KLayout/xsection), [klayout_em_export](https://github.com/VolkerMuehlhaus/klayout_em_export) to set up `palace` and `openems` EM simulations from a layout, and [klayout-productivity-suite](https://github.com/iic-jku/klayout-productivity-suite) with various iic-jku KLayout plugins
 - [lctime](https://codeberg.org/librecell/lctime) Characterization kit for CMOS cells
 - [librelane](https://github.com/librelane/librelane) successor of OpenLane(2), RTL2GDS flow scripts
 - [magic](https://github.com/rtimothyedwards/magic) layout editor with DRC and PEX
