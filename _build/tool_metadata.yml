@@ -33,7 +33,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 5bbcab2574b3433e8b2cfd5c87453bb3a9b39961
+  commit: af170a0b5adf0dc35c71f9d7f813b3dfd61b7d33
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
@@ -45,13 +45,13 @@
   commit: v0.30.13
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
-  commit: 8.3.697
+  commit: 8.3.698
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
   commit: 1.5.328
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: f934534a415c08c04f721826be7a34da5e13ba9b
+  commit: 5e2718b6364e189e414c35b8eef3db4d5e3c0773
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
