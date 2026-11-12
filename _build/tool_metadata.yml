@@ -18,7 +18,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 9cc54bbc189d28d42aec14e046aec7590ae6bad8
+  commit: 8e642a9a5168bfe39bda65e23e5f7a6fdfec1b61
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: c21051d6e5a18b70d0ef7ce398758d7fbec5068e
@@ -33,7 +33,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: 3c970ad81a04a3d6431c8ac341db486a901603be
+  commit: 5bbcab2574b3433e8b2cfd5c87453bb3a9b39961
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
@@ -51,7 +51,7 @@
   commit: 1.5.328
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: b9c719481de1b2e7586bfc6fe4ad277d1a55be10
+  commit: f934534a415c08c04f721826be7a34da5e13ba9b
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -73,7 +73,7 @@
   commit: 622ac90e3f37700445df424779465e6a25d3c155
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: eba208b8ee384c719e503d07dacf24dfdf924f44
+  commit: b56f3a6a26fcab9c6f86604358ae5ac0a9a28ce1
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: c4d317e4fa2398b9880920a1411c20258a2175a9
@@ -90,13 +90,13 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: cf6462f2f476cafb98c639015c40887ddca3c65c
+  commit: 4ae1fcd2a6b88c275fb243db635f40ef5d3503c9
 - name: prjtrellis
   repo: https://github.com/YosysHQ/prjtrellis.git
   commit: 2d12005ab9703ff60603d7ae91dca254939e671f
 - name: pyopus
   repo: https://codeberg.org/arpadbuermen/PyOPUS.git
-  commit: f4f793c7387b248ceca9b5fc81b41bc5499a8626
+  commit: c85208097d001bbbd24f7b40ceef9699e9a8f666
 - name: qflow
   repo: https://github.com/RTimothyEdwards/qflow.git
   commit: 52ecda1053bcbd2f6ec88b8379c8179e2a849f7a
@@ -123,7 +123,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 734c25ca7c2687f5e4a05672af3f8adb4bd4fbf1
+  commit: 62affeb02b95df96a69c36ee5a7c3d6dc8878554
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: ea8879f3825e4844435632e8748ebd750098938c
