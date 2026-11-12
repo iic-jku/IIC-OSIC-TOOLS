@@ -5,7 +5,9 @@ This document summarizes the most important changes of the individual releases o
 ## 2026.11
 
 * [Adding] [`prep-ic`](https://github.com/iic-jku/prep-ic), a GUI and Python API that plans the pad ring, pinout and early floorplan of an IC and exports the LibreLane pad ring files
+* [Adding] `klayout-pex-plugin-kqcircuits` `0.1.1`, a development scaffold that registers an exporter but does not yet translate scenes or install KQCircuits
 * [Adding] KLayout plugin [`klayout_em_export`](https://github.com/VolkerMuehlhaus/klayout_em_export) (menu `EM`), which sets up a Palace or openEMS EM simulation of a layout region for `setupEM` and turns the result back into a circuit with the PDK devices
+* [Update] `klayout-pex` `0.9.0`, with non-rectangular capacitance extraction, updated PDK coefficients, RC-network checks and device-capacitance checks
 * [Update] FasterCap `6.2.1` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS-accelerated matrix products and a fixed hang of the `-pb` block preconditioner
 * [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites, `-s` to select a suite directly, and `-D` to run single rule decks (e.g. `activ,gatpoly`)
 * [Changing] FasterCap results change for inputs with dielectrics (6.0.7 gave values up to 21 % too high in 3D and 24 % in 2D), and can also change on `arm64` for runs with `-a`
