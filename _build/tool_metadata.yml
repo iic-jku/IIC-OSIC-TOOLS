@@ -21,8 +21,7 @@
   commit: 9cc54bbc189d28d42aec14e046aec7590ae6bad8
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
-  commit: 1537d621f2fbb3185a520cd95606e6f8a7989849
-  hold: Later commits need the TwinePool API of Yosys main, bump with the first Yosys release that has it (v0.70 does not)
+  commit: c21051d6e5a18b70d0ef7ce398758d7fbec5068e
 - name: gtkwave
   repo: https://github.com/gtkwave/gtkwave.git
   commit: e40ba7937336824f12f7db870ea36f6f090dd90d
@@ -127,7 +126,7 @@
   commit: 734c25ca7c2687f5e4a05672af3f8adb4bd4fbf1
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
-  commit: adce24f69c19a82e99923053d9f90d8899b04440
+  commit: ea8879f3825e4844435632e8748ebd750098938c
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: 668b9a6a1b474f7b5181b5caed915e8d0a1505bd
@@ -176,14 +175,13 @@
   commit: 948a30febdca52376bd9519e4c3786cc27d925bc
 - name: yosys
   repo: https://github.com/YosysHQ/yosys.git
-  commit: v0.70
+  commit: v0.71
 - name: yosys-eqy
   repo: https://github.com/YosysHQ/eqy.git
-  commit: v0.70
-  hold: eqy v0.71 needs the TwinePool API of Yosys v0.71, bump together with yosys
+  commit: v0.71
 - name: yosys-mcy
   repo: https://github.com/YosysHQ/mcy.git
-  commit: v0.70
+  commit: v0.71
 - name: yosys-sby
   repo: https://github.com/YosysHQ/sby.git
-  commit: v0.70
+  commit: v0.71
