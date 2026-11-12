@@ -43,6 +43,9 @@
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.13
+- name: kqcircuits
+  repo: https://github.com/iqm-finland/KQCircuits.git
+  commit: b3ed0cebfe5d5922f3484aabd32aed452b8433ea
 - name: magic
   repo: https://github.com/rtimothyedwards/magic.git
   commit: 8.3.698

@@ -1,0 +1,43 @@
+Allow the image's current scikit-rf and use its public Circuit import.
+The dependency relaxation is proposed upstream in IIC-OSIC-TOOLS#427:
+https://github.com/iic-jku/IIC-OSIC-TOOLS/issues/427#issuecomment-6819667336
+The RF regression also found that scikit-rf 2.2.0 no longer exports skrf.Circuit.
+Remove each hunk when the pinned source includes the corresponding change.
+
+--- a/klayout_package/python/sim-requirements.in
++++ b/klayout_package/python/sim-requirements.in
+@@ -1,4 +1,4 @@
+ gmsh
+ pandas
+-scikit-rf==0.32.0
++scikit-rf
+ qutip
+--- a/klayout_package/python/scripts/simulations/post_process/calculate_q_from_s.py
++++ b/klayout_package/python/scripts/simulations/post_process/calculate_q_from_s.py
+@@ -23,6 +23,7 @@
+ import json
+ import os
+ import skrf
++from skrf.circuit import Circuit
+ 
+ 
+ def read_snp_network(snp_file):
+@@ -49,14 +50,14 @@
+ 
+     output_data = {"frequencies": list(freq.f)}
+     for i, z0 in enumerate(z0s):
+-        port = skrf.Circuit.Port(freq, "port", z0=z0)
++        port = Circuit.Port(freq, "port", z0=z0)
+         connections = [[(snp_network, i), (port, 0)]]
+         for j, z0j in enumerate(z0s):
+             if j != i:
+-                resistor = skrf.Circuit.SeriesImpedance(freq, z0j, f"res{j}]")
+-                gnd = skrf.Circuit.Ground(freq, f"gnd{j}")
++                resistor = Circuit.SeriesImpedance(freq, z0j, f"res{j}]")
++                gnd = Circuit.Ground(freq, f"gnd{j}")
+                 connections += [[(snp_network, j), (resistor, 0)], [(resistor, 1), (gnd, 0)]]
+-        circ = skrf.Circuit(connections)
++        circ = Circuit(connections)
+         q = [y[0][0].imag / y[0][0].real for y in circ.network.y]
+         if any(v > 0 for v in q):  # ignore ports that gets invalid q values
+             output_data[f"Q_port{i + 1}"] = q

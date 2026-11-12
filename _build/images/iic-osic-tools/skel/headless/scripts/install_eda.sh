@@ -81,13 +81,19 @@ pip3 install $PIP_FLAGS \
 	pyrtl==1.0.3 \
 	pyuvm==5.0.0 \
 	pyverilog==1.3.0 \
+	qutip==5.3.1 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.2.0 \
 	setupEM==0.18.1 \
 	siliconcompiler==0.38.12 \
 	snp2le==0.1.20 \
 	spicelib==1.6.4 \
-	spyci==1.0.2
+	spyci==1.0.2 \
+	versiontag==1.2.0
+
+# The source checkout includes simulation and mask scripts omitted from the PyPI wheel.
+# Register it at its final path without replacing shared dependencies, including APT's gmsh.
+pip3 install $PIP_FLAGS --no-deps -e "${TOOLS}/kqcircuits/klayout_package/python"
 
 # librelane's Toolbox.get_lib_voltage() is the only Liberty reader in the flow
 # that opens the file with a plain open(), so with the PDKs' LIB pointing at

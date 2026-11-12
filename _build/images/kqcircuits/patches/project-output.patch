@@ -1,0 +1,15 @@
+Default outputs to the current project, including for direct Python imports.
+This is image-specific: the source tree under /foss/tools is not user-writable.
+KQC_TMP_PATH still overrides the default and ROOT_PATH still finds bundled scripts.
+
+--- a/klayout_package/python/kqcircuits/defaults.py
++++ b/klayout_package/python/kqcircuits/defaults.py
+@@ -41,7 +41,7 @@
+ if _kqcircuits_path.parts[-3] == "klayout_package":  # developer setup
+     ROOT_PATH = _kqcircuits_path.parents[2]
+ 
+-TMP_PATH = Path(os.getenv("KQC_TMP_PATH", str(ROOT_PATH.joinpath("tmp"))))  # specify alternative tmp directory
++TMP_PATH = Path(os.getenv("KQC_TMP_PATH", str(Path.cwd() / "kqc-output")))
+ _py_path = ROOT_PATH.joinpath("klayout_package/python")
+ 
+ if _kqcircuits_path.parts[-4] == "salt":  # KQC Salt package

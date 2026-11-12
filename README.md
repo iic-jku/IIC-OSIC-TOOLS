@@ -225,6 +225,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS, with packages: [klive](https://github.com/KLayout/klive), [xsection](https://github.com/KLayout/xsection), [klayout_em_export](https://github.com/VolkerMuehlhaus/klayout_em_export) to set up `palace` and `openems` EM simulations from a layout, and [klayout-productivity-suite](https://github.com/iic-jku/klayout-productivity-suite) with various iic-jku KLayout plugins
 - [klayout-pex](https://iic-jku.github.io/klayout-pex-website/) parasitic resistance and capacitance extraction, with `gmsh`, `elmer` and `palace` exporter plugins
 - [klayout-pex-plugin-kqcircuits](https://github.com/iic-jku/klayout-pex-plugin-kqcircuits) development scaffold for a KQCircuits exporter, without export support yet
+- [KQCircuits](https://github.com/iqm-finland/KQCircuits) standalone quantum-circuit layout generation and simulation input export, including simulation and mask examples
 - [lctime](https://codeberg.org/librecell/lctime) Characterization kit for CMOS cells
 - [librelane](https://github.com/librelane/librelane) successor of OpenLane(2), RTL2GDS flow scripts
 - [magic](https://github.com/rtimothyedwards/magic) layout editor with DRC and PEX
@@ -283,7 +284,17 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [yosys](https://github.com/YosysHQ/yosys) Verilog synthesis tool (with GHDL plugin for VHDL synthesis and Slang plugin for SystemVerilog synthesis), incl. `eqy` (equivalence checker), `sby` (formal verification), and `mcy` (mutation coverage)
 - RF toolkit with [FastHenry2](https://github.com/ediloren/FastHenry2), [FasterCap](https://github.com/iic-jku/FasterCap), [openEMS](https://github.com/thliebig/openEMS), and [scikit-rf](https://github.com/scikit-rf/scikit-rf).
 
-The KPEX exporter plugins write inputs for external tools. The KQCircuits toolkit and the Elmer solver executables are not installed in this image.
+The KPEX exporter plugins write inputs for external tools. The KQCircuits exporter plugin remains a development scaffold. Installing the KQCircuits toolkit does not implement that exporter. The Elmer solver executables are not installed.
+
+KQCircuits uses the shared Python environment and a pinned source installation in `/foss/tools/kqcircuits`. From a writable project directory, list the bundled examples or export a small model without starting a GUI or solver:
+
+```bash
+kqc sim ls
+kqc mask ls
+kqc sim waveguides_sim_compare.py --quiet --export-only --n-guides-range 1 1
+```
+
+Outputs default to `./kqc-output`, including when using KQCircuits from Python. Set `KQC_TMP_PATH` before starting Python or `kqc` to choose another directory, for example `KQC_TMP_PATH="$PWD/simulation output" kqc sim waveguides_sim_compare.py --quiet --export-only --n-guides-range 1 1`. The installed source tree stays read-only to ordinary users. KQCircuits GUI integration and solver execution are outside the supported scope of this installation.
 
 The tool versions used for `librelane` (and other tools) are documented in `tool_metadata.yml`. In addition to the EDA tools above, further valuable tools (like `git`) and editors (like `gvim`) are installed. If something useful is missing, please let us know!
 

@@ -5,7 +5,8 @@ This document summarizes the most important changes of the individual releases o
 ## 2026.11
 
 * [Adding] [`prep-ic`](https://github.com/iic-jku/prep-ic), a GUI and Python API that plans the pad ring, pinout and early floorplan of an IC and exports the LibreLane pad ring files
-* [Adding] `klayout-pex-plugin-kqcircuits` `0.1.1`, a development scaffold that registers an exporter but does not yet translate scenes or install KQCircuits
+* [Adding] `klayout-pex-plugin-kqcircuits` `0.1.1`, a development scaffold that registers an exporter but does not yet translate scenes
+* [Adding] `KQCircuits` for standalone layout generation and simulation input export, with bundled examples and writable project outputs
 * [Adding] KLayout plugin [`klayout_em_export`](https://github.com/VolkerMuehlhaus/klayout_em_export) (menu `EM`), which sets up a Palace or openEMS EM simulation of a layout region for `setupEM` and turns the result back into a circuit with the PDK devices
 * [Update] `klayout-pex` `0.9.0`, with non-rectangular capacitance extraction, updated PDK coefficients, RC-network checks and device-capacitance checks
 * [Update] `yosys` `0.71` (was `0.70`) together with `eqy`, `sby`, `mcy` and the GHDL and Slang plugins, fixing a unary `-`, `~` or `!` in front of a size cast that `read_verilog -sv` silently dropped
