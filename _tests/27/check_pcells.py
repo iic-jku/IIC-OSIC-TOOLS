@@ -83,9 +83,10 @@ EXPECTED = {
     "ihp-sg13cmos5l": {
         # 24 until the PDK gained cap_cmomf and guard_ring on 2026-08-11,
         # 26 until chipText (upstream d8261b7f, 2026-09-07, which added the
-        # PCell to both IHP PDKs at once).
-        # SG13_dev registers 26, SG13_native_pcell_lib adds Via.
-        "count": 27,
+        # PCell to both IHP PDKs at once), 27 until moscap_n and moscap_p
+        # (upstream IHP-Open-PDK#1272, merged 2026-11-06).
+        # SG13_dev registers 28, SG13_native_pcell_lib adds Via.
+        "count": 29,
         "known_bad": {},
     },
 }
