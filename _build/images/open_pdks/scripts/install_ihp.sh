@@ -242,6 +242,12 @@ rm -rf "$PDK_ROOT/$PDK/libs.doc/meas"
 # runs before the Liberty compression below, which then covers it as well.
 bash "$PDK_SCRIPT_DIR/install_ez130.sh"
 
+# LibreLane PAD_LIBS covers the 1.2 V core corners only, add the 1.5 V ones the
+# IO library ships too. Remove once iic-jku/IHP-Open-PDK registers them in
+# libs.tech/librelane/sg13g2_io/config.tcl. Runs before the compression below,
+# which rewrites the added paths to .lib.gz.
+python3 "$PDK_SCRIPT_DIR/fix_librelane_pad_libs.py" "$PDK_ROOT/$PDK" sg13g2_io
+
 # gzip Liberty (.lib) files
 bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/$PDK"
 

@@ -217,6 +217,11 @@ fi
 
 rm -rf "/tmp/${VACASK_NAME}"
 
+# LibreLane PAD_LIBS covers the 1.2 V core corners only, add the 1.5 V ones (see
+# install_ihp.sh). Remove once iic-jku/IHP-Open-PDK registers them in
+# libs.tech/librelane/sg13cmos5l_io/config.tcl.
+python3 "$PDK_SCRIPT_DIR/fix_librelane_pad_libs.py" "$PDK_ROOT/$PDK" sg13cmos5l_io
+
 # gzip Liberty (.lib) files. The SRAM and thick-oxide standard-cell Liberty
 # files are symlinks into the SG13G2 PDK and are already compressed by
 # install_ihp.sh; gzip_liberty.sh leaves those links alone and only rewrites
