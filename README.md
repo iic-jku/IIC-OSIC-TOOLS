@@ -43,6 +43,7 @@
       - [5.1.1 SELinux (Fedora, RHEL and Clones)](#511-selinux-fedora-rhel-and-clones)
     - [5.2 Distrobox](#52-distrobox)
   - [6. Support with Issues/Problems/Bugs](#6-support-with-issuesproblemsbugs)
+  - [7. Contributors](#7-contributors)
 
 ## 1. How to Use These Open-Source (and Free) IC Design Tools
 
@@ -589,3 +590,36 @@ We are open to your questions about this container and are very thankful for you
 - Finally, if you can exactly know how to fix the reported error, we are also happy if you open a pull request with a fix!
 
  Thank you for your cooperation!
+
+## 7. Contributors
+
+The following people contributed to IIC-OSIC-TOOLS (listed alphabetically, based on the git history):
+
+- Adan Kvitschal
+- Aquiles Viza
+- Clyde Laforge
+- Daniel Gerlicher
+- Daniel Schultz
+- Dario Quintero
+- fkwilken
+- Gaofeng Fan
+- Georg Zachl
+- Harald Pretl
+- JakobRat
+- Julian Schwarz
+- Kareem Farid
+- Manuel Moser
+- Martin Jan Köhler
+- Mateo Buteler
+- Matt Venn
+- Matt Young
+- Michael Köfinger
+- mixkrip
+- Mohamed Kassem
+- Patrick Fath
+- Philippe Sauter
+- Rob Taylor
+- Santiago Hofwimmer
+- Simon Dorrer
+- Stefan Wallentowitz
+- Taichi Ishitani
