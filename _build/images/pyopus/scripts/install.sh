@@ -38,9 +38,17 @@ cd /tmp && rm -rf "${PYOPUS_NAME}"
 # sphinx_rtd_theme and graphviz). The HTML build is published per release only,
 # so install the one of the release the pinned commit descends from.
 PYOPUS_DOC_URL="https://fides.fe.uni-lj.si/pyopus/download"
-wget --no-verbose "$PYOPUS_DOC_URL/$PYOPUS_RELEASE/PyOPUS-$PYOPUS_RELEASE-doc-demo.tar.gz"
-tar xfz "PyOPUS-$PYOPUS_RELEASE-doc-demo.tar.gz"
-mv "PyOPUS-$PYOPUS_RELEASE/docsrc/_build/html" "$TOOLS/$PYOPUS_NAME/doc"
-rm -rf "PyOPUS-$PYOPUS_RELEASE" "PyOPUS-$PYOPUS_RELEASE-doc-demo.tar.gz"
+# The tarball and its top directory are named pyopus-<rel> from 0.14 on, PyOPUS-<rel> before.
+PYOPUS_DOC_DIR=""
+for name in "pyopus-$PYOPUS_RELEASE" "PyOPUS-$PYOPUS_RELEASE"; do
+    if wget --no-verbose "$PYOPUS_DOC_URL/$PYOPUS_RELEASE/$name-doc-demo.tar.gz"; then
+        PYOPUS_DOC_DIR="$name"
+        break
+    fi
+done
+[ -n "$PYOPUS_DOC_DIR" ] || { echo "[ERROR] PyOPUS $PYOPUS_RELEASE doc tarball not found"; exit 1; }
+tar xfz "$PYOPUS_DOC_DIR-doc-demo.tar.gz"
+mv "$PYOPUS_DOC_DIR/docsrc/_build/html" "$TOOLS/$PYOPUS_NAME/doc"
+rm -rf "$PYOPUS_DOC_DIR" "$PYOPUS_DOC_DIR-doc-demo.tar.gz"
 
 echo "${PYOPUS_NAME} ${PYOPUS_REPO_COMMIT}" > "${TOOLS}/${PYOPUS_NAME}/SOURCES"
