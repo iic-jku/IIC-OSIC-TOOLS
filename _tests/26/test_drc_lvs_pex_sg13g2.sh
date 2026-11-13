@@ -46,6 +46,8 @@ if make regression >> "$LOG" 2>&1; then
     echo "[INFO] Test <open-pdks regression tests with ihp-sg13g2> passed."
     exit 0
 else
+    # Name the failing cells here: the log file is gone once a CI runner ends.
+    grep '^\[REGRESSION\] SUMMARY: UNEXPECTED' "$LOG" || tail -n 5 "$LOG"
     echo "[ERROR] Test <open-pdks regression tests with ihp-sg13g2> FAILED! Check the log file $LOG for details."
     exit 1
 fi
