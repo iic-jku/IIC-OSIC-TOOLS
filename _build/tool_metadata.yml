@@ -127,6 +127,7 @@
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: ea8879f3825e4844435632e8748ebd750098938c
+  hold: c8120602 calls IdString(std::string), which Yosys 0.71 (twines) no longer has, release the hold once povik/sv-elab PR 425 is merged
 - name: spicebind
   repo: https://github.com/themperek/spicebind.git
   commit: 668b9a6a1b474f7b5181b5caed915e8d0a1505bd
