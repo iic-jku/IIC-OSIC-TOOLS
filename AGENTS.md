@@ -100,6 +100,7 @@ IIC_TEST_NO_PULL=1 ./run_integration_tests.sh <registry>/iic-osic-tools:<tag>   
 ## Conventions
 
 - Work lands on `next_release`, and `main` receives it at the monthly release (tags `YYYY.MM`).
+- Feature branches must never track `next_release` on any remote. Create them with `git switch --no-track -c <feature> <remote>/next_release`, and leave the upstream unset until publishing to the corresponding remote feature branch. Renaming preserves tracking, so check `git branch -vv` after creation or rename and remove an incorrect upstream with `git branch --unset-upstream <feature>`. When publishing, use an explicit destination, e.g. `git push --set-upstream <remote> HEAD:refs/heads/<feature>`.
 - The nightly workflow (`.github/workflows/nightly.yaml`, section "Nightly build" of `_build/README.md`) force-resets branch `nightly` from `next_release` on each scheduled run (Sunday to Thursday nights). Never commit to `nightly`.
 - Scripts and Dockerfiles start with the SPDX block used throughout the repo (`SPDX-FileCopyrightText`, `SPDX-License-Identifier: Apache-2.0`). Copy it from a neighboring file. Markdown files carry none.
 - Build and install scripts use `set -e`. Messages start with `[INFO]`, `[WARNING]` or `[ERROR]`.
