@@ -13,7 +13,7 @@ FROM ${TOOL_IMAGE_XYCE} AS xyce
 
 FROM ${TOOL_IMAGE_OSIC_MULTITOOL} AS open_pdks
 ARG VACASK_REPO_URL="https://codeberg.org/arpadbuermen/VACASK.git"
-ARG VACASK_REPO_COMMIT="f29d2b0ea571654f4f6805350b5f1eb364ab10ab"
+ARG VACASK_REPO_COMMIT="d41e5e3d6ffdd97dd3342b391bc1c7a335d0e581"
 ARG VACASK_NAME="vacask"
 ARG EZ130_URL="https://iis-people.ee.ethz.ch/~iisdatasets/iip/ezlib/ihp130_8t/v1p1/ez130_8t_v1p1.zip"
 ARG EZ130_MIRROR_URL="https://github.com/osic-tools/ez130-mirror/releases/download/v1p1/ez130_8t_v1p1.zip"

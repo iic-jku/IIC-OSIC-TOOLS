@@ -63,7 +63,7 @@ pip3 install $PIP_FLAGS \
 	edalize==0.6.8 \
 	fault-dft==0.9.4 \
 	fusesoc==2.4.7 \
-	gds2palace==0.10.2 \
+	gds2palace==0.10.5 \
 	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
@@ -76,7 +76,7 @@ pip3 install $PIP_FLAGS \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev6 \
 	najaeda==0.7.35 \
-	prep-ic==0.1.2 \
+	prep-ic==0.2.0 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
 	pyuvm==5.0.0 \
@@ -84,7 +84,7 @@ pip3 install $PIP_FLAGS \
 	qutip==5.3.1 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.2.0 \
-	setupEM==0.18.1 \
+	setupEM==0.18.2 \
 	siliconcompiler==0.38.12 \
 	snp2le==0.1.20 \
 	spicelib==1.6.4 \

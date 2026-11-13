@@ -7,7 +7,7 @@
 ARG TOOL_IMAGE_OPENVAF="registry.iic.jku.at:5000/iic-osic-tools:tool-openvaf-latest"
 FROM ${TOOL_IMAGE_OPENVAF} AS vacask
 ARG VACASK_REPO_URL="https://codeberg.org/arpadbuermen/VACASK.git"
-ARG VACASK_REPO_COMMIT="f29d2b0ea571654f4f6805350b5f1eb364ab10ab"
+ARG VACASK_REPO_COMMIT="d41e5e3d6ffdd97dd3342b391bc1c7a335d0e581"
 ARG VACASK_NAME="vacask"
 RUN --mount=type=bind,source=images/vacask,target=/images/vacask \
     bash /images/vacask/scripts/install.sh
