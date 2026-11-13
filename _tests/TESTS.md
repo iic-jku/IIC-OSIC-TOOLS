@@ -88,3 +88,4 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 43       | `run_palace` with two MPI processes (ihp-sg13g2 inductor example meshed by gds2palace, one frequency at order 1)                |
 | 44       | `USER` in a login shell started like a `docker exec`, without nss_wrapper (one line, matches `getpass.getuser()`)               |
 | 45       | `buildxyceplugin` compiles a Verilog-A model into a Xyce plugin (ihp-sg13g2 `r3_cmc`, same results as the PDK's prebuilt one)   |
+| 46       | KQCircuits standalone export (non-root, output paths, layout and simulation inputs, scikit-rf postprocessing)                 |

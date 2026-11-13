@@ -299,6 +299,20 @@ target "klayout" {
   cache-to   = cache_to("klayout")
 }
 
+target "kqcircuits" {
+  inherits   = ["base-tool"]
+  dockerfile = "images/kqcircuits/Dockerfile"
+  tags       = [img("tool-kqcircuits-latest")]
+  contexts = {
+    "ctx-base-dev" = basedep("base-dev")
+  }
+  args = {
+    BASE_IMAGE_BUILD = "ctx-base-dev"
+  }
+  cache-from = tool_cache_from("kqcircuits")
+  cache-to   = cache_to("kqcircuits")
+}
+
 target "magic" {
   inherits   = ["base-tool"]
   dockerfile = "images/magic/Dockerfile"
@@ -869,6 +883,7 @@ target "image-full" {
     "ctx-kactus2"              = tooldep("kactus2")
     "ctx-kepler-formal"        = tooldep("kepler-formal")
     "ctx-klayout"              = tooldep("klayout")
+    "ctx-kqcircuits"           = tooldep("kqcircuits")
     "ctx-magic"                = tooldep("magic")
     "ctx-netgen"               = tooldep("netgen")
     "ctx-ngspice"              = tooldep("ngspice")
@@ -922,6 +937,7 @@ target "image-full" {
     TOOL_IMAGE_KACTUS2             = "ctx-kactus2"
     TOOL_IMAGE_KEPLER_FORMAL       = "ctx-kepler-formal"
     TOOL_IMAGE_KLAYOUT             = "ctx-klayout"
+    TOOL_IMAGE_KQCIRCUITS          = "ctx-kqcircuits"
     TOOL_IMAGE_MAGIC               = "ctx-magic"
     TOOL_IMAGE_NETGEN              = "ctx-netgen"
     TOOL_IMAGE_NGSPICE             = "ctx-ngspice"
@@ -992,6 +1008,7 @@ group "tools" {
     "kactus2",
     "kepler-formal",
     "klayout",
+    "kqcircuits",
     "magic",
     "netgen",
     "ngspice",
@@ -1050,6 +1067,7 @@ group "tools-level-1" {
     "kactus2",
     "kepler-formal",
     "klayout",
+    "kqcircuits",
     "magic",
     "netgen",
     "ngspyce",

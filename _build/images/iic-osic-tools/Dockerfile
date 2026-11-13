@@ -20,6 +20,7 @@ ARG TOOL_IMAGE_IVERILOG="registry.iic.jku.at:5000/iic-osic-tools:tool-iverilog-l
 ARG TOOL_IMAGE_KACTUS2="registry.iic.jku.at:5000/iic-osic-tools:tool-kactus2-latest"
 ARG TOOL_IMAGE_KEPLER_FORMAL="registry.iic.jku.at:5000/iic-osic-tools:tool-kepler-formal-latest"
 ARG TOOL_IMAGE_KLAYOUT="registry.iic.jku.at:5000/iic-osic-tools:tool-klayout-latest"
+ARG TOOL_IMAGE_KQCIRCUITS="registry.iic.jku.at:5000/iic-osic-tools:tool-kqcircuits-latest"
 ARG TOOL_IMAGE_MAGIC="registry.iic.jku.at:5000/iic-osic-tools:tool-magic-latest"
 ARG TOOL_IMAGE_NETGEN="registry.iic.jku.at:5000/iic-osic-tools:tool-netgen-latest"
 ARG TOOL_IMAGE_NGSPICE="registry.iic.jku.at:5000/iic-osic-tools:tool-ngspice-latest"
@@ -71,6 +72,7 @@ FROM ${TOOL_IMAGE_IVERILOG} AS iverilog
 FROM ${TOOL_IMAGE_KACTUS2} AS kactus2
 FROM ${TOOL_IMAGE_KEPLER_FORMAL} AS kepler-formal
 FROM ${TOOL_IMAGE_KLAYOUT} AS klayout
+FROM ${TOOL_IMAGE_KQCIRCUITS} AS kqcircuits
 FROM ${TOOL_IMAGE_MAGIC} AS magic
 FROM ${TOOL_IMAGE_NETGEN} AS netgen
 FROM ${TOOL_IMAGE_NGSPICE} AS ngspice
@@ -133,6 +135,7 @@ COPY --link --from=iverilog                     ${TOOLS}/iverilog               
 COPY --link --from=kactus2                      ${TOOLS}/kactus2                ${TOOLS}/kactus2/
 COPY --link --from=kepler-formal                ${TOOLS}/kepler-formal          ${TOOLS}/kepler-formal/
 COPY --link --from=klayout                      ${TOOLS}/klayout                ${TOOLS}/klayout/
+COPY --link --from=kqcircuits                   ${TOOLS}/kqcircuits             ${TOOLS}/kqcircuits/
 COPY --link --from=magic                        ${TOOLS}/magic                  ${TOOLS}/magic/
 COPY --link --from=netgen                       ${TOOLS}/netgen                 ${TOOLS}/netgen/
 COPY --link --from=ngspice                      ${TOOLS}/ngspice                ${TOOLS}/ngspice/
