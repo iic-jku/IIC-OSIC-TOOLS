@@ -76,7 +76,7 @@ pip3 install $PIP_FLAGS \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev6 \
 	najaeda==0.7.35 \
-	prep-ic==0.2.0 \
+	prep-ic==0.2.1 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \
 	pyuvm==5.0.0 \
