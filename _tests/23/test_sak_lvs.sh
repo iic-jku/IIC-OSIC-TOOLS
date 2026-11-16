@@ -144,7 +144,7 @@ lvs_error_classes() {
     done
 }
 
-# xschem schematic inv.sch with -b (both engines), then with the NMOS width doubled by <widen>
+# xschem schematic inv.sch with -b (both engines), then with the NMOS width doubled by <widen> (each engine)
 lvs_schematic() {
     local label=$1
     local widen=$2
@@ -154,6 +154,7 @@ lvs_schematic() {
     check "$label: -b wrote the reports of both engines" 0 bash -c "[ -f '$ws/inv.magic.lvs/inv.lvs.out' ] && find '$ws/inv.klayout.lvs' -name '*.lvsdb' | grep -q ."
     mutate w "$D/inv.sch" "$ws/wide/inv.sch" "$widen" || return
     check "$label: -m schematic with NMOS width doubled" 1 "$SAK" -m -s "$ws/wide/inv.sch" -l "$D/inv.gds" -c inv -w "$ws/wide"
+    check "$label: -k schematic with NMOS width doubled" 1 "$SAK" -k -s "$ws/wide/inv.sch" -l "$D/inv.gds" -c inv -w "$ws/wide"
 }
 
 # ============================================================================

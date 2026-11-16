@@ -4,7 +4,7 @@
 
 - Magic+Netgen (`-m`) and KLayout (`-k`) LVS on a known-good standard cell inverter in all supported PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l)
 - input variants: SPICE and CDL netlists, `.gds`/`.mag`/`.klay.gds` layouts, gzipped layouts, positional auto-derive (resolved against the current dir), multi-level `-w` work dirs, `-d` debug
-- xschem schematic (`inv.sch`) in every PDK with `-b`: the schematic is netlisted once per engine and both engines run. In the IHP PDKs this is the path on which the symbols write the Monte Carlo switch `mm_ok=1` into the SPICE netlist, in sky130A the path with subcircuit calls and W and L in micrometers
+- xschem schematic (`inv.sch`) in every PDK with `-b`: the schematic is netlisted once per engine and both engines run. With the NMOS width doubled in the schematic, each engine has to fail. In the IHP PDKs this is the path on which the symbols write the Monte Carlo switch `mm_ok=1` into the SPICE netlist, in sky130A the path with subcircuit calls and W and L in micrometers
 - Verilog netlist with a hierarchical layout of two standard cells (ihp-sg13g2), and the same layout against netlists on transistor level
 - engine selection: `-b` fallback behavior, last-flag-wins
 - error classes: a netlist with one deliberate error must fail with exit 1 (see below)
