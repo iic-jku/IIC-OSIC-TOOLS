@@ -89,4 +89,5 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 44       | `USER` in a login shell started like a `docker exec`, without nss_wrapper (one line, matches `getpass.getuser()`)               |
 | 45       | `buildxyceplugin` compiles a Verilog-A model into a Xyce plugin (ihp-sg13g2 `r3_cmc`, same results as the PDK's prebuilt one)   |
 | 46       | KQCircuits standalone export (non-root, output paths, layout and simulation inputs, scikit-rf postprocessing)                 |
+| 47       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) (DRC, LVS, PEX) with gf180mcuD              |
 | 48       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) (DRC, LVS, PEX) with sky130A                |
