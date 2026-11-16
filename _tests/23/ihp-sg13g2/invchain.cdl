@@ -1,0 +1,7 @@
+.SUBCKT invchain A Y VDD VSS
+*.PININFO A:I Y:O VDD:B VSS:B
+MN0 n1 A VSS VSS sg13_lv_nmos m=1 w=740.00n l=130.00n ng=1
+MP0 n1 A VDD VDD sg13_lv_pmos m=1 w=1.12u l=130.00n ng=1
+MN1 Y n1 VSS VSS sg13_lv_nmos m=1 w=740.00n l=130.00n ng=1
+MP1 Y n1 VDD VDD sg13_lv_pmos m=1 w=1.12u l=130.00n ng=1
+.ENDS
