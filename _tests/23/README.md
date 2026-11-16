@@ -14,6 +14,8 @@
 
 Set `SAK_LVS=<path>` to test a not-yet-installed version of the script.
 
+Every check is about the behaviour of `sak-lvs.sh`, none depends on an open issue of a PDK or tool. Cases where a PDK deck cannot be used as `sak-lvs.sh` calls it are left out here; they belong to the [open-pdks-regression-tests](https://github.com/iic-jku/open-pdks-regression-tests).
+
 The test reports only its verdict on the console; the per-case `[PASS]`/`[FAIL]` results and the full command output go into the log. Set `SAK_TEST_VERBOSE=1` to get every case on the console while debugging a regression.
 
 ## Error classes
@@ -31,7 +33,7 @@ The erroneous netlists are written at runtime from the correct one (function `mu
 
 For `w`, `l` and `m` the test also checks that the Netgen report shows a topology match with property errors. These are the cases a script passes if it only looks for `Circuits match uniquely`.
 
-Magic+Netgen runs all kinds in all PDKs. A KLayout run takes 4 to 11 s (Magic+Netgen: less than 1 s), so KLayout runs all kinds in ihp-sg13g2 and `w` and `port` in the other PDKs.
+Magic+Netgen runs all kinds in all PDKs. A KLayout run takes 4 to 11 s (Magic+Netgen: less than 1 s), so KLayout runs all kinds in ihp-sg13g2, `w` and `port` in ihp-sg13cmos5l, and `w` in gf180mcuD and sky130A. Their KLayout decks do not compare port names (in gf180mcuD `sak-lvs.sh` runs the deck with `check_ports=false`, because the deck names the substrate `SUB` and a bulk pin such as `VPW` of an untapped standard cell can never match).
 
 The verdict cases use a stand-in for `netgen` that writes a given report, because results like `Circuits match uniquely with port errors.` or property errors in a subcell only cannot be provoked with an inverter. Magic runs for real in these cases.
 
@@ -41,9 +43,9 @@ The data files are derived from the standard cell libraries of the installed
 PDKs (`libs.ref/<stdcell-lib>/{gds,cdl,spice}`):
 
 - `<cell>.gds`: the inverter cell extracted from the library GDS with KLayout
-- `<cell>.cdl` / `<cell>.spice`: the inverter subcircuit cut out of the library netlists
+- `<cell>.cdl` / `<cell>.spice`: the inverter subcircuit cut out of the library netlists (sky130A: `.spice` only)
 - `<cell>_broken.*` (ihp-sg13g2): first device card with two terminals swapped, guaranteed LVS mismatch
-- `<cell>_xschem.cdl` (sky130A): the inverter written by hand in the form xschem uses for the `sky130_fd_pr` symbols (`XM0 Y A VGND VNB sky130_fd_pr__nfet_01v8 L=0.15 W=0.65 nf=1 m=1`). The library CDL cannot be used for KLayout LVS, see the known issues
+- `<cell>_xschem.cdl` (sky130A): the inverter written by hand in the form xschem uses for the `sky130_fd_pr` symbols (`XM0 Y A VGND VNB sky130_fd_pr__nfet_01v8 L=0.15 W=0.65 nf=1 m=1`). The library CDL of sky130A does not match in KLayout LVS as `sak-lvs.sh` calls the deck (fossi-foundation/open-pdks#531), so it is not part of the test data
 - `<cell>_wrongtop.gds` (ihp-sg13g2): top cell renamed so it does not match the file name, triggers the top cell guard
 - `<cell>.mag` (ihp-sg13g2): magic-native view written by magic from the GDS
 - `<cell>.klay.gds` (ihp-sg13g2): the inverter saved by KLayout with library context (the `.klay.klib` file is KLayout's library reference belonging to it). The file carries an extra `$$$CONTEXT_INFO$$$` top cell that the GDS top cell guard must tolerate. Magic logs a harmless unknown-layer complaint for the context cell and reads on.
@@ -54,8 +56,3 @@ PDKs (`libs.ref/<stdcell-lib>/{gds,cdl,spice}`):
 - `invchain.v`, `invchain.spice`, `invchain.cdl` (ihp-sg13g2): the netlists for `invchain.gds`, on standard cell level (Verilog) and on transistor level
 
 `make_layouts.py` writes `inv.gds` and `invchain.gds` from the `<cell>.gds` files: `python3 make_layouts.py . <output dir>`.
-
-## Known issues
-
-- sky130A KLayout LVS is reported as `[KNOWN]` instead of failing: the `sky130.lvs` deck reads all schematic device classes upper-case while the layout device classes are lower-case, so the compare never matches (verified with a hand-checked identical netlist). To be fixed upstream in the PDK. See issue: https://github.com/fossi-foundation/open-pdks/issues/531
-- KLayout LVS does not notice a renamed port in gf180mcuD and sky130A, the `port` case passes there and is reported as `[KNOWN]`. In gf180mcuD `sak-lvs.sh` runs the deck with `check_ports=false`: the deck names the substrate `SUB`, so a bulk pin such as `VPW` of an untapped standard cell can never match. Magic+Netgen reports the renamed port in all PDKs.

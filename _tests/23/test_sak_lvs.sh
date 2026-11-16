@@ -45,7 +45,6 @@ fi
 
 PASS=0
 FAIL=0
-KNOWN=0
 
 # All tests of the suite run in parallel and share one console, so a test may
 # only report its verdict there. Per-case results go into the log; set
@@ -85,35 +84,6 @@ check() {
     fi
 }
 
-# like check, but the exit code <known> of an upstream issue counts as [KNOWN];
-# the expected exit code is reported on the console (the issue is gone)
-check_known() {
-    local name=$1
-    local expect=$2
-    local known=$3
-    local why=$4
-    shift 4
-    {
-        echo "===================================================================="
-        echo "==== TEST: $name (expect exit $expect, known issue: exit $known)"
-        echo "==== CMD : $*"
-    } >> "$LOG"
-    "$@" >> "$LOG" 2>&1
-    local rc=$?
-    echo "==== EXIT: $rc" >> "$LOG"
-    if [ "$rc" -eq "$expect" ]; then
-        PASS=$((PASS+1))
-        echo "[PASS] $name" >> "$LOG"
-        echo "[INFO] $name ended with exit $expect, the known issue is gone ($why)."
-    elif [ "$rc" -eq "$known" ]; then
-        KNOWN=$((KNOWN+1))
-        report "[KNOWN] $name: $why (not counted as failure)" 0
-    else
-        FAIL=$((FAIL+1))
-        report "[FAIL] $name (exit $rc, expected $expect or the known $known)" 1
-    fi
-}
-
 # copy a netlist or schematic with one deliberate error, an unchanged copy is a failed case
 #   swap: drain and gate of the first device, short: its gate to its source, del: second device,
 #   port: rename port <arg>, other kinds: apply the sed expression <arg>
@@ -138,7 +108,7 @@ mutate() {
 
 # every error class has to end with exit 1, with -m (SPICE) and -k (CDL); w, l and m must
 # show up as property errors under a matching topology. KLayout runs only <kinds for -k>
-# (4 to 11 s per run). Set before: D, CELL, W, SPICE, CDL, PORT, SED_SPICE, SED_CDL, KNOWN_PASS
+# (4 to 11 s per run). Set before: D, CELL, W, SPICE, CDL, PORT, SED_SPICE, SED_CDL
 declare -A SED_SPICE SED_CDL
 declare -A KIND_TEXT=(
     [w]="NMOS width doubled" [l]="NMOS length doubled" [m]="NMOS multiplier 2" [model]="NMOS of another model"
@@ -162,12 +132,7 @@ lvs_error_classes() {
             [ "$kind" = port ] && arg=$PORT
             net=$W/classes/$kind.$ext
             mutate "$kind" "$src" "$net" "$arg" || continue
-            if echo " $KNOWN_PASS " | grep -q " $eng:$kind "; then
-                check_known "$label: -$eng ${KIND_TEXT[$kind]}" 1 0 "KLayout LVS does not compare the port names here" \
-                    "$SAK" "-$eng" -s "$net" -l "$D/$CELL.gds" -c "$CELL" -w "$W/classes"
-            else
-                check "$label: -$eng ${KIND_TEXT[$kind]}" 1 "$SAK" "-$eng" -s "$net" -l "$D/$CELL.gds" -c "$CELL" -w "$W/classes"
-            fi
+            check "$label: -$eng ${KIND_TEXT[$kind]}" 1 "$SAK" "-$eng" -s "$net" -l "$D/$CELL.gds" -c "$CELL" -w "$W/classes"
             if [ "$eng" = m ]; then
                 rep=$W/classes/$CELL.magic.lvs/$CELL.lvs.out
                 case $kind in
@@ -255,7 +220,6 @@ check "ihp: -k broken CDL reports mismatch"   1 "$SAK" -k -s "$D/${CELL}_broken.
 SPICE=$D/$CELL.spice
 CDL=$D/$CELL.cdl
 PORT=Y
-KNOWN_PASS=""
 SED_SPICE=([w]='s/w=740.00n/w=1.48u/' [l]='0,/l=130.00n/s//l=260.00n/' [m]='0,/ m=1/s// m=2/' [model]='0,/sg13_lv_nmos/s//sg13_hv_nmos/')
 SED_CDL=([w]='s/w=740.00n/w=1.48u/' [l]='0,/l=130.00n/s//l=260.00n/' [m]='0,/ m=1/s// m=2/' [model]='0,/sg13_lv_nmos/s//sg13_hv_nmos/')
 lvs_error_classes "ihp"
@@ -349,7 +313,6 @@ check "cmos5l: -k CDL + GDS"               0 "$SAK" -k -s "$D/$CELL.cdl"   -l "$
 SPICE=$D/$CELL.spice
 CDL=$D/$CELL.cdl
 PORT=Y
-KNOWN_PASS=""
 lvs_error_classes "cmos5l" "w port"
 mutate mm_ok "$SPICE" "$W/classes/mm_ok.spice" '/^X/s/$/ mm_ok=1/' &&
     check "cmos5l: -m SPICE with mm_ok=1"  0 "$SAK" -m -s "$W/classes/mm_ok.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W/classes"
@@ -370,14 +333,13 @@ mkdir -p "$W"
 check "gf180: -m SPICE + GDS"              0 "$SAK" -m -s "$D/$CELL.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 check "gf180: -k CDL + GDS"                0 "$SAK" -k -s "$D/$CELL.cdl"   -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 
-# KNOWN ISSUE: with check_ports=false (see sak-lvs.sh) KLayout LVS does not notice a renamed port
+# -k without the port case: sak-lvs.sh runs the gf180mcu deck with check_ports=false
 SPICE=$D/$CELL.spice
 CDL=$D/$CELL.cdl
 PORT=ZN
-KNOWN_PASS="k:port"
 SED_SPICE=([w]='s/W=8.2e-07/W=1.64e-06/' [l]='s/L=6e-07/L=1.2e-06/' [m]='/nfet/s/$/ m=2/' [model]='s/nfet_05v0/nfet_03v3/')
 SED_CDL=([w]='s/W=8.2e-07/W=1.64e-06/' [l]='s/L=6e-07/L=1.2e-06/' [m]='/nfet/s/$/ m=2/' [model]='s/nfet_05v0/nfet_03v3/')
-lvs_error_classes "gf180" "w port"
+lvs_error_classes "gf180" "w"
 lvs_schematic "gf180" 's/^W=0.82u$/W=1.64u/'
 
 # ============================================================================
@@ -395,26 +357,16 @@ mkdir -p "$W"
 
 check "sky130: -m SPICE + GDS"             0 "$SAK" -m -s "$D/$CELL.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 
-# KNOWN ISSUE: the sky130.lvs KLayout deck reads all schematic device classes
-# upper-case while the layout classes are lower-case, so the compare never
-# matches (checked with a hand-verified identical netlist). The run itself and
-# the result handling of sak-lvs.sh are correct. Report this as known instead
-# of failing, and celebrate when an updated PDK fixes it.
-# see issue: https://github.com/fossi-foundation/open-pdks/issues/531
-check_known "sky130: -k CDL + GDS" 0 1 "mismatch due to the upstream sky130.lvs deck issue" \
-    "$SAK" -k -s "$D/$CELL.cdl" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
-
 # netlist as xschem writes it (subcircuit calls, W and L in micrometers), also the base of the -k error classes
 check "sky130: -k xschem-style CDL + GDS"  0 "$SAK" -k -s "$D/${CELL}_xschem.cdl" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 
-# KNOWN ISSUE: the sky130 deck does not compare port names, KLayout LVS does not notice a renamed port
+# -k without the port case: the sky130 deck does not compare port names
 SPICE=$D/$CELL.spice
 CDL=$D/${CELL}_xschem.cdl
 PORT=Y
-KNOWN_PASS="k:port"
 SED_SPICE=([w]='s/w=650000u/w=1.3e+06u/' [l]='0,/l=150000u/s//l=300000u/' [m]='/nfet/s/$/ m=2/' [model]='s/nfet_01v8 /nfet_01v8_lvt /')
 SED_CDL=([w]='s/W=0.65/W=1.3/' [l]='0,/L=0.15/s//L=0.3/' [m]='0,/m=1/s//m=2/' [model]='s/nfet_01v8 /nfet_01v8_lvt /')
-lvs_error_classes "sky130" "w port"
+lvs_error_classes "sky130" "w"
 lvs_schematic "sky130" 's/^W=0.65$/W=1.3/'
 
 # ============================================================================
@@ -425,6 +377,6 @@ if [ "$FAIL" -ne 0 ]; then
     echo "[ERROR] Test <sak-lvs.sh regression> FAILED! $PASS passed, $FAIL failed. Check the log file $LOG for details."
     exit 1
 else
-    echo "[INFO] Test <sak-lvs.sh regression> passed ($PASS checks, $KNOWN known issue(s))."
+    echo "[INFO] Test <sak-lvs.sh regression> passed ($PASS checks)."
     exit 0
 fi
