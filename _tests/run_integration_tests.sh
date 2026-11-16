@@ -127,7 +127,9 @@ mkdir -p "$HOST_RUNDIR"
 # Test 32 runs the same kind of template regression as 20, on the
 # ihp-sg13cmos5l sibling of that template, so it is queued right next to it.
 # Test 35 runs the PEX benches of four PDKs, so it is queued after 31.
-SLOW_TESTS="28 26 31 35 24 20 32 21 01 10 07 18 22 19 04 15"
+# Test 23 takes 155 s standalone (not measured under contention), so it is
+# queued last.
+SLOW_TESTS="28 26 31 35 24 20 32 21 01 10 07 18 22 19 04 15 23"
 
 # The current directory is bind-mounted at $WORKDIR in the container, so the
 # test list can be assembled here and the paths just re-based. Matching the
