@@ -603,23 +603,18 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 	# ----------------------------
 
 	NETGEN_SETUP="$PDK_ROOT/$PDK/libs.tech/netgen/${PDK}_setup.tcl"
-	# The IHP xschem symbols write the Monte Carlo mismatch switch mm_ok=1 into the SPICE netlist, and the IHP netgen setups
-	# compare it as a device property, so Netgen reports property errors on almost every IHP cell (IHP-Open-PDK #1327). The
-	# CDL netlist (lvs_netlist 1) has no mm_ok, but Magic+Netgen cannot use it: it has M elements where Magic extracts
-	# subcircuit calls (IHP-Open-PDK #1008). mm_ok does not describe the layout, so netgen runs a setup file that sources
-	# the PDK setup and then deletes mm_ok from every cell of both netlists, as the PDK setup does for other parameters.
-	# The netlists stay as they are. For a device without mm_ok netgen logs "No property mm_ok found for device <dev>",
-	# the result is not affected. Once the PDK setup deletes mm_ok itself, this has no effect.
+	# IHP: the xschem symbols write the Monte Carlo switch mm_ok=1 into the SPICE netlist, and the PDK netgen setup compares it as a device property.
+	# It does not describe the layout, so netgen gets a setup that sources the PDK setup and then deletes mm_ok from every cell.
 	if echo "$PDK" | grep -q -i "^ihp-sg13"; then
 		NETGEN_SETUP_PDK="$NETGEN_SETUP"
 		NETGEN_SETUP="$MAGIC_RUNDIR/netgen_setup_${FBASENAME}.tcl"
 		{
-			echo "# Written by sak-lvs.sh: the PDK setup, then mm_ok deleted from every cell (IHP-Open-PDK #1327)."
+			echo "# Written by sak-lvs.sh: the PDK setup, then mm_ok deleted from every cell."
 			echo "source {$NETGEN_SETUP_PDK}"
 			echo 'foreach c [cells list -all -circuit1] { catch {property "-circuit1 $c" delete mm_ok} }'
 			echo 'foreach c [cells list -all -circuit2] { catch {property "-circuit2 $c" delete mm_ok} }'
 		} > "$NETGEN_SETUP"
-		echo "[INFO] Netgen ignores mm_ok, the IHP netgen setups compare it as a property (setup <$NETGEN_SETUP>)."
+		echo "[INFO] Netgen ignores mm_ok (setup <$NETGEN_SETUP>)."
 	fi
 
 	echo "[INFO] Run netgen..."
@@ -645,12 +640,8 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 		[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
 		exit $ERR_NO_RESULT
 	fi
-	# netgen exits with 0 even on a mismatch, so the verdict is read from the report. The report also logs the comparison of
-	# each subcell ("Netlists match uniquely ...", "Netlists do not match."), only the line after "Final result:" judges the
-	# top cell. It reads "Circuits match uniquely." on a match, any other text there (e.g. "... with port errors.", "Netlists
-	# do not match.", "Top level cell failed pin matching.") is a failure. A topology match can still have differing device
-	# parameters (W, L, ...): netgen then adds "Property errors were found.", and "The following cells had property errors:"
-	# lists every such cell, subcells included.
+	# netgen exits with 0 even on a mismatch, so the verdict is read from the report: only "Final result: Circuits match uniquely." passes.
+	# Differing device parameters (W, L, ...) keep that line, so the property errors of the top cell and the subcells are checked separately.
 	grep -q "^Final result: Circuits match uniquely\.$" "$LVS_REPORT" || MAGIC_OK=0
 	if grep -q -e "^Property errors were found\." -e "^The following cells had property errors:" "$LVS_REPORT"; then
 		MAGIC_OK=0
@@ -670,10 +661,7 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	# sky130 and gf180mcu run their LVS deck directly. The IHP PDKs use their run_lvs.py wrapper under klayout/tech/lvs.
 	if echo "$PDK" | grep -q -i "sky130"; then
 		# The sky130 run_lvs.py wrapper is not used because it resolves its deck as $PDK_ROOT/$PDK/sky130.lvs, which does not exist in this installation.
-		# The xschem sky130_fd_pr symbols write each device as a subcircuit call with W and L in micrometers, meant for
-		# .option scale=1e-6 (e.g. "XM1 D G S S sky130_fd_pr__nfet_01v8 L=0.15 W=0.42 nf=1"). convert_subckts=true makes the
-		# deck read these calls as devices, scale=true scales the extracted W and L to the same micrometer values. Without both,
-		# no device matches. A CDL netlist given with -s has to follow the same convention. The wrapper cannot pass convert_subckts.
+		# convert_subckts and scale: xschem writes sky130 devices as subcircuit calls with W and L in micrometers, without both switches no device matches.
 		klayout -b -r "$PDKPATH/libs.tech/klayout/lvs/sky130.lvs" \
 			-rd input="$CELL_LAY" \
 			-rd top_cell="$TOPCELL" \

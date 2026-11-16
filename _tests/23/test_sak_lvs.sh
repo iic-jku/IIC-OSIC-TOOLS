@@ -85,10 +85,8 @@ check() {
     fi
 }
 
-# run one test case that an upstream issue keeps from its expected exit code.
-# The known exit code is reported as [KNOWN] and not counted as a failure. The
-# expected exit code is a pass and gets a line on the console: the issue is
-# gone and the known-issue handling can be removed.
+# like check, but the exit code <known> of an upstream issue counts as [KNOWN];
+# the expected exit code is reported on the console (the issue is gone)
 check_known() {
     local name=$1
     local expect=$2
@@ -116,13 +114,9 @@ check_known() {
     fi
 }
 
-# Write a copy of a netlist or schematic with one deliberate error. A copy that
-# does not differ from the original would test nothing, so that is a failed case.
-#   swap   first device: first and second terminal swapped (drain and gate)
-#   short  first device: second terminal tied to the third (gate to source)
-#   del    second device removed
-#   port   the port <arg> renamed, the layout keeps the old label
-#   other  <arg> is the sed expression, for what depends on the notation of the PDK
+# copy a netlist or schematic with one deliberate error, an unchanged copy is a failed case
+#   swap: drain and gate of the first device, short: its gate to its source, del: second device,
+#   port: rename port <arg>, other kinds: apply the sed expression <arg>
 mutate() {
     local kind=$1
     local in=$2
@@ -142,18 +136,9 @@ mutate() {
     fi
 }
 
-# Error classes of one PDK: every kind of error in the netlist has to end with
-# exit 1, with Magic+Netgen (-m, SPICE netlist) and with KLayout (-k, CDL
-# netlist). The first device of each netlist is the NMOS, the second the PMOS.
-# With w, l and m only a device parameter differs and the topology still
-# matches. Netgen reports that as property errors below a "Circuits match
-# uniquely." result, and the report is checked for exactly this, so that these
-# cases keep testing the property check of sak-lvs.sh.
-# A KLayout run takes 4 to 11 s and a Magic+Netgen run less than 1 s, so only
-# ihp-sg13g2 runs every kind with KLayout. <kinds for -k> limits the others.
-# The caller sets D, CELL, W, the correct netlists SPICE and CDL, the port to
-# rename PORT, the sed expressions SED_SPICE[w|l|m|model] and
-# SED_CDL[w|l|m|model], and KNOWN_PASS, the "<engine>:<kind>" cases known to pass.
+# every error class has to end with exit 1, with -m (SPICE) and -k (CDL); w, l and m must
+# show up as property errors under a matching topology. KLayout runs only <kinds for -k>
+# (4 to 11 s per run). Set before: D, CELL, W, SPICE, CDL, PORT, SED_SPICE, SED_CDL, KNOWN_PASS
 declare -A SED_SPICE SED_CDL
 declare -A KIND_TEXT=(
     [w]="NMOS width doubled" [l]="NMOS length doubled" [m]="NMOS multiplier 2" [model]="NMOS of another model"
@@ -193,11 +178,7 @@ lvs_error_classes() {
     done
 }
 
-# LVS from an xschem schematic. inv.sch is the inverter drawn with the device
-# symbols of the PDK, inv.gds the inverter standard cell with the top cell
-# renamed to inv. With -b sak-lvs.sh netlists the schematic once per engine and
-# runs both. The copy with the NMOS width doubled has to fail.
-# <widen> is the sed expression that doubles the NMOS width in the schematic.
+# xschem schematic inv.sch with -b (both engines), then with the NMOS width doubled by <widen>
 lvs_schematic() {
     local label=$1
     local widen=$2
@@ -279,17 +260,14 @@ SED_SPICE=([w]='s/w=740.00n/w=1.48u/' [l]='0,/l=130.00n/s//l=260.00n/' [m]='0,/ 
 SED_CDL=([w]='s/w=740.00n/w=1.48u/' [l]='0,/l=130.00n/s//l=260.00n/' [m]='0,/ m=1/s// m=2/' [model]='0,/sg13_lv_nmos/s//sg13_hv_nmos/')
 lvs_error_classes "ihp"
 
-# The IHP xschem symbols write the Monte Carlo mismatch switch mm_ok=1 into the SPICE netlist. It does not describe the
-# layout, so it must not cause a property error.
+# mm_ok=1 as written by the IHP xschem symbols must not cause a property error
 mutate mm_ok "$SPICE" "$W/classes/mm_ok.spice" '/^X/s/$/ mm_ok=1/' &&
     check "ihp: -m SPICE with mm_ok=1"     0 "$SAK" -m -s "$W/classes/mm_ok.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W/classes"
 
 # xschem schematic, both engines
 lvs_schematic "ihp" 's/^w=0.74u$/w=1.48u/'
 
-# Verilog netlist of a digital block. invchain.gds has two sg13g2_inv_1 instances in series. With a Verilog netlist
-# sak-lvs.sh keeps the hierarchy of the layout and Netgen compares the standard cells as black boxes. In the second
-# run the input of the second inverter is moved to the input of the block.
+# Verilog netlist against a hierarchical layout of two inverters, then with the second one rewired
 W6=$WORKDIR/ihp_hier
 mkdir -p "$W6/rewired"
 check "ihp: -m Verilog + hierarchical GDS"  0 "$SAK" -m -s "$D/invchain.v" -l "$D/invchain.gds" -c invchain -w "$W6"
@@ -299,10 +277,7 @@ mutate rewire "$D/invchain.v" "$W6/rewired/invchain.v" 's/\.A(n1)/.A(A)/' &&
 check "ihp: -m SPICE + hierarchical GDS"    0 "$SAK" -m -s "$D/invchain.spice" -l "$D/invchain.gds" -c invchain -w "$W6"
 check "ihp: -k CDL + hierarchical GDS"      0 "$SAK" -k -s "$D/invchain.cdl"   -l "$D/invchain.gds" -c invchain -w "$W6"
 
-# The verdict of a Magic+Netgen run is read from the Netgen report. Not every result of Netgen can be provoked with an
-# inverter, so here a stand-in for netgen writes a given report and sak-lvs.sh has to judge it. Magic runs for real.
-# The sentences are the ones of Netgen 1.5 (tcltk/tclnetgen.c, tcltk/netgen.tcl.in). Only "Final result: Circuits
-# match uniquely." without property errors is a pass.
+# verdict: a stand-in for netgen writes a given report, for results an inverter cannot provoke
 W7=$WORKDIR/ihp_verdict
 mkdir -p "$W7/bin"
 cat > "$W7/bin/netgen" <<'EOF'
@@ -370,7 +345,7 @@ mkdir -p "$W"
 check "cmos5l: -m SPICE + GDS"             0 "$SAK" -m -s "$D/$CELL.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 check "cmos5l: -k CDL + GDS"               0 "$SAK" -k -s "$D/$CELL.cdl"   -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 
-# the netlists use the notation of ihp-sg13g2, so SED_SPICE and SED_CDL stay as they are
+# same netlist notation as ihp-sg13g2, SED_SPICE and SED_CDL are reused
 SPICE=$D/$CELL.spice
 CDL=$D/$CELL.cdl
 PORT=Y
@@ -395,8 +370,7 @@ mkdir -p "$W"
 check "gf180: -m SPICE + GDS"              0 "$SAK" -m -s "$D/$CELL.spice" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 check "gf180: -k CDL + GDS"                0 "$SAK" -k -s "$D/$CELL.cdl"   -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 
-# KNOWN ISSUE: sak-lvs.sh runs the gf180mcu deck with check_ports=false, because the bulk pins of an untapped standard
-# cell can never match (see the comment in sak-lvs.sh). KLayout LVS therefore does not notice a renamed port.
+# KNOWN ISSUE: with check_ports=false (see sak-lvs.sh) KLayout LVS does not notice a renamed port
 SPICE=$D/$CELL.spice
 CDL=$D/$CELL.cdl
 PORT=ZN
@@ -430,11 +404,10 @@ check "sky130: -m SPICE + GDS"             0 "$SAK" -m -s "$D/$CELL.spice" -l "$
 check_known "sky130: -k CDL + GDS" 0 1 "mismatch due to the upstream sky130.lvs deck issue" \
     "$SAK" -k -s "$D/$CELL.cdl" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 
-# KLayout LVS matches a netlist as xschem writes it for the sky130_fd_pr symbols: subcircuit calls with W and L in
-# micrometers. The error classes for KLayout start from this netlist.
+# netlist as xschem writes it (subcircuit calls, W and L in micrometers), also the base of the -k error classes
 check "sky130: -k xschem-style CDL + GDS"  0 "$SAK" -k -s "$D/${CELL}_xschem.cdl" -l "$D/$CELL.gds" -c "$CELL" -w "$W"
 
-# KNOWN ISSUE: the sky130 deck does not compare the port names either, KLayout LVS does not notice a renamed port.
+# KNOWN ISSUE: the sky130 deck does not compare port names, KLayout LVS does not notice a renamed port
 SPICE=$D/$CELL.spice
 CDL=$D/${CELL}_xschem.cdl
 PORT=Y
