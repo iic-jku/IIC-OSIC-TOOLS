@@ -131,7 +131,9 @@ mkdir -p "$HOST_RUNDIR"
 # sky130A. Standalone its `make regression` takes about twice as long as that
 # of 26 (18 min against 10 min on 8 cores; not measured under contention), so
 # it is queued before 26.
-SLOW_TESTS="28 48 26 31 35 24 20 32 21 01 10 07 18 22 19 04 15"
+# Test 23 takes about 3 min standalone (not measured under contention), so it
+# is queued last.
+SLOW_TESTS="28 48 26 31 35 24 20 32 21 01 10 07 18 22 19 04 15 23"
 
 # The current directory is bind-mounted at $WORKDIR in the container, so the
 # test list can be assembled here and the paths just re-based. Matching the
