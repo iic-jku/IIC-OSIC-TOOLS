@@ -8,6 +8,7 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] `klayout-pex-plugin-kqcircuits` `0.1.1`, a development scaffold that registers an exporter but does not yet translate scenes
 * [Adding] `KQCircuits` for standalone layout generation and simulation input export, with bundled examples and writable project outputs
 * [Adding] KLayout plugin [`klayout_em_export`](https://github.com/VolkerMuehlhaus/klayout_em_export) (menu `EM`), which sets up a Palace or openEMS EM simulation of a layout region for `setupEM` and turns the result back into a circuit with the PDK devices
+* [Adding] KLayout plugin [`klayout-NAT`](https://github.com/flagar0/klayout_nat) (toolbar buttons `LiveDRC`, `LivePEX` and `Import Netlist`), which runs the `ihp-sg13g2` DRC on every save, runs a Magic PEX from a panel (`ihp-sg13g2` and `sky130A`), places an `xschem` netlist as `ihp-sg13g2` PCells named after the SPICE instances and draws ratsnest lines between devices on the same net
 * [Adding] the UVM 2020-3.2 library that Verilator is tested against, in `$UVM_HOME` (see `$UVM_HOME/README.md`)
 * [Adding] `universal-ctags`, which editors use for go-to-definition in Verilog, SystemVerilog and VHDL
 * [Update] `snp2le` `0.2.0` or later (was `0.1.20`), which also writes `xyce` netlists and runs `xyce` testbenches from its GUI and CLI

@@ -28,7 +28,7 @@ mkdir -p "$KLAYOUT_SALT"
 
 # Add essential plugins to KLayout: plugin-utils, align-tool, move-tool, layer-shortcuts,
 # auto-backup, pin-tool, library-manager, vector-file-export, netlist-import,
-# xsection, em-export
+# xsection, em-export, klayout-NAT
 packages=(
     KLayoutPluginUtils
     AlignToolPlugin
@@ -42,6 +42,8 @@ packages=(
     xsection
     # uses setupEM, gds2palace and snp2le from install_eda.sh
     klayout_em_export
+    # LivePEX uses klayout-pex from install_eda.sh
+    klayout-NAT
 )
 
 for package in "${packages[@]}"; do
