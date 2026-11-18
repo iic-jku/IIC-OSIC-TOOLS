@@ -67,7 +67,7 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 22       | [SPARX](https://github.com/iic-jku/SG13CMOS_SPARX) six-port receiver with ihp-sg13g2                                            |
 | 23       | Smoke/regression test of sak-lvs.sh (all PDKs, Magic+Netgen and KLayout)                                                        |
 | 24       | Smoke/regression test of sak-drc.sh (all PDKs, Magic, KLayout and gdscheck)                                                     |
-| 25       | Smoke/regression test of sak-pex.sh (all PDKs and PEX modes)                                                                    |
+| 25       | Smoke/regression test of sak-pex.sh (all PDKs and PEX modes, Magic and kpex 2.5D)                                               |
 | 26       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) (DRC, LVS, PEX) with ihp-sg13g2             |
 | 27       | KLayout PCells smoke/regression test (instantiate all PCells of all PDKs, flag empty cells and errors)                          |
 | 28       | [TinyWhisper](https://github.com/iic-jku/TinyWhisper) multi-mode short-wave transmitter with ihp-sg13g2                         |

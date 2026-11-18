@@ -18,21 +18,27 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-pex.sh [-d] [-m <mode>] [-s <mode>] [-n <subcktname>] [-w <workdir>]
-#                   [-t <threshold>] [-r <minres>] [-y <mindelay>] <cellname>
+# Usage: sak-pex.sh [-d] [-k] [-m <mode>] [-s <mode>] [-n <subcktname>] [-w <workdir>]
+#                   [-t <threshold>] [-r <minres>] [-y <mindelay>]
+#                   [-S <schematic>] [-R <reduction>] [-g <net>] <cellname>
+#        -k  Use the kpex 2.5D engine (KLayout-PEX) instead of Magic
 #        -m  Select PEX mode (1 = C-decoupled, 2 = C-coupled [default], 3 = full-RC)
 #        -s  Subcircuit definition (1 = include [default], 0 = no subcircuit)
 #        -n  Name of PEX subcircuit (default: <cellname>)
 #        -w  Use <workdir> to store result files (default: current dir)
-#        -t  full-RC only: extresist threshold in mOhm (default: 10000 = 10 Ohm)
-#        -r  full-RC only: extresist minres in mOhm (default: 1000 = 1 Ohm)
-#        -y  full-RC only: extresist mindelay in ps (default: 1, 0 = gate by resistance)
+#        -t  Magic, full-RC only: extresist threshold in mOhm (default: 10000 = 10 Ohm)
+#        -r  Magic, full-RC only: extresist minres in mOhm (default: 1000 = 1 Ohm)
+#        -y  Magic, full-RC only: extresist mindelay in ps (default: 1, 0 = gate by resistance)
+#        -S  kpex only: schematic netlist (SPICE or CDL) that kpex checks its devices and ports against and takes the port order from (default: none)
+#        -R  kpex, full-RC only: netlist reduction (none, floating, ticer [default])
+#        -g  kpex only: net the substrate port is tied to (default: VSS, an empty net keeps the substrate port)
 #        -d  Enable debug information
 #
-#        <cellname> may be a cell name or a layout file (.mag, .mag.gz, .gds, .gds.gz)
+#        <cellname> may be a cell name or a layout file (.mag, .mag.gz, .gds, .gds.gz), kpex reads GDS only
 #        NOTE: for a GDS input the top cell must be named like the file, otherwise the script aborts
 #
 # Example: sak-pex.sh -m 3 -t 5000 -r 500 -y 2 -n mycell_pex -w ./results mycell.gds
+#          sak-pex.sh -k -m 3 -S mycell.cdl -n mycell_pex -w ./results mycell.gds
 # ========================================================================
 
 ERR_GENERAL=1
@@ -46,21 +52,26 @@ ERR_NO_VAR=8
 
 if [ $# -eq 0 ]; then
 	echo
-	echo "PEX script using Magic (ICD@JKU)"
+	echo "PEX script using Magic or the kpex 2.5D engine (ICD@JKU)"
 	echo
-	echo "Usage: $0 [-d] [-m <mode>] [-s <mode>] [-n <subcktname>] [-w <workdir>]"
-	echo "       [-t <threshold>] [-r <minres>] [-y <mindelay>] <cellname>"
+	echo "Usage: $0 [-d] [-k] [-m <mode>] [-s <mode>] [-n <subcktname>] [-w <workdir>]"
+	echo "       [-t <threshold>] [-r <minres>] [-y <mindelay>]"
+	echo "       [-S <schematic>] [-R <reduction>] [-g <net>] <cellname>"
 	echo
+	echo "       -k Use the kpex 2.5D engine (KLayout-PEX) instead of Magic"
 	echo "       -m Select PEX mode (1 = C-decoupled, 2 = C-coupled [default], 3 = full-RC)"
 	echo "       -s Subcircuit definition in PEX netlist (1 = include subcircuit definition [default], 0 = no subcircuit)"
 	echo "       -n Name of PEX subcircuit (default is <cellname>)"
 	echo "       -w Use <workdir> to store result files (default current dir)"
-	echo "       -t full-RC only: extresist threshold in mOhm (default 10000 = 10 Ohm)"
-	echo "       -r full-RC only: extresist minres in mOhm (default 1000 = 1 Ohm)"
-	echo "       -y full-RC only: extresist mindelay in ps (default 1, 0 = gate by resistance instead of delay)"
+	echo "       -t Magic, full-RC only: extresist threshold in mOhm (default 10000 = 10 Ohm)"
+	echo "       -r Magic, full-RC only: extresist minres in mOhm (default 1000 = 1 Ohm)"
+	echo "       -y Magic, full-RC only: extresist mindelay in ps (default 1, 0 = gate by resistance instead of delay)"
+	echo "       -S kpex only: schematic netlist (SPICE or CDL) that kpex checks its devices and ports against and takes the port order from (default none)"
+	echo "       -R kpex, full-RC only: netlist reduction (none, floating, ticer [default])"
+	echo "       -g kpex only: net the substrate port is tied to (default VSS, an empty net keeps the substrate port)"
 	echo "       -d Enable debug information"
 	echo
-	echo "       <cellname> may be a cell name or a layout file (.mag, .mag.gz, .gds, .gds.gz)"
+	echo "       <cellname> may be a cell name or a layout file (.mag, .mag.gz, .gds, .gds.gz), kpex reads GDS only"
 	echo "       NOTE: for a GDS input the top cell must be named like the file (<cellname>)"
 	echo
 	exit $ERR_NO_PARAM
@@ -81,11 +92,41 @@ EXT_THRESHOLD=10000	# mOhm: coarse end-to-end resistance gating extraction
 EXT_MINRES=1000		# mOhm: resistors below this are merged (simplification)
 EXT_MINDELAY=1		# ps: delay-based output gating (0 = gate by resistance)
 
+# kpex engine defaults
+ENGINE=magic
+KPEX_SCHEMATIC=""
+KPEX_REDUCE=ticer
+KPEX_SUB_NET=VSS
+KPEX_SUB_NET_SET=0
+# flags given for the other engine, rejected below
+MAGIC_ONLY_FLAGS=""
+KPEX_ONLY_FLAGS=""
+
 # check flags
 # -----------
 
-while getopts "m:s:n:w:t:r:y:d" flag; do
+while getopts "m:s:n:w:t:r:y:dkS:R:g:" flag; do
 	case $flag in
+		k)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -k is set."
+			ENGINE=kpex
+			;;
+		S)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -S is set to <$OPTARG>."
+			KPEX_SCHEMATIC=${OPTARG}
+			KPEX_ONLY_FLAGS="$KPEX_ONLY_FLAGS -S"
+			;;
+		R)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -R is set to <$OPTARG>."
+			KPEX_REDUCE=${OPTARG}
+			KPEX_ONLY_FLAGS="$KPEX_ONLY_FLAGS -R"
+			;;
+		g)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -g is set to <$OPTARG>."
+			KPEX_SUB_NET=${OPTARG}
+			KPEX_SUB_NET_SET=1
+			KPEX_ONLY_FLAGS="$KPEX_ONLY_FLAGS -g"
+			;;
 		m)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -m is set to <$OPTARG>."
 			EXT_MODE=${OPTARG}
@@ -107,14 +148,17 @@ while getopts "m:s:n:w:t:r:y:d" flag; do
 		t)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -t is set to <$OPTARG>."
 			EXT_THRESHOLD=${OPTARG}
+			MAGIC_ONLY_FLAGS="$MAGIC_ONLY_FLAGS -t"
 			;;
 		r)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -r is set to <$OPTARG>."
 			EXT_MINRES=${OPTARG}
+			MAGIC_ONLY_FLAGS="$MAGIC_ONLY_FLAGS -r"
 			;;
 		y)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -y is set to <$OPTARG>."
 			EXT_MINDELAY=${OPTARG}
+			MAGIC_ONLY_FLAGS="$MAGIC_ONLY_FLAGS -y"
 			;;
 		d)
 			echo "[INFO] DEBUG is enabled!"
@@ -166,6 +210,24 @@ for _ext_par in "threshold:$EXT_THRESHOLD" "minres:$EXT_MINRES" "mindelay:$EXT_M
 	fi
 done
 
+# check that the flags fit the engine and the kpex reduction is valid
+# --------------------------------------------------------------------
+
+if [ "$ENGINE" = "kpex" ] && [ -n "$MAGIC_ONLY_FLAGS" ]; then
+	echo "[ERROR] Flag(s)$MAGIC_ONLY_FLAGS apply to the Magic engine only, not to kpex (-k)!"
+	exit $ERR_WRONG_MODE
+fi
+if [ "$ENGINE" = "magic" ] && [ -n "$KPEX_ONLY_FLAGS" ]; then
+	echo "[ERROR] Flag(s)$KPEX_ONLY_FLAGS apply to the kpex engine (-k) only!"
+	exit $ERR_WRONG_MODE
+fi
+case "$KPEX_REDUCE" in
+	none|floating|ticer) ;;
+	*)
+		echo "[ERROR] Unknown kpex reduction <$KPEX_REDUCE> (expected none, floating or ticer)!"
+		exit $ERR_WRONG_MODE ;;
+esac
+
 # check that the PDK environment is set up
 # ----------------------------------------
 
@@ -198,6 +260,18 @@ else
 	exit $ERR_PDK_NOT_SUPPORTED
 fi
 
+# kpex knows these four PDKs by name. Its PEX-LVS puts the substrate on one global net, a port of the netlist unless a tap and a label name it otherwise (e.g. VSS).
+if [ "$ENGINE" = "kpex" ]; then
+	case "$PDK" in
+		ihp-sg13g2|ihp-sg13cmos5l)	KPEX_SUB="sub!" ;;
+		sky130A)			KPEX_SUB="sky130_gnd" ;;
+		gf180mcuD)			KPEX_SUB="SUB" ;;
+		*)
+			echo "[ERROR] The PDK $PDK is not supported by kpex (ihp-sg13g2, ihp-sg13cmos5l, sky130A, gf180mcuD)!"
+			exit $ERR_PDK_NOT_SUPPORTED ;;
+	esac
+fi
+
 # a cellname (or layout file) is required
 # ---------------------------------------
 
@@ -223,6 +297,9 @@ else
 	# The list encodes the lookup priority, the magic view is found before the GDS views.
 	CELL_LAY=""
 	for _lay in "$1.mag" "$1.mag.gz" "$1.gds" "$1.gds.gz" "$1.klay.gds"; do
+		case "$ENGINE:$_lay" in
+			kpex:*.mag|kpex:*.mag.gz) continue ;;
+		esac
 		if [ -f "$_lay" ]; then
 			CELL_LAY="$_lay"
 			break
@@ -234,12 +311,33 @@ else
 	fi
 fi
 
+if [ "$ENGINE" = "kpex" ]; then
+	case "$CELL_LAY" in
+		*.mag|*.mag.gz)
+			echo "[ERROR] kpex reads GDS layouts only (.gds, .gds.gz, .klay.gds), not <$CELL_LAY>!"
+			exit $ERR_UNKNOWN_FILE ;;
+	esac
+	if [ -n "$KPEX_SCHEMATIC" ] && [ ! -f "$KPEX_SCHEMATIC" ]; then
+		echo "[ERROR] Schematic netlist <$KPEX_SCHEMATIC> not found!"
+		exit $ERR_FILE_NOT_FOUND
+	fi
+fi
+
 [ $DEBUG -eq 1 ] && echo "[INFO] Using layout file <$CELL_LAY>."
 
 # check that the required tools are available
 # -------------------------------------------
 
-if [ ! -x "$(command -v magic)" ]; then
+if [ "$ENGINE" = "kpex" ]; then
+	if [ ! -x "$(command -v kpex)" ]; then
+		echo "[ERROR] kpex could not be found!"
+		exit $ERR_CMD_NOT_FOUND
+	fi
+	if [ ! -x "$(command -v python3)" ]; then
+		echo "[ERROR] python3 could not be found!"
+		exit $ERR_CMD_NOT_FOUND
+	fi
+elif [ ! -x "$(command -v magic)" ]; then
 	echo "[ERROR] Magic could not be found!"
 	exit $ERR_CMD_NOT_FOUND
 fi
@@ -273,14 +371,14 @@ CELL_MISMATCH_MARKER="$RESDIR/pex_$CELL_NAME.cellmismatch"
 rm -f "$NETLIST_PEX.tmp"
 rm -f "$CELL_MISMATCH_MARKER"
 
-# decompress gzipped layout views, Magic cannot read them directly
-# ----------------------------------------------------------------
+# decompress gzipped layout views, Magic cannot read them directly (kpex can)
+# --------------------------------------------------------------------------
 
 # a .mag.gz must keep its cell name (<cell>.mag) so Magic loads it as $CELL_NAME. A private temp dir keeps that name without clobbering anything.
 TMP_MAG_DIR=""
 # a .gds.gz is decompressed into the result dir under a cell-specific name so runs do not collide. Both temp copies are removed during cleanup.
 TMP_GDS=""
-case "$CELL_LAY" in
+[ "$ENGINE" = "magic" ] && case "$CELL_LAY" in
 	*.mag.gz)
 		TMP_MAG_DIR="$RESDIR/.pextmp_${CELL_NAME}_$$"
 		mkdir -p "$TMP_MAG_DIR"
@@ -306,14 +404,165 @@ esac
 echo "[INFO] Running PEX of <$CELL_LAY>."
 echo "[INFO] Results are put into <$RESDIR>."
 
-# generate the extract script for Magic
-# -------------------------------------
-
 case "$EXT_MODE" in
 	1)	EXT_MODE_TEXT="C-decoupled" ;;
 	2)	EXT_MODE_TEXT="C-coupled" ;;
 	3)	EXT_MODE_TEXT="full-RC" ;;
 esac
+
+# extract the PEX netlist with the kpex 2.5D engine
+# -------------------------------------------------
+
+if [ "$ENGINE" = "kpex" ]; then
+	case "$EXT_MODE" in
+		1)	KPEX_MODE=C ;;
+		2)	KPEX_MODE=CC ;;
+		3)	KPEX_MODE=RC ;;
+	esac
+	# kpex writes its run directory (LVS, reports, LVSDB cache) here, it is removed after a successful run
+	KPEX_DIR="$RESDIR/.pextmp_kpex_${CELL_NAME}_$$"
+	KPEX_EXIT_FILE="$KPEX_DIR.exit"
+	# a netlist of an earlier run must not be mistaken for the output of a failed one
+	rm -f "$NETLIST_PEX" "$NETLIST_PEX.tmp"
+
+	# --blackbox y keeps MIM and MOM capacitors as devices with their SPICE models, without it kpex replaces them by their extracted plates
+	set -- kpex extract --log-level info --pdk "$PDK" --cell "$CELL_NAME" --gds "$CELL_LAY" \
+		--2.5D --mode "$KPEX_MODE" --blackbox y --out-dir "$KPEX_DIR" --out-netlist "$NETLIST_PEX.tmp"
+	[ "$EXT_MODE" -eq 3 ] && set -- "$@" --reduce "$KPEX_REDUCE"
+	[ -n "$KPEX_SCHEMATIC" ] && set -- "$@" --schematic "$KPEX_SCHEMATIC"
+	[ $DEBUG -eq 1 ] && echo "[INFO] Running <$*>."
+
+	if [ $DEBUG -eq 0 ]; then
+		"$@" > "$PEX_LOG" 2>&1
+		KPEX_EXIT=$?
+	else
+		# sh has no PIPESTATUS, so the exit code of kpex goes through a file
+		{ "$@"; echo $? > "$KPEX_EXIT_FILE"; } 2>&1 | tee "$PEX_LOG"
+		KPEX_EXIT=$(cat "$KPEX_EXIT_FILE" 2>/dev/null)
+		rm -f "$KPEX_EXIT_FILE"
+	fi
+
+	# kpex exits non-zero also for a failed --check (in full-RC, a device or port mismatch against -S), after it wrote the netlist
+	if [ "$KPEX_EXIT" != "0" ]; then
+		grep -q "Could not find cell" "$PEX_LOG" && echo "[ERROR] The GDS has no cell <$CELL_NAME>, rename the layout file/cell so they match, then re-run."
+		echo "[ERROR] kpex stopped with exit code <$KPEX_EXIT>, see <$PEX_LOG>!"
+		echo "[ERROR] Its run directory <$KPEX_DIR> is kept for inspection."
+		rm -f "$NETLIST_PEX.tmp"
+		exit $ERR_GENERAL
+	fi
+	if [ ! -f "$NETLIST_PEX.tmp" ]; then
+		echo "[ERROR] No PEX netlist produced, see <$PEX_LOG>!"
+		echo "[ERROR] Its run directory <$KPEX_DIR> is kept for inspection."
+		exit $ERR_GENERAL
+	fi
+	# outside full-RC a failed --check is a warning, which would otherwise stay in the log
+	grep -q "The extracted netlist is inconsistent" "$PEX_LOG" && \
+		echo "[WARNING] kpex found the extracted netlist inconsistent with its LVS netlist or the schematic, see <$PEX_LOG>."
+
+	HEADER="* PEX produced on $(date) using $0 with m=$EXT_MODE and s=$SUBCIRCUIT (kpex 2.5D: --mode $KPEX_MODE"
+	[ "$EXT_MODE" -eq 3 ] && HEADER="$HEADER --reduce $KPEX_REDUCE"
+	HEADER="$HEADER --blackbox y"
+
+	# rename the subcircuit (-n), drop its wrapper (-s 0) and tie the substrate port to a port net (-g)
+	if ! python3 -I - "$NETLIST_PEX.tmp" "$NETLIST_PEX" "$HEADER" "$CELL_NAME" "$CELL_NAME_PEX" "$SUBCIRCUIT" \
+		"$KPEX_SUB" "$KPEX_SUB_NET" "$KPEX_SUB_NET_SET" << 'EOF'
+import re
+import sys
+
+src, dst, header, cell, name, subckt, sub, net, net_set = sys.argv[1:10]
+lines = open(src, encoding="utf-8").read().splitlines()
+
+
+def rename(line):
+    """Rename the subcircuit in a .SUBCKT or .ENDS line, keeping the rest of the line as it is."""
+    return re.sub(r"^(\s*\S+\s+)" + re.escape(cell) + r"(?=\s|$)", lambda m: m.group(1) + name, line)
+
+
+# the ports of the cell, kpex wraps a long port list over "+" lines
+ports = None
+for i, line in enumerate(lines):
+    tokens = line.split()
+    if len(tokens) > 1 and tokens[0].lower() == ".subckt" and tokens[1] == cell:
+        ports = tokens[2:]
+        for cont in lines[i + 1:]:
+            if not cont.startswith("+"):
+                break
+            ports += cont[1:].split()
+        break
+if ports is None:
+    sys.exit(f"[ERROR] The kpex netlist has no subcircuit <{cell}>!")
+
+tie = sub in ports and net != ""
+if sub in ports and net == "":
+    print(f"[INFO] The substrate port <{sub}> is kept (-g with an empty net).")
+if tie and net not in ports:
+    if net_set == "1":
+        sys.exit(f"[ERROR] Net <{net}> is not a port of <{cell}>, so the substrate port <{sub}> cannot be tied to it (-g)!")
+    print(f"[WARNING] Net <{net}> is not a port of <{cell}>, so the substrate port <{sub}> is kept (select a net with -g).")
+    tie = False
+
+out, moved, dropped, in_cell = [], 0, 0, False
+i = 0
+while i < len(lines):
+    first = i
+    line = lines[i]
+    i += 1
+    tokens = line.split()
+    if tokens and tokens[0].lower() == ".subckt":
+        while i < len(lines) and lines[i].startswith("+"):
+            tokens += lines[i][1:].split()
+            i += 1
+        in_cell = len(tokens) > 1 and tokens[1] == cell
+        if not in_cell:
+            out += lines[first:i]
+        elif subckt == "0":
+            pass
+        elif tie:
+            out.append(" ".join([tokens[0], name] + [t for t in tokens[2:] if t != sub]))
+        else:
+            out += [rename(lines[first])] + lines[first + 1:i]
+        continue
+    if not in_cell:
+        out.append(line)
+        continue
+    if tokens and tokens[0].lower() == ".ends":
+        in_cell = False
+        if subckt != "0":
+            out.append(rename(line))
+        continue
+    if not tie or not tokens or line.startswith("*") or sub not in tokens[1:]:
+        out.append(line)
+        continue
+    tokens = [tokens[0]] + [net if t == sub else t for t in tokens[1:]]
+    # an R or C with both ends on the tied net does nothing
+    if tokens[0][0].lower() in "rc" and tokens[1] == tokens[2]:
+        dropped += 1
+        continue
+    moved += 1
+    out.append(" ".join(tokens))
+
+if tie:
+    header += f", substrate port {sub} tied to {net}"
+    print(f"[INFO] Tied the substrate port <{sub}> to <{net}>: {moved} element lines moved, "
+          f"{dropped} elements between <{sub}> and <{net}> dropped.")
+with open(dst, "w", encoding="utf-8") as f:
+    f.write(header + ")\n" + "\n".join(out) + "\n")
+EOF
+	then
+		echo "[ERROR] Post-processing of <$NETLIST_PEX.tmp> failed, kpex's run directory <$KPEX_DIR> is kept for inspection."
+		rm -f "$NETLIST_PEX" "$NETLIST_PEX.tmp"
+		exit $ERR_GENERAL
+	fi
+
+	rm -f "$NETLIST_PEX.tmp"
+	rm -rf "$KPEX_DIR"
+	echo "[INFO] PEX ($EXT_MODE_TEXT, kpex 2.5D) done, the extracted SPICE netlist is <$NETLIST_PEX>."
+	echo "[DONE] Bye!"
+	exit 0
+fi
+
+# generate the extract script for Magic
+# -------------------------------------
 
 {
 	echo "crashbackups stop"
