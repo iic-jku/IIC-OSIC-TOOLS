@@ -46,6 +46,14 @@ variable "PLATFORMS" {
   default = "linux/amd64,linux/arm64"
 }
 
+# Commit of branch dev of iic-jku/IHP-Open-PDK that open_pdks installs. The
+# branch is not pinned, so without this the cached IHP layer of open_pdks is
+# reused after dev moves on. The build scripts and the nightly workflow set it
+# to the head of dev. Empty installs the head of dev at build time.
+variable "IHP_PDK_COMMIT" {
+  default = ""
+}
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -766,6 +774,7 @@ target "open_pdks" {
     TOOL_IMAGE_OSIC_MULTITOOL = "ctx-osic-multitool"
     TOOL_IMAGE_OPENVAF        = "ctx-openvaf"
     TOOL_IMAGE_XYCE           = "ctx-xyce"
+    IHP_PDK_COMMIT            = IHP_PDK_COMMIT
   }
   cache-from = tool_cache_from("open_pdks")
   cache-to   = cache_to("open_pdks")

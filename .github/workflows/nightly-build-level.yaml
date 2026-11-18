@@ -21,6 +21,11 @@ on:
         description: "Commit to build"
         required: true
         type: string
+      ihp_commit:
+        description: "Head of branch dev of the IHP PDK, rebuilds the IHP layers of open_pdks when it moves"
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
@@ -76,9 +81,10 @@ jobs:
           DEPS_FROM_TARGETS: "0"
           CACHE_EXPORT: "1"
           BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
+          IHP_PDK_COMMIT: ${{ inputs.ihp_commit }}
         run: |
-          # bake reads REGISTRY, IMAGE, PLATFORMS, DEPS_FROM_TARGETS and
-          # CACHE_EXPORT from the environment. GHCR names must be lower case.
+          # bake reads REGISTRY, IMAGE, PLATFORMS, DEPS_FROM_TARGETS,
+          # CACHE_EXPORT and IHP_PDK_COMMIT from the environment. GHCR names must be lower case.
           export REGISTRY="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}"
           args=(--progress=plain --push)
           if [ "$TARGET" = "image-full" ]; then

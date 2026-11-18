@@ -25,6 +25,8 @@ COPY --from=openvaf ${TOOLS}/ ${TOOLS}/
 COPY --from=xyce ${TOOLS}/ ${TOOLS}/
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ciel.sh
+# Set by docker-bake.hcl, declared here so a new value rebuilds only the IHP layers
+ARG IHP_PDK_COMMIT=""
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ihp.sh
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
