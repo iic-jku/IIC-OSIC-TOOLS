@@ -18,9 +18,10 @@ git submodule update --init --recursive --filter=blob:none
 # The DEF and LEF lexers store GETC()/lefGetc() (an int) in `char fc` and then
 # test fc == EOF. char is unsigned on aarch64, so the test is always false
 # there and clang fails the build under the -Werror that .bazelrc sets for
-# src/. Widen fc to int, which also makes EOF inside a comment terminate on
-# aarch64. Not reported upstream yet, drop once both files declare fc as int.
-for KEYWORDS in src/odb/src/def/def/def_keywords.cpp src/odb/src/lef/lef/lef_keywords.cpp; do
+# openroad/ (src/ before upstream 37a84d0a3e). Widen fc to int, which also
+# makes EOF inside a comment terminate on aarch64. Not reported upstream yet,
+# drop once both files declare fc as int.
+for KEYWORDS in openroad/odb/src/def/def/def_keywords.cpp openroad/odb/src/lef/lef/lef_keywords.cpp; do
     sed -i 's/^  char fc;$/  int fc;/' "$KEYWORDS"
     grep -q '^  int fc;$' "$KEYWORDS" || { echo "[ERROR] char fc not found in $KEYWORDS, check whether the patch is still needed"; exit 1; }
 done
@@ -42,11 +43,11 @@ if [ "$(arch)" == "aarch64" ]; then
     BAZEL_ARGS+=("--per_file_copt=qsimd\.cpp@-include,stdlib.h")
     BAZEL_ARGS+=("--host_per_file_copt=qsimd\.cpp@-include,stdlib.h")
 fi
-bazelisk build "${BAZEL_ARGS[@]}" //:openroad //src/sta:opensta
+bazelisk build "${BAZEL_ARGS[@]}" //:openroad //openroad/sta:opensta
 bazelisk run "${BAZEL_ARGS[@]}" //:install -- "${TOOLS}/${OPENROAD_NAME}"
 # //:install only ships openroad; add the standalone OpenSTA binary as the
 # CMake build did (used as OPENSTA_EXE by ORFS)
-install -m 755 bazel-bin/src/sta/opensta "${TOOLS}/${OPENROAD_NAME}/bin/sta"
+install -m 755 bazel-bin/openroad/sta/opensta "${TOOLS}/${OPENROAD_NAME}/bin/sta"
 
 # Get ORFS GitHub hash that works with this OR version
 ORFS_COMMIT=$(git ls-remote https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git HEAD | cut -f 1)

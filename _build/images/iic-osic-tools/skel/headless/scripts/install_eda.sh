@@ -67,11 +67,11 @@ pip3 install $PIP_FLAGS \
 	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.9.0 \
-	klayout-pex-plugin-elmer==0.1.1 \
-	klayout-pex-plugin-gmsh==0.1.1 \
+	klayout-pex==0.10.0 \
+	klayout-pex-plugin-elmer==0.2.0 \
+	klayout-pex-plugin-gmsh==0.2.0 \
 	klayout-pex-plugin-kqcircuits==0.1.1 \
-	klayout-pex-plugin-palace==0.1.1 \
+	klayout-pex-plugin-palace==0.2.0 \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev6 \
@@ -84,9 +84,9 @@ pip3 install $PIP_FLAGS \
 	qutip==5.3.1 \
 	"schemdraw[svgmath]==0.23" \
 	scikit-rf==2.2.0 \
-	setupEM==0.18.3 \
+	setupEM==0.18.4 \
 	siliconcompiler==0.38.12 \
-	snp2le==0.1.20 \
+	snp2le==0.2.1 \
 	spicelib==1.6.4 \
 	spyci==1.0.2 \
 	versiontag==1.2.0
