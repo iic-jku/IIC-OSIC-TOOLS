@@ -66,6 +66,7 @@ jobs:
       changed: ${{ steps.commit.outputs.changed }}
       skip: ${{ steps.skip.outputs.skip }}
       fingerprint: ${{ steps.skip.outputs.fingerprint }}
+      ihp: ${{ steps.skip.outputs.ihp }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -133,6 +134,7 @@ jobs:
           ihp=$(git ls-remote https://github.com/iic-jku/IHP-Open-PDK.git refs/heads/dev | cut -f1 || true)
           fp="tree=$(git rev-parse 'HEAD^{tree}') ihp=${ihp:-unknown}"
           echo "fingerprint=$fp" >> "$GITHUB_OUTPUT"
+          echo "ihp=$ihp" >> "$GITHUB_OUTPUT"
           skip=false
           if [ "$EVENT" = "schedule" ] && [ -n "$ihp" ] && git fetch --quiet origin nightly-tested 2>/dev/null; then
             age=$(( $(date +%s) - $(git log -1 --format=%ct FETCH_HEAD) ))
@@ -184,6 +186,7 @@ jobs:
     with:
       targets: ${{ needs.plan.outputs.base }}
       sha: ${{ needs.bump.outputs.sha }}
+      ihp_commit: ${{ needs.bump.outputs.ihp }}
 
   base-dev:
     needs: [bump, plan, base]
@@ -191,6 +194,7 @@ jobs:
     with:
       targets: ${{ needs.plan.outputs.base_dev }}
       sha: ${{ needs.bump.outputs.sha }}
+      ihp_commit: ${{ needs.bump.outputs.ihp }}
 
   # A level runs only when the levels before it passed. An empty level is
   # skipped, and the later ones still run, hence !failure() instead of the
@@ -202,6 +206,7 @@ jobs:
     with:
       targets: ${{ needs.plan.outputs.tools_1 }}
       sha: ${{ needs.bump.outputs.sha }}
+      ihp_commit: ${{ needs.bump.outputs.ihp }}
 
   tools-2:
     needs: [bump, plan, tools-1]
@@ -210,6 +215,7 @@ jobs:
     with:
       targets: ${{ needs.plan.outputs.tools_2 }}
       sha: ${{ needs.bump.outputs.sha }}
+      ihp_commit: ${{ needs.bump.outputs.ihp }}
 
   tools-3:
     needs: [bump, plan, tools-2]
@@ -218,6 +224,7 @@ jobs:
     with:
       targets: ${{ needs.plan.outputs.tools_3 }}
       sha: ${{ needs.bump.outputs.sha }}
+      ihp_commit: ${{ needs.bump.outputs.ihp }}
 
   tools-4:
     needs: [bump, plan, tools-3]
@@ -226,6 +233,7 @@ jobs:
     with:
       targets: ${{ needs.plan.outputs.tools_4 }}
       sha: ${{ needs.bump.outputs.sha }}
+      ihp_commit: ${{ needs.bump.outputs.ihp }}
 
   image-full:
     needs: [bump, plan, tools-4]
@@ -234,6 +242,7 @@ jobs:
     with:
       targets: ${{ needs.plan.outputs.image_full }}
       sha: ${{ needs.bump.outputs.sha }}
+      ihp_commit: ${{ needs.bump.outputs.ihp }}
 
   publish:
     needs: image-full

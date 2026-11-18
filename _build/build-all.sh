@@ -30,6 +30,14 @@ if [ -z ${BUILDER_NAME+z} ]; then
         BUILDER_NAME="tools-builder-$USER"
 fi
 
+# The IHP PDKs come from branch dev without a pin. Pass the head of dev to bake,
+# so open_pdks rebuilds its IHP layers when dev moves instead of using the cache.
+if [ -z "${IHP_PDK_COMMIT}" ]; then
+	IHP_PDK_COMMIT=$(git ls-remote https://github.com/iic-jku/IHP-Open-PDK.git refs/heads/dev | cut -f1) || true
+	echo "[INFO] Head of the IHP PDK branch dev: ${IHP_PDK_COMMIT:-unknown, the IHP layers may come from the cache}"
+fi
+export IHP_PDK_COMMIT
+
 if [ -z ${DOCKER_PREFIXES+z} ]; then
         DOCKER_PREFIXES="registry.iic.jku.at:5000"
 fi

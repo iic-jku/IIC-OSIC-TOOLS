@@ -26,6 +26,12 @@ echo "[INFO] Installing the IHP PDKs."
 # For now uses branch "dev" to get the latest releases
 git clone --filter=blob:none --branch dev "$IHP_REPO_URL" ihp
 cd ihp || exit 1
+# IHP_PDK_COMMIT (see docker-bake.hcl) is the head of dev the build resolved.
+# Checking it out keeps the layer and its cache key on the same commit.
+if [ -n "$IHP_PDK_COMMIT" ]; then
+	echo "[INFO] Checking out IHP-Open-PDK commit $IHP_PDK_COMMIT."
+	git checkout "$IHP_PDK_COMMIT"
+fi
 git submodule update --init --recursive --filter=blob:none
 
 # Store git hash of installed PDK version for reference. Both PDKs come from
