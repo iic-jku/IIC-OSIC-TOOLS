@@ -31,7 +31,7 @@
 #        -y  Magic, full-RC only: extresist mindelay in ps (default: 1, 0 = gate by resistance)
 #        -S  kpex only: schematic netlist (SPICE or CDL) that kpex checks its devices and ports against and takes the port order from (default: none)
 #        -R  kpex, full-RC only: netlist reduction (none, floating, ticer [default])
-#        -g  kpex only: net the substrate port is tied to (default: VSS, an empty net keeps the substrate port)
+#        -g  kpex only: net the substrate port is tied to (default: VSS, an empty net keeps the substrate port, a given net that is no port stops the run where the default only warns)
 #        -d  Enable debug information
 #
 #        <cellname> may be a cell name or a layout file (.mag, .mag.gz, .gds, .gds.gz), kpex reads GDS only
@@ -68,7 +68,7 @@ if [ $# -eq 0 ]; then
 	echo "       -y Magic, full-RC only: extresist mindelay in ps (default 1, 0 = gate by resistance instead of delay)"
 	echo "       -S kpex only: schematic netlist (SPICE or CDL) that kpex checks its devices and ports against and takes the port order from (default none)"
 	echo "       -R kpex, full-RC only: netlist reduction (none, floating, ticer [default])"
-	echo "       -g kpex only: net the substrate port is tied to (default VSS, an empty net keeps the substrate port)"
+	echo "       -g kpex only: net the substrate port is tied to (default VSS, an empty net keeps the substrate port, a given net that is no port stops the run where the default only warns)"
 	echo "       -d Enable debug information"
 	echo
 	echo "       <cellname> may be a cell name or a layout file (.mag, .mag.gz, .gds, .gds.gz), kpex reads GDS only"
@@ -270,6 +270,10 @@ if [ "$ENGINE" = "kpex" ]; then
 			echo "[ERROR] The PDK $PDK is not supported by kpex (ihp-sg13g2, ihp-sg13cmos5l, sky130A, gf180mcuD)!"
 			exit $ERR_PDK_NOT_SUPPORTED ;;
 	esac
+	if [ "$KPEX_SUB_NET" = "$KPEX_SUB" ]; then
+		echo "[ERROR] -g names the substrate port <$KPEX_SUB> itself, give a port net, or an empty net to keep the port!"
+		exit $ERR_WRONG_MODE
+	fi
 fi
 
 # a cellname (or layout file) is required
@@ -549,8 +553,8 @@ with open(dst, "w", encoding="utf-8") as f:
     f.write(header + ")\n" + "\n".join(out) + "\n")
 EOF
 	then
-		echo "[ERROR] Post-processing of <$NETLIST_PEX.tmp> failed, kpex's run directory <$KPEX_DIR> is kept for inspection."
-		rm -f "$NETLIST_PEX" "$NETLIST_PEX.tmp"
+		echo "[ERROR] Post-processing failed, the netlist of kpex stays in <$NETLIST_PEX.tmp> and its run directory in <$KPEX_DIR>."
+		rm -f "$NETLIST_PEX"
 		exit $ERR_GENERAL
 	fi
 

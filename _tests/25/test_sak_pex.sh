@@ -304,7 +304,7 @@ check "kpex ihp: -m 2 CDL does not warn"      0 bash -c "'$SAK' -k -m 2 -S '$CDL
 check "kpex ihp: -d -m 3 -S wrong schematic"  1 "$SAK" -d -k -m 3 -S "$W/wrong_w.cdl" -w "$W" "$D/$CELL.gds"
 rm -rf "$W"/.pextmp_kpex_*
 check "kpex ihp: -d debug run"                0 "$SAK" -d -k -w "$W" "$D/$CELL.gds"
-check "kpex ihp: -d run leaves no run dir"    0 bash -c "head -1 '$NL' | grep -q 'kpex 2.5D' && ! ls -d '$W'/.pextmp_kpex_* '$W'/.pextmp_kpex_*.exit 2>/dev/null"
+check "kpex ihp: -d run leaves no run dir"    0 bash -c "head -1 '$NL' | grep -q 'kpex 2.5D' && ! ls -d '$W'/.pextmp_kpex_* 2>/dev/null"
 
 # substrate tie (-g)
 SNL=$W/subtie.pex.spice
@@ -339,6 +339,8 @@ check "kpex guard: -g without -k"             4 "$SAK" -g VSS -w "$W" "$D/$CELL.
 check "kpex guard: -R unknown reduction"      4 "$SAK" -k -m 3 -R fast -w "$W" "$D/$CELL.gds"
 check "kpex guard: -S file not found"         2 "$SAK" -k -S "$W/does_not_exist.cdl" -w "$W" "$D/$CELL.gds"
 check "kpex guard: -g net is no port"         1 "$SAK" -k -g no_such_net -w "$W" "$SUBTIE"
+check "kpex guard: kpex netlist kept after it" 0 bash -c "grep -q 'created by KLayout-PEX' '$W/subtie.pex.spice.tmp' && [ ! -f '$W/subtie.pex.spice' ]"
+check "kpex guard: -g names the substrate"    4 "$SAK" -k -g 'sub!' -w "$W" "$SUBTIE"
 check "kpex guard: GDS has no such cell"      1 "$SAK" -k -w "$W" "$D/${CELL}_wrongtop.gds"
 check "kpex guard: PDK unknown to kpex"       6 env PDK=sky130B "$SAK" -k -w "$W" "$D/$CELL.gds"
 check "kpex guard: kpex not in PATH"          5 env PATH=/usr/bin:/bin "$SAK" -k -w "$W" "$D/$CELL.gds"
@@ -357,6 +359,8 @@ mkdir -p "$W"
 check "kpex cmos5l: default (C-coupled) GDS"  0 "$SAK" -k -w "$W" "$D/$CELL.gds"
 check "kpex cmos5l: netlist has .subckt"      0 bash -c "grep -q 'created by KLayout-PEX' '$W/$CELL.pex.spice' && grep -qi '^\.subckt $CELL ' '$W/$CELL.pex.spice'"
 check "kpex cmos5l: -m 3 full-RC"             0 "$SAK" -k -m 3 -w "$W" "$D/$CELL.gds"
+check "kpex cmos5l: subtie (tie to VSS)"      0 "$SAK" -k -w "$W" "$SUBTIE"
+check "kpex cmos5l: sub! tied to VSS"         0 bash -c "grep -q 'created by KLayout-PEX' '$W/subtie.pex.spice' && head -1 '$W/subtie.pex.spice' | grep -q 'substrate port sub! tied to VSS)$' && ! grep -v '^\*' '$W/subtie.pex.spice' | grep -q 'sub!'"
 
 # the gf180mcuD inverter has no tap, so its substrate is the port SUB
 # shellcheck source=/dev/null
@@ -367,6 +371,8 @@ W=$WORKDIR/kpex_gf180
 mkdir -p "$W"
 check "kpex gf180: default (C-coupled) GDS"   0 "$SAK" -k -w "$W" "$D/$CELL.gds"
 check "kpex gf180: SUB tied to VSS"           0 bash -c "grep -q 'created by KLayout-PEX' '$W/$CELL.pex.spice' && grep -qi '^\.subckt $CELL .*VSS' '$W/$CELL.pex.spice' && ! grep -v '^\*' '$W/$CELL.pex.spice' | grep -qw 'SUB'"
+check "kpex gf180: -m 3 full-RC"              0 "$SAK" -k -m 3 -w "$W" "$D/$CELL.gds"
+check "kpex gf180: full-RC netlist written"   0 bash -c "grep -q 'created by KLayout-PEX' '$W/$CELL.pex.spice' && head -1 '$W/$CELL.pex.spice' | grep -q -- '--mode RC --reduce ticer'"
 
 # the sky130A inverter names its ground VGND, so the default -g VSS keeps the port sky130_gnd
 # shellcheck source=/dev/null
