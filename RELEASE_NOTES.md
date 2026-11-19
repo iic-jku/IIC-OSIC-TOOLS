@@ -16,6 +16,7 @@ This document summarizes the most important changes of the individual releases o
 * [Update] FasterCap `6.2.1` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS-accelerated matrix products and a fixed hang of the `-pb` block preconditioner
 * [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites, `-s` to select a suite directly, and `-D` to run single rule decks (e.g. `activ,gatpoly`)
 * [Update] `sak-drc.sh -j <n>` limits the number of KLayout DRC processes (default `min(4, nproc)`), and a crashed rule deck ends with exit 7 instead of a clean result
+* [Update] `sak-pex.sh -k` extracts with the `kpex` 2.5D engine instead of Magic (`-m 1`, `2` and `3` run its modes `C`, `CC` and `RC`), keeps MIM and MOM capacitors as devices with their models (`--blackbox y`), ties the substrate port to `VSS` (`-g`), and takes a schematic for the device check of `kpex` (`-S`) and the full-RC reduction (`-R`, default `ticer`)
 * [Update] `librelane` `3.1.0.dev6` with OpenROAD `26Q4`, `cace` `2.13.0` and `ciel` `3.2.0`
 * [Update] `gdscheck` `v0.2.1`, which adds ASAP7 support
 * [Update] various tool and Python package version bumps
