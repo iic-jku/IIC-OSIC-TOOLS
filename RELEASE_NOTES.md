@@ -13,7 +13,7 @@ This document summarizes the most important changes of the individual releases o
 * [Update] `snp2le` `0.2.0` or later (was `0.1.20`), which also writes `xyce` netlists and runs `xyce` testbenches from its GUI and CLI
 * [Update] `klayout-pex` `0.9.0`, with non-rectangular capacitance extraction, updated PDK coefficients, RC-network checks and device-capacitance checks
 * [Update] `yosys` `0.71` (was `0.70`) together with `eqy`, `sby`, `mcy` and the GHDL and Slang plugins, fixing a unary `-`, `~` or `!` in front of a size cast that `read_verilog -sv` silently dropped
-* [Update] FasterCap `6.2.1` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS-accelerated matrix products and a fixed hang of the `-pb` block preconditioner
+* [Update] FasterCap `6.3.0` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS-accelerated matrix products, a fixed hang of the `-pb` block preconditioner and optional full-precision JSON reports (`--report=<new-path>`)
 * [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites, `-s` to select a suite directly, and `-D` to run single rule decks (e.g. `activ,gatpoly`)
 * [Update] `sak-drc.sh -j <n>` limits the number of KLayout DRC processes (default `min(4, nproc)`), and a crashed rule deck ends with exit 7 instead of a clean result
 * [Update] `sak-pex.sh -k` extracts with the `kpex` 2.5D engine instead of Magic (`-m 1`, `2` and `3` run its modes `C`, `CC` and `RC`), keeps MIM and MOM capacitors as devices with their models (`--blackbox y`), ties the substrate port to `VSS` (`-g`), and takes a schematic for the device check of `kpex` (`-S`) and the full-RC reduction (`-R`, default `ticer`)
@@ -22,6 +22,7 @@ This document summarizes the most important changes of the individual releases o
 * [Update] various tool and Python package version bumps
 * [Changing] FasterCap results change for inputs with dielectrics (6.0.7 gave values up to 21 % too high in 3D and 24 % in 2D), and can also change on `arm64` for runs with `-a`
 * [Changing] FasterCap exits with 75 when GMRES does not converge (the last matrix is still printed) and with 65 for NaN or infinite entries, where 6.0.7 exited with 0, and `kpex` stops on both
+* [Changing] FasterCap verifies the actual GMRES residual and honors explicit preconditioner selection, which can change numerical results, iteration counts and convergence or failure decisions
 * [Changing] IHP's LibMan is now DOOR and starts as `door`, `libman` still works
 * [Changing] `start_x.sh` adds `--net=host` when the display comes from SSH X11 forwarding (`ssh -X`), and keeps the Xauthority file out of `/tmp` with Docker installed as a snap
 * [Changing] the `.sh` start scripts announce the image copy that the first rootless Podman start of an image version makes, which takes minutes
