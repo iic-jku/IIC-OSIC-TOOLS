@@ -86,7 +86,7 @@ pip3 install $PIP_FLAGS \
 	scikit-rf==2.2.0 \
 	setupEM==0.18.4 \
 	siliconcompiler==0.38.12 \
-	snp2le==0.2.1 \
+	snp2le==0.2.2 \
 	spicelib==1.6.4 \
 	spyci==1.0.2 \
 	versiontag==1.2.0
