@@ -37,7 +37,8 @@ This document summarizes the most important changes of the individual releases o
 * [Fix] Verilator models with `--trace-fst` compile again (broken since Verilator `5.052`)
 * [Fix] `sudo` works without a password in the devcontainer image
 * [Fix] `kpex` recognizes fixed-width `sky130A` precision-poly resistors with short or rotated bodies
-* [Build] new regression tests 41 (Verilator FST tracing), 42 (Verilator with UVM), 43 (`run_palace` with MPI), 44 (`USER` in a login shell), 45 (`buildxyceplugin`), 46 (KQCircuits export), 47 and 48 (open-pdks regression tests with gf180mcuD and sky130A) and 49 (VLSI design course examples with ihp-sg13cmos5l)
+* [Fix] LibreLane `Odb` steps work when LibreLane is started as `python3 -m librelane` or through its Python API, which ran an OpenROAD without `-python` (broken since `2026.10`)
+* [Build] new regression tests 41 (Verilator FST tracing), 42 (Verilator with UVM), 43 (`run_palace` with MPI), 44 (`USER` in a login shell), 45 (`buildxyceplugin`), 46 (KQCircuits export), 47 and 48 (open-pdks regression tests with gf180mcuD and sky130A), 49 (VLSI design course examples with ihp-sg13cmos5l) and 50 (LibreLane OpenROAD with Python)
 * [Build] a nightly build of `next_release` with the newest upstream tool versions, published as `ghcr.io/iic-jku/iic-osic-tools:nightly`
 * [Docs] `README.md` describes how to run the nightly image (section 4.4.3) and lists the contributors (section 7)
 

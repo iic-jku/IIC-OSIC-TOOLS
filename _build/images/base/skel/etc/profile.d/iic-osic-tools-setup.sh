@@ -91,6 +91,14 @@ if [ -z "${FOSS_INIT_DONE+x}" ]; then
     export SHELL=/bin/bash
     export UVM_HOME="${TOOLS}/verilator/share/uvm"
 
+    # LibreLane's Odb steps run `openroad -python`, which only the CMake build
+    # openroad-librelane supports. The librelane wrapper in $TOOLS/bin puts it
+    # first on PATH, but `python3 -m librelane` and the Python API bypass the
+    # wrapper and got the Bazel-built openroad (issue #453). LibreLane reads
+    # this internal variable in OpenROADStep.get_openroad_path(), re-check it
+    # when bumping librelane.
+    export _LLN_OVERRIDE_OPENROAD="${_LLN_OVERRIDE_OPENROAD:-${TOOLS}/openroad-librelane/bin/openroad}"
+
     # Enable ngspice co-simulation with VHDL
     export CPATH="${TOOLS}/ghdl/include:${TOOLS}/ghdl/include/ghdl:${CPATH}"
     export LIBRARY_PATH="${TOOLS}/ghdl/lib:${LIBRARY_PATH}"
