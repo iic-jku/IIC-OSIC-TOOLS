@@ -172,9 +172,6 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	cd "$PDK_ROOT/gf180mcuD"
 	find . -name "testing" -print0 | xargs -0 rm -rf
 
-	# Fix missing PDK variant in path definitions for in xschemrc
-	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuD/libs.tech/ngspice|' "$PDK_ROOT/gf180mcuD/libs.tech/xschem/xschemrc"
-
 	# The xschem "Create FET .save file" menu entry runs "mkdir -p $netlist_dir"
 	# -- a shell command -- from Tcl, so clicking it aborts with
 	# `invalid command name "mkdir"` and no .save file is written. Tcl's own
