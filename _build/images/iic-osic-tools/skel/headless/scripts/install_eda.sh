@@ -44,11 +44,12 @@ echo "[INFO] Install EDA packages via PIP"
 # Debian-installed packages ("RECORD file not found"). Shadow-install those
 # packages first: --ignore-installed puts a pip-managed copy into /usr/local
 # that hides the Debian one, and the main install below can then upgrade it
-# cleanly. Currently only blinker (Debian 1.7.0, Flask needs >=1.9); add
-# further packages here if a build fails with "Cannot uninstall X ...
-# installed by debian".
+# cleanly. Currently blinker (Debian 1.7.0, Flask needs >=1.9) and PyJWT
+# (Debian 2.7.0, siliconcompiler 0.39.0 needs >=2.10.0). Add further packages here if a build fails with
+# "Cannot uninstall X ... installed by debian".
 pip3 install $PIP_FLAGS --ignore-installed \
-	blinker
+	blinker \
+	PyJWT
 
 # amaranth deliberately without [builtin-yosys]: that extra pulls in the
 # WASM-based amaranth-yosys + wasmtime (~75 MB); amaranth uses the native
