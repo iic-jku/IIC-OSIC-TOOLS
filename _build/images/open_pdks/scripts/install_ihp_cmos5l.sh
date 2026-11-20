@@ -68,9 +68,9 @@ find "$PDK_ROOT/$PDK/libs.tech/xschem" -name "*.orig" -delete
 
 # Rebuild the Verilog-A models for ngspice, the same way install_ihp.sh does
 # for SG13G2: in-image and with --compile-model-generic, so the resulting OSDI
-# runs on any host CPU. The PDK repo ships cap_cmomi and cap_cmomf prebuilt,
-# but they come from whoever committed them (unknown OpenVAF version and target
-# CPU), so they are not trustworthy for the image.
+# runs on any host CPU. Until 2026-10 the PDK repo shipped cap_cmomi and
+# cap_cmomf prebuilt, from whoever committed them (unknown OpenVAF version and
+# target CPU), so prebuilt objects are not trustworthy for the image.
 # The PDK's own openvaf-compile-va.sh builds every object CMOS5L needs -- its
 # own cap_cmomi and cap_cmomf, plus psp103, psp103_nqs, r3_cmc and mosvar from
 # the SG13G2 sources the symlinks in libs.tech/verilog-a point at. There are no

@@ -15,8 +15,8 @@ names the devices it converts in two hardcoded lists:
         ( "cap_cmomi/cap_cmomi.va",     [ "-D__NGSPICE" ] ),
     ]
 
-The CMOS5L PDK is installed from its default branch rather than from a pinned
-commit (see install_ihp_cmos5l.sh), so it grows devices between VACASK releases.
+The CMOS5L PDK is installed from the tip of the IHP dev branch rather than from
+a pinned commit (see install_ihp.sh), so it grows devices between VACASK releases.
 When it does, the converted PDK breaks in a way that is easy to miss: the model
 wrapper .lib is never converted and its Verilog-A is never compiled, yet the
 corner file that includes it *is* converted verbatim. Every VACASK deck that
