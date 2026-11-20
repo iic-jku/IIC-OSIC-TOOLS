@@ -12,7 +12,7 @@ ARG RFTK_FASTHENRY_REPO_COMMIT="363e43ed57ad3b9affa11cba5a86624fad0edaa9"
 ARG RFTK_FASTERCAP_REPO_URL="https://github.com/iic-jku/FasterCap.git"
 ARG RFTK_FASTERCAP_REPO_COMMIT="v6.3.0"
 ARG RFTK_LINALGEBRA_REPO_URL="https://github.com/iic-jku/LinAlgebra.git"
-ARG RFTK_LINALGEBRA_REPO_COMMIT="381258c7229315f16611b5912414632ffa9f548a"
+ARG RFTK_LINALGEBRA_REPO_COMMIT="4da8bf29cb004239ba8152bd6afd4b1f7e8a2821"
 ARG RFTK_GEOMETRY_REPO_URL="https://github.com/iic-jku/Geometry.git"
 ARG RFTK_GEOMETRY_REPO_COMMIT="426c1970ab71a4a1cf75bc15ff55d28b6281dde6"
 RUN --mount=type=bind,source=images/rftoolkit,target=/images/rftoolkit \

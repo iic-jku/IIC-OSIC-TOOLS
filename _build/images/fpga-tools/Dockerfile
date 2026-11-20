@@ -13,6 +13,6 @@ ARG ICESTORM_REPO_COMMIT="00da9c3e6ceff056248e3451dd6fd3210d6ceec9"
 ARG PRJTRELLIS_REPO_URL="https://github.com/YosysHQ/prjtrellis.git"
 ARG PRJTRELLIS_REPO_COMMIT="2d12005ab9703ff60603d7ae91dca254939e671f"
 ARG NEXTPNR_REPO_URL="https://github.com/YosysHQ/nextpnr.git"
-ARG NEXTPNR_REPO_COMMIT="c22d070975236450a58ea8e984b5662e9fc7d18e"
+ARG NEXTPNR_REPO_COMMIT="e6788bb7fdac0eead385a9d746de6508d280f602"
 RUN --mount=type=bind,source=images/fpga-tools,target=/images/fpga-tools \
     bash /images/fpga-tools/scripts/install.sh
