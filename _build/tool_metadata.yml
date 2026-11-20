@@ -108,7 +108,7 @@
   commit: 26.1.1
 - name: rftk-fastercap
   repo: https://github.com/iic-jku/FasterCap.git
-  commit: v6.3.0
+  commit: v6.4.0
 - name: rftk-fasthenry
   repo: https://github.com/ediloren/FastHenry2.git
   commit: 363e43ed57ad3b9affa11cba5a86624fad0edaa9
