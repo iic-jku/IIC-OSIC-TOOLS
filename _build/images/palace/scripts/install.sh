@@ -9,7 +9,23 @@ git clone --filter=blob:none --no-checkout "${PALACE_REPO_URL}" "${PALACE_NAME}"
 cd "${PALACE_NAME}" || exit 1
 git checkout "${PALACE_REPO_COMMIT}"
 mkdir -p build && cd build
-cmake .. -DCMAKE_INSTALL_PREFIX="${TOOLS}/${PALACE_NAME}" -DCMAKE_BUILD_TYPE=Release
+# The configure step downloads about 20 patches from github.com within
+# seconds, and GitHub answers such bursts with HTTP 503 for up to a minute.
+# Palace does not retry (cmake/PatchHelpers.cmake), so retry the configure:
+# patches that already arrived are kept (hash check), only the rest is fetched.
+# Can go when Palace retries the downloads or ships the patches in its repo.
+CONFIGURE_TRIES=10
+for i in $(seq 1 "${CONFIGURE_TRIES}"); do
+    if cmake .. -DCMAKE_INSTALL_PREFIX="${TOOLS}/${PALACE_NAME}" -DCMAKE_BUILD_TYPE=Release; then
+        break
+    fi
+    if [ "$i" -eq "${CONFIGURE_TRIES}" ]; then
+        echo "[ERROR] Palace configure failed ${CONFIGURE_TRIES} times."
+        exit 1
+    fi
+    echo "[WARNING] Palace configure failed (try $i of ${CONFIGURE_TRIES}), next try in 30 s."
+    sleep 30
+done
 cmake --build . -- -j "$(nproc)"
 cmake --install .
 
