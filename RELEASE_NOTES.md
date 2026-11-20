@@ -13,7 +13,8 @@ This document summarizes the most important changes of the individual releases o
 * [Update] `sak-drc.sh -g` runs `gdscheck` as a third DRC engine (`-s` selects a rule suite, `-D` single rule decks)
 * [Update] `sak-drc.sh -j <n>` limits the number of KLayout DRC processes (default `min(4, nproc)`), and a crashed rule deck exits with 7
 * [Update] `sak-pex.sh -k` extracts with the `kpex` 2.5D engine instead of Magic, with the new options `-S` (schematic for the device check), `-R` (full-RC reduction) and `-g` (substrate tie net)
-* [Update] `klayout-pex` `0.11.0` (was `0.6.8`), with non-rectangular capacitance extraction, updated PDK coefficients and `kpex calibrate`
+* [Update] `klayout-pex` `0.11.1` (was `0.6.8`), with non-rectangular capacitance extraction, updated PDK coefficients and `kpex calibrate`
+* [Update] `kpex` retains unmapped LVS devices in netlists with `--unmapped-devices keep`, with simulation models supplied separately
 * [Update] FasterCap `6.4.0` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS acceleration and full-precision JSON reports (`--report`)
 * [Update] `yosys` `0.71` with `eqy`, `sby`, `mcy` and the GHDL and Slang plugins, which no longer drops a unary operator in front of a size cast
 * [Update] `snp2le` `0.2.2`, which writes `xyce` netlists and runs `xyce` testbenches
@@ -37,6 +38,7 @@ This document summarizes the most important changes of the individual releases o
 * [Fix] Verilator models with `--trace-fst` compile again (broken since Verilator `5.052`)
 * [Fix] `sudo` works without a password in the devcontainer image
 * [Fix] `kpex` recognizes fixed-width `sky130A` precision-poly resistors with short or rotated bodies
+* [Fix] `kpex` preserves polygon holes and corrects `sky130A` varactor recognition, NPN extraction and BJT contact ownership
 * [Fix] LibreLane `Odb` steps work when LibreLane is started as `python3 -m librelane` or through its Python API, which ran an OpenROAD without `-python` (broken since `2026.10`)
 * [Build] new regression tests 41 (Verilator FST tracing), 42 (Verilator with UVM), 43 (`run_palace` with MPI), 44 (`USER` in a login shell), 45 (`buildxyceplugin`), 46 (KQCircuits export), 47 and 48 (open-pdks regression tests with gf180mcuD and sky130A), 49 (VLSI design course examples with ihp-sg13cmos5l) and 50 (LibreLane OpenROAD with Python)
 * [Build] a nightly build of `next_release` with the newest upstream tool versions, published as `ghcr.io/iic-jku/iic-osic-tools:nightly`

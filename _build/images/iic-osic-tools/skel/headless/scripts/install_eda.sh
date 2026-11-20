@@ -68,7 +68,7 @@ pip3 install $PIP_FLAGS \
 	gdsfactory==9.51.0 \
 	gdspy==1.6.13 \
 	jsonschema2md==1.7.0 \
-	klayout-pex==0.11.0 \
+	klayout-pex==0.11.1 \
 	klayout-pex-plugin-elmer==0.2.0 \
 	klayout-pex-plugin-gmsh==0.2.0 \
 	klayout-pex-plugin-kqcircuits==0.1.1 \
