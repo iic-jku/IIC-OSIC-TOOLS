@@ -11,7 +11,8 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] the UVM 2020-3.2 library that Verilator is tested against, in `$UVM_HOME` (see `$UVM_HOME/README.md`)
 * [Adding] `universal-ctags`, which editors use for go-to-definition in Verilog, SystemVerilog and VHDL
 * [Update] `snp2le` `0.2.0` or later (was `0.1.20`), which also writes `xyce` netlists and runs `xyce` testbenches from its GUI and CLI
-* [Update] `klayout-pex` `0.9.0`, with non-rectangular capacitance extraction, updated PDK coefficients, RC-network checks and device-capacitance checks
+* [Update] `klayout-pex` `0.11.0`, with non-rectangular capacitance extraction, updated PDK coefficients, RC-network checks and device-capacitance checks
+* [Update] `kpex calibrate` prepares, solves and collects calibration cases, with full-precision results from FasterCap `6.3.0` or newer
 * [Update] `yosys` `0.71` (was `0.70`) together with `eqy`, `sby`, `mcy` and the GHDL and Slang plugins, fixing a unary `-`, `~` or `!` in front of a size cast that `read_verilog -sv` silently dropped
 * [Update] FasterCap `6.3.0` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS-accelerated matrix products, a fixed hang of the `-pb` block preconditioner and optional full-precision JSON reports (`--report=<new-path>`)
 * [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites, `-s` to select a suite directly, and `-D` to run single rule decks (e.g. `activ,gatpoly`)
@@ -35,6 +36,7 @@ This document summarizes the most important changes of the individual releases o
 * [Fix] `buildxyceplugin` compiles Verilog-A models into Xyce plugins inside the container, also through the IHP PDKs' `adms-compile-va.sh`, where every compile stopped at the missing `mpi.h` since `2025.11`
 * [Fix] Verilator models with `--trace-fst` compile inside the container, where `lz4.h` was missing since Verilator `5.052`
 * [Fix] `sudo` works without a password in the devcontainer image
+* [Fix] `kpex` recognizes fixed-width `sky130A` precision-poly resistors with short or rotated bodies
 * [Build] new regression tests 41 (Verilator FST tracing), 42 (Verilator with UVM), 43 (`run_palace` with two MPI processes), 44 (`USER` in a `docker exec` login shell), 45 (`buildxyceplugin` with an ihp-sg13g2 model) and 46 (KQCircuits standalone export)
 * [Build] a nightly build of `next_release` with the newest upstream tool versions, published as `ghcr.io/iic-jku/iic-osic-tools:nightly`
 * [Docs] `README.md` describes how to run the nightly image (section 4.4.3) and lists the contributors (section 7)
