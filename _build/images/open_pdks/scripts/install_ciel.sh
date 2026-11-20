@@ -186,12 +186,6 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 		echo "[WARN] 'mkdir -p \$netlist_dir' not found in $XSCHEM_MENU (already fixed upstream?)"
 	fi
 
-	# Fix incorrect sky130 model reference in gf180mcuD xschem transistor symbols.
-	# The OP annotation tcleval expressions incorrectly use msky130_fd_pr__@model
-	# instead of m0 (the actual internal MOSFET element name in gf180mcu subcircuits).
-	find "$PDK_ROOT/gf180mcuD/libs.tech/xschem" -name "*.sym" \
-		-exec sed -i 's/msky130_fd_pr__@model/m0/g' {} \;
-
 	# Port the bundled (gdsfactory v7 era) pcells to the current gdsfactory 9.x:
 	#  - cells/_patches.py (new): runtime shims for removed v7 APIs (add_array,
 	#    size, get_polygons(by_spec=...), connect(destination=...), geometry
