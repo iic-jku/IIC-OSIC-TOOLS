@@ -14,13 +14,13 @@ This document summarizes the most important changes of the individual releases o
 * [Update] `sak-drc.sh -j <n>` limits the number of KLayout DRC processes (default `min(4, nproc)`), and a crashed rule deck exits with 7
 * [Update] `sak-pex.sh -k` extracts with the `kpex` 2.5D engine instead of Magic, with the new options `-S` (schematic for the device check), `-R` (full-RC reduction) and `-g` (substrate tie net)
 * [Update] `klayout-pex` `0.11.0` (was `0.6.8`), with non-rectangular capacitance extraction, updated PDK coefficients and `kpex calibrate`
-* [Update] FasterCap `6.3.0` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS acceleration and full-precision JSON reports (`--report`)
+* [Update] FasterCap `6.4.0` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS acceleration and full-precision JSON reports (`--report`)
 * [Update] `yosys` `0.71` with `eqy`, `sby`, `mcy` and the GHDL and Slang plugins, which no longer drops a unary operator in front of a size cast
 * [Update] `snp2le` `0.2.2`, which writes `xyce` netlists and runs `xyce` testbenches
 * [Update] `librelane` `3.1.0.dev6` with OpenROAD `26Q4`, `cace` `2.13.0` and `ciel` `3.2.0`
 * [Update] `gdscheck` `v0.2.1`, which adds ASAP7 support
 * [Update] various tool and Python package version bumps
-* [Changing] FasterCap results differ from `6.0.7`, which gave values up to 24 % too high for inputs with dielectrics
+* [Changing] FasterCap's corrected dielectric and conductor calculations can change results, refinement and convergence decisions, including compared with `6.3.0`
 * [Changing] FasterCap exits with 75 when GMRES does not converge and with 65 on NaN or infinite entries (was 0), and `kpex` stops on both
 * [Changing] IHP's LibMan is now DOOR and starts as `door`, `libman` still works
 * [Changing] `start_x.sh` adds `--net=host` with SSH X11 forwarding (`ssh -X`), and keeps the Xauthority file out of `/tmp` with Docker installed as a snap
