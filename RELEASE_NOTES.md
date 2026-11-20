@@ -4,40 +4,40 @@ This document summarizes the most important changes of the individual releases o
 
 ## 2026.11
 
-* [Adding] [`prep-ic`](https://github.com/iic-jku/prep-ic), a GUI and Python API that plans the pad ring, pinout and early floorplan of an IC and exports the LibreLane pad ring files
-* [Adding] `klayout-pex-plugin-kqcircuits` `0.1.1`, a development scaffold that registers an exporter but does not yet translate scenes
-* [Adding] `KQCircuits` for standalone layout generation and simulation input export, with bundled examples and writable project outputs
-* [Adding] KLayout plugin [`klayout_em_export`](https://github.com/VolkerMuehlhaus/klayout_em_export) (menu `EM`), which sets up a Palace or openEMS EM simulation of a layout region for `setupEM` and turns the result back into a circuit with the PDK devices
-* [Adding] the UVM 2020-3.2 library that Verilator is tested against, in `$UVM_HOME` (see `$UVM_HOME/README.md`)
-* [Adding] `universal-ctags`, which editors use for go-to-definition in Verilog, SystemVerilog and VHDL
-* [Update] `snp2le` `0.2.0` or later (was `0.1.20`), which also writes `xyce` netlists and runs `xyce` testbenches from its GUI and CLI
-* [Update] `klayout-pex` `0.11.0`, with non-rectangular capacitance extraction, updated PDK coefficients, RC-network checks and device-capacitance checks
-* [Update] `kpex calibrate` prepares, solves and collects calibration cases, with full-precision results from FasterCap `6.3.0` or newer
-* [Update] `yosys` `0.71` (was `0.70`) together with `eqy`, `sby`, `mcy` and the GHDL and Slang plugins, fixing a unary `-`, `~` or `!` in front of a size cast that `read_verilog -sv` silently dropped
-* [Update] FasterCap `6.3.0` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS-accelerated matrix products, a fixed hang of the `-pb` block preconditioner and optional full-precision JSON reports (`--report=<new-path>`)
-* [Update] `sak-drc.sh` runs `gdscheck` as a third DRC engine (`-g`), with the `-l` levels mapped onto its rule suites, `-s` to select a suite directly, and `-D` to run single rule decks (e.g. `activ,gatpoly`)
-* [Update] `sak-drc.sh -j <n>` limits the number of KLayout DRC processes (default `min(4, nproc)`), and a crashed rule deck ends with exit 7 instead of a clean result
-* [Update] `sak-pex.sh -k` extracts with the `kpex` 2.5D engine instead of Magic (`-m 1`, `2` and `3` run its modes `C`, `CC` and `RC`), keeps MIM and MOM capacitors as devices with their models (`--blackbox y`), ties the substrate port to `VSS` (`-g`), and takes a schematic for the device check of `kpex` (`-S`) and the full-RC reduction (`-R`, default `ticer`)
+* [Adding] [`prep-ic`](https://github.com/iic-jku/prep-ic), a GUI and Python API to plan the pad ring, pinout and early floorplan of an IC
+* [Adding] `KQCircuits` for standalone layout generation and simulation input export
+* [Adding] `klayout-pex-plugin-kqcircuits` `0.1.1`, a development scaffold that does not translate scenes yet
+* [Adding] KLayout plugin [`klayout_em_export`](https://github.com/VolkerMuehlhaus/klayout_em_export) (menu `EM`), which sets up a Palace or openEMS simulation of a layout region
+* [Adding] the UVM 2020-3.2 library for Verilator in `$UVM_HOME`
+* [Adding] `universal-ctags` for go-to-definition in editors
+* [Update] `sak-drc.sh -g` runs `gdscheck` as a third DRC engine (`-s` selects a rule suite, `-D` single rule decks)
+* [Update] `sak-drc.sh -j <n>` limits the number of KLayout DRC processes (default `min(4, nproc)`), and a crashed rule deck exits with 7
+* [Update] `sak-pex.sh -k` extracts with the `kpex` 2.5D engine instead of Magic, with the new options `-S` (schematic for the device check), `-R` (full-RC reduction) and `-g` (substrate tie net)
+* [Update] `klayout-pex` `0.11.0` (was `0.6.8`), with non-rectangular capacitance extraction, updated PDK coefficients and `kpex calibrate`
+* [Update] FasterCap `6.3.0` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS acceleration and full-precision JSON reports (`--report`)
+* [Update] `yosys` `0.71` with `eqy`, `sby`, `mcy` and the GHDL and Slang plugins, which no longer drops a unary operator in front of a size cast
+* [Update] `snp2le` `0.2.2`, which writes `xyce` netlists and runs `xyce` testbenches
 * [Update] `librelane` `3.1.0.dev6` with OpenROAD `26Q4`, `cace` `2.13.0` and `ciel` `3.2.0`
 * [Update] `gdscheck` `v0.2.1`, which adds ASAP7 support
 * [Update] various tool and Python package version bumps
-* [Changing] FasterCap results change for inputs with dielectrics (6.0.7 gave values up to 21 % too high in 3D and 24 % in 2D), and can also change on `arm64` for runs with `-a`
-* [Changing] FasterCap exits with 75 when GMRES does not converge (the last matrix is still printed) and with 65 for NaN or infinite entries, where 6.0.7 exited with 0, and `kpex` stops on both
-* [Changing] FasterCap verifies the actual GMRES residual and honors explicit preconditioner selection, which can change numerical results, iteration counts and convergence or failure decisions
+* [Changing] FasterCap results differ from `6.0.7`, which gave values up to 24 % too high for inputs with dielectrics
+* [Changing] FasterCap exits with 75 when GMRES does not converge and with 65 on NaN or infinite entries (was 0), and `kpex` stops on both
 * [Changing] IHP's LibMan is now DOOR and starts as `door`, `libman` still works
-* [Changing] `start_x.sh` adds `--net=host` when the display comes from SSH X11 forwarding (`ssh -X`), and keeps the Xauthority file out of `/tmp` with Docker installed as a snap
-* [Changing] the `.sh` start scripts announce the image copy that the first rootless Podman start of an image version makes, which takes minutes
-* [Remove] FasterCap's undocumented options `-s`, `-kc`, `-km` and `-ph`, which had no effect or hung
-* [Remove] the `vtk` and `pyvista` Python packages, which saves about 600 MB on disk: `setupEM` keeps working, but its 3D field viewer (`fieldViewer`) needs them installed by hand (see [KNOWN_ISSUES.md](KNOWN_ISSUES.md))
-* [Fix] `run_palace -np N` runs Palace on N MPI processes, where every N above 1 aborted with "mpirun does not support recursive calls"
-* [Fix] a login shell in `docker exec` sets `USER` to `designer` when the container UID has no passwd entry, instead of the two lines `1000` and `designer`
-* [Fix] `sak-drc.sh -k` leaves the gf180mcu dummy COMP deck out of `-l precheck` and `-l macro`, where `DCF.1a` failed every block without COMP, such as a logo
-* [Fix] `sak-drc.sh -f` refuses a pattern that matches the top cell (such as the `'*'` its help suggested), with which Magic checked an empty cell and reported any layout clean
-* [Fix] `buildxyceplugin` compiles Verilog-A models into Xyce plugins inside the container, also through the IHP PDKs' `adms-compile-va.sh`, where every compile stopped at the missing `mpi.h` since `2025.11`
-* [Fix] Verilator models with `--trace-fst` compile inside the container, where `lz4.h` was missing since Verilator `5.052`
+* [Changing] `start_x.sh` adds `--net=host` with SSH X11 forwarding (`ssh -X`), and keeps the Xauthority file out of `/tmp` with Docker installed as a snap
+* [Changing] the `.sh` start scripts announce the image copy of the first rootless Podman start, which takes minutes
+* [Remove] FasterCap's undocumented options `-s`, `-kc`, `-km` and `-ph`
+* [Remove] the `vtk` and `pyvista` Python packages (about 600 MB), which the 3D field viewer of `setupEM` needs installed by hand (see [KNOWN_ISSUES.md](KNOWN_ISSUES.md))
+* [Fix] `sak-lvs.sh` fails on Netgen property errors (e.g. a differing W or L), which passed before
+* [Fix] `sak-lvs.sh -k` matches the devices of xschem netlists with `sky130A`
+* [Fix] `run_palace -np N` runs Palace on N MPI processes, where every N above 1 aborted
+* [Fix] `USER` is `designer` in a `docker exec` login shell when the container UID has no passwd entry
+* [Fix] `sak-drc.sh -k` leaves the gf180mcu dummy COMP deck out of `-l precheck` and `-l macro`, where it failed every block without COMP
+* [Fix] `sak-drc.sh -f` refuses a pattern that matches the top cell, with which Magic reported any layout clean
+* [Fix] `buildxyceplugin` compiles Verilog-A models into Xyce plugins again (broken since `2025.11`)
+* [Fix] Verilator models with `--trace-fst` compile again (broken since Verilator `5.052`)
 * [Fix] `sudo` works without a password in the devcontainer image
 * [Fix] `kpex` recognizes fixed-width `sky130A` precision-poly resistors with short or rotated bodies
-* [Build] new regression tests 41 (Verilator FST tracing), 42 (Verilator with UVM), 43 (`run_palace` with two MPI processes), 44 (`USER` in a `docker exec` login shell), 45 (`buildxyceplugin` with an ihp-sg13g2 model) and 46 (KQCircuits standalone export)
+* [Build] new regression tests 41 (Verilator FST tracing), 42 (Verilator with UVM), 43 (`run_palace` with MPI), 44 (`USER` in a login shell), 45 (`buildxyceplugin`), 46 (KQCircuits export), 47 and 48 (open-pdks regression tests with gf180mcuD and sky130A) and 49 (VLSI design course examples with ihp-sg13cmos5l)
 * [Build] a nightly build of `next_release` with the newest upstream tool versions, published as `ghcr.io/iic-jku/iic-osic-tools:nightly`
 * [Docs] `README.md` describes how to run the nightly image (section 4.4.3) and lists the contributors (section 7)
 
