@@ -40,18 +40,12 @@ if [ -d "$PDK_ROOT/sky130A" ]; then
     echo "# Custom bindkeys for ICD" 		        >> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
     echo "source $SCRIPT_DIR/iic-magic-bindkeys" 	>> "$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
 
-	# Repair the KLayout tech file shipped by open_pdks: it still carries the
-	# generic "sky130" tech/layer-property naming and the absolute base paths of
-	# the machine the PDK was built on. All four edits are idempotent; the guard
-	# only exists so we notice when the workaround becomes unnecessary (still
-	# needed as of 2026-08-06).
+	# The KLayout tech file shipped by open_pdks still carries the generic tech
+	# name "sky130" (still needed with open_pdks 1689ac3f). The edit is idempotent,
+	# the guard only exists so we notice when it becomes unnecessary.
 	SKY130A_LYT="$PDK_ROOT/sky130A/libs.tech/klayout/tech/sky130A.lyt"
-	if grep -q -e '>sky130<' -e 'sky130\.lyp' -e '<base-path>' "$SKY130A_LYT"; then
+	if grep -q '>sky130<' "$SKY130A_LYT"; then
 		sed -i 's/>sky130</>sky130A</g' "$SKY130A_LYT"
-		sed -i 's/sky130.lyp/sky130A.lyp/g' "$SKY130A_LYT"
-		sed -i '/<base-path>/c\ <base-path/>' "$SKY130A_LYT"
-		# shellcheck disable=SC2016
-		sed -i '/<original-base-path>/c\ <original-base-path>$PDK_ROOT/$PDK/libs.tech/klayout</original-base-path>' "$SKY130A_LYT"
 	else
 		echo "[INFO] sky130A.lyt needs no repair anymore, this patch can be dropped"
 	fi
