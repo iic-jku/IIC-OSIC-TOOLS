@@ -172,9 +172,6 @@ if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	cd "$PDK_ROOT/gf180mcuD"
 	find . -name "testing" -print0 | xargs -0 rm -rf
 
-	# Fix test schematic relative paths
-	sed -i 's/{test_/{tests\/test_/g' "$PDK_ROOT/gf180mcuD/libs.tech/xschem/tests/0_top.sch"
-
 	# Fix missing PDK variant in path definitions for in xschemrc
 	sed -i 's|set 180MCU_MODELS ${PDK_ROOT}/models/ngspice|set 180MCU_MODELS ${PDK_ROOT}/gf180mcuD/libs.tech/ngspice|' "$PDK_ROOT/gf180mcuD/libs.tech/xschem/xschemrc"
 
