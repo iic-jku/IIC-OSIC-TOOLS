@@ -95,3 +95,4 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 50       | LibreLane started without its wrapper (`python3 -m librelane`, Python API) runs an OpenROAD with `-python` support            |
 | 51       | Netgen derives the MIM capacitor area of the SG13G2 setup in every run directory (wrong sizes fail, matching sizes pass)        |
 | 52       | Icarus Verilog elaborates and simulates a flip-flop of the SG13G2 and SG13CMOS5L standard cells with `-gspecify`                |
+| 53       | LibreLane with gf180mcuD and the 3.3V standard cells `gf180mcu_as_sc_mcu7t3v3`                                                  |
