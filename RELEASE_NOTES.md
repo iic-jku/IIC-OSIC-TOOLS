@@ -29,6 +29,7 @@ This document summarizes the most important changes of the individual releases o
 * [Remove] FasterCap's undocumented options `-s`, `-kc`, `-km` and `-ph`
 * [Remove] the `vtk` and `pyvista` Python packages (about 600 MB), which the 3D field viewer of `setupEM` needs installed by hand (see [KNOWN_ISSUES.md](KNOWN_ISSUES.md))
 * [Fix] `sak-lvs.sh` fails on Netgen property errors (e.g. a differing W or L), which passed before
+* [Fix] Netgen LVS compares the size of MIM capacitors in every directory, where the result depended on the netlist path and a wrongly sized capacitor could pass (Netgen `1.5.332`)
 * [Fix] `sak-lvs.sh -k` matches the devices of xschem netlists with `sky130A`
 * [Fix] `run_palace -np N` runs Palace on N MPI processes, where every N above 1 aborted
 * [Fix] `USER` is `designer` in a `docker exec` login shell when the container UID has no passwd entry
@@ -40,7 +41,7 @@ This document summarizes the most important changes of the individual releases o
 * [Fix] `kpex` recognizes fixed-width `sky130A` precision-poly resistors with short or rotated bodies
 * [Fix] `kpex` preserves polygon holes and corrects `sky130A` varactor recognition, NPN extraction and BJT contact ownership
 * [Fix] LibreLane `Odb` steps work when LibreLane is started as `python3 -m librelane` or through its Python API, which ran an OpenROAD without `-python` (broken since `2026.10`)
-* [Build] new regression tests 41 (Verilator FST tracing), 42 (Verilator with UVM), 43 (`run_palace` with MPI), 44 (`USER` in a login shell), 45 (`buildxyceplugin`), 46 (KQCircuits export), 47 and 48 (open-pdks regression tests with gf180mcuD and sky130A), 49 (VLSI design course examples with ihp-sg13cmos5l) and 50 (LibreLane OpenROAD with Python)
+* [Build] new regression tests 41 (Verilator FST tracing), 42 (Verilator with UVM), 43 (`run_palace` with MPI), 44 (`USER` in a login shell), 45 (`buildxyceplugin`), 46 (KQCircuits export), 47 and 48 (open-pdks regression tests with gf180mcuD and sky130A), 49 (VLSI design course examples with ihp-sg13cmos5l), 50 (LibreLane OpenROAD with Python) and 51 (Netgen MIM capacitor area)
 * [Build] a nightly build of `next_release` with the newest upstream tool versions, published as `ghcr.io/iic-jku/iic-osic-tools:nightly`
 * [Docs] `README.md` describes how to run the nightly image (section 4.4.3) and lists the contributors (section 7)
 

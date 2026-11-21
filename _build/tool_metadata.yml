@@ -51,7 +51,7 @@
   commit: 8.3.706
 - name: netgen
   repo: https://github.com/rtimothyedwards/netgen.git
-  commit: 1.5.331
+  commit: 1.5.332
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
   commit: e6788bb7fdac0eead385a9d746de6508d280f602
