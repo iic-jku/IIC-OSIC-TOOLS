@@ -93,3 +93,4 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 48       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) (DRC, LVS, PEX) with sky130A                |
 | 49       | [VLSI design](https://github.com/iic-jku/vlsi-design) course examples (lint, simulation, synthesis, STA, DFT, LibreLane) with ihp-sg13cmos5l |
 | 50       | LibreLane started without its wrapper (`python3 -m librelane`, Python API) runs an OpenROAD with `-python` support            |
+| 51       | Netgen derives the MIM capacitor area of the SG13G2 setup in every run directory (wrong sizes fail, matching sizes pass)        |
