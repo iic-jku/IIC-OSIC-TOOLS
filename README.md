@@ -142,6 +142,8 @@ export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
 ```
 
+Next to the two 5V libraries `gf180mcu_fd_sc_mcu7t5v0` and `gf180mcu_fd_sc_mcu9t5v0`, `gf180mcuD` ships the 3.3V 7-track standard-cell library [`gf180mcu_as_sc_mcu7t3v3`](https://github.com/AvalonSemiconductors/gf180mcu_as_sc_mcu7t3v3) of Avalon Semiconductors, with a LibreLane configuration. Select it with `export STD_CELL_LIBRARY=gf180mcu_as_sc_mcu7t3v3` or `sak-pdk gf180mcuD gf180mcu_as_sc_mcu7t3v3`. Its Liberty files cover the corners `tt_025C_3v30`, `ss_125C_3v00` and `ff_n40C_3v60`.
+
 | IHP Microelectronics `ihp-sg13g2` |
 |---|
 

@@ -93,3 +93,4 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 48       | [open-pdks regression tests](https://github.com/iic-jku/open-pdks-regression-tests) (DRC, LVS, PEX) with sky130A                |
 | 49       | [VLSI design](https://github.com/iic-jku/vlsi-design) course examples (lint, simulation, synthesis, STA, DFT, LibreLane) with ihp-sg13cmos5l |
 | 50       | LibreLane started without its wrapper (`python3 -m librelane`, Python API) runs an OpenROAD with `-python` support            |
+| 51       | LibreLane with gf180mcuD and the 3.3V standard cells `gf180mcu_as_sc_mcu7t3v3`                                                  |

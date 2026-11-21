@@ -138,9 +138,10 @@ mkdir -p "$HOST_RUNDIR"
 # Test 49 runs the checks of the VLSI design course, seven LibreLane flows
 # among them. It took 5414 s on 2026.10 on 14 cores with other jobs running,
 # in the range of 28, so it is queued right after it.
+# Test 51 runs the LibreLane flow of 04 with the 3.3V standard cells, so it is queued right after it.
 # Test 23 takes about 3 min standalone (not measured under contention), so it
 # is queued last.
-SLOW_TESTS="28 49 47 48 26 31 35 24 20 32 21 01 10 07 18 22 19 04 15 23"
+SLOW_TESTS="28 49 47 48 26 31 35 24 20 32 21 01 10 07 18 22 19 04 51 15 23"
 
 # The current directory is bind-mounted at $WORKDIR in the container, so the
 # test list can be assembled here and the paths just re-based. Matching the
