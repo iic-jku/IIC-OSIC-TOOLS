@@ -144,7 +144,10 @@ fi
 ######################
 
 echo "[INFO] Installing GF180 PDK."
-ciel enable "${OPEN_PDKS_REPO_COMMIT}" --pdk-family gf180mcu
+# ciel's default set has only the 5V standard cells, add the 3.3V ones of Avalon.
+# An explicit -l replaces the default set, so "default" is listed as well.
+ciel enable "${OPEN_PDKS_REPO_COMMIT}" --pdk-family gf180mcu \
+	-l default -l gf180mcu_as_sc_mcu7t3v3
 
 # Remove gf180mcuA, gf180mcuB and gf180mcuC for size reasons
 rm -rf "$PDK_ROOT"/ciel/gf180mcu/versions/*/gf180mcuA
@@ -156,6 +159,11 @@ rm -rf "$PDK_ROOT"/gf180mcuC
 
 if [ ! -d "$PDK_ROOT/gf180mcuD" ]; then
 	echo "[ERROR] gf180mcuD not found after ciel enable!"
+	exit 1
+fi
+
+if [ ! -d "$PDK_ROOT/gf180mcuD/libs.ref/gf180mcu_as_sc_mcu7t3v3" ]; then
+	echo "[ERROR] gf180mcu_as_sc_mcu7t3v3 not found after ciel enable!"
 	exit 1
 fi
 
