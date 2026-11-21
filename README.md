@@ -286,6 +286,8 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 
 The KPEX exporter plugins write inputs for external tools. The KQCircuits exporter plugin remains a development scaffold. Installing the KQCircuits toolkit does not implement that exporter. The Elmer solver executables are not installed.
 
+`kpex calibrate` prepares, solves and collects calibration cases. New solves require FasterCap `6.4.0` or newer, while saved `6.3.0` reports can still be collected.
+
 KQCircuits uses the shared Python environment and a pinned source installation in `/foss/tools/kqcircuits`. From a writable project directory, list the bundled examples or export a small model without starting a GUI or solver:
 
 ```bash
