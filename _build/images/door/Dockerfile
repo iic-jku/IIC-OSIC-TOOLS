@@ -7,7 +7,7 @@
 ARG BASE_IMAGE_BUILD=registry.iic.jku.at:5000/iic-osic-tools:base-dev
 FROM ${BASE_IMAGE_BUILD} AS door
 ARG DOOR_REPO_URL="https://github.com/IHP-GmbH/Door.git"
-ARG DOOR_REPO_COMMIT="5b9c203657ba973eeb6445f7a08632e35801009e"
+ARG DOOR_REPO_COMMIT="7be9ff60d538dbd07ac89c93b0e0ff3520a2e93b"
 ARG DOOR_NAME="door"
 RUN --mount=type=bind,source=images/door,target=/images/door \
     bash /images/door/scripts/install.sh
