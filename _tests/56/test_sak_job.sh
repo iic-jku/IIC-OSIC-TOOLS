@@ -132,6 +132,47 @@ mkdir -p "$WORKDIR/.sak-jobs/lostjob-20260101-000000-0000"
 echo 4194300 > "$WORKDIR/.sak-jobs/lostjob-20260101-000000-0000/pid"
 check "lost" 2 "d['state']=='lost'" status lostjob-20260101-000000-0000
 
+# 12: cancel of a command that ignores SIGTERM (SIGKILL path), a concurrent wait must never see "lost"
+check "start ignoring term" 0 "" start -- sh -c 'trap "" TERM; sleep 300'
+ID8=$(id_of)
+sleep 1
+JOB wait "$ID8" --timeout 30 > "$WORKDIR/wait8.json" &
+WPID=$!
+sleep 1
+check "cancel ignoring term" 0 "d['state']=='cancelled'" cancel "$ID8"
+wait $WPID
+RC=$?
+if [ $RC -ne 1 ] || ! python3 -c "import json; assert json.load(open('$WORKDIR/wait8.json'))['state']=='cancelled'"; then
+    echo "[ERROR] concurrent wait during cancel: exit code $RC, expected 1 with state cancelled"
+    ERROR=1
+fi
+
+# 13: two cancels of one job at the same time
+check "start double cancel" 0 "" start -- sleep 300
+ID9=$(id_of)
+JOB cancel "$ID9" > "$WORKDIR/c1.json" &
+P1=$!
+JOB cancel "$ID9" > "$WORKDIR/c2.json" &
+P2=$!
+wait $P1; RC1=$?
+wait $P2; RC2=$?
+if [ $RC1 -ne 0 ] || [ $RC2 -ne 0 ]; then
+    echo "[ERROR] concurrent cancels exited with $RC1 and $RC2, expected 0 and 0"
+    ERROR=1
+fi
+check "status double cancel" 1 "d['state']=='cancelled'" status "$ID9"
+
+# 14: the command runs where the caller stands, not in the -w folder
+mkdir -p "$WORKDIR/elsewhere"
+OUT=$(cd "$WORKDIR/elsewhere" && JOB start -- pwd)
+ID10=$(id_of)
+check "wait pwd" 0 "d['state']=='done' and d['log_tail']==['$WORKDIR/elsewhere']" wait "$ID10" --timeout 30
+
+# 15: the command starts with default signal dispositions
+check "start hup" 0 "" start -- python3 -c "import signal; print(signal.getsignal(signal.SIGHUP) == signal.SIG_DFL)"
+ID11=$(id_of)
+check "wait hup" 0 "d['log_tail']==['True']" wait "$ID11" --timeout 30
+
 # without --json: text, no JSON
 TXT=$(sak-job.py -w "$WORKDIR" status "$ID1" 2> /dev/null)
 RC=$?

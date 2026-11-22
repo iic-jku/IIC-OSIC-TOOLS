@@ -30,7 +30,7 @@
 
 ``start`` launches a supervisor (this script with an internal subcommand) in a
 new session, so the job outlives the starting shell and a ``docker exec``. State
-lives in ``<workdir>/.sak-jobs/<id>/``: ``cmd.json`` (argv and cwd), ``pid`` (of
+lives in ``<workdir>/.sak-jobs/<id>/``: ``cmd.json`` (argv and the caller's cwd, where the command runs), ``pid`` (of
 the supervisor, which is also the process group ID), ``log`` (stdout and stderr
 of the command), ``lock`` (held by the supervisor for its whole life), ``start``
 (epoch seconds) and, once the job has ended, ``rc``. The process table is never
@@ -80,7 +80,7 @@ def now_iso(stamp: float) -> str:
 
 def write_atomic(path: str, text: str) -> None:
     """Write ``text`` to a temporary file and rename it, so a reader never sees half of it."""
-    tmp = path + ".tmp"
+    tmp = f"{path}.{os.getpid()}.tmp"  # unique per writer, two cancels may write rc at once
     with open(tmp, "w", encoding="utf-8") as handle:
         handle.write(text)
     os.replace(tmp, path)
@@ -99,7 +99,10 @@ def supervise(jobdir: str) -> None:
     """Hold the lock, run the command with its output in ``log`` and write ``rc`` at the end."""
     lock = os.open(os.path.join(jobdir, "lock"), os.O_CREAT | os.O_RDWR, 0o644)
     fcntl.flock(lock, fcntl.LOCK_EX)
-    signal.signal(signal.SIGHUP, signal.SIG_IGN)
+    cancel_requested = []
+    # the command gets the SIGTERM of cancel from the group signal itself, the supervisor stays alive (and keeps the
+    # lock) until the command has ended, so a concurrent status never sees a free lock without an rc
+    signal.signal(signal.SIGTERM, lambda *_: cancel_requested.append(True))
     with open(os.path.join(jobdir, "cmd.json"), encoding="utf-8") as handle:
         spec = json.load(handle)
     # the supervisor leads its session, so its PID is the process group ID that cancel signals
@@ -115,7 +118,7 @@ def supervise(jobdir: str) -> None:
         except OSError as exc:
             log.write(f"[ERROR] cannot run {spec['argv'][0]}: {exc.strerror}\n".encode())
             code = 127 if isinstance(exc, FileNotFoundError) else 126
-    write_atomic(os.path.join(jobdir, "rc"), f"{code}\n")
+    write_atomic(os.path.join(jobdir, "rc"), CANCELLED + "\n" if cancel_requested else f"{code}\n")
 
 
 def lock_is_held(jobdir: str) -> bool:
@@ -181,6 +184,9 @@ class Job:
             return ("done" if code == 0 else "failed"), code, end
         if lock_is_held(self.dir):
             return "running", None, None
+        # the supervisor was killed by the SIGKILL fallback of cancel, which writes rc a moment later
+        if os.path.exists(os.path.join(self.dir, "cancel")):
+            return "cancelled", None, None
         return "lost", None, None
 
     def result(self, with_tail: bool) -> dict:
@@ -257,7 +263,7 @@ def cmd_start(args) -> None:
     os.makedirs(os.path.join(args.workdir, JOBS_DIR), exist_ok=True)
     job = Job(args.workdir, new_id(args.workdir, args.name))
     write_atomic(os.path.join(job.dir, "cmd.json"),
-                 json.dumps({"argv": command, "cwd": os.path.abspath(args.workdir)}) + "\n")
+                 json.dumps({"argv": command, "cwd": os.getcwd()}) + "\n")
     subprocess.Popen([sys.executable, os.path.realpath(__file__), SUPERVISE, job.dir],
                      stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                      start_new_session=True, close_fds=True)
@@ -320,6 +326,7 @@ def cmd_cancel(args) -> None:
             pgid = int(read_text(os.path.join(job.dir, "pid")) or "")
         except ValueError:
             sak_json.fail(TOOL, f"{job.id} has no readable pid file", args.json, sak_json.EXIT_INPUT)
+        write_atomic(os.path.join(job.dir, "cancel"), "\n")
         # SIGTERM to the whole group (supervisor and command with its children), SIGKILL after a grace time
         try:
             os.killpg(pgid, signal.SIGTERM)
