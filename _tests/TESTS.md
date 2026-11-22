@@ -100,3 +100,4 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 54       | `sak-report.py` summarizes KLayout and Netgen LVS reports of a matching and a mismatching sky130A inverter                      |
 | 55       | `sak-gds-info.py` reports layers, bounding box, cell tree and labels of a layout and rejects missing files and ambiguous top cells |
 | 56       | `sak-job.py` runs commands detached, waits for them, reads their log, cancels them with their children and flags lost jobs      |
+| 57       | `sak-render.py` keeps its default output, renders a `--bbox` region and reports files, region and scale with `--json`          |

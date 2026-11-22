@@ -21,7 +21,8 @@
 #
 # Usage: sak-render.py [-t <tech>] [-l <layers>] [-x <layers>] [--list]
 #                      [-o <image>] [-b both|white|black] [-c <cellname>]
-#                      [-w <px>] [--height <px>] [-s <n>] [-d] <layout>
+#                      [-w <px>] [--height <px>] [-s <n>] [-d]
+#                      [--bbox=<x1,y1,x2,y2>] [--json] <layout>
 #
 # This script uses KLayout (https://www.klayout.de).
 # ========================================================================
@@ -87,10 +88,21 @@ When both are given, the geometry is fitted inside and the rest stays
 background. `-s` renders with n-times oversampling (anti-aliasing).
 Rendering happens off-screen, no display is needed.
 
+`--bbox=<x1,y1,x2,y2>` renders that region (micrometers) instead of the
+drawn extent, e.g. to zoom into a cell corner. Use the `=` form, since a
+leading minus sign (`--bbox=-1,-1,2,2`) would otherwise be read as an option.
+
+`--json` prints exactly one JSON object on stdout and sends every other
+message to stderr, on success and on failure. It carries `schema`, `tool`,
+`status`, `input`, `bbox_um` (the rendered region), `um_per_px` (the scale)
+and `files` (`path`, `background`, `width_px` and `height_px` of every image).
+On failure `status` is `error` and `error` holds the message.
+
 Usage:
     sak-render.py [-t <tech>] [-l <layers>] [-x <layers>] [--list]
                   [-o <image>] [-b both|white|black] [-c <cellname>]
-                  [-w <px>] [--height <px>] [-s <n>] [-d] <layout>
+                  [-w <px>] [--height <px>] [-s <n>] [-d]
+                  [--bbox=<x1,y1,x2,y2>] [--json] <layout>
 
 Return codes for script automation:
   0 = image(s) written (or --list printed)
@@ -103,8 +115,15 @@ import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+import sak_json  # pylint: disable=wrong-import-position
+
 ERR_NONE = 0
 ERR_FAIL = 1
+TOOL = "sak-render"
+
+# Set by --json: messages go to stderr and failures print the error object.
+JSON_MODE = False
 
 # KLayout provides the same API as the module 'pya' (the name used inside
 # the KLayout application) and as the standalone modules 'klayout.lay' /
@@ -120,10 +139,9 @@ except ImportError:
         kdb = klay
         klay.LayoutView
     except (ImportError, AttributeError):
-        print("[ERROR] KLayout Python module not found "
-              "(tried 'klayout.lay'/'klayout.db' and 'pya')!",
-              file=sys.stderr)
-        sys.exit(ERR_FAIL)
+        sak_json.fail(TOOL, "KLayout Python module not found "
+                      "(tried 'klayout.lay'/'klayout.db' and 'pya')!",
+                      "--json" in sys.argv[1:], ERR_FAIL)
 
 BACKGROUNDS = {"white": "#FFFFFF", "black": "#000000"}
 
@@ -315,8 +333,40 @@ LAYOUT_SUFFIXES = (".gds.gz", ".oas.gz", ".gds2", ".oasis", ".gds", ".oas")
 
 def die(msg):
     """Print an error message and terminate with the error return code."""
+    if JSON_MODE:
+        sak_json.fail(TOOL, msg, True, ERR_FAIL)
     print(f"[ERROR] {msg}", file=sys.stderr)
     sys.exit(ERR_FAIL)
+
+
+def info(msg):
+    """Print a progress message, on stderr with --json to keep stdout clean."""
+    print(msg, file=sys.stderr if JSON_MODE else sys.stdout)
+
+
+class RenderArgumentParser(argparse.ArgumentParser):
+    """ArgumentParser that prints the error object for a usage error with --json.
+
+    The exit code stays the one of argparse (2).
+    """
+
+    def error(self, message):
+        self.print_usage(sys.stderr)
+        if "--json" in sys.argv[1:]:
+            sak_json.fail(TOOL, message, True, 2)
+        self.exit(2, f"{self.prog}: error: {message}\n")
+
+
+def parse_bbox(text):
+    """The --bbox value `x1,y1,x2,y2` as a DBox in micrometers."""
+    try:
+        x1, y1, x2, y2 = (float(v) for v in text.split(","))
+    except ValueError:
+        die(f"--bbox '{text}' is not four comma-separated numbers "
+            f"(x1,y1,x2,y2 in um)")
+    if x2 <= x1 or y2 <= y1:
+        die(f"--bbox '{text}' is an empty region (need x2 > x1 and y2 > y1)")
+    return kdb.DBox(x1, y1, x2, y2)
 
 
 def norm(token):
@@ -570,7 +620,8 @@ def output_paths(output, layout_path, backgrounds):
 
 
 def main():
-    parser = argparse.ArgumentParser(
+    global JSON_MODE  # pylint: disable=global-statement
+    parser = RenderArgumentParser(
         description="Render a layout (GDS2/OASIS, optionally gzipped) to "
                     "PNG images with the layer colors of the PDK "
                     "(ICD@JKU). By default all physical mask layers are "
@@ -614,7 +665,17 @@ def main():
                         help="Render with N-times oversampling (default: 1)")
     parser.add_argument("-d", "--debug", action="store_true",
                         help="Enable debug information")
+    parser.add_argument("--bbox", metavar="X1,Y1,X2,Y2",
+                        help="Render this region (micrometers) instead of "
+                             "the drawn extent. Write it as --bbox=... , "
+                             "a leading minus sign needs the = form")
+    parser.add_argument("--json", action="store_true",
+                        help="Print one JSON object with the written "
+                             "files on stdout, all messages go to stderr")
     args = parser.parse_args()
+    JSON_MODE = args.json
+    if args.bbox:
+        args.bbox = parse_bbox(args.bbox)
 
     if not args.tech:
         die("No technology given: use -t or set the PDK environment "
@@ -623,6 +684,8 @@ def main():
     pdk_root = os.getenv("PDK_ROOT", "/foss/pdks")
 
     if args.list:
+        if args.json:
+            die("--list cannot be combined with --json.")
         list_layers(tech, pdk_root)
         sys.exit(ERR_NONE)
 
@@ -661,7 +724,7 @@ def main():
                  for pair in pairs}
         shown = [f"{names.get(p, '?')}({p[0]}/{p[1]})"
                  for p in sorted(selected)]
-        print(f"[INFO] Rendering {len(selected)} layers: {', '.join(shown)}")
+        info(f"[INFO] Rendering {len(selected)} layers: {', '.join(shown)}")
 
     # Only the selected layers are drawn. Selected layers are also marked
     # valid: some .lyp files carry reserved entries as invalid, which
@@ -682,6 +745,11 @@ def main():
     if bbox.empty():
         die(f"Nothing to render: the selected layers hold no shapes in "
             f"cell '{cell.name}'.")
+    if args.bbox:
+        if not args.bbox.overlaps(bbox):
+            die(f"The region {args.bbox} lies outside the drawn geometry "
+                f"of cell '{cell.name}' ({bbox}).")
+        bbox = args.bbox
     if bbox.width() > 10 ** 5 or bbox.height() > 10 ** 5:
         # No die is 10 cm wide: almost certainly stray shapes, e.g.
         # coordinates wrapped around the 32-bit GDS integer range.
@@ -695,9 +763,10 @@ def main():
               f"{args.oversampling}x oversampling, this may need a lot "
               f"of memory!", file=sys.stderr)
 
-    print(f"[INFO] Rendering cell '{cell.name}' of {args.layout} "
-          f"({bbox.width():.2f} x {bbox.height():.2f} um, {tech}).")
+    info(f"[INFO] Rendering cell '{cell.name}' of {args.layout} "
+         f"({bbox.width():.2f} x {bbox.height():.2f} um, {tech}).")
 
+    files = []
     for background, path in outputs.items():
         view.set_config("background-color", BACKGROUNDS[background])
         # target=bbox crops to the exact bounding box of the selected
@@ -708,12 +777,34 @@ def main():
                 oversampling=args.oversampling, target=bbox)
         except Exception as e:  # KLayout raises a plain RuntimeError here
             die(f"Cannot write {path}: {e}")
-        print(f"[INFO] Written {path} ({width}x{height} pixels, "
-              f"{background} background).")
+        info(f"[INFO] Written {path} ({width}x{height} pixels, "
+             f"{background} background).")
+        files.append({"path": path, "background": background,
+                      "width_px": width, "height_px": height})
 
-    print("[DONE] Bye!")
+    if args.json:
+        # With both dimensions given the geometry is fitted inside, so the
+        # larger of the two scales is the one that holds.
+        um_per_px = max(bbox.width() / width, bbox.height() / height)
+        sak_json.emit(
+            TOOL, "ok", [sak_json.input_entry(args.layout)],
+            {"bbox_um": [round(v, 6) for v in
+                         (bbox.left, bbox.bottom, bbox.right, bbox.top)],
+             "um_per_px": round(um_per_px, 6), "files": files},
+            True, "")
+    info("[DONE] Bye!")
     sys.exit(ERR_NONE)
 
 
+def run():
+    """Call main(), reporting an unexpected exception through die() with --json."""
+    try:
+        main()
+    except Exception as e:  # pylint: disable=broad-except
+        if not JSON_MODE:
+            raise
+        die(f"unexpected {type(e).__name__}: {e}")
+
+
 if __name__ == "__main__":
-    main()
+    run()
