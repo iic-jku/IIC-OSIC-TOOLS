@@ -83,6 +83,8 @@ $D
 
 RPT
 grep -v 'COUNT\|divided' two.magic.drc.rpt > crashed.magic.drc.rpt
+# the Magic reports of LibreLane may write "[INFO]: COUNT: n"
+sed 's/^\[INFO\] /[INFO]: /' two.magic.drc.rpt > colon.magic.drc.rpt
 # well-formed report database with an item without a category (loads, then fails in the reader)
 cat > broken.lyrdb <<RPT
 <?xml version="1.0" encoding="utf-8"?>
@@ -130,13 +132,16 @@ check "clean.lyrdb" 0 "d['status']=='clean' and d['total']==0" --json clean.lyrd
 check "big.lyrdb" 1 "r['rules'][0]['count']==5000 and len(r['rules'][0]['markers'])==20 and d['cap']==20" --json big.lyrdb
 check "big.lyrdb --max 0" 1 "len(r['rules'][0]['markers'])==5000" --json --max 0 big.lyrdb
 check "cut.lyrdb" 2 "d['status']=='error'" --json cut.lyrdb
-check "missing.lyrdb" 2 "d['status']=='error'" --json missing.lyrdb
+check "missing.lyrdb" 2 "d['status']=='error' and d['exit_code']==2 and d['error']" --json missing.lyrdb
 check "two.magic" 1 "r['format']=='magic' and r['engine']=='magic' and d['total']==2" --json two.magic.drc.rpt
 check "clean.magic" 0 "d['total']==0" --json clean.magic.drc.rpt
 check "crashed.magic" 2 "d['status']=='error'" --json crashed.magic.drc.rpt
+check "colon.magic" 1 "r['format']=='magic' and d['total']==2" --json colon.magic.drc.rpt
 check "two reports" 1 "d['total']==6 and len(d['reports'])==2" --json two.lyrdb two.magic.drc.rpt
 check "stale report" 2 "'older than' in d['error']" --json --newer-than newer.marker two.lyrdb
 check "no report" 3 "d['status']=='error' and d['schema']==1" --json
+check "negative max" 3 "d['status']=='error' and d['exit_code']==3" --json --max -1 two.lyrdb
+check "abbreviated option" 3 "" --js two.lyrdb
 check "unreadable content" 2 "d['status']=='error' and 'unexpected' in d['error']" --json broken.lyrdb
 
 check "waived items" 1 "d['status']=='findings' and d['total']==2 and d['waived']==2 and r['total']==2 and r['waived']==2 and r['rules'][0]['rule']=='A' and r['rules'][0]['count']==2 and r['rules'][0]['waived']==1 and len(r['rules'][0]['markers'])==2 and r['rules'][1]['rule']=='B' and r['rules'][1]['count']==0 and r['rules'][1]['waived']==1 and r['rules'][1]['markers']==[]" --json waived.lyrdb

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # ========================================================================
-# Summarize DRC and LVS reports for agents and scripts
+# Summarize DRC and LVS reports for scripts and Makefiles
 #
 # SPDX-FileCopyrightText: 2026 Harald Pretl and Simon Dorrer
 # Johannes Kepler University, Department for Integrated Circuits
@@ -44,7 +44,7 @@ import os
 import re
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 import sak_json  # noqa: E402
 
 
@@ -76,7 +76,8 @@ except ImportError:
 
 DASHES = re.compile(r"^-{10,}\s*$")
 MARKER = re.compile(r"^\s*(-?[\d.]+)um\s+(-?[\d.]+)um\s+(-?[\d.]+)um\s+(-?[\d.]+)um\s*$")
-COUNT = re.compile(r"^\[INFO\] COUNT:\s*(\d+)\s*$")
+# sak-drc.sh writes "[INFO] COUNT: n", the Magic reports of LibreLane may write "[INFO]: COUNT: n"
+COUNT = re.compile(r"^\[INFO\]:? COUNT:\s*(\d+)\s*$")
 NETGEN_COUNT = re.compile(r"^Number of (devices|nets):\s*(\d+)[^|]*\|Number of \1:\s*(\d+)")
 NETGEN_HEAD = re.compile(r"^(Contents of circuit 1:|Circuit 1 cell )", re.M)
 NETGEN_PROPERTY = ("Property errors were found.", "The following cells had property errors:")
@@ -256,16 +257,21 @@ def read_lvsdb(path: str) -> dict:
             return {"devices": 0, "nets": 0}
         return {"devices": len(list(circuit.each_device())), "nets": len(list(circuit.each_net()))}
 
+    # every circuit pair that does not match contributes, the top pair first
     unmatched = {"nets": [], "devices": [], "pins": []}
-    for key, each, attrs in (("nets", xref.each_net_pair, ("expanded_name",)),
-                             ("devices", xref.each_device_pair, ("expanded_name",)),
-                             ("pins", xref.each_pin_pair, ("name",))):
-        for p in list(each(pair)):
-            if _get(p, "status") in ok:
-                continue
-            for side, obj in (("layout", _get(p, "first")), ("schematic", _get(p, "second"))):
-                if obj is not None:
-                    unmatched[key].append({"side": side, "name": _name(obj, *attrs)})
+    for cpair in [pair] + [p for p in pairs if p is not pair]:
+        if _get(cpair, "status") in ok:
+            continue
+        circuit = _name(_get(cpair, "first"), "name") or _name(_get(cpair, "second"), "name")
+        for key, each, attrs in (("nets", xref.each_net_pair, ("expanded_name",)),
+                                 ("devices", xref.each_device_pair, ("expanded_name",)),
+                                 ("pins", xref.each_pin_pair, ("name",))):
+            for p in list(each(cpair)):
+                if _get(p, "status") in ok:
+                    continue
+                for side, obj in (("layout", _get(p, "first")), ("schematic", _get(p, "second"))):
+                    if obj is not None:
+                        unmatched[key].append({"circuit": circuit, "side": side, "name": _name(obj, *attrs)})
     return {"kind": "lvs", "format": "lvsdb", "top_cell": top_name or _name(layout, "name"),
             "match": match, "layout": counts(layout), "schematic": counts(schem),
             "property_errors": False, "unmatched_available": True, "unmatched": unmatched}

@@ -60,10 +60,29 @@ for _arg in "$@"; do
 	fi
 done
 
-# a run that ends without a result object (usage, missing input, failed tool) prints the error object with the exit code of the script
+# a run that ends without a result object (usage, missing input, failed tool) prints the error object with the exit code of the script.
+# Its error text is JSON_ERROR if set, else a short reason derived from the exit code (the full message is on stderr).
+JSON_ERROR=""
 json_error() {
 	_rc=$?
-	[ "$JSON_DONE" -eq 1 ] || printf '{"schema": 1, "tool": "sak-drc", "status": "error", "exit_code": %d, "input": []}\n' "$_rc" >&3
+	[ "$JSON_DONE" -eq 1 ] && return
+	_reason=$JSON_ERROR
+	if [ -z "$_reason" ]; then
+		case "$_rc" in
+			"$ERR_DRC")	_reason="DRC findings" ;;
+			"$ERR_FILE_NOT_FOUND")	_reason="layout not found" ;;
+			"$ERR_NO_PARAM")	_reason="wrong usage or missing parameter" ;;
+			"$ERR_CMD_NOT_FOUND")	_reason="a required tool was not found" ;;
+			"$ERR_UNKNOWN_FILE")	_reason="unsupported layout format" ;;
+			"$ERR_PDK_NOT_SUPPORTED")	_reason="PDK not supported" ;;
+			"$ERR_NO_OUTPUT")	_reason="a DRC run failed or produced no report" ;;
+			"$ERR_NO_VAR")	_reason="PDK environment variable not set" ;;
+			*)	_reason="sak-drc.sh ended with exit code $_rc" ;;
+		esac
+	fi
+	# JSON string: control characters become spaces, backslash and double quote are escaped
+	_reason=$(printf '%s' "$_reason" | tr '\000-\037' ' ' | sed 's/\\/\\\\/g; s/"/\\"/g')
+	printf '{"schema": 1, "tool": "sak-drc", "status": "error", "error": "%s", "exit_code": %d, "input": []}\n' "$_reason" "$_rc" >&3
 }
 
 if [ "$JSON" -eq 1 ]; then
@@ -86,8 +105,22 @@ json_result() {
 	_rc=$?
 	# 0 and 1 are the verdict of sak-report.py, anything else means it could not read a report (its message is on stderr)
 	if [ "$_rc" -gt 1 ] || [ -z "$_json" ]; then
+		_msg=$(printf '%s' "$_json" | python3 -c 'import json, sys; print(json.load(sys.stdin)["error"])' 2>/dev/null)
+		JSON_ERROR="sak-report.py could not summarize the reports (exit code $_rc)${_msg:+: $_msg}"
 		echo "[ERROR] sak-report.py could not summarize the reports!"
 		exit $ERR_NO_OUTPUT
+	fi
+	# the exit code of this script follows its own verdict, so a result that contradicts it is not printed
+	_own=1
+	[ "$DRC_CLEAN" -eq 1 ] && _own=0
+	if [ "$_rc" -ne "$_own" ]; then
+		_seen=findings
+		[ "$_rc" -eq 0 ] && _seen=clean
+		_found=findings
+		[ "$_own" -eq 0 ] && _found=clean
+		JSON_ERROR="sak-report.py reads the reports as $_seen, but sak-drc.sh found $_found"
+		echo "[ERROR] $JSON_ERROR!"
+		return
 	fi
 	printf '%s\n' "$_json" >&3
 	JSON_DONE=1

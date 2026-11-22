@@ -74,7 +74,7 @@ jcheck "drc --json violations" 1 "d['status']=='findings' and d['total']>=2 and 
     sak-drc.sh --json -w "$WORKDIR/viol" -b "$WORKDIR/viol.gds"
 jcheck "lvs --json" 0 "d['match'] is True and d['tool']=='sak-lvs' and d['reports'][0]['engine']=='netgen'" \
     sak-lvs.sh --json -w "$WORKDIR" -s "$DIR/inv.sch" -l "$DIR/inv.mag" -c inv
-jcheck "drc --json missing layout" 2 "d['status']=='error' and d['exit_code']==2 and d['tool']=='sak-drc'" \
+jcheck "drc --json missing layout" 2 "d['status']=='error' and d['exit_code']==2 and d['tool']=='sak-drc' and isinstance(d['error'], str) and d['error']" \
     sak-drc.sh --json -w "$WORKDIR" "$WORKDIR/nonexistent.gds"
 # Check if there is an error in the log
 if [ $ERROR -eq 1 ]; then
