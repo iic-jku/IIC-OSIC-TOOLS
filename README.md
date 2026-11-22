@@ -309,14 +309,14 @@ The SAK commands in `$TOOLS/sak` that summarize results can print one JSON objec
 
 - `sak-report.py`: summarizes DRC reports (KLayout `lyrdb`, Magic, `gdscheck`) or LVS reports (KLayout `lvsdb`, Netgen), one kind per call. Every report object names its `engine`, and DRC results list `waived` items separately from findings.
 - `sak-gds-info.py`: layers, bounding box, cell tree and labels of a GDS2 or OASIS layout (`--layers`, `--cells`, `--labels`, `-c`, `--depth`, `--bbox`).
-- `sak-run-summary.py`: timing, checks, area and step run times of a LibreLane run directory.
-- `sak-job.py`: starts a long command detached from the shell and asks for it later (`start`, `status`, `wait`, `tail`, `cancel`, `list`).
+- `sak-run-summary.py`: timing (worst slack and violation counts, also per corner), checks, area and step run times of a LibreLane run directory.
+- `sak-job.py`: starts a long command detached from the shell and asks for it later (`start`, `status`, `wait`, `tail`, `cancel`, `list`). Its `status` is `ok` for a finished job, `running`, `failed` (also for a cancelled job) or `error` (lost job, unknown ID), and `state` names the exact state.
 - `sak-drc.sh` and `sak-lvs.sh`: `--json` prints the summary of `sak-report.py` for the reports of the run.
 - `sak-render.py`: `--json` lists the written images, and `--bbox=<x1,y1,x2,y2>` renders a region given in um.
 
-Without `--json` the commands print a short text. With `--json` stdout holds exactly one JSON object and all other messages go to stderr, also on errors. The object has the fields `schema`, `tool`, `input` (path and modification time of every input) and `status`, and paths are given as on the command line.
+Without `--json` the commands print a short text. With `--json` stdout holds exactly one JSON object and all other messages go to stderr, also on errors. The object has the fields `schema`, `tool`, `input` (path and modification time of every input) and `status`, and paths are given as on the command line. An error object has `status` `error`, an `error` text and the `exit_code`.
 The exit codes of `sak-report.py`, `sak-gds-info.py`, `sak-run-summary.py` and `sak-job.py` are `0` for clean, `1` for findings, `2` for input that is missing, unreadable, truncated or stale, and `3` for wrong usage. `sak-job.py` adds `4` for a job that is still running, so `sak-job.py wait <id> && next-step` never goes on after a timeout.
-`sak-drc.sh`, `sak-lvs.sh` and `sak-render.py` keep their own exit codes with `--json`, and the `status` field of the JSON object carries the verdict (an error object of `sak-drc.sh` and `sak-lvs.sh` also has `exit_code`).
+`sak-drc.sh`, `sak-lvs.sh` and `sak-render.py` keep their own exit codes with `--json`, and the `status` field of the JSON object carries the verdict. If the report summary contradicts the verdict of `sak-drc.sh` or `sak-lvs.sh`, they print an error object.
 Commands that list items cap the lists at 20 entries, `--max <n>` changes the cap (`0` for no cap), and the object states `cap` and the full count. `sak-report.py --newer-than <file>` exits with `2` for a report older than `<file>` instead of reporting a stale result.
 
 ```bash
