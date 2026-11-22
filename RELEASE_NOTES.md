@@ -11,6 +11,8 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] the UVM 2020-3.2 library for Verilator in `$UVM_HOME`
 * [Adding] `universal-ctags` for go-to-definition in editors
 * [Adding] the 3.3V standard-cell library [`gf180mcu_as_sc_mcu7t3v3`](https://github.com/AvalonSemiconductors/gf180mcu_as_sc_mcu7t3v3) of Avalon Semiconductors to `gf180mcuD`, with a LibreLane configuration (`STD_CELL_LIBRARY=gf180mcu_as_sc_mcu7t3v3`)
+* [Adding] `sak-report.py`, `sak-gds-info.py`, `sak-run-summary.py` and `sak-job.py`: DRC, LVS, layout and LibreLane run summaries and a job runner, each with `--json` for scripts and Makefiles
+* [Update] `sak-drc.sh`, `sak-lvs.sh` and `sak-render.py` take `--json`, and `sak-render.py --bbox` renders a region
 * [Update] `sak-drc.sh -g` runs `gdscheck` as a third DRC engine (`-s` selects a rule suite, `-D` single rule decks)
 * [Update] `sak-drc.sh -j <n>` limits the number of KLayout DRC processes (default `min(4, nproc)`), and a crashed rule deck exits with 7
 * [Update] `sak-pex.sh -k` extracts with the `kpex` 2.5D engine instead of Magic, with the new options `-S` (schematic for the device check), `-R` (full-RC reduction) and `-g` (substrate tie net)

@@ -23,6 +23,7 @@
     - [1.3 Step 3: Start and Use a Docker Container based on our IIC-OSIC-TOOLS Image](#13-step-3-start-and-use-a-docker-container-based-on-our-iic-osic-tools-image)
   - [2. Installed PDKs](#2-installed-pdks)
   - [3. Installed Tools](#3-installed-tools)
+    - [3.1 SAK commands with JSON output](#31-sak-commands-with-json-output)
   - [4. Quick Launch for Designers](#4-quick-launch-for-designers)
     - [4.1 Customizing Environment](#41-customizing-environment)
     - [4.2 Using VNC and noVNC](#42-using-vnc-and-novnc)
@@ -301,6 +302,28 @@ kqc sim waveguides_sim_compare.py --quiet --export-only --n-guides-range 1 1
 Outputs default to `./kqc-output`, including when using KQCircuits from Python. Set `KQC_TMP_PATH` before starting Python or `kqc` to choose another directory, for example `KQC_TMP_PATH="$PWD/simulation output" kqc sim waveguides_sim_compare.py --quiet --export-only --n-guides-range 1 1`. The installed source tree stays read-only to ordinary users. KQCircuits GUI integration and solver execution are outside the supported scope of this installation.
 
 The tool versions used for `librelane` (and other tools) are documented in `tool_metadata.yml`. In addition to the EDA tools above, further valuable tools (like `git`) and editors (like `gvim`) are installed. If something useful is missing, please let us know!
+
+### 3.1 SAK commands with JSON output
+
+The SAK commands in `$TOOLS/sak` that summarize results can print one JSON object instead of text, for use in scripts, Makefiles and other automation.
+
+- `sak-report.py`: summarizes DRC reports (KLayout `lyrdb`, Magic, `gdscheck`) or LVS reports (KLayout `lvsdb`, Netgen), one kind per call. Every report object names its `engine`, and DRC results list `waived` items separately from findings.
+- `sak-gds-info.py`: layers, bounding box, cell tree and labels of a GDS2 or OASIS layout (`--layers`, `--cells`, `--labels`, `-c`, `--depth`, `--bbox`).
+- `sak-run-summary.py`: timing, checks, area and step run times of a LibreLane run directory.
+- `sak-job.py`: starts a long command detached from the shell and asks for it later (`start`, `status`, `wait`, `tail`, `cancel`, `list`).
+- `sak-drc.sh` and `sak-lvs.sh`: `--json` prints the summary of `sak-report.py` for the reports of the run.
+- `sak-render.py`: `--json` lists the written images, and `--bbox=<x1,y1,x2,y2>` renders a region given in um.
+
+Without `--json` the commands print a short text. With `--json` stdout holds exactly one JSON object and all other messages go to stderr, also on errors. The object has the fields `schema`, `tool`, `input` (path and modification time of every input) and `status`, and paths are given as on the command line.
+The exit codes are `0` for clean, `1` for findings, `2` for input that is missing, unreadable or truncated, and `3` for wrong usage. `sak-job.py` adds `4` for a job that is still running, so `sak-job.py wait <id> && next-step` never goes on after a timeout.
+Lists are capped at 20 entries, `--max <n>` changes the cap (`0` for no cap), and the object states `cap` and the full count. `sak-report.py --newer-than <file>` exits with `2` for a report older than `<file>` instead of reporting a stale result.
+
+```bash
+sak-drc.sh --json -m inverter                  # DRC with Magic, JSON result on stdout
+sak-report.py --json --max 0 drc/inverter.lyrdb
+sak-job.py start -n drc -- sak-drc.sh -k inverter
+sak-job.py wait <id> --timeout 600
+```
 
 ## 4. Quick Launch for Designers
 
