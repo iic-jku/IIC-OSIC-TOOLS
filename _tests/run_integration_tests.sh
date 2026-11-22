@@ -142,7 +142,7 @@ mkdir -p "$HOST_RUNDIR"
 # Test 59 (LibreLane, DRC and LVS with ics55) took 3.3 min standalone, so it is queued after 53.
 # Test 23 takes about 3 min standalone (not measured under contention), so it
 # is queued last.
-SLOW_TESTS="28 49 47 48 26 31 35 24 20 32 21 01 10 07 18 22 19 04 53 59 15 23"
+SLOW_TESTS="28 49 47 48 26 31 35 24 20 32 21 01 10 07 18 22 19 04 53 59 62 15 23"
 
 # The current directory is bind-mounted at $WORKDIR in the container, so the
 # test list can be assembled here and the paths just re-based. Matching the

@@ -186,6 +186,26 @@ export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
 
 `ics55` is the [ICsprout 55 nm open PDK](https://github.com/openecos-projects/icsprout55-pdk) (55LLULP 1P6M) for digital designs only: the v1.10 7-track standard cells `ics55_LLSC_H7CR` (RVT), `ics55_LLSC_H7CH` (HVT) and `ics55_LLSC_H7CL` (LVT), the IO library, a LibreLane configuration based on [ckdur/icsprout55-openpdk](https://github.com/ckdur/icsprout55-openpdk), the community KLayout DRC [ics55_klayout_drc](https://github.com/Ayoubbelguellaoui/ics55_klayout_drc) and a digital-only KLayout LVS (`sak-drc -k`, `sak-lvs -k`). ICsprout publishes no SPICE models and no extraction rules, and there is no Magic setup. Neither deck is foundry sign-off. The PDK is a preview release, limited to education and research tapeouts. Commercial mass production is prohibited. `$PDK_ROOT/ics55/README.md` lists the LibreLane settings a design needs.
 
+| ASU and Arm Research `asap7` (predictive, not manufacturable) |
+|---|
+
+```bash
+export PDK=asap7
+export PDKPATH=$PDK_ROOT/$PDK
+export STD_CELL_LIBRARY=asap7sc7p5t
+export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
+```
+
+[ASAP7](https://github.com/The-OpenROAD-Project/asap7) is a 7 nm FinFET **predictive** PDK for teaching and research. It is not tied to a foundry and cannot be manufactured. The PDK and its libraries are BSD-3-Clause licensed. Its Calibre DRC, LVS and PEX decks are not redistributable and are not part of the image, the open decks below replace them. `$PDK_ROOT/asap7` contains:
+
+* The 7.5-track standard cells `asap7sc7p5t` (`asap7sc7p5t_28`) in the flavors RVT, LVT, SLVT and SRAM: LEF, GDS (1x, no 4x scaling needed), NLDM Liberty (gzipped), CDL, Verilog. For LibreLane select `STD_CELL_LIBRARY=asap7sc7p5t` (RVT), `asap7sc7p5t_lvt` or `asap7sc7p5t_slvt`. The LibreLane setup follows the OpenROAD-flow-scripts platform `asap7`. The example in `libs.tech/librelane/example` shows the settings every design needs (no Magic steps, `CLOCK_PERIOD` in ps). The 6-track library `asap7sc6t_26` is not installed.
+* BSIM-CMG models for the corners `tt`, `ff` and `ss` of the devices `nmos_{lvt,rvt,slvt,sram}` and `pmos_{lvt,rvt,slvt,sram}` (subcircuits with the parameters `l` and `nfin`) for ngspice, Xyce and VACASK, e.g. `.lib $PDK_ROOT/asap7/libs.tech/ngspice/models/asap7.lib tt`. Xyce runs the original cards (BSIM-CMG 107) and matches the per-fin currents of the ASAP7 paper. ngspice and VACASK use BSIM-CMG 111.2.1 compiled with OpenVAF, which reads 2 % to 8 % lower Idsat and up to 45 % lower Ioff on LVT and SLVT devices.
+* xschem symbols in `libs.tech/xschem/asap7` with inverter testbenches for ngspice and Xyce, and a VACASK example in `libs.tech/vacask/examples`.
+* A KLayout technology, the DRC deck of [ASAP7_for_KLayout](https://github.com/laurentc2/ASAP7_for_KLayout) (`libs.tech/klayout/drc/asap7.lydrc`) and an LVS deck written for the image (`libs.tech/klayout/lvs/asap7.lvs`). The LVS deck compares FinFETs by gate length and fin count, and top-level pins by name. In a design the standard cells are compared at transistor level, except a list of cells whose layouts split or reorder transistor stacks against their CDL, which KLayout does not reduce. Those are compared as black boxes. There is no Magic technology.
+* `libs.tech/pygmid/techsweep_asap7.py`, which writes gm/ID lookup tables for [pygmid](https://github.com/dreoilin/pygmid) with ngspice.
+* The design rule manual in `libs.doc`.
+
 Probably the best way to switch between PDKs is to use the command `sak-pdk`. When called without arguments a list of installed PDKs is shown. To e.g. switch to IHP enter
 
 ```bash
@@ -206,6 +226,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 
 - [abc](https://github.com/berkeley-abc/abc) sequential logic synthesis and formal verification
 - [amaranth](https://github.com/amaranth-lang/amaranth) a Python-based HDL tool chain
+- [asap7](https://github.com/The-OpenROAD-Project/asap7) ASU and Arm Research 7 nm FinFET predictive PDK (not manufacturable) with the 7.5-track standard cells `asap7sc7p5t`
 - [cace](https://github.com/efabless/cace) a Python-based circuit automatic characterization engine
 - [charlib](https://github.com/stineje/CharLib) a characterization library for standard cells
 - [chipify](https://github.com/santihofi/chipify) GUI and CLI wrapper for mismatch simulation, parameter sweeps, and yield analysis with `xschem` and `ngspice`

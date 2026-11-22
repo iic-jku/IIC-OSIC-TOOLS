@@ -1,0 +1,29 @@
+# ASAP7 RVT cells whose layout KLayout LVS does not match to the CDL, one per
+# line. The layouts split a series stack into parallel stacks or order a
+# series stack differently than the CDL. Calibre reduces both, KLayout does
+# not. The LVS deck compares them as black boxes in a design (KNOWN_MISMATCH
+# in asap7.lvs), so they are usable.
+A2O1A1O1Ixp25_ASAP7_75t_R
+AND2x2_ASAP7_75t_R
+AND2x4_ASAP7_75t_R
+AND2x6_ASAP7_75t_R
+AOI211xp5_ASAP7_75t_R
+AOI21x1_ASAP7_75t_R
+AOI22x1_ASAP7_75t_R
+DFFASRHQNx1_ASAP7_75t_R
+ICGx2p67DC_ASAP7_75t_R
+ICGx4DC_ASAP7_75t_R
+ICGx5p33DC_ASAP7_75t_R
+ICGx6p67DC_ASAP7_75t_R
+ICGx8DC_ASAP7_75t_R
+NAND3x2_ASAP7_75t_R
+NOR3x2_ASAP7_75t_R
+OAI21x1_ASAP7_75t_R
+OAI221xp5_ASAP7_75t_R
+OAI22x1_ASAP7_75t_R
+OR2x6_ASAP7_75t_R
+SDFLx1_ASAP7_75t_R
+SDFLx2_ASAP7_75t_R
+SDFLx3_ASAP7_75t_R
+XNOR2x1_ASAP7_75t_R
+XOR2x1_ASAP7_75t_R

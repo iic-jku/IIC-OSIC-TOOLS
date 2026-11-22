@@ -1,0 +1,322 @@
+# SPDX-FileCopyrightText: 2026 Harald Pretl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+#
+# KLayout LVS deck for the ASAP7 7 nm FinFET predictive PDK.
+#
+# Written from the layer table of the ASAP7 design rule manual
+# (asap7_drm_201207a.pdf) and the 1x standard-cell layouts. The Calibre
+# decks of ASAP7 are not redistributable, so this is an independent deck.
+#
+# Batch use:
+#   klayout -b -r asap7.lvs -rd input=<layout.gds> -rd topcell=<cell> \
+#     -rd schematic=<netlist.cdl|.spice> [-rd report=<file.lvsdb>] \
+#     [-rd target_netlist=<extracted.cir>] [-rd threads=<n>] \
+#     [-rd blackbox_cells=<glob>[,<glob>...]|known|none]
+#
+# The schematic may use M devices with the model names of the CDL
+# (nmos_rvt, ...) or X calls of the subcircuits of the PDK SPICE models.
+#
+# Standard cells inside a design are compared at transistor level, except
+# the cells in KNOWN_MISMATCH below (blackbox_cells=known, the default):
+# their layouts split a transistor stack into parallel stacks or order a
+# series stack differently than the CDL, which Calibre reduces and KLayout
+# does not. They are compared as black boxes. A black box has no fixed pin
+# roles, so swapped connections on it are not found. blackbox_cells=none
+# compares every cell at transistor level, a glob list black-boxes other
+# cells instead.
+#
+# Device model:
+#   * FinFETs are extracted as 3-terminal MOS devices (D, G, S). ASAP7
+#     standard cells carry no well or substrate taps, so the body terminal
+#     of the schematic devices is dropped when the schematic is read.
+#   * W is the active width across the gate, which is nfin times the fin
+#     pitch of 27 nm, so comparing W compares nfin. Parallel fingers are
+#     combined by summing W, as the CDL netlists use one device per stack.
+#   * The threshold flavor comes from the VT marker layers (SLVT 97/0,
+#     LVT 98/0, SRAMVT 110/0), no marker is RVT.
+
+require "set"
+
+# ---------------------------------------------------------------------------
+# Options
+# ---------------------------------------------------------------------------
+
+if $input
+  if $topcell
+    source($input, $topcell)
+  else
+    source($input)
+  end
+end
+
+layout_name = File.basename(source.path.to_s, ".*")
+top_name = source.cell_name
+
+if $report
+  report_lvs($report)
+else
+  report_lvs(File.join(Dir.pwd, "#{top_name}.lvsdb"))
+end
+
+if $target_netlist
+  target_netlist($target_netlist, write_spice(true, false), "Extracted by KLayout with the ASAP7 LVS deck")
+end
+
+threads(($threads || 4).to_i)
+deep
+verbose($verbose.to_s == "true")
+
+FIN_PITCH_UM = 0.027
+DEVICE_NAMES = ["nmos_lvt", "nmos_rvt", "nmos_slvt", "nmos_sram",
+                "pmos_lvt", "pmos_rvt", "pmos_slvt", "pmos_sram"]
+
+# ---------------------------------------------------------------------------
+# Schematic reader: drop the body terminal of M devices, keep W and L in um
+# ---------------------------------------------------------------------------
+
+class ASAP7SpiceReader < RBA::NetlistSpiceReaderDelegate
+
+  def initialize(top_name)
+    super()
+    @top_name = top_name
+  end
+
+  # The schematic may be a whole library (e.g. the standard-cell CDL). Keep
+  # the top circuit and what it instantiates, so unrelated cells are not
+  # reported as unmatched.
+  def finish(netlist)
+    top = netlist.circuit_by_name(@top_name)
+    netlist.each_circuit { |c| top ||= c if c.name.casecmp?(@top_name) }
+    return if !top
+    keep = Set.new
+    stack = [top]
+    while (c = stack.pop)
+      next if keep.include?(c.name)
+      keep.add(c.name)
+      c.each_subcircuit { |sc| stack.push(sc.circuit_ref) }
+    end
+    drop = []
+    netlist.each_circuit { |c| drop << c unless keep.include?(c.name) }
+    drop.each { |c| netlist.remove(c) }
+  end
+
+  # X calls of the PDK device subcircuits (xschem netlists) become devices
+  def wants_subcircuit(circuit_name)
+    DEVICE_NAMES.include?(circuit_name.downcase)
+  end
+
+  def element(circuit, el, name, model, value, nets, params)
+    if !["M", "X"].include?(el) || nets.size != 4 || !DEVICE_NAMES.include?(model.downcase)
+      return super
+    end
+    cls_name = model.upcase
+    cls = circuit.netlist.device_class_by_name(cls_name)
+    if !cls
+      cls = RBA::DeviceClassMOS3Transistor::new
+      cls.name = cls_name
+      circuit.netlist.add(cls)
+    end
+    dev = circuit.create_device(cls, name)
+    dev.connect_terminal("D", nets[0])
+    dev.connect_terminal("G", nets[1])
+    dev.connect_terminal("S", nets[2])
+    w = params["W"]
+    nfin = params["NFIN"]
+    # nfin wins over w, so a schematic that gives only nfin compares as well
+    w = nfin.to_f * FIN_PITCH_UM * 1e-6 if nfin
+    dev.set_parameter("W", (w || 0.0).to_f * 1e6)
+    dev.set_parameter("L", (params["L"] || 20e-9).to_f * 1e6)
+    true
+  end
+
+end
+
+schematic_file = $schematic
+if !schematic_file
+  # Default: a netlist next to the layout with the same base name
+  base = File.join(File.dirname(source.path.to_s), layout_name)
+  schematic_file = [".cdl", ".spice", ".cir", ".sp"].map { |e| base + e }.find { |f| File.exist?(f) }
+  schematic_file || raise("No schematic given (-rd schematic=...) and none found next to the layout")
+end
+schematic(schematic_file, RBA::NetlistSpiceReader::new(ASAP7SpiceReader::new(top_name)))
+
+# ---------------------------------------------------------------------------
+# Layers (ASAP7 DRM layer table)
+# ---------------------------------------------------------------------------
+
+fin     = input(2, 0)
+gate    = input(7, 0)
+gcut    = input(10, 0)
+active  = input(11, 0)
+nselect = input(12, 0)
+pselect = input(13, 0)
+lig     = input(16, 0)
+lisd    = input(17, 0)
+v0      = input(18, 0)
+slvt    = input(97, 0)
+lvt     = input(98, 0)
+sramvt  = input(110, 0)
+
+metals = {
+  "M1" => [19, 18], "M2" => [20, 21], "M3" => [30, 25], "M4" => [40, 35],
+  "M5" => [50, 45], "M6" => [60, 55], "M7" => [70, 65], "M8" => [80, 75],
+  "M9" => [90, 85]
+}
+m   = {}
+via = {}
+lbl = {}
+metals.each do |name, (ml, vl)|
+  m[name]   = input(ml, 0)
+  via[name] = input(vl, 0)
+  # pins (251) and labels (2) both name nets
+  lbl[name] = labels(ml, 251) + labels(ml, 2)
+end
+v9  = input(95, 0)
+pad = input(96, 0)
+
+# ---------------------------------------------------------------------------
+# Derived layers
+# ---------------------------------------------------------------------------
+
+poly    = gate - gcut
+channel = poly & active
+sd      = active - poly
+
+nchan = channel & nselect
+pchan = channel & pselect
+
+vt_any = slvt + lvt + sramvt
+
+devices = {
+  "nmos_rvt"  => nchan - vt_any,
+  "nmos_lvt"  => nchan & lvt,
+  "nmos_slvt" => nchan & slvt,
+  "nmos_sram" => nchan & sramvt,
+  "pmos_rvt"  => pchan - vt_any,
+  "pmos_lvt"  => pchan & lvt,
+  "pmos_slvt" => pchan & slvt,
+  "pmos_sram" => pchan & sramvt
+}
+
+# ---------------------------------------------------------------------------
+# Device extraction
+# ---------------------------------------------------------------------------
+
+devices.each do |name, g|
+  extract_devices(mos3(name), { "SD" => sd, "G" => g, "tS" => sd, "tD" => sd, "tG" => poly })
+end
+
+# ---------------------------------------------------------------------------
+# Connectivity
+# ---------------------------------------------------------------------------
+
+connect(sd, lisd)
+connect(poly, lig)
+connect(lisd, v0)
+connect(lig, v0)
+# LIG landing on LISD connects them directly (used e.g. in the flip-flops)
+connect(lig, lisd)
+connect(v0, m["M1"])
+
+order = ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9"]
+order.each_cons(2) do |lo, hi|
+  connect(m[lo], via[hi])
+  connect(via[hi], m[hi])
+end
+connect(m["M9"], v9)
+connect(v9, pad)
+
+order.each { |n| connect(m[n], lbl[n]) }
+
+# ---------------------------------------------------------------------------
+# Netlist preparation and compare
+# ---------------------------------------------------------------------------
+
+netlist.make_top_level_pins
+netlist.combine_devices
+netlist.purge
+netlist.simplify
+
+schematic.combine_devices
+schematic.simplify
+
+devices.keys.each do |name|
+  tolerance(name, "W", :relative => 0.01)
+  tolerance(name, "L", :relative => 0.01)
+end
+
+# Cells whose layout does not match their CDL in KLayout, for every threshold
+# flavor. Keep in sync with _tests/61/lvs_known_mismatch.txt of IIC-OSIC-TOOLS.
+KNOWN_MISMATCH = %w[
+  A2O1A1O1Ixp25 AND2x2 AND2x4 AND2x6 AOI211xp5 AOI21x1 AOI22x1 DFFASRHQNx1
+  ICGx2p67DC ICGx4DC ICGx5p33DC ICGx6p67DC ICGx8DC NAND3x2 NOR3x2 OAI21x1
+  OAI221xp5 OAI22x1 OR2x6 SDFLx1 SDFLx2 SDFLx3 XNOR2x1 XOR2x1
+]
+
+# Cells that match their CDL only with logically interchangeable inputs
+# swapped (the layout orders a series stack the other way round). Declared as
+# equivalent pins, so the nets on them do not mismatch in a design. A cell
+# missing here fails its own LVS (test 61 of IIC-OSIC-TOOLS).
+EQUIVALENT_INPUTS = {
+  "AND4x1" => %w[A B C D], "AO21x1" => %w[A1 A2], "AO21x2" => %w[A1 A2],
+  "AOI32xp33" => %w[B1 B2], "FAx1" => %w[A B], "OAI31xp33" => %w[A1 A2 A3],
+  "OAI31xp67" => %w[A1 A2 A3], "OAI322xp33" => %w[A1 A2 A3],
+  "OAI32xp33" => %w[B1 B2], "OAI33xp33" => %w[B1 B2 B3], "XOR2x2" => %w[A B]
+}
+sch_names = Set.new
+schematic.netlist.each_circuit { |c| sch_names.add(c.name) } rescue nil
+EQUIVALENT_INPUTS.each do |cell, pins|
+  %w[R L SL SRAM].each do |vt|
+    name = "#{cell}_ASAP7_75t_#{vt}".upcase
+    equivalent_pins(name, *pins) if sch_names.empty? || sch_names.include?(name)
+  end
+end
+
+blackbox = $blackbox_cells || "known"
+patterns =
+  case blackbox
+  when "none" then []
+  when "known" then KNOWN_MISMATCH.map { |c| "#{c}_ASAP7_75t_*" }
+  else blackbox.split(",").map(&:strip)
+  end
+# The cell under test itself is never a black box. blank_circuit matches case
+# sensitively, and the SPICE reader upper-cases the schematic names, so every
+# pattern is applied as given (layout) and upper-cased (schematic).
+patterns.reject { |p| File.fnmatch?(p, top_name, File::FNM_CASEFOLD) }.each do |p|
+  [p, p.upcase].uniq.each { |q| blank_circuit(q) }
+end
+
+# AS/AD/PS/PD are not extracted from FinFET layouts
+devices.keys.each do |name|
+  ["AS", "AD", "PS", "PD"].each { |p| ignore_parameter(name, p) rescue nil }
+end
+
+matched = compare
+
+# KLayout pairs the pins of the top circuit by connectivity, not by name, so
+# two swapped ports still match. Require equal names, except within a group
+# of equivalent inputs of the cell under test.
+if matched
+  base = top_name.sub(/_ASAP7_75t_[A-Z]+\z/i, "")
+  equivalent = (EQUIVALENT_INPUTS.find { |c, _| c.casecmp?(base) } || [nil, []])[1].map(&:upcase)
+  xref = lvs_data.xref
+  xref.each_circuit_pair do |cp|
+    next unless cp.first && cp.second && cp.first.name.casecmp?(top_name)
+    xref.each_pin_pair(cp) do |pp|
+      next unless pp.first && pp.second
+      lay = pp.first.expanded_name.upcase
+      sch = pp.second.expanded_name.upcase
+      next if lay == sch || (equivalent.include?(lay) && equivalent.include?(sch))
+      puts "[ERROR] Layout pin #{pp.first.expanded_name} matches schematic pin #{pp.second.expanded_name}"
+      matched = false
+    end
+  end
+end
+
+if matched
+  puts "[INFO] LVS of #{top_name}: netlists match"
+else
+  puts "[ERROR] LVS of #{top_name}: netlists do not match"
+end
+$lvs_result = matched

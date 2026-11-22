@@ -1,0 +1,30 @@
+{
+    "meta": {
+        "version": 3,
+        "flow": "Classic",
+        "substituting_steps": {
+            "Magic.StreamOut": null,
+            "Magic.WriteLEF": null,
+            "Odb.CheckDesignAntennaProperties": null,
+            "KLayout.XOR": null,
+            "Checker.XOR": null,
+            "Magic.DRC": null,
+            "Checker.MagicDRC": null,
+            "Magic.SpiceExtraction": null,
+            "Checker.IllegalOverlap": null,
+            "Netgen.LVS": null,
+            "Checker.LVS": null
+        }
+    },
+    "DESIGN_NAME": "counter",
+    "VERILOG_FILES": "dir::counter.v",
+    "CLOCK_PORT": "clk",
+    "CLOCK_PERIOD": 1000,
+    "FP_SIZING": "absolute",
+    "DIE_AREA": [0, 0, 20, 20],
+    "PL_TARGET_DENSITY_PCT": 50,
+    "RUN_ANTENNA_REPAIR": false,
+    "IO_PIN_H_THICKNESS_MULT": 1,
+    "IO_PIN_V_THICKNESS_MULT": 1,
+    "ERROR_ON_KLAYOUT_DRC": false
+}

@@ -1,0 +1,12 @@
+* ngspice initialization for the ASAP7 7 nm FinFET predictive PDK
+*
+* Use the models with:  .lib $PDK_ROOT/asap7/libs.tech/ngspice/models/asap7.lib tt
+* Corners: tt ff ss. Devices: nmos_{lvt,rvt,slvt,sram}, pmos_{lvt,rvt,slvt,sram}
+* (subcircuits, terminals d g s b, parameters l and nfin).
+
+setcs sourcepath = ( $sourcepath $PDK_ROOT/asap7/libs.tech/ngspice/models )
+
+set num_threads=4
+
+* BSIM-CMG 111.2.1 compiled from Verilog-A
+osdi '$PDK_ROOT/asap7/libs.tech/ngspice/osdi/bsimcmg.osdi'

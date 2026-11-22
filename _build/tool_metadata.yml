@@ -1,3 +1,12 @@
+- name: asap7_for_klayout
+  repo: https://github.com/laurentc2/ASAP7_for_KLayout.git
+  commit: ef77f080381cab3993428492a3dcb41044c3f518
+- name: asap7_pdk_r1p7
+  repo: https://github.com/The-OpenROAD-Project/asap7_pdk_r1p7.git
+  commit: 58d72c9d291e186a77468586ab0c43d8a21eda6a
+- name: asap7sc7p5t_28
+  repo: https://github.com/The-OpenROAD-Project/asap7sc7p5t_28.git
+  commit: e5bd25da72cd297b8c0ec6f77600e0cbaa1124d0
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
   commit: e80020910fc91fd223dd64a240fd3bd5fb607b9d
@@ -88,6 +97,9 @@
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: a92ebd27dc3a36a8f0e7821c825fae15d9c6ab42
+- name: openroad-flow-scripts
+  repo: https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
+  commit: a9adcf481395d3b1355afda40df1c8bde10a0e40
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: c4d317e4fa2398b9880920a1411c20258a2175a9
@@ -162,6 +174,9 @@
 - name: uv
   repo: https://github.com/astral-sh/uv.git
   commit: 0.13.9
+- name: va-models
+  repo: https://github.com/dwarning/VA-Models.git
+  commit: f04299a330591a591f309f4be1e208f83883ba2a
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
   commit: 2a432c7ce8f1ace6a709c6090dcd3efa7e9a9491
