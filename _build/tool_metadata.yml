@@ -53,7 +53,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: fd4a65b2008350bcae14bc6451eefe9a4a964442
+  commit: 1df6f8bf664c70979373c07022e6fdd10bb19a47
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2

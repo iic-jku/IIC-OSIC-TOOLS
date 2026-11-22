@@ -1,70 +1,57 @@
 diff --git a/elaborate.cc b/elaborate.cc
-index fca9273a..873e39da 100644
+index f1b6db14..77e34590 100644
 --- a/elaborate.cc
 +++ b/elaborate.cc
-@@ -7832,13 +7832,17 @@ static bool unconditional_timing_check_event(Design*des, const LineInfo&loc,
+@@ -7861,13 +7861,15 @@ static bool timing_check_copy(Design*des, NetScope*scope, NetNet*source,
  
  void PRecRem::elaborate(Design*des, NetScope*scope) const
  {
 -      if (gn_specify_blocks_flag) {
--            if (timestamp_cond_ || timecheck_cond_ || delayed_reference_ || delayed_data_) {
+-            if (timestamp_cond_ || timecheck_cond_) {
 -                  cerr << get_fileline() << ": error: $recrem timestamp/timecheck"
--                       << " conditions and delayed signals are not supported." << endl;
+-                       << " conditions are not supported." << endl;
 -                  des->errors += 1;
 -                  return;
 -            }
-+      // A check with timestamp/timecheck conditions or delayed signals keeps
-+      // the behavior before the runtime checks: no check, delayed signals
-+      // copied from the originals. A runtime check would need delayed
-+      // signals with real delays for negative SDF limits.
-+      if (gn_specify_blocks_flag
-+          && (timestamp_cond_ || timecheck_cond_ || delayed_reference_ || delayed_data_)) {
++      // A check with timestamp/timecheck conditions keeps the behavior
++      // without specify timing: no runtime check, delayed signals copied
++      // from the originals.
++      if (gn_specify_blocks_flag && (timestamp_cond_ || timecheck_cond_)) {
 +            cerr << get_fileline() << ": warning: $recrem with timestamp/timecheck"
-+                 << " conditions or delayed signals is not checked. Delayed"
-+                 << " reference and data signals become copies of the original"
-+                 << " reference and data signals." << endl;
++                 << " conditions is not checked. Delayed reference and data"
++                 << " signals become copies of the original reference and data"
++                 << " signals." << endl;
 +      } else if (gn_specify_blocks_flag) {
              int reference_edge, data_edge;
              NetNet*reference_condition, *data_condition;
              ivl_tchk_cond_t reference_condition_kind, data_condition_kind;
-@@ -7934,13 +7938,17 @@ void PRecRem::elaborate(Design*des, NetScope*scope) const
+@@ -7967,13 +7969,15 @@ void PRecRem::elaborate(Design*des, NetScope*scope) const
  
  void PSetupHold::elaborate(Design*des, NetScope*scope) const
  {
 -      if (gn_specify_blocks_flag) {
--            if (timestamp_cond_ || timecheck_cond_ || delayed_reference_ || delayed_data_) {
+-            if (timestamp_cond_ || timecheck_cond_) {
 -                  cerr << get_fileline() << ": error: $setuphold timestamp/timecheck"
--                       << " conditions and delayed signals are not supported." << endl;
+-                       << " conditions are not supported." << endl;
 -                  des->errors += 1;
 -                  return;
 -            }
-+      // A check with timestamp/timecheck conditions or delayed signals keeps
-+      // the behavior before the runtime checks: no check, delayed signals
-+      // copied from the originals. A runtime check would need delayed
-+      // signals with real delays for negative SDF limits.
-+      if (gn_specify_blocks_flag
-+          && (timestamp_cond_ || timecheck_cond_ || delayed_reference_ || delayed_data_)) {
++      // A check with timestamp/timecheck conditions keeps the behavior
++      // without specify timing: no runtime check, delayed signals copied
++      // from the originals.
++      if (gn_specify_blocks_flag && (timestamp_cond_ || timecheck_cond_)) {
 +            cerr << get_fileline() << ": warning: $setuphold with timestamp/timecheck"
-+                 << " conditions or delayed signals is not checked. Delayed"
-+                 << " reference and data signals become copies of the original"
-+                 << " reference and data signals." << endl;
++                 << " conditions is not checked. Delayed reference and data"
++                 << " signals become copies of the original reference and data"
++                 << " signals." << endl;
 +      } else if (gn_specify_blocks_flag) {
              int reference_edge, data_edge;
              NetNet*reference_condition, *data_condition;
              ivl_tchk_cond_t reference_condition_kind, data_condition_kind;
 diff --git a/vpi/sys_sdf.c b/vpi/sys_sdf.c
-index db89cb9c..12463828 100644
+index 8812ef0d..ecbfaeee 100644
 --- a/vpi/sys_sdf.c
 +++ b/vpi/sys_sdf.c
-@@ -662,7 +662,7 @@ static void sdf_single_limit(int check_type, const char* check_name,
-       if (!sdf_cur_cell || !limit.defined ||
-           (check_type == vpiPeriod && !sdf_cur_cell_type_matches)) return;
-       if (!isfinite(limit.value) || limit.value < 0) {
--            vpi_printf("SDF ERROR: %s:%d: invalid %s limit\n", sdf_fname, lineno, check_name);
-+            vpi_printf("SDF WARNING: %s:%d: negative or invalid %s limit, not annotated\n", sdf_fname, lineno, check_name);
-             return;
-       }
-       vpiHandle checks = vpi_iterate(vpiTchk, sdf_cur_cell);
 @@ -695,7 +695,7 @@ static void sdf_single_limit(int check_type, const char* check_name,
                               sdf_fname, lineno, check_name, reference, value.real);
        }
@@ -74,16 +61,7 @@ index db89cb9c..12463828 100644
                         sdf_fname, lineno, check_name, edge_str(edge), reference,
                         vpi_get_str(vpiFullName, sdf_cur_cell));
  }
-@@ -751,7 +751,7 @@ static void sdf_recovery_removal_values(int check_type, struct sdf_tchk_port_s r
-           (!recovery.defined && !removal.defined)) return;
-       if ((recovery.defined && (!isfinite(recovery.value) || recovery.value < 0)) ||
-           (removal.defined && (!isfinite(removal.value) || removal.value < 0))) {
--            vpi_printf("SDF ERROR: %s:%d: invalid %s limit\n",
-+            vpi_printf("SDF WARNING: %s:%d: negative or invalid %s limit, not annotated\n",
-                        sdf_fname, lineno, name);
-             return;
-       }
-@@ -813,7 +813,7 @@ static void sdf_recovery_removal_values(int check_type, struct sdf_tchk_port_s r
+@@ -854,7 +854,7 @@ static void sdf_recovery_removal_values(int check_type, struct sdf_tchk_port_s r
              }
        }
        if (!matches)
@@ -92,16 +70,7 @@ index db89cb9c..12463828 100644
                         sdf_fname, lineno, name, reference.port.string_val,
                         data.port.string_val, vpi_get_str(vpiFullName, sdf_cur_cell));
  }
-@@ -860,7 +860,7 @@ static void sdf_setup_hold_values(int check_type, struct sdf_tchk_port_s data,
-           (!setup.defined && !hold.defined)) return;
-       if ((setup.defined && (!isfinite(setup.value) || setup.value < 0)) ||
-           (hold.defined && (!isfinite(hold.value) || hold.value < 0))) {
--            vpi_printf("SDF ERROR: %s:%d: invalid %s limit\n",
-+            vpi_printf("SDF WARNING: %s:%d: negative or invalid %s limit, not annotated\n",
-                        sdf_fname, lineno, name);
-             return;
-       }
-@@ -922,7 +922,7 @@ static void sdf_setup_hold_values(int check_type, struct sdf_tchk_port_s data,
+@@ -966,7 +966,7 @@ static void sdf_setup_hold_values(int check_type, struct sdf_tchk_port_s data,
              }
        }
        if (!matches)

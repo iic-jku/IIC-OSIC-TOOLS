@@ -8,10 +8,8 @@
 # gate-level simulation does.
 #
 # The cells declare $setuphold and $recrem with delayed reference and data
-# signals. Since steveicarus/iverilog PR 1743 ($recrem) and PR 1745
-# ($setuphold), elaboration with -gspecify rejects them as unsupported.
-# images/iverilog/patches/timing-check-delayed-signals.patch makes them work
-# again, this test fails without it.
+# signals. steveicarus/iverilog PR 1743 ($recrem) and PR 1745 ($setuphold)
+# rejected them under -gspecify until PR 1875 (steveicarus/iverilog#1871).
 
 if [ -z "${RAND}" ]; then
     RAND=$(hexdump -v -e '/1 "%02x"' -n4 < /dev/urandom)
