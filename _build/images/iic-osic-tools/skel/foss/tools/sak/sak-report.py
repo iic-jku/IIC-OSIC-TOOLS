@@ -67,6 +67,7 @@ COUNT = re.compile(r"^\[INFO\] COUNT:\s*(\d+)\s*$")
 NETGEN_COUNT = re.compile(r"^Number of (devices|nets):\s*(\d+)[^|]*\|Number of \1:\s*(\d+)")
 NETGEN_HEAD = re.compile(r"^(Contents of circuit 1:|Circuit 1 cell )", re.M)
 NETGEN_PROPERTY = ("Property errors were found.", "The following cells had property errors:")
+GDSCHECK_GENERATOR = re.compile(r"<generator>\s*gdscheck\s*</generator>")
 KIND = {"lyrdb": "drc", "magic": "drc", "lvsdb": "lvs", "netgen": "lvs"}
 
 
@@ -86,6 +87,20 @@ def detect_format(path: str) -> str:
     if any(DASHES.match(line) for line in head.splitlines()):
         return "magic"
     raise sak_json.InputError(f"{path}: unknown report format")
+
+
+def detect_engine(path: str, fmt: str) -> str:
+    """Name of the tool that wrote the report. gdscheck names itself in the generator tag of its lyrdb, every other lyrdb or lvsdb is KLayout's."""
+    if fmt == "magic":
+        return "magic"
+    if fmt == "netgen":
+        return "netgen"
+    if fmt == "lyrdb":
+        with open(path, "rb") as f:
+            head = f.read(4096).decode("utf-8", errors="replace")
+        if GDSCHECK_GENERATOR.search(head):
+            return "gdscheck"
+    return "klayout"
 
 
 def value_bbox(value):
@@ -276,14 +291,15 @@ def summarize(path: str, limit: int) -> dict:
     if reader is None:
         raise sak_json.InputError(f"{path}: unsupported report format {fmt}")
     rep = reader(path)
+    engine = detect_engine(path, fmt)
     if rep.get("kind") == "lvs":
         counts = {key: len(items) for key, items in rep["unmatched"].items()}
         rep["unmatched"] = {key: sak_json.cap(items, limit) for key, items in rep["unmatched"].items()}
-        return {"path": path, **rep, "unmatched_count": counts}
+        return {"path": path, "engine": engine, **rep, "unmatched_count": counts}
     rules = sorted(rep["rules"], key=lambda r: -r["count"])
     for rule in rules:
         rule["markers"] = sak_json.cap(rule["markers"], limit)
-    return {"path": path, "format": rep["format"], "top_cell": rep["top_cell"],
+    return {"path": path, "engine": engine, "format": rep["format"], "top_cell": rep["top_cell"],
             "total": sum(r["count"] for r in rules), "rules": rules}
 
 
@@ -291,7 +307,7 @@ def lvs_text_summary(reports: list, match: bool) -> str:
     out = [f"LVS {'match' if match else 'MISMATCH'} in {len(reports)} report(s)"]
     for rep in reports:
         lay, sch = rep["layout"], rep["schematic"]
-        out.append(f"{rep['path']} ({rep['format']}, top cell {rep['top_cell']}): "
+        out.append(f"{rep['path']} ({rep['engine']} {rep['format']}, top cell {rep['top_cell']}): "
                    f"{'match' if rep['match'] else 'mismatch'}, "
                    f"devices {lay['devices']}/{sch['devices']}, nets {lay['nets']}/{sch['nets']} (layout/schematic)")
         if rep["property_errors"]:
@@ -306,7 +322,7 @@ def lvs_text_summary(reports: list, match: bool) -> str:
 def text_summary(reports: list, total: int) -> str:
     out = [f"{total} DRC violation(s) in {len(reports)} report(s)"]
     for rep in reports:
-        out.append(f"{rep['path']} ({rep['format']}, top cell {rep['top_cell']}): {rep['total']}")
+        out.append(f"{rep['path']} ({rep['engine']} {rep['format']}, top cell {rep['top_cell']}): {rep['total']}")
         for rule in rep["rules"]:
             out.append(f"  {rule['rule']}: {rule['count']}")
     return "\n".join(out)

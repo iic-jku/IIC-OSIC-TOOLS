@@ -91,8 +91,8 @@ check() {
     fi
 }
 
-check "ok lvsdb" 0 "d['status']=='clean' and d['kind']=='lvs' and d['match'] is True and r['format']=='lvsdb' and r['match'] is True and r['layout']['devices']==2 and r['schematic']['devices']==2 and r['layout']['nets']==4 and r['unmatched_available'] is True and r['unmatched']['nets']==[]" --json "$OK_DB"
-check "ok netgen" 0 "d['match'] is True and r['format']=='netgen' and r['layout']['devices']==2 and r['schematic']['nets']==4 and r['property_errors'] is False and r['unmatched_available'] is False" --json "$OK_OUT"
+check "ok lvsdb" 0 "d['status']=='clean' and d['kind']=='lvs' and d['match'] is True and r['format']=='lvsdb' and r['engine']=='klayout' and r['match'] is True and r['layout']['devices']==2 and r['schematic']['devices']==2 and r['layout']['nets']==4 and r['unmatched_available'] is True and r['unmatched']['nets']==[]" --json "$OK_DB"
+check "ok netgen" 0 "d['match'] is True and r['format']=='netgen' and r['engine']=='netgen' and r['layout']['devices']==2 and r['schematic']['nets']==4 and r['property_errors'] is False and r['unmatched_available'] is False" --json "$OK_OUT"
 check "bad lvsdb" 1 "d['status']=='findings' and d['match'] is False and r['match'] is False and r['unmatched_available'] is True and len(r['unmatched']['nets'])>0 and r['unmatched_count']['nets']>0" --json "$BAD_DB"
 check "bad netgen" 1 "d['match'] is False and r['match'] is False" --json "$BAD_OUT"
 check "ok lvsdb + bad netgen" 1 "d['match'] is False and len(d['reports'])==2" --json "$OK_DB" "$BAD_OUT"
