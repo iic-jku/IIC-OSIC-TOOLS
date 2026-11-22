@@ -11,8 +11,8 @@ match the parameters w and l of the models. The pins are labeled.
       FinFET {n,p}mos_{lvt,rvt,slvt,sram} with nf gate fingers of nfin fins
       between two dummy gates, after the transistors of the standard cells.
       --lg is the gate length in nm (20, 24, 28, 36, 60 or 80, the gates
-      keep their spacing of 34 nm). --vt io18 is the 1.8 V IO FinFET
-      {n,p}mos_io18 (--lg 80, 160 or 240, gate spacing 100 nm).
+      keep their spacing of 34 nm). --vt 18 is the 1.8 V IO FinFET
+      {n,p}mos_18 (--lg 80, 160 or 240, gate spacing 100 nm).
       All gates are tied on M1 (pin G). With --strap the sources and the
       drains are tied on M2 (pins S and D), otherwise every source and
       drain ends on its own M1 strip. --cap ties all of them to one pin B,
@@ -214,7 +214,7 @@ def draw_mos(par, c, kind, vt, nfin, nf, strap=False, cap=False, tap=False, l=No
     at the gate pitch with a dummy gate on each side, the active area ending
     9 nm before the dummy gates, SDT, LISD, V0 and an M1 strip on every source
     and drain, and LIG with V0 and M1 above the active area on the gates.
-    vt "io18" is the 1.8 V IO FinFET: the layer TG over the row, a gate
+    vt "18" is the 1.8 V IO FinFET: the layer TG over the row, a gate
     length of 80 nm or more and a gate spacing of 100 nm.
 
     tap draws the body contact of such a row instead, after TAPCELL: two dummy
@@ -223,16 +223,16 @@ def draw_mos(par, c, kind, vt, nfin, nf, strap=False, cap=False, tap=False, l=No
     kind "p" the well contact next to PMOS (n implant in the well). A row has
     the same height for the same nfin, so taps and FinFETs abut.
     """
-    io = vt == "io18"
+    io = vt == "18"
     if kind not in ("n", "p") or (vt not in VT_LAYERS and not io):
-        raise PassiveError("mos needs the type n or p and the vt lvt, rvt, slvt, sram or io18")
+        raise PassiveError("mos needs the type n or p and the vt lvt, rvt, slvt, sram or 18")
     if nfin < 1 or nf < 1:
         raise PassiveError("mos needs nfin >= 1 and nf >= 1")
     lengths = par["io_lengths"] if io else par["mos_lengths"]
     if tap or l is None:
         l = lengths[0]
     if l not in lengths:
-        raise PassiveError(f"{'io18' if io else 'core'} mos needs a gate length of {', '.join(str(x) for x in lengths)} nm")
+        raise PassiveError(f"{"1.8 V IO" if io else "core"} mos needs a gate length of {', '.join(str(x) for x in lengths)} nm")
     L = MOS_LAYERS
     space = par["io_gate_space"] if io else par["mos_gate_space"]
     cpp = l + space
@@ -400,12 +400,12 @@ def main():
     ap.add_argument("device", choices=["mos", "ndio", "pdio", "pnp", "rm", "rtfr", "cmom", "pad"])
     ap.add_argument("-m", type=int, default=1, help="strips of ndio, pdio and pnp")
     ap.add_argument("--type", choices=["n", "p"], default="n", help="polarity of mos")
-    ap.add_argument("--vt", choices=list(VT_LAYERS) + ["io18"], default="rvt",
-                    help="threshold flavor of mos, io18 is the 1.8 V IO FinFET")
+    ap.add_argument("--vt", choices=list(VT_LAYERS) + ["18"], default="rvt",
+                    help="threshold flavor of mos, 18 is the 1.8 V IO FinFET")
     ap.add_argument("--nfin", type=int, default=3, help="fins per finger of mos")
     ap.add_argument("--nf", type=int, default=1, help="gate fingers of mos")
     ap.add_argument("--lg", type=int, help="gate length of mos in nm: 20 (default), 24, 28, 36, 60 or 80, "
-                    "for io18 80 (default), 160 or 240")
+                    "for vt 18 80 (default), 160 or 240")
     ap.add_argument("--strap", action="store_true", help="mos: tie sources and drains on M2")
     ap.add_argument("--cap", action="store_true", help="mos: MOS capacitor, sources and drains on one pin")
     ap.add_argument("--tap", action="store_true", help="mos: body contact for a row of this type and nfin")

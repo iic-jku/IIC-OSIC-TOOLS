@@ -312,9 +312,9 @@ if [ -z "$FAILED" ]; then
         echo ".lib $LIBS/ngspice/models/asap7.lib tt"
         echo ".temp 25"
         echo "vdn dn 0 1.8"
-        echo "xn dn dn 0 0 nmos_io18 nfin=100"
+        echo "xn dn dn 0 0 nmos_18 nfin=100"
         echo "vdp dp 0 -1.8"
-        echo "xp dp dp 0 0 pmos_io18 nfin=100"
+        echo "xp dp dp 0 0 pmos_18 nfin=100"
         for l in 20 36 80; do
             echo "vg$l g$l 0 0.35"
             echo "vd$l d$l 0 0.35"
@@ -339,9 +339,9 @@ if [ -z "$FAILED" ]; then
         echo ".lib $LIBS/xyce/models/asap7.lib tt"
         echo ".options device temp=25"
         echo "vdn dn 0 1.8"
-        echo "xn dn dn 0 0 nmos_io18 nfin=100"
+        echo "xn dn dn 0 0 nmos_18 nfin=100"
         echo "vdp dp 0 -1.8"
-        echo "xp dp dp 0 0 pmos_io18 nfin=100"
+        echo "xp dp dp 0 0 pmos_18 nfin=100"
         echo ".dc vdn 1.8 1.8 0.1"
         echo ".print dc format=noindex file=xy_io.txt {-i(vdn)} {i(vdp)}"
         echo ".end"
@@ -353,9 +353,9 @@ if [ -z "$FAILED" ]; then
         echo "include \"asap7.lib\" section=tt"
         echo "model vsource vsource"
         echo "vdn (dn 0) vsource dc=1.8"
-        echo "xn (dn dn 0 0) nmos_io18 nfin=100"
+        echo "xn (dn dn 0 0) nmos_18 nfin=100"
         echo "vdp (dp 0) vsource dc=-1.8"
-        echo "xp (dp dp 0 0) pmos_io18 nfin=100"
+        echo "xp (dp dp 0 0) pmos_18 nfin=100"
         echo "control"
         echo "  options temp=25"
         echo "  analysis vc_io op"
@@ -382,7 +382,7 @@ ion["vacask"] = (-float(np.ravel(r["vdn:flow(br)"])[0]), float(np.ravel(r["vdp:f
 bad = []
 for sim, (n, p) in ion.items():
     n, p = abs(n) / perimeter, abs(p) / perimeter   # A/m is mA/mm, 1e-3 of that is mA/um
-    print(f"{sim}: nmos_io18 {n * 1e-3:.3f} mA/um, pmos_io18 {p * 1e-3:.3f} mA/um")
+    print(f"{sim}: nmos_18 {n * 1e-3:.3f} mA/um, pmos_18 {p * 1e-3:.3f} mA/um")
     if abs(n * 1e-3 / 0.92 - 1) > 0.1 or abs(p * 1e-3 / 0.80 - 1) > 0.1:
         bad.append(f"{sim}: IO drive current off 0.92 and 0.80 mA/um by more than 10 %")
 i0, i1, i2 = v[2:5], v[5:8], v[8:11]
@@ -569,8 +569,8 @@ t_n3|--type n --vt sram --nfin 8 --nf 3 --strap|D G S|X1 D G S S nmos_sram l=20n
 t_c5|--type n --vt slvt --nfin 1 --nf 5 --cap|G B|X1 B G B B nmos_slvt l=20n nfin=1 m=5
 t_l60|--type n --nfin 3 --nf 2 --lg 60 --strap|D G S|X1 D G S S nmos_rvt l=60n nfin=3 m=2
 t_l80|--type p --vt lvt --nfin 2 --nf 3 --lg 80 --cap|G B|X1 B G B B pmos_lvt l=80n nfin=2 m=3
-t_io|--type n --vt io18 --nfin 4 --nf 2 --strap|D G S|X1 D G S S nmos_io18 l=80n nfin=4 m=2
-t_iop|--type p --vt io18 --nfin 2 --nf 1 --lg 240|D G S|M1 D G S S pmos_io18 l=240n nfin=2"
+t_io|--type n --vt 18 --nfin 4 --nf 2 --strap|D G S|X1 D G S S nmos_18 l=80n nfin=4 m=2
+t_iop|--type p --vt 18 --nfin 2 --nf 1 --lg 240|D G S|M1 D G S S pmos_18 l=240n nfin=2"
 fi
 if [ -z "$FAILED" ]; then
     printf '.subckt t_p2 D G S\nX1 D G S S pmos_lvt l=20n nfin=5 m=2\n.ends\n' > t_p2_wrong.cdl
@@ -621,7 +621,7 @@ cells = {
     "pc_rtfr": ("rtfr", dict(w=0.2, l=3.0)),
     "pc_cmom": ("cmom", dict(bot=2, top=5, w=1.0, l=0.8)),
     "pc_l36": ("nmos", dict(vt="rvt", l=36, nfin=3, nf=2, strap=True)),
-    "pc_io": ("pmos", dict(vt="io18", l=160, nfin=3, nf=2, strap=True)),
+    "pc_io": ("pmos", dict(vt="18", l=160, nfin=3, nf=2, strap=True)),
     "pc_ndio": ("ndio", dict(nfin=3, m=2)),
     "pc_pdio": ("pdio", dict(nfin=4, m=4)),
     "pc_pnp": ("pnp", dict(nfin=4, m=1)),
@@ -660,7 +660,7 @@ pc_cmom|p n|X1 p n cmom_m2m5 w=1u l=0.8u|
 pc_nmos_tap|D G S B|X1 D G S B nmos_rvt l=20n nfin=5 m=2|
 pc_pmos_tap|D G S B|X1 D G S B pmos_rvt l=20n nfin=2|
 pc_l36|D G S|X1 D G S S nmos_rvt l=36n nfin=3 m=2|ACTIVE.LUP.1
-pc_io|D G S|X1 D G S S pmos_io18 l=160n nfin=3 m=2|ACTIVE.LUP.1
+pc_io|D G S|X1 D G S S pmos_18 l=160n nfin=3 m=2|ACTIVE.LUP.1
 pc_ndio|a k|X1 a k ndio nfin=3 m=2|
 pc_pdio|a k|X1 a k pdio nfin=4 m=4|
 pc_pnp|c b e|X1 c b e pnp nfin=4 m=1|"

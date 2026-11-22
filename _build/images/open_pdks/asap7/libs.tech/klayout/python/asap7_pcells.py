@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """KLayout PCell library ASAP7: one PCell per device with a simulation model.
 
-  nmos, pmos   FinFET {n,p}mos_{lvt,rvt,slvt,sram} and the IO FinFET {n,p}mos_io18
+  nmos, pmos   FinFET {n,p}mos_{lvt,rvt,slvt,sram} and the IO FinFET {n,p}mos_18
   ncap, pcap   MOS capacitor of the symbols ncap_* and pcap_*
   ptap, ntap   substrate contact for NMOS rows, well contact for PMOS rows
                (no model: the body of a FinFET is a terminal of its model)
@@ -25,7 +25,7 @@ import pya
 import asap7_layout as gen
 
 LIBRARY = "ASAP7"
-VTS = ["rvt", "lvt", "slvt", "sram", "io18"]
+VTS = ["rvt", "lvt", "slvt", "sram", "18"]
 
 
 class DevicePCell(pya.PCellDeclarationHelper):
@@ -57,7 +57,7 @@ class MOS(DevicePCell):
         super().__init__()
         self.kind, self.cap = kind, cap
         self.choice("vt", "Threshold flavor", VTS, "rvt")
-        self.choice("l", "Gate length in nm (20 is the length of ASAP7, io18 takes 80, 160 or 240)",
+        self.choice("l", "Gate length in nm (20 is the length of ASAP7, vt 18 takes 80, 160 or 240)",
                     sorted(set(self.passives["mos_lengths"] + self.passives["io_lengths"])), 20)
         self.param("nfin", self.TypeInt, "Fins per finger", default=4 if cap else 3)
         self.param("nf", self.TypeInt, "Fingers (m of the model)", default=1)
@@ -71,7 +71,7 @@ class MOS(DevicePCell):
         self.nfin = max(1, self.nfin)
         self.nf = max(1, self.nf)
         # a length of the other device family becomes the shortest valid one
-        lengths = self.passives["io_lengths" if self.vt == "io18" else "mos_lengths"]
+        lengths = self.passives["io_lengths" if self.vt == "18" else "mos_lengths"]
         if self.l not in lengths:
             self.l = lengths[0]
 

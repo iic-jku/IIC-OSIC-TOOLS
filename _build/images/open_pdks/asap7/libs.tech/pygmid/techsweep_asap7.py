@@ -30,8 +30,8 @@ length of ASAP7 and of the model fit, and 24, 28, 36, 60 and 80 nm, which
 IIC-OSIC-TOOLS allows for analog design and which are an extrapolation of
 the model. pygmid looks up the smallest length, 20 nm, when L is not given.
 A .mat table needs at least two lengths (loadmat squeezes a single one to a
-scalar, which pygmid cannot use). The 1.8 V IO FinFETs nmos_io18 and
-pmos_io18 are swept up to 1.8 V at 80, 160 and 240 nm.
+scalar, which pygmid cannot use). The 1.8 V IO FinFETs nmos_18 and
+pmos_18 are swept up to 1.8 V at 80, 160 and 240 nm.
 
 Usage:
     techsweep_asap7.py [--device nmos_rvt] [--corner tt] [--temp 27]
@@ -154,13 +154,13 @@ def main():
     ap.add_argument("--temp", type=float, default=27.0, help="degC, the course tables use 27")
     ap.add_argument("--nfin", type=int, default=1)
     ap.add_argument("--lengths", default=None, help="gate lengths in um, comma-separated, at least two "
-                    "(default 0.02,0.024,0.028,0.036,0.06,0.08, for the io18 devices 0.08,0.16,0.24)")
-    ap.add_argument("--vmax", type=float, default=None, help="largest VGS and VDS (default 0.7, for the io18 devices 1.8)")
+                    "(default 0.02,0.024,0.028,0.036,0.06,0.08, for the 1.8 V devices 0.08,0.16,0.24)")
+    ap.add_argument("--vmax", type=float, default=None, help="largest VGS and VDS (default 0.7, for the 1.8 V devices 1.8)")
     ap.add_argument("--step", type=float, default=0.025)
     ap.add_argument("--vsb", default="0,0.1,0.2,0.3")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
-    io = args.device.endswith("_io18")
+    io = args.device.endswith("_18")
     if args.lengths is None:
         args.lengths = "0.08,0.16,0.24" if io else "0.02,0.024,0.028,0.036,0.06,0.08"
     if args.vmax is None:

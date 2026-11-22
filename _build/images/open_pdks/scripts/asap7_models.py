@@ -61,8 +61,8 @@ IO_L = "80n"
 CORE_LEFF = 0.025
 IO_LEFF = 0.085
 IO_DEVICES = {
-    "nmos_io18": ("nmos_rvt", {"phig": +0.15, "agidl": 6e-14, "agisl": 6e-14}),
-    "pmos_io18": ("pmos_rvt", {"phig": -0.15, "agidl": 3e-13, "agisl": 3e-13}),
+    "nmos_18": ("nmos_rvt", {"phig": +0.15, "agidl": 6e-14, "agisl": 6e-14}),
+    "pmos_18": ("pmos_rvt", {"phig": -0.15, "agidl": 3e-13, "agisl": 3e-13}),
 }
 IO_COMMON = {"eot": "3.2e-009", "toxp": "4.3e-009", "toxg": "4.3e-009", "ptwg": "0"}
 ALL_DEVICES = DEVICES + list(IO_DEVICES)
@@ -88,7 +88,7 @@ HEADER = """{c} ASAP7 7 nm FinFET predictive PDK, BSIM-CMG models for {sim}
 {c} Devices (subcircuits, terminals d g s b):
 {c}   nmos_lvt nmos_rvt nmos_slvt nmos_sram
 {c}   pmos_lvt pmos_rvt pmos_slvt pmos_sram
-{c}   nmos_io18 pmos_io18: 1.8 V IO FinFETs with a thick gate oxide, l from
+{c}   nmos_18 pmos_18: 1.8 V IO FinFETs with a thick gate oxide, l from
 {c}   80n (default), 160n or 240n. An IIC-OSIC-TOOLS addition derived from the RVT
 {c}   cards, not part of ASAP7 (see the PDK README).
 {c} Parameters: l (gate length, default {l}, the only length of ASAP7 and of

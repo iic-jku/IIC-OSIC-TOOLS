@@ -41,7 +41,7 @@
 #   * The threshold flavor comes from the VT marker layers (SLVT 97/0,
 #     LVT 98/0, SRAMVT 110/0), no marker is RVT. A channel under the thick
 #     gate oxide TG (123/0, an IIC-OSIC-TOOLS layer) is the 1.8 V IO FinFET
-#     {n,p}mos_io18.
+#     {n,p}mos_18.
 #   * pex=<file> writes a netlist for simulation after the compare: the
 #     devices as calls of the PDK models, plus the capacitance of the metal
 #     wires between the nets and to the substrate (pin VSUB). No wire
@@ -100,8 +100,8 @@ verbose($verbose.to_s == "true")
 
 WITH_BODY = $body.to_s == "true"
 FIN_PITCH_UM = 0.027
-DEVICE_NAMES = ["nmos_lvt", "nmos_rvt", "nmos_slvt", "nmos_sram", "nmos_io18",
-                "pmos_lvt", "pmos_rvt", "pmos_slvt", "pmos_sram", "pmos_io18"]
+DEVICE_NAMES = ["nmos_lvt", "nmos_rvt", "nmos_slvt", "nmos_sram", "nmos_18",
+                "pmos_lvt", "pmos_rvt", "pmos_slvt", "pmos_sram", "pmos_18"]
 
 # Passive device parameters, shared with the models and the layout generator
 PASSIVES = JSON.parse(File.read(File.join(File.dirname(File.expand_path(__FILE__)), "..", "tech", "asap7_passives.json")))
@@ -329,8 +329,8 @@ devices = {
   "pmos_lvt"  => pchan & lvt,
   "pmos_slvt" => pchan & slvt,
   "pmos_sram" => pchan & sramvt,
-  "nmos_io18" => channel & nselect & tg,
-  "pmos_io18" => channel & pselect & tg
+  "nmos_18" => channel & nselect & tg,
+  "pmos_18" => channel & pselect & tg
 }
 
 # Metal under a resistor marker is the resistor body, the rest is wire
