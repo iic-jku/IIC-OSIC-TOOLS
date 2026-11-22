@@ -50,7 +50,7 @@ Select the library with `STD_CELL_LIBRARY`: `asap7sc7p5t` (RVT, default), `asap7
 
 ## Verification
 
-`sak-drc.sh` and `sak-lvs.sh` run the two KLayout decks below (`-m`, the default, switches to KLayout, as there is no Magic technology). `sak-gds-info.py -t asap7` and `sak-render.py -t asap7` know the ASAP7 layers.
+`sak-drc.sh -k` and `sak-lvs.sh -k` run the two KLayout decks below. There is no Magic technology, so a Magic run (`-m`, the default) stops with an error, and `-b` runs KLayout only. `sak-gds-info.py -t asap7` and `sak-render.py -t asap7` know the ASAP7 layers.
 
 
 * DRC: `klayout -b -r $PDK_ROOT/asap7/libs.tech/klayout/drc/asap7.lydrc -rd input=<gds> -rd topcell=<cell> -rd report=<lyrdb>`. The deck follows the DRM and is experimental. It reports violations inside some library cells (e.g. TIEHIx1, DFFASRHQNx1) and some vias of the tech LEF.

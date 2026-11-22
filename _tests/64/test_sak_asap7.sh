@@ -4,9 +4,10 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # SAK commands with asap7, on the standard cell INVx1_ASAP7_75t_R:
-# * sak-drc.sh --json without an engine flag runs KLayout DRC (asap7 has no
-#   Magic technology) and reports only the latch-up tap rule ACTIVE.LUP.1
-# * sak-lvs.sh --json matches the layout to its CDL and fails against a CDL
+# * sak-drc.sh and sak-lvs.sh refuse a Magic run (the default), asap7 has no
+#   Magic technology
+# * sak-drc.sh -k --json reports only the latch-up tap rule ACTIVE.LUP.1
+# * sak-lvs.sh -k --json matches the layout to its CDL and fails against a CDL
 #   with a wrong fin count
 # * sak-gds-info.py and sak-render.py know the asap7 layers
 
@@ -48,8 +49,20 @@ json_get() {
     python3 -c "import json, sys; d = json.load(open(sys.argv[1])); print(eval(sys.argv[2]))" "$1" "$2" 2> /dev/null
 }
 
+# Magic is refused with exit code 6 (PDK not supported), as for ics55
 if [ -z "$FAILED" ]; then
-    sak-drc.sh --json "$CELL" > drc.json 2> drc.log
+    sak-drc.sh "$CELL" > drc_magic.log 2>&1
+    RC=$?
+    [ "$RC" -eq 6 ] || FAILED="sak-drc.sh with Magic exited with $RC instead of 6"
+fi
+if [ -z "$FAILED" ]; then
+    sak-lvs.sh "$CELL" > lvs_magic.log 2>&1
+    RC=$?
+    [ "$RC" -eq 6 ] || FAILED="sak-lvs.sh with Magic exited with $RC instead of 6"
+fi
+
+if [ -z "$FAILED" ]; then
+    sak-drc.sh -k --json "$CELL" > drc.json 2> drc.log
     RULES=$(json_get drc.json "' '.join(sorted({r['rule'] for rep in d['reports'] for r in rep['rules']}))")
     ENGINE=$(json_get drc.json "d['reports'][0]['engine']")
     [ "$ENGINE" = "klayout" ] || FAILED="sak-drc.sh did not run KLayout DRC (engine <$ENGINE>)"
@@ -57,7 +70,7 @@ if [ -z "$FAILED" ]; then
 fi
 
 if [ -z "$FAILED" ]; then
-    sak-lvs.sh --json "$CELL" > lvs.json 2> lvs.log
+    sak-lvs.sh -k --json "$CELL" > lvs.json 2> lvs.log
     [ "$(json_get lvs.json "d['match']")" = "True" ] || FAILED="sak-lvs.sh does not match $CELL to its CDL"
 fi
 if [ -z "$FAILED" ]; then

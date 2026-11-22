@@ -132,7 +132,7 @@ if [ $# -eq 0 ]; then
 	echo "       .mag.gz|.gds|.gds.gz|.klay.gds). When no <cellname> is specified use -s,"
 	echo "       -l, and -c to point to the corresponding files and name the topcell."
 	echo
-	echo "       -m Run Magic+Netgen LVS (default, asap7 has no Magic technology and runs KLayout LVS instead)"
+	echo "       -m Run Magic+Netgen LVS (default, not for ics55 and asap7, which have no Magic technology)"
 	echo "       -k Run KLayout LVS"
 	echo "       -b Run Magic+Netgen and KLayout LVS"
 	echo "       -s Use this <schematic> (xschem .sch schematic, SPICE/CDL netlist, or Verilog netlist)"
@@ -304,12 +304,6 @@ else
 	exit $ERR_PDK_NOT_SUPPORTED
 fi
 
-# asap7 has no Magic technology, so a Magic+Netgen LVS request runs KLayout LVS instead
-if echo "$PDK" | grep -q -i "asap7" && [ "$RUN_MAGIC" -eq 1 ]; then
-	echo "[WARNING] There is no Magic+Netgen LVS for $PDK, running KLayout LVS instead."
-	RUN_MAGIC=0
-	RUN_KLAYOUT=1
-fi
 
 # check if files exist, look into usual directories
 # -------------------------------------------------
@@ -413,10 +407,10 @@ if [ "$VERILOG_MODE" -eq 0 ] && [ "$SPICE_MODE" -eq 0 ]; then
 	fi
 fi
 
-# ics55 has no Magic technology or Netgen setup, so Magic+Netgen LVS is dropped when KLayout LVS also runs and is an error otherwise.
+# ics55 and asap7 have no Magic technology or Netgen setup, so Magic+Netgen LVS is dropped when KLayout LVS also runs and is an error otherwise.
 # ----------------------------------------------------------------------------------------------
 
-if [ "$RUN_MAGIC" -eq 1 ] && echo "$PDK" | grep -q -i "^ics55"; then
+if [ "$RUN_MAGIC" -eq 1 ] && echo "$PDK" | grep -q -i -E "^ics55|asap7"; then
 	if [ "$RUN_KLAYOUT" -eq 1 ]; then
 		echo "[WARNING] Magic+Netgen LVS is not available for $PDK, running KLayout LVS only."
 		RUN_MAGIC=0

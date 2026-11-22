@@ -132,7 +132,7 @@ if [ $# -eq 0 ]; then
 	echo
 	echo "Usage: $0 [--json] [-d] [-m|-k|-b|-g] [-c] [-l <level>] [-s <suite>|-D <decks>] [-j <n>] [-f <pattern>] [-w <workdir>] <cellname>"
 	echo
-	echo "       -m Run Magic DRC (default, asap7 has no Magic technology and runs KLayout DRC instead)"
+	echo "       -m Run Magic DRC (default, not for ics55 and asap7, which have no Magic technology)"
 	echo "       -k Run KLayout DRC"
 	echo "       -b Run Magic and KLayout DRC"
 	echo "       -g Run gdscheck DRC"
@@ -312,12 +312,6 @@ else
 	exit $ERR_PDK_NOT_SUPPORTED
 fi
 
-# asap7 has no Magic technology, so a Magic DRC request runs KLayout DRC instead
-if echo "$PDK" | grep -q -i "asap7" && [ "$RUN_MAGIC" -eq 1 ]; then
-	echo "[WARNING] There is no Magic DRC for $PDK, running KLayout DRC instead."
-	RUN_MAGIC=0
-	RUN_KLAYOUT=1
-fi
 
 # a cellname (or layout file) is required
 # ---------------------------------------
@@ -392,10 +386,10 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 	esac
 fi
 
-# ics55 has no Magic technology, so Magic DRC is dropped when KLayout DRC also runs and is an error otherwise.
+# ics55 and asap7 have no Magic technology, so Magic DRC is dropped when KLayout DRC also runs and is an error otherwise.
 # ----------------------------------------------------------------------------------------------
 
-if [ "$RUN_MAGIC" -eq 1 ] && echo "$PDK" | grep -q -i "^ics55"; then
+if [ "$RUN_MAGIC" -eq 1 ] && echo "$PDK" | grep -q -i -E "^ics55|asap7"; then
 	if [ "$RUN_KLAYOUT" -eq 1 ]; then
 		echo "[WARNING] Magic DRC is not available for $PDK, running KLayout DRC only."
 		RUN_MAGIC=0
