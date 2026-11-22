@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # ========================================================================
-# Summarize DRC reports (KLayout lyrdb, Magic) for agents and scripts
+# Summarize DRC and LVS reports for agents and scripts
 #
 # SPDX-FileCopyrightText: 2026 Harald Pretl and Simon Dorrer
 # Johannes Kepler University, Department for Integrated Circuits
@@ -23,16 +23,21 @@
 # This script uses KLayout (https://www.klayout.de).
 # ========================================================================
 
-"""Summarize DRC reports as short text or as one JSON object.
+"""Summarize DRC or LVS reports as short text or as one JSON object.
 
 Supported report formats, detected from the content and not from the name:
 
   - ``lyrdb``: KLayout report database (XML with a ``report-database`` root,
     also the sky130 ``.xml`` reports)
   - ``magic``: the text report written by ``sak-drc.sh`` for Magic
+  - ``lvsdb``: KLayout LVS database (``#%lvsdb-klayout``)
+  - ``netgen``: the Netgen LVS report (``*.lvs.out``) written by ``sak-lvs.sh``
 
-Exit codes: 0 no violations, 1 violations, 2 report missing, unreadable,
-truncated or older than ``--newer-than``, 3 wrong usage.
+One call summarizes DRC reports or LVS reports, not both.
+
+Exit codes: 0 no violations or matching netlists, 1 violations or mismatch,
+2 report missing, unreadable, truncated or older than ``--newer-than``,
+3 wrong usage (including DRC and LVS reports in one call).
 """
 
 import os
@@ -59,6 +64,10 @@ except ImportError:
 DASHES = re.compile(r"^-{10,}\s*$")
 MARKER = re.compile(r"^\s*(-?[\d.]+)um\s+(-?[\d.]+)um\s+(-?[\d.]+)um\s+(-?[\d.]+)um\s*$")
 COUNT = re.compile(r"^\[INFO\] COUNT:\s*(\d+)\s*$")
+NETGEN_COUNT = re.compile(r"^Number of (devices|nets):\s*(\d+)[^|]*\|Number of \1:\s*(\d+)")
+NETGEN_HEAD = re.compile(r"^(Contents of circuit 1:|Circuit 1 cell )", re.M)
+NETGEN_PROPERTY = ("Property errors were found.", "The following cells had property errors:")
+KIND = {"lyrdb": "drc", "magic": "drc", "lvsdb": "lvs", "netgen": "lvs"}
 
 
 def detect_format(path: str) -> str:
@@ -68,6 +77,10 @@ def detect_format(path: str) -> str:
             head = f.read(4096).decode("utf-8", errors="replace")
     except OSError as exc:
         raise sak_json.InputError(f"cannot read {path}: {exc.strerror}") from exc
+    if head.startswith("#%lvsdb-klayout"):
+        return "lvsdb"
+    if NETGEN_HEAD.search(head):
+        return "netgen"
     if re.search(r"<report-database[\s>]", head):
         return "lyrdb"
     if any(DASHES.match(line) for line in head.splitlines()):
@@ -168,8 +181,98 @@ def read_magic(path: str) -> dict:
     return {"format": "magic", "top_cell": top, "rules": rules}
 
 
-READERS = {"lyrdb": read_lyrdb, "magic": read_magic}
-# Task 2 adds the LVS formats here, an unknown format is an input error.
+# KLayout (nightly image) aborts with exit code 134 in its memory management when a LayoutVsSchematic is freed, whether
+# at the end of the reader or at interpreter exit. The databases stay alive and main() leaves with os._exit.
+_KEEP_ALIVE = []
+
+
+def _get(obj, attr):
+    """Attribute of a KLayout object, called if it is a method (the API differs between 'pya' and 'klayout.db')."""
+    value = getattr(obj, attr)
+    return value() if callable(value) else value
+
+
+def _name(obj, *attrs) -> str:
+    """First non-empty name attribute of a KLayout netlist object, '' for none."""
+    if obj is None:
+        return ""
+    for attr in attrs:
+        value = _get(obj, attr)
+        if value:
+            return str(value)
+    return ""
+
+
+def read_lvsdb(path: str) -> dict:
+    if pya is None:
+        raise sak_json.InputError("KLayout Python module not found (tried 'pya' and 'klayout.db')")
+    lvs = pya.LayoutVsSchematic()
+    _KEEP_ALIVE.append(lvs)
+    try:
+        lvs.read(path)
+    except Exception as exc:
+        raise sak_json.InputError(f"{path}: {exc}") from exc
+    xref = lvs.xref()
+    pairs = list(xref.each_circuit_pair())
+    if not pairs:
+        raise sak_json.InputError(f"{path}: no circuits compared, the LVS run did not finish")
+    top = lvs.netlist().top_circuit()
+    top_name = _name(top, "name")
+    # the pair of the top circuit, the first pair if the top circuit has no partner
+    pair = next((p for p in pairs if _name(_get(p, "first"), "name") == top_name), pairs[0])
+    layout, schem = _get(pair, "first"), _get(pair, "second")
+    ok = (pya.NetlistCrossReference.Match, pya.NetlistCrossReference.MatchWithWarning)
+    match = layout is not None and schem is not None and _get(pair, "status") in ok
+
+    def counts(circuit):
+        if circuit is None:
+            return {"devices": 0, "nets": 0}
+        return {"devices": len(list(circuit.each_device())), "nets": len(list(circuit.each_net()))}
+
+    unmatched = {"nets": [], "devices": [], "pins": []}
+    for key, each, attrs in (("nets", xref.each_net_pair, ("expanded_name",)),
+                             ("devices", xref.each_device_pair, ("expanded_name",)),
+                             ("pins", xref.each_pin_pair, ("name",))):
+        for p in list(each(pair)):
+            if _get(p, "status") in ok:
+                continue
+            for side, obj in (("layout", _get(p, "first")), ("schematic", _get(p, "second"))):
+                if obj is not None:
+                    unmatched[key].append({"side": side, "name": _name(obj, *attrs)})
+    return {"kind": "lvs", "format": "lvsdb", "top_cell": top_name or _name(layout, "name"),
+            "match": match, "layout": counts(layout), "schematic": counts(schem),
+            "property_errors": False, "unmatched_available": True, "unmatched": unmatched}
+
+
+def read_netgen(path: str) -> dict:
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            lines = f.read().splitlines()
+    except OSError as exc:
+        raise sak_json.InputError(f"cannot read {path}: {exc.strerror}") from exc
+    # same verdict as sak-lvs.sh: only this exact line passes, property errors fail
+    finals = [ln for ln in lines if ln.startswith("Final result:")]
+    if not finals:
+        raise sak_json.InputError(f"{path}: no 'Final result:' line, the LVS run did not finish")
+    property_errors = any(ln.startswith(NETGEN_PROPERTY) for ln in lines)
+    match = finals[-1] == "Final result: Circuits match uniquely." and not property_errors
+    layout = {"devices": None, "nets": None}
+    schem = {"devices": None, "nets": None}
+    top = ""
+    for i, line in enumerate(lines):
+        m = NETGEN_COUNT.match(line)
+        if m:
+            layout[m.group(1)] = int(m.group(2))
+            schem[m.group(1)] = int(m.group(3))
+        elif line.startswith("Circuit 1:") and "|Circuit 2:" in line:
+            top = line[len("Circuit 1:"):line.index("|")].strip()
+    # circuit 1 is the layout, circuit 2 the schematic (see the netgen call in sak-lvs.sh)
+    return {"kind": "lvs", "format": "netgen", "top_cell": top, "match": match,
+            "layout": layout, "schematic": schem, "property_errors": property_errors,
+            "unmatched_available": False, "unmatched": {"nets": [], "devices": [], "pins": []}}
+
+
+READERS = {"lyrdb": read_lyrdb, "magic": read_magic, "lvsdb": read_lvsdb, "netgen": read_netgen}
 
 
 def summarize(path: str, limit: int) -> dict:
@@ -178,11 +281,31 @@ def summarize(path: str, limit: int) -> dict:
     if reader is None:
         raise sak_json.InputError(f"{path}: unsupported report format {fmt}")
     rep = reader(path)
+    if rep.get("kind") == "lvs":
+        counts = {key: len(items) for key, items in rep["unmatched"].items()}
+        rep["unmatched"] = {key: sak_json.cap(items, limit) for key, items in rep["unmatched"].items()}
+        return {"path": path, **rep, "unmatched_count": counts}
     rules = sorted(rep["rules"], key=lambda r: -r["count"])
     for rule in rules:
         rule["markers"] = sak_json.cap(rule["markers"], limit)
     return {"path": path, "format": rep["format"], "top_cell": rep["top_cell"],
             "total": sum(r["count"] for r in rules), "rules": rules}
+
+
+def lvs_text_summary(reports: list, match: bool) -> str:
+    out = [f"LVS {'match' if match else 'MISMATCH'} in {len(reports)} report(s)"]
+    for rep in reports:
+        lay, sch = rep["layout"], rep["schematic"]
+        out.append(f"{rep['path']} ({rep['format']}, top cell {rep['top_cell']}): "
+                   f"{'match' if rep['match'] else 'mismatch'}, "
+                   f"devices {lay['devices']}/{sch['devices']}, nets {lay['nets']}/{sch['nets']} (layout/schematic)")
+        if rep["property_errors"]:
+            out.append("  property errors found")
+        for key, items in rep["unmatched"].items():
+            if rep["unmatched_count"][key]:
+                names = ", ".join(f"{i['name']} ({i['side']})" for i in items)
+                out.append(f"  unmatched {key}: {rep['unmatched_count'][key]}: {names}")
+    return "\n".join(out)
 
 
 def text_summary(reports: list, total: int) -> str:
@@ -196,7 +319,7 @@ def text_summary(reports: list, total: int) -> str:
 
 def main() -> None:
     parser = sak_json.SakArgumentParser(
-        prog="sak-report.py", tool=TOOL, description="Summarize DRC reports (KLayout lyrdb, Magic).")
+        prog="sak-report.py", tool=TOOL, description="Summarize DRC reports (KLayout lyrdb, Magic) or LVS reports (KLayout lvsdb, Netgen).")
     parser.add_argument("--newer-than", metavar="FILE",
                         help="fail if a report is older than FILE (stale report)")
     parser.add_argument("reports", nargs="+", metavar="report")
@@ -212,9 +335,24 @@ def main() -> None:
             for p in args.reports:
                 if os.stat(p).st_mtime < ref:
                     raise sak_json.InputError(f"{p} is older than {args.newer_than}")
+        kinds = {KIND.get(detect_format(p)) for p in args.reports}
+        if len(kinds) > 1:
+            sak_json.fail(TOOL, "DRC and LVS reports cannot be summarized in one call",
+                          as_json, sak_json.EXIT_USAGE)
         reports = [summarize(p, args.max) for p in args.reports]
     except sak_json.InputError as exc:
         sak_json.fail(TOOL, str(exc), as_json)
+
+    if kinds == {"lvs"}:
+        match = all(r["match"] for r in reports)
+        body = {"kind": "lvs", "match": match, "cap": args.max, "reports": reports}
+        sak_json.emit(TOOL, "clean" if match else "findings", inputs, body, as_json,
+                      lvs_text_summary(reports, match))
+        code = sak_json.EXIT_OK if match else sak_json.EXIT_FINDINGS
+        # leave without teardown, see _KEEP_ALIVE
+        sys.stdout.flush()
+        sys.stderr.flush()
+        os._exit(code)
 
     total = sum(r["total"] for r in reports)
     status = "clean" if total == 0 else "findings"

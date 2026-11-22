@@ -97,3 +97,4 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 52       | Icarus Verilog elaborates and simulates a flip-flop of the SG13G2 and SG13CMOS5L standard cells with `-gspecify`                |
 | 53       | LibreLane with gf180mcuD and the 3.3V standard cells `gf180mcu_as_sc_mcu7t3v3`                                                  |
 | 53       | `sak-report.py` summarizes KLayout and Magic DRC reports and rejects missing, truncated, crashed and stale ones                 |
+| 54       | `sak-report.py` summarizes KLayout and Netgen LVS reports of a matching and a mismatching sky130A inverter                      |
