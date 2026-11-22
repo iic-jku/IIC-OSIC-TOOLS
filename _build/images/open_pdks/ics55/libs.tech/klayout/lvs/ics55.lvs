@@ -1,0 +1,295 @@
+# SPDX-FileCopyrightText: 2026 Harald Pretl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+#
+# Digital-only KLayout LVS of ICS55 (55LLULP 1P6M, 1.2 V core and 3.3 V IO
+# MOS devices). Written for IIC-OSIC-TOOLS (issue 464), not foundry sign-off.
+#
+# Layer numbers and the device recognition follow the vendor Calibre runset
+# (pv/LVS/ICsprout_CalLVS_55LLULP1233_REV1_0_OS.lvs of icsprout55-pdk) for
+# the default stack (TOTALMETAL 6, single thick top metal T4M2, RDL).
+#
+# Not covered: resistors, diodes, BJTs, varactors, MoM capacitors, SRAM, native
+# 2.5 V devices and ULVT. Their gates are left unextracted, so a design using
+# them fails LVS rather than passing silently.
+#
+# MOS devices are compared as three-terminal devices. The vendor CDLs tie the
+# bulk of every cell to VDD/VSS, while the cell layouts have no well or
+# substrate tie (the FILLTAP cells provide them), so a bulk comparison cannot
+# match on a cell level. Well and substrate ties are therefore not checked.
+#
+# Usage:
+#   klayout -b -r ics55.lvs -rd input=<gds> -rd schematic=<cdl/spice> \
+#     [-rd topcell=<name>] [-rd report=<lvsdb>] [-rd target_netlist=<cir>] \
+#     [-rd run_mode=deep|flat]
+
+def ics55_opt(name, default = nil)
+  v = eval("defined?($#{name}) ? $#{name} : nil")
+  (v.nil? || v.to_s.empty?) ? default : v.to_s
+end
+
+input_file = ics55_opt("input")
+schematic_file = ics55_opt("schematic")
+raise "ics55.lvs: -rd input=<gds> is required" unless input_file
+raise "ics55.lvs: -rd schematic=<netlist> is required" unless schematic_file
+# KLayout resolves relative paths against the layout, the user means the
+# working directory.
+input_file = File.expand_path(input_file)
+schematic_file = File.expand_path(schematic_file)
+topcell = ics55_opt("topcell")
+report_file = File.expand_path(ics55_opt("report", File.basename(input_file, ".*") + ".lvsdb"))
+target_file = File.expand_path(ics55_opt("target_netlist", File.basename(input_file, ".*") + "_extracted.cir"))
+run_mode = ics55_opt("run_mode", "deep")
+
+if topcell
+  source(input_file, topcell)
+else
+  source(input_file)
+end
+report_lvs(report_file)
+target_netlist(target_file, write_spice(true, false), "Extracted by ics55.lvs")
+
+if run_mode == "flat"
+  flat
+else
+  deep
+end
+
+# A 4-terminal M card of the schematic becomes a MOS3 device of its model, the
+# bulk node is dropped (see the header).
+class ICS55SpiceReaderDelegate < RBA::NetlistSpiceReaderDelegate
+  def element(circuit, el, name, model, value, nets, params)
+    return super unless el == "M" && nets.size == 4
+    cls = circuit.netlist.device_class_by_name(model)
+    unless cls
+      cls = RBA::DeviceClassMOS3Transistor.new
+      cls.name = model
+      circuit.netlist.add(cls)
+    end
+    device = circuit.create_device(cls, name)
+    device.connect_terminal("D", nets[0])
+    device.connect_terminal("G", nets[1])
+    device.connect_terminal("S", nets[2])
+    # W and L arrive in m, the MOS device classes take um
+    device.set_parameter("W", (params["W"] || 0.0) * 1e6)
+    device.set_parameter("L", (params["L"] || 0.0) * 1e6)
+    device.set_parameter("AS", (params["AS"] || 0.0) * 1e12)
+    device.set_parameter("AD", (params["AD"] || 0.0) * 1e12)
+    device.set_parameter("PS", (params["PS"] || 0.0) * 1e6)
+    device.set_parameter("PD", (params["PD"] || 0.0) * 1e6)
+    true
+  end
+end
+
+reader = RBA::NetlistSpiceReader.new(ICS55SpiceReaderDelegate.new)
+schematic(schematic_file, reader)
+
+# ---------------------------------------------------------------------------
+# Layers (GDS layer/datatype of the Calibre LAYER MAP)
+# ---------------------------------------------------------------------------
+act      = input(2, 1) + input(2, 2)
+act_res  = input(2, 4)
+nw_all   = input(9, 1)
+nw_res   = input(9, 4)
+nvt1     = input(17, 1)
+pvt1     = input(18, 1)
+nvt3     = input(21, 1)
+pvt3     = input(22, 1)
+dgox     = input(27, 1)
+tgox     = input(28, 1)
+poly_drw = input(41, 1)
+poly_dm  = input(41, 2)
+poly_res = input(41, 4)
+np       = input(52, 1)
+pp       = input(53, 1)
+ct       = input(72, 1) + input(72, 7)
+ulld     = input(152, 12)
+ud       = input(153, 12)
+od       = input(154, 12)
+sramall  = input(171, 12)
+diode    = input(191, 12)
+varam    = input(193, 12)
+bjt      = input(195, 12)
+ldmos    = input(211, 12)
+esdioe   = input(232, 12)
+psub     = input(261, 12)
+
+met1 = input(81, 1) + input(81, 2)
+via1 = input(91, 1) + input(91, 7)
+met2 = input(82, 1) + input(82, 2)
+via2 = input(92, 1) + input(92, 7)
+met3 = input(83, 1) + input(83, 2)
+via3 = input(93, 1) + input(93, 7)
+met4 = input(84, 1) + input(84, 2)
+via4 = input(94, 1) + input(94, 7)
+met5 = input(85, 1) + input(85, 2)
+t4v2 = input(113, 1) + input(113, 7)
+t4m2 = input(103, 1) + input(103, 2)
+pas  = input(120, 1) + input(121, 1)
+aps  = input(122, 1) + input(123, 1)
+
+# Pin labels: datatype 6 (pin text) and the label purpose 1 of each metal
+met1_lbl = labels(81, 6) + labels(81, 1) + labels(81, 2)
+met2_lbl = labels(82, 6) + labels(82, 1)
+met3_lbl = labels(83, 6) + labels(83, 1)
+met4_lbl = labels(84, 6) + labels(84, 1)
+met5_lbl = labels(85, 6) + labels(85, 1)
+t4m2_lbl = labels(103, 6) + labels(103, 1)
+aps_lbl  = labels(122, 6) + labels(122, 1) + labels(123, 6) + labels(123, 1)
+poly_lbl = labels(41, 6) + labels(41, 1)
+
+# ---------------------------------------------------------------------------
+# Derived layers
+# ---------------------------------------------------------------------------
+nw = nw_all - nw_res
+po = (poly_drw + poly_dm) - poly_res
+# Only diffusion with contacts (directly or through its poly) forms devices,
+# dummy diffusion and dummy poly do not.
+aa_eff = act.interacting(ct) + act.interacting(po.interacting(ct))
+gate = ((po & act) & aa_eff) - poly_dm
+conn_poly = po - (po & act)
+
+ngate = gate.inside(np) - nw
+pgate = gate.inside(pp) & nw
+
+not_mos = bjt + diode + ldmos + varam + act_res + esdioe
+ngate_ok = ngate - not_mos - sramall - od - ud
+pgate_ok = pgate - not_mos - sramall - od - ud
+
+ngate_core = ngate_ok - dgox - tgox
+pgate_core = pgate_ok - dgox - tgox
+nonsvt = nvt1 + pvt1 + nvt3 + pvt3 + ulld
+
+n_svt = (ngate_core - psub) - nonsvt
+p_svt = (pgate_core - psub) - nonsvt
+n_hvt = ((ngate_core - psub) & nvt3) - ulld
+p_hvt = ((pgate_core - psub) & pvt3) - ulld
+n_lvt = (ngate_core - psub) & nvt1
+p_lvt = (pgate_core - psub) & pvt1
+n_nat = ngate_core & psub
+# 3.3 V IO devices (thick oxide TGOX, IO define TGOX_33 of the Calibre runset)
+n_io = ((ngate_ok & tgox) - dgox - psub) - nonsvt
+p_io = ((pgate_ok & tgox) - dgox - psub) - nonsvt
+
+diff = act - po
+nsd = ((diff & np) - nw) - bjt - diode - ldmos
+psd = ((diff & pp) & nw) - bjt - diode - ldmos
+ntap = (diff & np) & nw
+ptap = (diff & pp) - nw
+
+# ---------------------------------------------------------------------------
+# Devices
+# ---------------------------------------------------------------------------
+extract_devices(mos3("nm1p2_svt_lp"), { "SD" => nsd, "G" => n_svt, "tG" => conn_poly })
+extract_devices(mos3("pm1p2_svt_lp"), { "SD" => psd, "G" => p_svt, "tG" => conn_poly })
+extract_devices(mos3("nm1p2_hvt_lp"), { "SD" => nsd, "G" => n_hvt, "tG" => conn_poly })
+extract_devices(mos3("pm1p2_hvt_lp"), { "SD" => psd, "G" => p_hvt, "tG" => conn_poly })
+extract_devices(mos3("nm1p2_lvt_lp"), { "SD" => nsd, "G" => n_lvt, "tG" => conn_poly })
+extract_devices(mos3("pm1p2_lvt_lp"), { "SD" => psd, "G" => p_lvt, "tG" => conn_poly })
+extract_devices(mos3("nnat1p2_lp"),   { "SD" => nsd, "G" => n_nat, "tG" => conn_poly })
+extract_devices(mos3("nm3p3_lp"),     { "SD" => nsd, "G" => n_io,  "tG" => conn_poly })
+extract_devices(mos3("pm3p3_lp"),     { "SD" => psd, "G" => p_io,  "tG" => conn_poly })
+
+# ---------------------------------------------------------------------------
+# Connectivity
+# ---------------------------------------------------------------------------
+connect(conn_poly, ct)
+connect(nsd, ct)
+connect(psd, ct)
+connect(ntap, ct)
+connect(ptap, ct)
+connect(ct, met1)
+connect(met1, via1)
+connect(via1, met2)
+connect(met2, via2)
+connect(via2, met3)
+connect(met3, via3)
+connect(via3, met4)
+connect(met4, via4)
+connect(via4, met5)
+connect(met5, t4v2)
+connect(t4v2, t4m2)
+connect(t4m2, pas)
+connect(pas, aps)
+
+connect(conn_poly, poly_lbl)
+connect(met1, met1_lbl)
+connect(met2, met2_lbl)
+connect(met3, met3_lbl)
+connect(met4, met4_lbl)
+connect(met5, met5_lbl)
+connect(t4m2, t4m2_lbl)
+connect(aps, aps_lbl)
+
+# ---------------------------------------------------------------------------
+# Netlist preparation and compare
+# ---------------------------------------------------------------------------
+# Rails split inside a cell (e.g. VDD on both ends) are joined at the parent.
+connect_implicit("VDD")
+connect_implicit("VSS")
+
+# Split gates: the layout often builds a series stack of width W as two
+# stacks of W/2 in parallel, each with its own middle node, where the CDL has
+# one stack. combine_devices only merges devices on the same nets, so the
+# middle nodes are joined first (what Calibre's LVS REDUCE SPLIT GATES does).
+# A candidate is a net without pins that connects the source/drain of exactly
+# two MOS devices. Candidates join when their devices agree in class, L and
+# gate net, and in the far ends that are not candidates themselves. Both
+# netlists get the same reduction.
+def ics55_reduce_split_gates(nl)
+  nl.each_circuit do |circuit|
+    circuit.combine_devices
+    loop do
+      cand = {}
+      circuit.each_net do |net|
+        next if net.pin_count > 0 || net.subcircuit_pin_count > 0 || net.terminal_count != 2
+        refs = []
+        net.each_terminal { |t| refs << [t.device, t.terminal_id] }
+        next unless refs.all? { |d, tid| d.device_class.is_a?(RBA::DeviceClassMOS3Transistor) && tid != 1 }
+        cand[net.cluster_id] = [net, refs]
+      end
+      groups = {}
+      cand.each_value do |net, refs|
+        key = refs.map do |d, tid|
+          far = d.net_for_terminal(tid == 0 ? 2 : 0)
+          far_key = (far.nil? || cand.key?(far.cluster_id)) ? "*" : far.cluster_id
+          [d.device_class.name, d.parameter("L").round(4), d.net_for_terminal(1).cluster_id, far_key].join("/")
+        end.sort.join("|")
+        (groups[key] ||= []) << net
+      end
+      joined = false
+      groups.each_value do |nets|
+        next if nets.size < 2
+        nets[1..-1].each { |n| circuit.join_nets(nets[0], n) }
+        joined = true
+      end
+      break unless joined
+      circuit.combine_devices
+    end
+  end
+end
+
+ics55_reduce_split_gates(netlist)
+ics55_reduce_split_gates(schematic)
+
+netlist.combine_devices
+netlist.purge
+netlist.purge_nets
+schematic.combine_devices
+schematic.purge
+schematic.purge_nets
+
+# Ignore AS/AD/PS/PD, compare W and L within 1 %.
+%w[nm1p2_svt_lp pm1p2_svt_lp nm1p2_hvt_lp pm1p2_hvt_lp nm1p2_lvt_lp pm1p2_lvt_lp
+   nnat1p2_lp nm3p3_lp pm3p3_lp].each do |model|
+  tolerance(model, "W", :relative => 0.01)
+  tolerance(model, "L", :relative => 0.01)
+end
+
+align
+
+if compare
+  puts "Congratulations! Netlists match."
+else
+  puts "ERROR : Netlists don't match"
+end

@@ -121,6 +121,7 @@ if [ -z "${FOSS_INIT_DONE+x}" ]; then
             ihp-sg13g2)           STD_CELL_LIBRARY="sg13g2_stdcell" ;;
             ihp-sg13cmos5l)       STD_CELL_LIBRARY="sg13cmos5l_stdcell" ;;
             gf180mcuC|gf180mcuD)  STD_CELL_LIBRARY="gf180mcu_fd_sc_mcu7t5v0" ;;
+            ics55)                STD_CELL_LIBRARY="ics55_LLSC_H7CR" ;;
             *)
                 [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && \
                     echo "[WARN] No standard cell library known for PDK '$PDK', leaving STD_CELL_LIBRARY unset."
@@ -133,6 +134,8 @@ if [ -z "${FOSS_INIT_DONE+x}" ]; then
     case "$PDK" in
         gf180mcuC) export GF_PDK_OPTION="${GF_PDK_OPTION:-C}" ;;
         gf180mcuD) export GF_PDK_OPTION="${GF_PDK_OPTION:-D}" ;;
+        # digital-only PDK without SPICE models
+        ics55) unset SPICE_USERINIT_DIR ;;
     esac
 
     # This gets rid of the DBUS warning
