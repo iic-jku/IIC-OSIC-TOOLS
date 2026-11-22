@@ -18,7 +18,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 3890a7c26e089770cf229841bcf9f2b5f2cb6ffa
+  commit: 35e7e4fba2d7e77a1bec8a544b1eed29467b2e39
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: c21051d6e5a18b70d0ef7ce398758d7fbec5068e
@@ -33,7 +33,7 @@
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7
 - name: iverilog
   repo: https://github.com/steveicarus/iverilog.git
-  commit: c20d73fe3b36ca93ebcf5f1b67f85e0d5f61a91b
+  commit: fd4a65b2008350bcae14bc6451eefe9a4a964442
 - name: kactus2
   repo: https://github.com/kactus2/kactus2dev.git
   commit: v3.14.2
@@ -76,7 +76,7 @@
   commit: f1d021db79acbd644ebcc899247bec72d0f55f9d
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 782e022b769883f39e97131b834093d12ba83928
+  commit: a92ebd27dc3a36a8f0e7821c825fae15d9c6ab42
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: c4d317e4fa2398b9880920a1411c20258a2175a9
@@ -93,7 +93,7 @@
   commit: 17fba2638142baa4dc6e2a0b18cb1cd542017e16
 - name: palace
   repo: https://github.com/awslabs/palace.git
-  commit: d3f53924fa50056f4aa4c7ff762c9c3572349629
+  commit: be4b5d36ffe77933d4dbf86209d2bf21a2059fe3
 - name: prjtrellis
   repo: https://github.com/YosysHQ/prjtrellis.git
   commit: 2d12005ab9703ff60603d7ae91dca254939e671f
@@ -126,7 +126,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: 12d7bab7ee776fd4be7725367d74b97c608a33c1
+  commit: c7df013307e104f7237c3e54b26b15d5e9bc24ec
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: fc131711d4e88035f5af0a28fa25b6c7fae2380e
@@ -138,7 +138,7 @@
   commit: 982f078e65ab52d5d9a91248c2178f5399df7783
 - name: surelog
   repo: https://github.com/chipsalliance/Surelog.git
-  commit: v1.89
+  commit: v1.90
 - name: surfer
   repo: https://gitlab.com/surfer-project/surfer.git
   commit: v0.7.0
