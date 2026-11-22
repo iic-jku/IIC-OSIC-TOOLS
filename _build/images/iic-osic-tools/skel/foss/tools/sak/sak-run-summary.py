@@ -53,7 +53,9 @@ Metric names, confirmed against the final/metrics.json of that run. A metric
 with a ``__corner:<name>`` suffix exists per timing corner, the name without
 suffix is the worst case over the corners. A metric a run does not hold is
 null in the result (for example ``magic__drc_error__count`` when Magic DRC
-did not run).
+did not run). A check or violation metric that is present but not a finite
+number, and a finished run without any check or timing metric, are input
+errors: the run cannot be read as clean.
 """
 
 import glob
@@ -88,6 +90,8 @@ CORNER_SETUP_WS = "timing__setup__ws__corner:"
 CORNER_HOLD_WS = "timing__hold__ws__corner:"
 CORNER_SETUP_VIO = "timing__setup_vio__count__corner:"
 CORNER_HOLD_VIO = "timing__hold_vio__count__corner:"
+CHECK_FIELDS = ("drc_klayout", "drc_magic", "lvs_errors", "antenna_nets", "route_drc")
+TIMING_FIELDS = ("setup_ws_ns", "hold_ws_ns", "setup_violations", "hold_violations")
 
 STEP_RE = re.compile(r"^(\d+)-[A-Za-z0-9_.-]+$")
 RUNTIME_RE = re.compile(r"^(\d+):(\d+):(\d+(?:\.\d+)?)$")
@@ -151,6 +155,16 @@ def number(value):
     return value
 
 
+def count(metrics: dict, key: str):
+    """A check or violation metric: None if absent, InputError if present but not a finite number."""
+    if key not in metrics:
+        return None
+    value = number(metrics[key])
+    if value is None:
+        raise sak_json.InputError(f"metric {key} is {metrics[key]!r}, not a finite number")
+    return value
+
+
 def pick_metrics(run_dir: str, steps: list, finished: bool) -> tuple:
     """(metrics, input file): final/metrics.json, else the state_out.json of the last step that wrote one."""
     if finished:
@@ -166,31 +180,35 @@ def pick_metrics(run_dir: str, steps: list, finished: bool) -> tuple:
     return {}, None
 
 
-def per_corner(metrics: dict, prefix: str) -> dict:
-    """Numbers of the metrics named ``prefix<corner>``, by corner name."""
-    return {key[len(prefix):]: number(value) for key, value in metrics.items() if key.startswith(prefix)}
+def per_corner(metrics: dict, prefix: str, read=None) -> dict:
+    """Values of the metrics named ``prefix<corner>``, by corner name, read with ``read`` (default: ``number``)."""
+    return {key[len(prefix):]: (read(metrics, key) if read else number(value))
+            for key, value in metrics.items() if key.startswith(prefix)}
 
 
-def worst(metrics: dict, field: str, prefix: str, combine):
-    """Metric of ``field``, else ``combine`` over the corner values (a step before the corner merge)."""
-    value = number(metrics.get(METRIC_KEYS[field]))
+def worst(metrics: dict, field: str, prefix: str, combine, read=None) -> tuple:
+    """(value, corner values): the metric of ``field``, else ``combine`` over the corners (before the corner merge)."""
+    corners = per_corner(metrics, prefix, read)
+    key = METRIC_KEYS[field]
+    value = read(metrics, key) if read else number(metrics.get(key))
     if value is None:
-        values = [v for v in per_corner(metrics, prefix).values() if v is not None]
+        values = [v for v in corners.values() if v is not None]
         value = combine(values) if values else None
-    return value
+    return value, corners
 
 
 def timing_facts(metrics: dict) -> dict:
-    """Worst slack, violation counts and the per-corner slack."""
-    setup = per_corner(metrics, CORNER_SETUP_WS)
-    hold = per_corner(metrics, CORNER_HOLD_WS)
-    corners = [{"corner": name, "setup_ws_ns": setup.get(name), "hold_ws_ns": hold.get(name)}
-               for name in sorted(set(setup) | set(hold))]
-    return {"setup_ws_ns": worst(metrics, "setup_ws_ns", CORNER_SETUP_WS, min),
-            "hold_ws_ns": worst(metrics, "hold_ws_ns", CORNER_HOLD_WS, min),
-            "setup_violations": worst(metrics, "setup_violations", CORNER_SETUP_VIO, sum),
-            "hold_violations": worst(metrics, "hold_violations", CORNER_HOLD_VIO, sum),
-            "corners": corners}
+    """Worst slack, violation counts, and slack and violation counts per corner."""
+    setup_ws, setup = worst(metrics, "setup_ws_ns", CORNER_SETUP_WS, min)
+    hold_ws, hold = worst(metrics, "hold_ws_ns", CORNER_HOLD_WS, min)
+    setup_vio, setup_vios = worst(metrics, "setup_violations", CORNER_SETUP_VIO, sum, count)
+    hold_vio, hold_vios = worst(metrics, "hold_violations", CORNER_HOLD_VIO, sum, count)
+    names = sorted(set(setup) | set(hold) | set(setup_vios) | set(hold_vios))
+    corners = [{"corner": name, "setup_ws_ns": setup.get(name), "hold_ws_ns": hold.get(name),
+                "setup_violations": setup_vios.get(name), "hold_violations": hold_vios.get(name)}
+               for name in names]
+    return {"setup_ws_ns": setup_ws, "hold_ws_ns": hold_ws, "setup_violations": setup_vio,
+            "hold_violations": hold_vio, "corners": corners}
 
 
 def final_views(run_dir: str):
@@ -224,13 +242,19 @@ def summarize(run_dir: str, limit: int) -> tuple:
     steps = step_dirs(run_dir)
     finished = os.path.isfile(os.path.join(run_dir, "final", "metrics.json"))
     metrics, metrics_path = pick_metrics(run_dir, steps, finished)
-    timing = timing_facts(metrics)
+    if finished and not any(METRIC_KEYS[field] in metrics for field in CHECK_FIELDS + TIMING_FIELDS):
+        raise sak_json.InputError(f"{metrics_path} holds none of the check and timing metrics "
+                                  f"({', '.join(METRIC_KEYS[f] for f in CHECK_FIELDS + TIMING_FIELDS)}), "
+                                  "this LibreLane version is not supported")
+    try:
+        timing = timing_facts(metrics)
+        checks = {field: count(metrics, METRIC_KEYS[field]) for field in CHECK_FIELDS}
+    except sak_json.InputError as exc:
+        raise sak_json.InputError(f"{metrics_path}: {exc}") from exc
 
     def metric(field):
         return number(metrics.get(METRIC_KEYS[field]))
 
-    checks = {field: metric(field) for field in ("drc_klayout", "drc_magic", "lvs_errors", "antenna_nets",
-                                                  "route_drc")}
     area = {field: metric(field) for field in ("die_um2", "core_um2", "utilization")}
     step_list = [{"step": name, "runtime_s": runtime_seconds(os.path.join(run_dir, name, "runtime.txt"))}
                  for name in steps]
@@ -263,7 +287,8 @@ def text_summary(body: dict, status: str) -> str:
              f"Timing (ns): setup ws {show(timing['setup_ws_ns'])}, hold ws {show(timing['hold_ws_ns'])}, "
              f"violations setup {show(timing['setup_violations'])} / hold {show(timing['hold_violations'])}"]
     for corner in timing["corners"]:
-        lines.append(f"  {corner['corner']}: setup {show(corner['setup_ws_ns'])}, hold {show(corner['hold_ws_ns'])}")
+        lines.append(f"  {corner['corner']}: setup {show(corner['setup_ws_ns'])} ({show(corner['setup_violations'])} "
+                     f"violations), hold {show(corner['hold_ws_ns'])} ({show(corner['hold_violations'])} violations)")
     lines.append("Checks: " + ", ".join(f"{name} {show(value)}" for name, value in body["checks"].items()))
     area = body["area"]
     lines.append(f"Area (um2): die {show(area['die_um2'])}, core {show(area['core_um2'])}, "
@@ -283,8 +308,6 @@ def main() -> None:
     parser = sak_json.SakArgumentParser(tool=TOOL, description="Summarize a LibreLane run directory.")
     parser.add_argument("path", help="run directory (runs/RUN_...) or design directory with a runs/ folder")
     args = parser.parse_args()
-    if args.max < 0:
-        parser.error("--max must not be negative")
     as_json = args.json
 
     try:

@@ -52,7 +52,7 @@ if command -v librelane >/dev/null 2>&1; then
     # sak-run-summary.py reads the run directory the flow just wrote
     if [ -z "$FAILED" ]; then
         SUMMARY_ERR=$(WORKDIR="$WORKDIR" RUNS_DIR="$RUNS_DIR" RAND="$RAND" python3 - <<'PYEOF' 2>&1
-import json, os, shutil, subprocess, sys
+import json, os, runpy, shutil, subprocess, sys
 
 workdir = os.environ["WORKDIR"]
 debug = os.environ.get("DEBUG") == "1"
@@ -91,6 +91,9 @@ if len(design["steps"]) <= 10:
     sys.exit(f"design dir: only {len(design['steps'])} steps")
 if not all(number(step["runtime_s"]) for step in design["steps"]):
     sys.exit("design dir: a step runtime_s is not a number")
+corners = design["timing"]["corners"]
+if not corners or not all("setup_violations" in c and "hold_violations" in c for c in corners):
+    sys.exit("design dir: a timing.corners entry lacks setup_violations or hold_violations")
 
 code, direct = summary(design["run_dir"])
 if code not in (0, 1) or direct["run_dir"] != design["run_dir"]:
@@ -113,6 +116,23 @@ code, none = summary(empty)
 os.rmdir(empty)
 if code != 2 or none.get("status") != "error":
     sys.exit(f"empty dir: exit {code}, status {none.get('status')!r}")
+
+# a metrics.json that cannot be read as clean is an input error
+metric_keys = runpy.run_path(shutil.which("sak-run-summary.py"))["METRIC_KEYS"]
+with open(os.path.join(design["run_dir"], "final", "metrics.json"), encoding="utf-8") as handle:
+    metrics = json.load(handle)
+for tag, changed in (("string check metric", {**metrics, "design__lvs_error__count": "0"}),
+                     ("renamed metrics", {(f"renamed_{k}" if k in metric_keys.values() else k): v
+                                          for k, v in metrics.items()})):
+    copy = os.path.join(os.environ["RUNS_DIR"], os.environ["RAND"], "18_metrics")
+    shutil.rmtree(copy, ignore_errors=True)
+    shutil.copytree(design["run_dir"], copy, symlinks=True)
+    with open(os.path.join(copy, "final", "metrics.json"), "w", encoding="utf-8") as handle:
+        json.dump(changed, handle)
+    code, bad = summary(copy)
+    shutil.rmtree(copy, ignore_errors=True)
+    if code != 2 or bad.get("status") != "error":
+        sys.exit(f"{tag}: exit {code}, status {bad.get('status')!r}")
 PYEOF
 )
         [ $? -eq 0 ] || FAILED="sak-run-summary.py check failed: $SUMMARY_ERR"
