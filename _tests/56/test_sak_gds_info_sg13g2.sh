@@ -14,7 +14,7 @@ fi
 RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
 
 ERROR=0
-WORKDIR=${RUNS_DIR}/${RAND}/55
+WORKDIR=${RUNS_DIR}/${RAND}/56
 mkdir -p "$WORKDIR"
 cd "$WORKDIR" || exit 1
 

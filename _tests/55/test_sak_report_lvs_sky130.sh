@@ -15,7 +15,7 @@ RUNS_DIR=${IIC_TEST_RUNDIR:-/tmp/iic-osic-tools-tests}
 
 ERROR=0
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKDIR=${RUNS_DIR}/${RAND}/54
+WORKDIR=${RUNS_DIR}/${RAND}/55
 mkdir -p "$WORKDIR/lay" "$WORKDIR/ok" "$WORKDIR/bad"
 cd "$WORKDIR" || exit 1
 
