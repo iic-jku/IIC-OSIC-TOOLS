@@ -26,12 +26,14 @@ N 220 90 240 90 {lab=GND}
 C {asap7/pmos_rvt.sym} 200 -40 2 1 {name=M2
 l=20n
 nfin=3
+mm=0
 model=pmos_rvt
 spiceprefix=X
 }
 C {asap7/nmos_rvt.sym} 200 40 0 0 {name=M1
 l=20n
 nfin=3
+mm=0
 model=nmos_rvt
 spiceprefix=X
 }

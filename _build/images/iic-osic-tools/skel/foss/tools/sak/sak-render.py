@@ -329,7 +329,8 @@ TECHS = {
     },
     # asap7 numbers from the ASAP7 DRM layer table, the .lyp is the one of
     # ASAP7_for_KLayout. LIG, LISD and V0 are the middle-of-line local
-    # interconnect and its via.
+    # interconnect and its via. TFR (thin-film resistor) and TG (thick gate oxide
+    # of the IO FinFETs) are layers IIC-OSIC-TOOLS adds, ASAP7 has none.
     "asap7": {
         "aliases": ("asap7sc7p5t",),
         "lyp": ("libs.tech", "klayout", "tech", "asap7.lyp"),
@@ -342,11 +343,15 @@ TECHS = {
             ("SLVT",       97,  0, ("implant",), False, ()),
             ("LVT",        98,  0, ("implant",), False, ()),
             ("SRAMVT",    110,  0, ("implant",), False, ()),
+            ("TG",        123,  0, ("implant",), False, ()),
+            ("DIODE",     124,  0, ("implant",), False, ()),
+            ("BJT",       125,  0, ("implant",), False, ()),
             ("Gate",        7,  0, ("poly",),    True,  ("poly",)),
             ("GCut",       10,  0, ("poly",),    True,  ()),
             ("SDT",        88,  0, ("cont",),    True,  ()),
             ("LISD",       17,  0, ("cont",),    True,  ()),
             ("LIG",        16,  0, ("cont",),    True,  ()),
+            ("TFR",       121,  0, ("res",),     True,  ()),
             ("V0",         18,  0, ("via",),     True,  ()),
             ("M1",         19,  0, ("metal",),   True,  ("metal1",)),
             ("V1",         21,  0, ("via",),     True,  ("via1",)),

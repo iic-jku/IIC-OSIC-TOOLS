@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+SPDX-FileCopyrightText: 2026 Harald Pretl
+Johannes Kepler University, Department for Integrated Circuits
+SPDX-License-Identifier: Apache-2.0
+-->
+<klayout-macro>
+ <description>Register the ASAP7 PCell library</description>
+ <version/>
+ <category>pymacros</category>
+ <prolog/>
+ <epilog/>
+ <doc/>
+ <autorun>true</autorun>
+ <autorun-early>false</autorun-early>
+ <priority>0</priority>
+ <shortcut/>
+ <show-in-menu>false</show-in-menu>
+ <group-name/>
+ <menu-path/>
+ <interpreter>python</interpreter>
+ <dsl-interpreter-name/>
+ <text># The PCells are in python/asap7_pcells.py of the technology directory
+import asap7_pcells
+
+asap7_pcells.register()
+</text>
+</klayout-macro>

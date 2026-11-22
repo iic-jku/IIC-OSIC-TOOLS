@@ -1,0 +1,89 @@
+# SPDX-FileCopyrightText: 2026 Harald Pretl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+#
+# Design rules of the devices that IIC-OSIC-TOOLS adds to ASAP7: metal
+# resistors rm<n> (marker RES_M<n>, 120/<n>), the thin-film resistor rtfr
+# (TFR, 121/0), the MOM capacitor cmom (marker MOMCAP, 122/0), the 1.8 V IO
+# FinFETs (thick gate oxide TG, 123/0), the junction diodes (marker DIODE,
+# 124/0) and the vertical PNP (marker BJT, 125/0).
+# ASAP7 defines none of these, the rules are assumptions and not part of the
+# ASAP7 design rule manual. fix_asap7_drc_deck.py merges this file into
+# asap7.lydrc at install, it is not run on its own.
+
+info("Passive devices (IIC-OSIC-TOOLS)")
+
+psv_metals = { 1 => m1, 2 => m2, 3 => m3, 4 => m4, 5 => m5, 6 => m6, 7 => m7, 8 => m8, 9 => m9 }
+psv_vias = { 0 => v0, 1 => v1, 2 => v2, 3 => v3, 4 => v4, 5 => v5, 6 => v6, 7 => v7, 8 => v8, 9 => v9 }
+# minimum width of M1 to M9 in nm
+psv_wmin = { 1 => 18, 2 => 18, 3 => 18, 4 => 24, 5 => 24, 6 => 32, 7 => 32, 8 => 40, 9 => 40 }
+
+###   Metal resistors
+psv_metals.each do |n, metal|
+  marker = input(120, n)
+  body = metal & marker
+  marker.not_interacting(metal).output("RES.M#{n}.1", "RES.M#{n}.1 : RES_M#{n} must cover M#{n}")
+  body.non_rectangles.output("RES.M#{n}.2", "RES.M#{n}.2 : M#{n} under RES_M#{n} must be a rectangle")
+  # the wire has to cross the marker, so the body has a wire on two sides
+  body.not_interacting(metal - marker, 2, 2).output("RES.M#{n}.3", "RES.M#{n}.3 : M#{n} under RES_M#{n} must continue on exactly two sides of the marker")
+  (body & (psv_vias[n - 1] + psv_vias[n])).output("RES.M#{n}.4", "RES.M#{n}.4 : No via on M#{n} under RES_M#{n}")
+end
+
+###   Thin-film resistor
+tfr = input(121, 0)
+tfr_head = tfr & m1
+tfr_v0 = v0.interacting(tfr)
+tfr.width(54.nm).output("TFR.W.1", "TFR.W.1 : Min. width of TFR : 54nm")
+tfr.space(54.nm).output("TFR.S.1", "TFR.S.1 : Min. spacing of TFR : 54nm")
+tfr.non_rectangles.output("TFR.AUX.1", "TFR.AUX.1 : TFR must be a rectangle")
+tfr_head.space(108.nm, projection).polygons.inside(tfr).output("TFR.L.1", "TFR.L.1 : Min. length of TFR between two M1 contacts : 108nm")
+[[gate, "GATE"], [active, "ACTIVE"], [lig, "LIG"], [lisd, "LISD"]].each do |layer, name|
+  (tfr & layer).output("TFR.#{name}.S.1", "TFR.#{name}.S.1 : TFR may not overlap #{name}")
+  tfr.separation(layer, 27.nm).output("TFR.#{name}.S.1", "TFR.#{name}.S.1 : Min. spacing of TFR to #{name} : 27nm")
+end
+(tfr_v0 - tfr).output("TFR.V0.EN.1", "TFR.V0.EN.1 : V0 on TFR must be inside TFR")
+tfr.enclosing(tfr_v0, 5.nm).output("TFR.V0.EN.1", "TFR.V0.EN.1 : Min. enclosure of V0 by TFR : 5nm")
+tfr_head.not_interacting(v0).output("TFR.M1.AUX.1", "TFR.M1.AUX.1 : M1 over TFR must carry a V0, no M1 routing over TFR")
+tfr.not_interacting(tfr_head, 2, 2).output("TFR.M1.AUX.2", "TFR.M1.AUX.2 : TFR must have exactly two M1 contacts")
+(tfr - m1).interacting(tfr_head, 2, 2).non_rectangles.output("TFR.M1.AUX.3", "TFR.M1.AUX.3 : An M1 contact must cross the whole width of TFR")
+
+###   MOM capacitor
+momcap = input(122, 0)
+momcap.non_rectangles.output("MOM.AUX.1", "MOM.AUX.1 : MOMCAP must be a rectangle")
+momcap.width(200.nm).output("MOM.W.1", "MOM.W.1 : Min. width of MOMCAP : 200nm")
+(1..7).each do |n|
+  fingers = psv_metals[n] & momcap
+  fingers.non_rectangles.output("MOM.M#{n}.AUX.2", "MOM.M#{n}.AUX.2 : M#{n} in MOMCAP must be straight fingers")
+  fingers.rectangles.without_bbox_min(psv_wmin[n].nm).output("MOM.M#{n}.W.2", "MOM.M#{n}.W.2 : M#{n} fingers in MOMCAP must have the minimum width : #{psv_wmin[n]}nm")
+end
+(momcap & (m8 + m9)).output("MOM.AUX.3", "MOM.AUX.3 : No M8 and M9 over MOMCAP")
+(momcap & (gate + active + tfr)).output("MOM.AUX.4", "MOM.AUX.4 : No GATE, ACTIVE and TFR under MOMCAP")
+
+###   IO FinFETs (thick gate oxide)
+tg = input(123, 0)
+tg_gate = gate.interacting(tg)
+tg.non_rectangles.output("TG.AUX.1", "TG.AUX.1 : TG must be a rectangle")
+tg.width(108.nm).output("TG.W.1", "TG.W.1 : Min. width of TG : 108nm")
+tg.space(108.nm).output("TG.S.1", "TG.S.1 : Min. spacing of TG : 108nm")
+(tg_gate - tg).output("TG.GATE.EN.1", "TG.GATE.EN.1 : A GATE may not cross the edge of TG")
+(active.interacting(tg) - tg).output("TG.ACTIVE.EN.2", "TG.ACTIVE.EN.2 : ACTIVE may not cross the edge of TG")
+# gate lengths of the IO FinFETs in nm, the same as IO_LENGTHS of asap7_passives.py
+tg_lengths = [80, 160, 240]
+tg_long = tg_gate
+tg_lengths.each { |l| tg_long = tg_long.without_bbox_width(l.nm) }
+tg_long.output("TG.GATE.W.2", "TG.GATE.W.2 : GATE in TG must have a length of : #{tg_lengths.join(", ")} nm")
+(gate - tg_gate).with_bbox_width(81.nm, nil).output("TG.GATE.W.3", "TG.GATE.W.3 : A GATE longer than 80 nm must be in TG")
+tg_gate.space(100.nm, projection).output("TG.GATE.S.2", "TG.GATE.S.2 : Min. spacing of GATE in TG : 100nm")
+tg.separation(gate - tg_gate, 54.nm).output("TG.GATE.S.3", "TG.GATE.S.3 : Min. spacing of TG to GATE outside : 54nm")
+(tg & (slvt + lvt + sramvt)).output("TG.AUX.2", "TG.AUX.2 : No SLVT, LVT or SRAMVT in TG")
+
+###   Junction diodes and the vertical PNP
+[[input(124, 0), "DIODE"], [input(125, 0), "BJT"]].each do |marker, name|
+  marker.non_rectangles.output("#{name}.AUX.1", "#{name}.AUX.1 : #{name} must be a rectangle")
+  marker.not_interacting(active).output("#{name}.AUX.2", "#{name}.AUX.2 : #{name} must cover ACTIVE")
+  (active.interacting(marker) - marker).output("#{name}.ACTIVE.EN.1", "#{name}.ACTIVE.EN.1 : ACTIVE may not cross the edge of #{name}")
+  (active & marker).interacting(gate).output("#{name}.GATE.AUX.3", "#{name}.GATE.AUX.3 : ACTIVE in #{name} may not touch a GATE")
+  (marker & (slvt + lvt + sramvt + tg)).output("#{name}.AUX.4", "#{name}.AUX.4 : No SLVT, LVT, SRAMVT or TG in #{name}")
+end
+(input(125, 0) - nwell).output("BJT.WELL.EN.2", "BJT.WELL.EN.2 : BJT must be inside WELL")
+(input(124, 0) & input(125, 0)).output("BJT.AUX.5", "BJT.AUX.5 : DIODE and BJT may not overlap")

@@ -107,4 +107,5 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 62       | LibreLane example of ASAP7 (8-bit counter at 1 GHz) with KLayout LVS of the final GDS and a negative LVS check                  |
 | 63       | pygmid lookup tables of the ASAP7 RVT devices from `techsweep_asap7.py`                                                        |
 | 64       | SAK commands with asap7: `sak-drc.sh` and `sak-lvs.sh` refuse Magic and run KLayout with `-k` (JSON results, a wrong fin count fails), layer names in `sak-gds-info.py` and `sak-render.py` |
+| 65       | ASAP7 analog devices (FinFETs with their gate lengths, IO FinFETs, junction diodes and vertical PNP, MOS capacitors, metal and thin-film resistors, MOM capacitor): values in ngspice, Xyce and VACASK, mismatch, xschem testbench, KLayout LVS (also with body nets) and DRC of generated layouts, of every PCell and of the routed example, wire capacitance extraction, negative checks |
 | 66       | Icarus Verilog elaborates and simulates a flip-flop of the sky130 HD standard cells with `-gspecify` (timing checks with timestamp/timecheck conditions) |

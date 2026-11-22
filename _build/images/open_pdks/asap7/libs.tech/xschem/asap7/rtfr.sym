@@ -1,0 +1,50 @@
+v {xschem version=3.4.8RC file_version=1.3
+* SPDX-FileCopyrightText: 2026 Harald Pretl
+* Johannes Kepler University, Department for Integrated Circuits
+* SPDX-License-Identifier: Apache-2.0
+*
+* TiN thin-film resistor, l is the length between the two M1 contacts.
+* B is the substrate under the film, mm=1 adds mismatch.
+* An IIC-OSIC-TOOLS addition with assumed parameters, ASAP7 defines no
+* passive devices.
+}
+G {}
+K {type=resistor
+format="@spiceprefix@name @pinlist @model w=@w l=@l m=@m mm=@mm"
+lvs_format="@spiceprefix@name @pinlist @model w=@w l=@l m=@m mm=@mm"
+spectre_format="@spiceprefix@name ( @pinlist ) @model w=@w l=@l m=@m mm=@mm"
+template="name=R1
+w=108n
+l=1u
+m=1
+mm=0
+model=rtfr
+spiceprefix=X
+"
+}
+V {}
+S {}
+F {}
+E {}
+L 4 0 20 0 30 {}
+L 4 0 20 7.5 17.5 {}
+L 4 -7.5 12.5 7.5 17.5 {}
+L 4 -7.5 12.5 7.5 7.5 {}
+L 4 -7.5 2.5 7.5 7.5 {}
+L 4 -7.5 2.5 7.5 -2.5 {}
+L 4 -7.5 -7.5 7.5 -2.5 {}
+L 4 -7.5 -7.5 7.5 -12.5 {}
+L 4 -7.5 -17.5 7.5 -12.5 {}
+L 4 -7.5 -17.5 0 -20 {}
+L 4 0 -30 0 -20 {}
+B 5 -2.5 -32.5 2.5 -27.5 {name=P dir=inout}
+B 5 -2.5 27.5 2.5 32.5 {name=N dir=inout}
+B 5 -22.5 -2.5 -17.5 2.5 {name=B dir=inout}
+L 4 -20 0 -12.5 0 {}
+L 4 -12.5 -17.5 -12.5 17.5 {}
+T {B} -17.5 -12.5 0 1 0.15 0.15 {layer=7}
+T {@name} 15 -26.25 0 0 0.2 0.2 {}
+T {@model} 15 -13.75 0 0 0.2 0.2 {}
+T {w=@w} 15 -1.25 0 0 0.2 0.2 {layer=13}
+T {l=@l} 15 11.25 0 0 0.2 0.2 {layer=13}
+T {m=@m} 15 23.75 0 0 0.2 0.2 {layer=13}
