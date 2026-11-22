@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-lvs.sh [-d] [-m|-k|-b] [-w <workdir>] [-s <schematic> -l <layout> -c <cellname> | <cellname>]
+# Usage: sak-lvs.sh [--json] [-d] [-m|-k|-b] [-w <workdir>] [-s <schematic> -l <layout> -c <cellname> | <cellname>]
 #        -m  Run Magic+Netgen LVS (default)
 #        -k  Run KLayout LVS
 #        -b  Run Magic+Netgen and KLayout LVS
@@ -27,6 +27,7 @@
 #        -c  Name of <topcell>
 #        -w  Use <workdir> to store result files (default: current dir)
 #        -d  Enable debug information
+#        --json  Print one JSON object with the result on stdout, all messages go to stderr (see sak-report.py)
 # ========================================================================
 
 ERR_LVS_MISMATCH=1
@@ -38,11 +39,93 @@ ERR_PDK_NOT_SUPPORTED=6
 ERR_UNKNOWN_FILE=7
 ERR_CMD_NOT_FOUND=8
 
+# --json: print one JSON object on stdout and send every other message to stderr
+# -------------------------------------------------------------------------------
+
+JSON=0
+JSON_DONE=0
+JSON_REPORTS=""
+# take --json out of the arguments, the others keep their order and quoting
+for _arg in "$@"; do
+	shift
+	if [ "$_arg" = "--json" ]; then
+		JSON=1
+	else
+		set -- "$@" "$_arg"
+	fi
+done
+
+# a run that ends without a result object (usage, missing input, failed tool) prints the error object with the exit code of the script.
+# Its error text is JSON_ERROR if set, else a short reason derived from the exit code (the full message is on stderr).
+JSON_ERROR=""
+json_error() {
+	_rc=$?
+	[ "$JSON_DONE" -eq 1 ] && return
+	_reason=$JSON_ERROR
+	if [ -z "$_reason" ]; then
+		case "$_rc" in
+			"$ERR_LVS_MISMATCH")	_reason="LVS mismatch" ;;
+			"$ERR_FILE_NOT_FOUND")	_reason="input file not found" ;;
+			"$ERR_NO_PARAM")	_reason="wrong usage or missing parameter" ;;
+			"$ERR_NO_VAR")	_reason="parameter or PDK environment variable not set" ;;
+			"$ERR_NO_RESULT")	_reason="an LVS run failed or produced no result" ;;
+			"$ERR_PDK_NOT_SUPPORTED")	_reason="PDK not supported" ;;
+			"$ERR_UNKNOWN_FILE")	_reason="unsupported file format" ;;
+			"$ERR_CMD_NOT_FOUND")	_reason="a required tool was not found" ;;
+			*)	_reason="sak-lvs.sh ended with exit code $_rc" ;;
+		esac
+	fi
+	# JSON string: control characters become spaces, backslash and double quote are escaped
+	_reason=$(printf '%s' "$_reason" | tr '\000-\037' ' ' | sed 's/\\/\\\\/g; s/"/\\"/g')
+	printf '{"schema": 1, "tool": "sak-lvs", "status": "error", "error": "%s", "exit_code": %d, "input": []}\n' "$_reason" "$_rc" >&3
+}
+
+if [ "$JSON" -eq 1 ]; then
+	exec 3>&1 1>&2
+	trap json_error EXIT
+fi
+
+# print the result object for the report files collected in JSON_REPORTS (one path per line), compared against the layout <$1> for staleness
+json_result() {
+	_layout=$1
+	_ifs=$IFS
+	IFS='
+'
+	set -f
+	# shellcheck disable=SC2086
+	set -- $JSON_REPORTS
+	IFS=$_ifs
+	set +f
+	_json=$(sak-report.py --json --tool sak-lvs --newer-than "$_layout" "$@")
+	_rc=$?
+	# 0 and 1 are the verdict of sak-report.py, anything else means it could not read a report (its message is on stderr)
+	if [ "$_rc" -gt 1 ] || [ -z "$_json" ]; then
+		_msg=$(printf '%s' "$_json" | python3 -c 'import json, sys; print(json.load(sys.stdin)["error"])' 2>/dev/null)
+		JSON_ERROR="sak-report.py could not summarize the reports (exit code $_rc)${_msg:+: $_msg}"
+		echo "[ERROR] sak-report.py could not summarize the reports!"
+		exit $ERR_NO_RESULT
+	fi
+	# the exit code of this script follows its own verdict, so a result that contradicts it is not printed
+	_own=1
+	[ "$LVS_CLEAN" -eq 1 ] && _own=0
+	if [ "$_rc" -ne "$_own" ]; then
+		_seen=findings
+		[ "$_rc" -eq 0 ] && _seen=clean
+		_found=findings
+		[ "$_own" -eq 0 ] && _found=clean
+		JSON_ERROR="sak-report.py reads the reports as $_seen, but sak-lvs.sh found $_found"
+		echo "[ERROR] $JSON_ERROR!"
+		return
+	fi
+	printf '%s\n' "$_json" >&3
+	JSON_DONE=1
+}
+
 if [ $# -eq 0 ]; then
 	echo
 	echo "LVS script for Magic+Netgen and KLayout (ICD@JKU)"
 	echo
-	echo "Usage: $0 [-d] [-m|-k|-b] [-w <workdir>] [-s <schematic>|<netlist> -l <layout> -c <cellname> | <cellname>]"
+	echo "Usage: $0 [--json] [-d] [-m|-k|-b] [-w <workdir>] [-s <schematic>|<netlist> -l <layout> -c <cellname> | <cellname>]"
 	echo
 	echo "       Specify <cellname> to use for schematic and layout, resolved against the"
 	echo "       current dir using default name prefixes (.sch|.spice|.spc|.cdl|.v|.mag|"
@@ -57,6 +140,7 @@ if [ $# -eq 0 ]; then
 	echo "       -c Name of <topcell>"
 	echo "       -w Use <workdir> to store result files (default current dir)"
 	echo "       -d Enable debug information"
+	echo "       --json Print one JSON object with the result on stdout, all messages go to stderr"
 	echo
 	exit $ERR_NO_PARAM
 fi
@@ -281,6 +365,8 @@ fi
 # --------------------------------------------------------------------------
 
 CELL_LAY=$(realpath "$CELL_LAY")
+# a decompressed copy replaces CELL_LAY below, the result files are compared against the layout as given
+CELL_LAY_GIVEN="$CELL_LAY"
 
 [ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 1 ] && echo "[INFO] Using Verilog file <$CELL_V>."
 [ $DEBUG -eq 1 ] && [ "$VERILOG_MODE" -eq 0 ] && [ "$SPICE_MODE" -eq 0 ] && echo "[INFO] Using schematic file <$CELL_SCH>."
@@ -640,6 +726,8 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 		[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
 		exit $ERR_NO_RESULT
 	fi
+	JSON_REPORTS="$JSON_REPORTS
+$LVS_REPORT"
 	# netgen exits with 0 even on a mismatch, so the verdict is read from the report: only "Final result: Circuits match uniquely." passes.
 	# Differing device parameters (W, L, ...) keep that line, so the property errors of the top cell and the subcells are checked separately.
 	grep -q "^Final result: Circuits match uniquely\.$" "$LVS_REPORT" || MAGIC_OK=0
@@ -719,6 +807,8 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 		[ -n "$GZ_TMP" ] && rm -f "$GZ_TMP"
 		exit $ERR_NO_RESULT
 	fi
+	JSON_REPORTS="$JSON_REPORTS
+$(find "$KLAYOUT_RUNDIR" -name '*.lvsdb' | sort)"
 	# the KLayout LVS decks print this exact line on a match (same string the IHP wrapper parses)
 	grep -r -q "Congratulations! Netlists match." "$KLAYOUT_RUNDIR" || KLAYOUT_OK=0
 fi
@@ -752,6 +842,8 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 		LVS_CLEAN=0
 	fi
 fi
+
+[ "$JSON" -eq 1 ] && json_result "$CELL_LAY_GIVEN"
 
 echo "---"
 

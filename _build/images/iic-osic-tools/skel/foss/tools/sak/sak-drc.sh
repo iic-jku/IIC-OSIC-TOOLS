@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-drc.sh [-d] [-m|-k|-b|-g] [-c] [-l <level>] [-s <suite>|-D <decks>] [-j <n>] [-f <pattern>] [-w <workdir>] <cellname>
+# Usage: sak-drc.sh [--json] [-d] [-m|-k|-b|-g] [-c] [-l <level>] [-s <suite>|-D <decks>] [-j <n>] [-f <pattern>] [-w <workdir>] <cellname>
 #        -m  Run Magic DRC (default)
 #        -k  Run KLayout DRC
 #        -b  Run Magic and KLayout DRC
@@ -32,6 +32,7 @@
 #            A pattern that matches the top cell is refused: Magic would flatten it away and check an empty cell.
 #        -w  Use <workdir> to store result files (default: current dir)
 #        -d  Enable debug information
+#        --json  Print one JSON object with the result on stdout, all messages go to stderr (see sak-report.py)
 # ========================================================================
 
 ERR_DRC=1
@@ -43,11 +44,93 @@ ERR_PDK_NOT_SUPPORTED=6
 ERR_NO_OUTPUT=7
 ERR_NO_VAR=8
 
+# --json: print one JSON object on stdout and send every other message to stderr
+# -------------------------------------------------------------------------------
+
+JSON=0
+JSON_DONE=0
+JSON_REPORTS=""
+# take --json out of the arguments, the others keep their order and quoting
+for _arg in "$@"; do
+	shift
+	if [ "$_arg" = "--json" ]; then
+		JSON=1
+	else
+		set -- "$@" "$_arg"
+	fi
+done
+
+# a run that ends without a result object (usage, missing input, failed tool) prints the error object with the exit code of the script.
+# Its error text is JSON_ERROR if set, else a short reason derived from the exit code (the full message is on stderr).
+JSON_ERROR=""
+json_error() {
+	_rc=$?
+	[ "$JSON_DONE" -eq 1 ] && return
+	_reason=$JSON_ERROR
+	if [ -z "$_reason" ]; then
+		case "$_rc" in
+			"$ERR_DRC")	_reason="DRC findings" ;;
+			"$ERR_FILE_NOT_FOUND")	_reason="layout not found" ;;
+			"$ERR_NO_PARAM")	_reason="wrong usage or missing parameter" ;;
+			"$ERR_CMD_NOT_FOUND")	_reason="a required tool was not found" ;;
+			"$ERR_UNKNOWN_FILE")	_reason="unsupported layout format" ;;
+			"$ERR_PDK_NOT_SUPPORTED")	_reason="PDK not supported" ;;
+			"$ERR_NO_OUTPUT")	_reason="a DRC run failed or produced no report" ;;
+			"$ERR_NO_VAR")	_reason="PDK environment variable not set" ;;
+			*)	_reason="sak-drc.sh ended with exit code $_rc" ;;
+		esac
+	fi
+	# JSON string: control characters become spaces, backslash and double quote are escaped
+	_reason=$(printf '%s' "$_reason" | tr '\000-\037' ' ' | sed 's/\\/\\\\/g; s/"/\\"/g')
+	printf '{"schema": 1, "tool": "sak-drc", "status": "error", "error": "%s", "exit_code": %d, "input": []}\n' "$_reason" "$_rc" >&3
+}
+
+if [ "$JSON" -eq 1 ]; then
+	exec 3>&1 1>&2
+	trap json_error EXIT
+fi
+
+# print the result object for the report files collected in JSON_REPORTS (one path per line), compared against the layout <$1> for staleness
+json_result() {
+	_layout=$1
+	_ifs=$IFS
+	IFS='
+'
+	set -f
+	# shellcheck disable=SC2086
+	set -- $JSON_REPORTS
+	IFS=$_ifs
+	set +f
+	_json=$(sak-report.py --json --tool sak-drc --newer-than "$_layout" "$@")
+	_rc=$?
+	# 0 and 1 are the verdict of sak-report.py, anything else means it could not read a report (its message is on stderr)
+	if [ "$_rc" -gt 1 ] || [ -z "$_json" ]; then
+		_msg=$(printf '%s' "$_json" | python3 -c 'import json, sys; print(json.load(sys.stdin)["error"])' 2>/dev/null)
+		JSON_ERROR="sak-report.py could not summarize the reports (exit code $_rc)${_msg:+: $_msg}"
+		echo "[ERROR] sak-report.py could not summarize the reports!"
+		exit $ERR_NO_OUTPUT
+	fi
+	# the exit code of this script follows its own verdict, so a result that contradicts it is not printed
+	_own=1
+	[ "$DRC_CLEAN" -eq 1 ] && _own=0
+	if [ "$_rc" -ne "$_own" ]; then
+		_seen=findings
+		[ "$_rc" -eq 0 ] && _seen=clean
+		_found=findings
+		[ "$_own" -eq 0 ] && _found=clean
+		JSON_ERROR="sak-report.py reads the reports as $_seen, but sak-drc.sh found $_found"
+		echo "[ERROR] $JSON_ERROR!"
+		return
+	fi
+	printf '%s\n' "$_json" >&3
+	JSON_DONE=1
+}
+
 if [ $# -eq 0 ]; then
 	echo
 	echo "DRC script for Magic, KLayout, and gdscheck (ICD@JKU)"
 	echo
-	echo "Usage: $0 [-d] [-m|-k|-b|-g] [-c] [-l <level>] [-s <suite>|-D <decks>] [-j <n>] [-f <pattern>] [-w <workdir>] <cellname>"
+	echo "Usage: $0 [--json] [-d] [-m|-k|-b|-g] [-c] [-l <level>] [-s <suite>|-D <decks>] [-j <n>] [-f <pattern>] [-w <workdir>] <cellname>"
 	echo
 	echo "       -m Run Magic DRC (default)"
 	echo "       -k Run KLayout DRC"
@@ -72,6 +155,7 @@ if [ $# -eq 0 ]; then
 	echo "          a pattern that matches the top cell is refused, Magic would check an empty cell"
 	echo "       -w Use <workdir> to store result files (default current dir)"
 	echo "       -d Enable debug information"
+	echo "       --json Print one JSON object with the result on stdout, all messages go to stderr"
 	echo
 	exit $ERR_NO_PARAM
 fi
@@ -261,6 +345,8 @@ else
 fi
 
 [ $DEBUG -eq 1 ] && echo "[INFO] Using layout file <$CELL_LAY>."
+# a decompressed copy replaces CELL_LAY below, the result files are compared against the layout as given
+CELL_LAY_GIVEN="$CELL_LAY"
 
 # check that the required tools are available
 # -------------------------------------------
@@ -820,6 +906,8 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 		exit $ERR_NO_OUTPUT
 	fi
 
+	JSON_REPORTS="$JSON_REPORTS
+$MAGIC_RUNDIR/$CELL_NAME.magic.drc.rpt"
 	if grep -q "COUNT: 0" "$MAGIC_RUNDIR/$CELL_NAME.magic.drc.rpt"; then
 		echo "[INFO] Magic DRC is clean!"
 	else
@@ -847,6 +935,10 @@ if [ "$RUN_KLAYOUT" -eq 1 ] && echo "$PDK" | grep -q -i "sky130"; then
 			echo "[ERROR] KLayout $_deck DRC failed, see <$_log>!"
 			exit $ERR_NO_OUTPUT
 		fi
+	done
+	for _deck in $SKY130_DECKS; do
+		JSON_REPORTS="$JSON_REPORTS
+$RESDIR/$CELL_NAME.klayout.drc.$_deck.xml"
 	done
 	# each KLayout report violation is one <item> regardless of its geometry type (edge pair, polygon, edge, ...), so count the <item> occurrences
 	if [ ! -f "$RESDIR/$CELL_NAME.klayout.drc.feol.xml" ]; then
@@ -934,6 +1026,8 @@ elif [ "$RUN_KLAYOUT" -eq 1 ]; then
 			exit $ERR_NO_OUTPUT
 		fi
 	done
+	JSON_REPORTS="$JSON_REPORTS
+$(find "$KLAYOUT_RUNDIR" -name '*.lyrdb' | sort)"
 	# one violation is one <item> in the report, regardless of its geometry type
 	DRC_ERRORS=$(find "$KLAYOUT_RUNDIR" -name '*.lyrdb' -exec cat {} + 2>/dev/null | grep -c "<item>")
 	if [ "$DRC_ERRORS" -ne 0 ]; then
@@ -952,6 +1046,8 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 		echo "[ERROR] gdscheck DRC run failed (no report produced), see <$GDSCHECK_RUNDIR/$CELL_NAME.drc.log>!"
 		exit $ERR_NO_OUTPUT
 	fi
+	JSON_REPORTS="$JSON_REPORTS
+$GDSCHECK_RPT"
 	GDSCHECK_WAIVED=$(grep -c "<tags>waived</tags>" "$GDSCHECK_RPT")
 	case "$GDSCHECK_RC" in
 		0)
@@ -975,6 +1071,8 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 			;;
 	esac
 fi
+
+[ "$JSON" -eq 1 ] && json_result "$CELL_LAY_GIVEN"
 
 echo "---"
 

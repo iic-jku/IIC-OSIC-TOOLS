@@ -138,6 +138,12 @@ Each tool's `_build/images/<tool>/scripts/install.sh`:
 - **Start script customization**: Set shell variables before running (e.g., `DESIGNS=/my/path ./start_vnc.sh`)
 - **Version tagging**: Images tagged as `YYYY.MM` and `latest` (see `_build/build-all.sh`)
 - **SAK scripts**: Bash utilities in `$TOOLS/sak/` (Swiss Army Knife), e.g., `sak-pdk-script.sh`, `sak-pex.sh`
+- **SAK commands with JSON output**: for scripts and assistants, each takes `--json` (one JSON object on stdout, messages on stderr). Exit codes of `sak-report.py`, `sak-gds-info.py`, `sak-run-summary.py` and `sak-job.py`: 0 clean, 1 findings, 2 input missing or stale, 3 usage, and 4 from `sak-job.py` while a job runs. `sak-drc.sh`, `sak-lvs.sh` and `sak-render.py` keep their own exit codes, read the `status` field of the JSON object. Every error object has `error` (text) and `exit_code`.
+  - `sak-drc.sh --json` and `sak-lvs.sh --json`: run DRC or LVS and print the result. Use `sak-report.py --json <report>...` for existing reports (add `--newer-than <layout>` to refuse a stale one).
+  - `sak-gds-info.py`: use it before writing a layout query script, to get layers, bounding box, cell tree and labels instead of guessing them.
+  - `sak-run-summary.py`: use it after a LibreLane run for timing (with violation counts per corner), checks, area and step run times.
+  - `sak-job.py`: use it for anything that runs longer than a minute (`start`, then `wait` or `status`, `tail` for the log, `cancel`). `status` is `ok` (done), `running`, `failed` (failed or cancelled) or `error` (lost or unknown ID), `state` holds the exact state.
+  - `sak-render.py --bbox=<x1,y1,x2,y2> --json`: render a region of a layout and list the written images.
 - **Tool wrappers**: Some tools have wrapper scripts that set environment or select versions (see `librelane`, `xyce` aliases)
 
 ## File Organization

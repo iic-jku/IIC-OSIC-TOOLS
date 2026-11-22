@@ -1,0 +1,157 @@
+#!/usr/bin/env python3
+# ========================================================================
+# Shared JSON contract of the SAK commands with JSON output
+#
+# SPDX-FileCopyrightText: 2026 Harald Pretl and Simon Dorrer
+# Johannes Kepler University, Department for Integrated Circuits
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Imported by the sak-*.py helpers (not a command itself).
+# ========================================================================
+
+"""Shared contract of the SAK commands with JSON output.
+
+Every command prints either short text or, with ``--json``, exactly one JSON
+object on stdout (``schema`` 1, ``tool``, ``status``, ``input``, plus a
+command specific body). Messages for a person go to stderr. Exit codes:
+0 clean or successful, 1 findings, 2 input missing or unreadable, 3 usage.
+"""
+
+import argparse
+import datetime
+import json
+import os
+import sys
+from typing import NoReturn
+
+EXIT_OK = 0
+EXIT_FINDINGS = 1
+EXIT_INPUT = 2
+EXIT_USAGE = 3
+
+SCHEMA = 1
+
+
+class InputError(Exception):
+    """An input file is missing, unreadable, truncated or stale."""
+
+
+class SakArgumentParser(argparse.ArgumentParser):
+    """ArgumentParser with ``--json``/``--max`` and the usage exit code.
+
+    Abbreviated long options are refused, so ``--js`` is not taken for ``--json``.
+    """
+
+    def __init__(self, *args, tool: str | None = None, **kwargs):
+        kwargs.setdefault("allow_abbrev", False)
+        super().__init__(*args, **kwargs)
+        self.tool = tool or self.prog
+        self.add_argument("--json", action="store_true", dest="json",
+                          help="print one JSON object instead of text")
+        self.add_argument("--max", type=int, default=20, metavar="N",
+                          help="list at most N entries, 0 for all (default: 20)")
+
+    def parse_known_args(self, args=None, namespace=None):
+        parsed, rest = super().parse_known_args(args, namespace)
+        # a subcommand parser may suppress the default, then the value is missing
+        limit = getattr(parsed, "max", None)
+        if isinstance(limit, int) and limit < 0:
+            self.error("--max must not be negative")
+        return parsed, rest
+
+    def error(self, message: str) -> NoReturn:
+        # argparse exits with 2, which is reserved for input errors here
+        self.print_usage(sys.stderr)
+        if "--json" in sys.argv[1:]:
+            fail(self.tool, message, True, EXIT_USAGE)
+        print(f"[ERROR] {message}", file=sys.stderr)
+        sys.exit(EXIT_USAGE)
+
+
+def input_entry(path: str) -> dict:
+    """Return {"path", "mtime"} of an input file, mtime as ISO 8601 UTC."""
+    try:
+        mtime = os.stat(path).st_mtime
+    except OSError as exc:
+        raise InputError(f"cannot read {path}: {exc.strerror}") from exc
+    stamp = datetime.datetime.fromtimestamp(mtime, datetime.timezone.utc)
+    return {"path": path, "mtime": stamp.strftime("%Y-%m-%dT%H:%M:%SZ")}
+
+
+def emit(tool: str, status: str, inputs: list, body: dict,
+         as_json: bool, text: str) -> None:
+    """Print the result object (``--json``) or ``text`` on stdout."""
+    if as_json:
+        obj = {"schema": SCHEMA, "tool": tool, "status": status,
+               "input": inputs, **body}
+        print(json.dumps(obj))
+    else:
+        print(text)
+
+
+def fail(tool: str, message: str, as_json: bool, code: int = EXIT_INPUT,
+         extra: dict | None = None) -> NoReturn:
+    """Report an error (JSON object on stdout with ``--json``, with ``error`` and ``exit_code``) and exit."""
+    if as_json:
+        obj = {"schema": SCHEMA, "tool": tool, "status": "error",
+               "error": message, "exit_code": code, "input": [], **(extra or {})}
+        print(json.dumps(obj))
+    print(f"[ERROR] {message}", file=sys.stderr)
+    sys.exit(code)
+
+
+def cap(items: list, limit: int) -> list:
+    """The first ``limit`` items, all of them for 0."""
+    return list(items) if limit == 0 else list(items[:limit])
+
+
+# Objects a script must not free before the process ends. While this list is not empty, run() ends the process with
+# os._exit after flushing, so no interpreter teardown (and no freeing of these objects) takes place on any exit path.
+# Used by sak-report.py for KLayout LVS databases: with KLayout 0.30.13 (nightly image of 2026-11-22), freeing a
+# LayoutVsSchematic after its cross reference was read aborts with "malloc_consolidate(): unaligned fastbin chunk
+# detected" and exit code 134. No upstream issue exists yet. Remove this when a KLayout release no longer aborts.
+KEEP_ALIVE: list = []
+
+
+def _exit_now(code) -> NoReturn:
+    """End the process with ``code`` without interpreter teardown (see ``KEEP_ALIVE``)."""
+    if code is None:
+        code = EXIT_OK
+    elif not isinstance(code, int):
+        print(code, file=sys.stderr)
+        code = EXIT_FINDINGS
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(code)
+
+
+def run(tool: str, main) -> None:
+    """Call ``main()``, turning an unexpected exception into exit code 2.
+
+    Without this a traceback ends with Python's exit code 1, which means
+    "findings" in this contract. If ``KEEP_ALIVE`` holds objects when the
+    script ends, whatever the exit code, the process leaves without teardown.
+    """
+    try:
+        try:
+            main()
+        except Exception as exc:  # pylint: disable=broad-except
+            fail(tool, f"unexpected {type(exc).__name__}: {exc}", "--json" in sys.argv[1:])
+    except SystemExit as exc:
+        if not KEEP_ALIVE:
+            raise
+        _exit_now(exc.code)
+    if KEEP_ALIVE:
+        _exit_now(EXIT_OK)

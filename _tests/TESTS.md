@@ -96,3 +96,8 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 51       | Netgen derives the MIM capacitor area of the SG13G2 setup in every run directory (wrong sizes fail, matching sizes pass)        |
 | 52       | Icarus Verilog elaborates and simulates a flip-flop of the SG13G2 and SG13CMOS5L standard cells with `-gspecify`                |
 | 53       | LibreLane with gf180mcuD and the 3.3V standard cells `gf180mcu_as_sc_mcu7t3v3`                                                  |
+| 54       | `sak-report.py` summarizes KLayout and Magic DRC reports and rejects missing, truncated, crashed and stale ones                 |
+| 55       | `sak-report.py` summarizes KLayout and Netgen LVS reports of a matching and a mismatching sky130A inverter                      |
+| 56       | `sak-gds-info.py` reports layers, bounding box, cell tree and labels of a layout and rejects missing files and ambiguous top cells |
+| 57       | `sak-job.py` runs commands detached, waits for them, reads their log, cancels them with their children and flags lost jobs      |
+| 58       | `sak-render.py` keeps its default output, renders a `--bbox` region and reports files, region and scale with `--json`          |
