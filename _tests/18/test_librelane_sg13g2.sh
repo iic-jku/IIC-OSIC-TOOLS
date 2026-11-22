@@ -49,6 +49,75 @@ if command -v librelane >/dev/null 2>&1; then
         FAILED="the flow produced no final/metrics.json"
     fi
 
+    # sak-run-summary.py reads the run directory the flow just wrote
+    if [ -z "$FAILED" ]; then
+        SUMMARY_ERR=$(WORKDIR="$WORKDIR" RUNS_DIR="$RUNS_DIR" RAND="$RAND" python3 - <<'PYEOF' 2>&1
+import json, os, shutil, subprocess, sys
+
+workdir = os.environ["WORKDIR"]
+debug = os.environ.get("DEBUG") == "1"
+
+
+def summary(path):
+    try:
+        proc = subprocess.run(["sak-run-summary.py", "--json", path], capture_output=True, text=True, check=False)
+    except FileNotFoundError:
+        sys.exit("sak-run-summary.py: command not found")
+    if debug:
+        print(proc.stdout, proc.stderr, file=sys.stderr)
+    try:
+        return proc.returncode, json.loads(proc.stdout)
+    except ValueError:
+        sys.exit(f"sak-run-summary.py {path}: no JSON on stdout (exit {proc.returncode}): {proc.stderr.strip()[:300]}")
+
+
+def number(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
+code, design = summary(workdir)
+if code not in (0, 1):
+    sys.exit(f"design dir: exit {code}")
+if design.get("finished") is not True:
+    sys.exit("design dir: finished is not true")
+if not number(design["timing"]["setup_ws_ns"]):
+    sys.exit("design dir: timing.setup_ws_ns is not a number")
+if design["checks"]["lvs_errors"] != 0:
+    sys.exit(f"design dir: checks.lvs_errors is {design['checks']['lvs_errors']}")
+gds = design["final_views"].get("gds")
+if not gds or not os.path.isfile(gds):
+    sys.exit(f"design dir: final_views.gds {gds!r} is no file")
+if len(design["steps"]) <= 10:
+    sys.exit(f"design dir: only {len(design['steps'])} steps")
+if not all(number(step["runtime_s"]) for step in design["steps"]):
+    sys.exit("design dir: a step runtime_s is not a number")
+
+code, direct = summary(design["run_dir"])
+if code not in (0, 1) or direct["run_dir"] != design["run_dir"]:
+    sys.exit(f"run dir: exit {code}, run_dir {direct.get('run_dir')!r} differs from {design['run_dir']!r}")
+
+copy = os.path.join(os.environ["RUNS_DIR"], os.environ["RAND"], "18_nofinal")
+shutil.rmtree(copy, ignore_errors=True)
+shutil.copytree(design["run_dir"], copy, symlinks=True)
+shutil.rmtree(os.path.join(copy, "final"))
+code, partial = summary(copy)
+if code != 1 or partial.get("finished") is not False:
+    sys.exit(f"run without final/: exit {code}, finished {partial.get('finished')!r}")
+if not isinstance(partial.get("last_step"), str) or not partial["last_step"]:
+    sys.exit("run without final/: last_step is not a non-empty string")
+shutil.rmtree(copy, ignore_errors=True)
+
+empty = os.path.join(os.environ["RUNS_DIR"], os.environ["RAND"], "18_empty")
+os.makedirs(empty, exist_ok=True)
+code, none = summary(empty)
+os.rmdir(empty)
+if code != 2 or none.get("status") != "error":
+    sys.exit(f"empty dir: exit {code}, status {none.get('status')!r}")
+PYEOF
+)
+        [ $? -eq 0 ] || FAILED="sak-run-summary.py check failed: $SUMMARY_ERR"
+    fi
+
     if [ -n "$FAILED" ]; then
         echo "[ERROR] Test <LibreLane smoke-test with ihp-sg13g2> FAILED ($FAILED). Check the logs <$LOG> and <$STDERR_LOG>."
         exit 1
