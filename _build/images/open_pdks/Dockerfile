@@ -40,3 +40,15 @@ RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ihp.sh
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ihp_cmos5l.sh
+ARG ASAP7_PDK_R1P7_REPO_URL="https://github.com/The-OpenROAD-Project/asap7_pdk_r1p7.git"
+ARG ASAP7_PDK_R1P7_REPO_COMMIT="58d72c9d291e186a77468586ab0c43d8a21eda6a"
+ARG ASAP7SC7P5T_28_REPO_URL="https://github.com/The-OpenROAD-Project/asap7sc7p5t_28.git"
+ARG ASAP7SC7P5T_28_REPO_COMMIT="e5bd25da72cd297b8c0ec6f77600e0cbaa1124d0"
+ARG OPENROAD_FLOW_SCRIPTS_REPO_URL="https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git"
+ARG OPENROAD_FLOW_SCRIPTS_REPO_COMMIT="a9adcf481395d3b1355afda40df1c8bde10a0e40"
+ARG ASAP7_FOR_KLAYOUT_REPO_URL="https://github.com/laurentc2/ASAP7_for_KLayout.git"
+ARG ASAP7_FOR_KLAYOUT_REPO_COMMIT="ef77f080381cab3993428492a3dcb41044c3f518"
+ARG VA_MODELS_REPO_URL="https://github.com/dwarning/VA-Models.git"
+ARG VA_MODELS_REPO_COMMIT="f04299a330591a591f309f4be1e208f83883ba2a"
+RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
+    bash /images/open_pdks/scripts/install_asap7.sh

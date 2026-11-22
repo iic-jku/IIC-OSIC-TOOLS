@@ -27,12 +27,13 @@ import os
 import re
 import xml.etree.ElementTree as ET
 
-# PDK name -> path of the .lyp file below $PDK_ROOT. The same four files as the TECHS table of sak-render.py.
+# PDK name -> path of the .lyp file below $PDK_ROOT. The same files as the TECHS table of sak-render.py.
 LYP_FILES = {
     "ihp-sg13g2": ("ihp-sg13g2", "libs.tech", "klayout", "tech", "sg13g2.lyp"),
     "ihp-sg13cmos5l": ("ihp-sg13cmos5l", "libs.tech", "klayout", "tech", "sg13cmos5l.lyp"),
     "gf180mcud": ("gf180mcuD", "libs.tech", "klayout", "tech", "gf180mcu.lyp"),
     "sky130a": ("sky130A", "libs.tech", "klayout", "tech", "sky130A.lyp"),
+    "asap7": ("asap7", "libs.tech", "klayout", "tech", "asap7.lyp"),
 }
 
 ALIASES = {
@@ -42,6 +43,7 @@ ALIASES = {
     "gf180mcu": "gf180mcud",
     "gf180": "gf180mcud",
     "sky130": "sky130a",
+    "asap7sc7p5t": "asap7",
 }
 
 # The source of a .lyp entry is "[name ]layer/datatype@view"

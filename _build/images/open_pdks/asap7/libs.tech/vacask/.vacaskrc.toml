@@ -1,0 +1,6 @@
+# VACASK configuration for the ASAP7 7 nm FinFET predictive PDK
+#
+# Use the models with:  include "asap7.lib" section=tt
+[Paths]
+include_path_prefix = [ "$(PDK_ROOT)/asap7/libs.tech/vacask/models" ]
+module_path_prefix = [ "$(PDK_ROOT)/asap7/libs.tech/vacask/osdi" ]

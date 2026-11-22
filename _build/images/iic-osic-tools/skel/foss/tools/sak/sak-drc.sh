@@ -132,12 +132,12 @@ if [ $# -eq 0 ]; then
 	echo
 	echo "Usage: $0 [--json] [-d] [-m|-k|-b|-g] [-c] [-l <level>] [-s <suite>|-D <decks>] [-j <n>] [-f <pattern>] [-w <workdir>] <cellname>"
 	echo
-	echo "       -m Run Magic DRC (default)"
+	echo "       -m Run Magic DRC (default, not for ics55 and asap7, which have no Magic technology)"
 	echo "       -k Run KLayout DRC"
 	echo "       -b Run Magic and KLayout DRC"
 	echo "       -g Run gdscheck DRC"
 	echo "       -c Clean output files before running"
-	echo "       -l KLayout/gdscheck DRC level: precheck|macro|regular (default: macro)"
+	echo "       -l KLayout/gdscheck DRC level: precheck|macro|regular (default: macro), asap7 runs all KLayout rules at every level"
 	echo "          precheck: core FEOL and BEOL rules only"
 	echo "          macro: adds off-grid, pin, and zero-area checks, skips chip-level density and antenna"
 	echo "          regular: all checks"
@@ -305,10 +305,13 @@ elif echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13cmos5l PDK selected."
 elif echo "$PDK" | grep -q -i "^ics55"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] ics55 PDK selected."
+elif echo "$PDK" | grep -q -i "asap7"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] asap7 PDK selected."
 else
 	echo "[ERROR] The PDK $PDK is not yet supported!"
 	exit $ERR_PDK_NOT_SUPPORTED
 fi
+
 
 # a cellname (or layout file) is required
 # ---------------------------------------
@@ -383,10 +386,10 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 	esac
 fi
 
-# ics55 has no Magic technology, so Magic DRC is dropped when KLayout DRC also runs and is an error otherwise.
+# ics55 and asap7 have no Magic technology, so Magic DRC is dropped when KLayout DRC also runs and is an error otherwise.
 # ----------------------------------------------------------------------------------------------
 
-if [ "$RUN_MAGIC" -eq 1 ] && echo "$PDK" | grep -q -i "^ics55"; then
+if [ "$RUN_MAGIC" -eq 1 ] && echo "$PDK" | grep -q -i -E "^ics55|asap7"; then
 	if [ "$RUN_KLAYOUT" -eq 1 ]; then
 		echo "[WARNING] Magic DRC is not available for $PDK, running KLayout DRC only."
 		RUN_MAGIC=0
@@ -396,10 +399,10 @@ if [ "$RUN_MAGIC" -eq 1 ] && echo "$PDK" | grep -q -i "^ics55"; then
 	fi
 fi
 
-# KLayout DRC is implemented for sky130/gf180mcu/ihp-sg13g2/ihp-sg13cmos5l/ics55 and needs a GDS layout. In each unmet case skip KLayout: warn and continue if Magic DRC also runs, otherwise error out.
+# KLayout DRC is implemented for sky130/gf180mcu/ihp-sg13g2/ihp-sg13cmos5l/ics55/asap7 and needs a GDS layout. In each unmet case skip KLayout: warn and continue if Magic DRC also runs, otherwise error out.
 # ----------------------------------------------------------------------------------------------
 
-if [ "$RUN_KLAYOUT" -eq 1 ] && ! echo "$PDK" | grep -q -i -E "sky130|gf180mcu|ihp-sg13g2|ihp-sg13cmos5l|^ics55"; then
+if [ "$RUN_KLAYOUT" -eq 1 ] && ! echo "$PDK" | grep -q -i -E "sky130|gf180mcu|ihp-sg13g2|ihp-sg13cmos5l|^ics55|asap7"; then
 	if [ "$RUN_MAGIC" -eq 1 ]; then
 		echo "[WARNING] KLayout DRC for $PDK not yet supported, running Magic DRC only."
 		RUN_KLAYOUT=0
@@ -496,7 +499,7 @@ fi
 # run dir holding the Magic DRC report, log, and generated extract script. It is wiped at the start of each Magic run.
 MAGIC_RUNDIR="$RESDIR/${CELL_NAME}.magic.drc"
 EXT_SCRIPT="$MAGIC_RUNDIR/drc_$CELL_NAME.tcl"
-# run dir holding the gf180mcu/ihp/ics55 KLayout DRC report(s) (.lyrdb) and log, sky130 writes its reports directly into $RESDIR
+# run dir holding the gf180mcu/ihp/ics55/asap7 KLayout DRC report(s) (.lyrdb) and log, sky130 writes its reports directly into $RESDIR
 KLAYOUT_RUNDIR="$RESDIR/${CELL_NAME}.klayout.drc"
 # run dir holding the gdscheck DRC report (.lyrdb) and log
 GDSCHECK_RUNDIR="$RESDIR/${CELL_NAME}.gdscheck.drc"
@@ -794,6 +797,22 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 				> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1
 			echo "[INFO] KLayout exit status: $?" >> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log"
 		} &
+	elif echo "$PDK" | grep -q -i "asap7"; then
+		# asap7 runs the ASAP7_for_KLayout deck as a single process with -j threads. The deck has no rule selection, so
+		# every level runs all rules. The log ends with the KLayout exit status.
+		rm -rf "$KLAYOUT_RUNDIR"
+		mkdir -p "$KLAYOUT_RUNDIR"
+		KLAYOUT_PARTS="asap7"
+		{
+			klayout -b \
+				-rd input="$CELL_LAY" \
+				-rd report="$KLAYOUT_RUNDIR/$CELL_NAME.lyrdb" \
+				-rd topcell="$CELL_NAME" \
+				-rd threads="$JOBS" \
+				-r "$PDKPATH/libs.tech/klayout/drc/asap7.lydrc" \
+				> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1
+			echo "[INFO] KLayout exit status: $?" >> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log"
+		} &
 	elif echo "$PDK" | grep -q -i -E "ihp-sg13g2|ihp-sg13cmos5l"; then
 		# the ihp-sg13g2 and ihp-sg13cmos5l wrappers share the same CLI, both write their .lyrdb report(s) into --run_dir
 		# precheck: minimal foundry precheck rule set, drops density, off-grid, angle, extra, and recommended rules
@@ -1047,18 +1066,18 @@ $RESDIR/$CELL_NAME.klayout.drc.$_deck.xml"
 		fi
 	fi
 elif [ "$RUN_KLAYOUT" -eq 1 ]; then
-	# gf180mcu/ihp/ics55 write their .lyrdb report(s) into the run dir of each part (main, all, gf180 and ics55 use $KLAYOUT_RUNDIR, the other parts a subfolder of it). No report means the part failed (a DRC run with violations still writes one).
+	# gf180mcu/ihp/ics55/asap7 write their .lyrdb report(s) into the run dir of each part (main, all, gf180, ics55 and asap7 use $KLAYOUT_RUNDIR, the other parts a subfolder of it). No report means the part failed (a DRC run with violations still writes one).
 	# run_drc.py exits 1 for violations and for a crash alike. A crashed deck leaves a Python traceback in its log, a crashed table job of --mp > 1 leaves "generated an exception" (run_drc.py then merges the remaining reports and reports success). A deck run directly with klayout -b ends its log with the KLayout exit status.
 	for _part in $KLAYOUT_PARTS; do
 		case "$_part" in
-			main|all|gf180|ics55)	_dir="$KLAYOUT_RUNDIR" ;;
+			main|all|gf180|ics55|asap7)	_dir="$KLAYOUT_RUNDIR" ;;
 			*)		_dir="$KLAYOUT_RUNDIR/$_part" ;;
 		esac
 		_log="$_dir/$CELL_NAME.drc.log"
 		_failed=0
 		find "$_dir" -maxdepth 1 -name '*.lyrdb' 2>/dev/null | grep -q . || _failed=1
 		case "$_part" in
-			gf180|maximal|ics55)	tail -n 1 "$_log" 2>/dev/null | grep -q "exit status: 0$" || _failed=1 ;;
+			gf180|maximal|ics55|asap7)	tail -n 1 "$_log" 2>/dev/null | grep -q "exit status: 0$" || _failed=1 ;;
 			*)		grep -q -E "Traceback|generated an exception" "$_log" 2>/dev/null && _failed=1 ;;
 		esac
 		if [ "$_failed" -eq 1 ]; then

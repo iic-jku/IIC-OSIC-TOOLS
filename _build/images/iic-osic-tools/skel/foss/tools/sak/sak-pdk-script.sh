@@ -88,6 +88,9 @@ else
 			ics55)
 				export STD_CELL_LIBRARY="ics55_LLSC_H7CR"
 				;;
+			asap7)
+				export STD_CELL_LIBRARY="asap7sc7p5t"
+				;;
 			*)
 				echo "[ERROR] No valid standard cell library selected!"
 				export STD_CELL_LIBRARY=""

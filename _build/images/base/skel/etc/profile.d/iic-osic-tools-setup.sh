@@ -122,6 +122,7 @@ if [ -z "${FOSS_INIT_DONE+x}" ]; then
             ihp-sg13cmos5l)       STD_CELL_LIBRARY="sg13cmos5l_stdcell" ;;
             gf180mcuC|gf180mcuD)  STD_CELL_LIBRARY="gf180mcu_fd_sc_mcu7t5v0" ;;
             ics55)                STD_CELL_LIBRARY="ics55_LLSC_H7CR" ;;
+            asap7)                STD_CELL_LIBRARY="asap7sc7p5t" ;;
             *)
                 [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && \
                     echo "[WARN] No standard cell library known for PDK '$PDK', leaving STD_CELL_LIBRARY unset."

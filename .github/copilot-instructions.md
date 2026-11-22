@@ -50,7 +50,7 @@ each one pulls in whatever it depends on.
 
 ## PDK Management
 
-Four PDKs are pre-installed with automatic environment setup:
+These PDKs are pre-installed with automatic environment setup:
 
 **Switching PDKs**: Use `sak-pdk <pdk-name>` (not raw export commands)
 ```bash
@@ -58,6 +58,7 @@ sak-pdk sky130A                    # SkyWater 130nm
 sak-pdk gf180mcuD                  # GlobalFoundries 180nm  
 sak-pdk ihp-sg13g2                 # IHP 130nm SiGe BiCMOS (default)
 sak-pdk ihp-sg13cmos5l             # IHP 130nm CMOS
+sak-pdk asap7                      # ASAP7 7nm FinFET, predictive (not manufacturable)
 ```
 
 The script sets: `PDK`, `PDKPATH`, `STD_CELL_LIBRARY`, `SPICE_USERINIT_DIR`, `KLAYOUT_PATH`

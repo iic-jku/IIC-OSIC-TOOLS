@@ -1,0 +1,37 @@
+ASAP7 inverter DC transfer curve, VACASK
+
+// SPDX-FileCopyrightText: 2026 Harald Pretl
+// Johannes Kepler University, Department for Integrated Circuits
+// SPDX-License-Identifier: Apache-2.0
+//
+// Run with PDK_ROOT and PDK=asap7 set: vacask inv_vtc.sim
+// asap7.lib and bsimcmg.osdi are found through
+// $PDK_ROOT/asap7/libs.tech/vacask/.vacaskrc.toml.
+
+ground 0
+
+include "asap7.lib" section=tt
+model vsource vsource
+
+vdd (vdd 0) vsource dc=0.7
+vin (in 0) vsource dc=0
+xp (out in vdd vdd) pmos_rvt l=20n nfin=3
+xn (out in 0 0) nmos_rvt l=20n nfin=3
+
+control
+  options temp=25
+  sweep vin instance="vin" parameter="dc" from=0 to=0.7 step=0.005
+    analysis vtc op
+  postprocess(PYTHON, "inv_vtc.py")
+endc
+
+embed "inv_vtc.py" <<<FILE
+import numpy as np
+from vacask.rawfile import rawread
+
+vtc = rawread("vtc.raw").get()
+vin = np.asarray(vtc["in"])
+vout = np.asarray(vtc["out"])
+i = int(np.argmin(np.abs(vout - vin)))
+print(f"switching point vm = {vin[i]:.4f} V")
+>>>FILE

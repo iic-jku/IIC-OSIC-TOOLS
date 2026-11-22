@@ -102,3 +102,8 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 57       | `sak-job.py` runs commands detached, waits for them, reads their log, cancels them with their children and flags lost jobs      |
 | 58       | `sak-render.py` keeps its default output, renders a `--bbox` region and reports files, region and scale with `--json`          |
 | 59       | LibreLane with ics55 (counter), KLayout DRC with `sak-drc -k`, KLayout LVS with `sak-lvs -k` that matches the design and rejects a changed connection |
+| 60       | ASAP7 BSIM-CMG models in ngspice, Xyce and VACASK against the per-fin targets of the ASAP7 paper, xschem testbenches and the VACASK example |
+| 61       | KLayout LVS of the ASAP7 RVT standard cells against their CDL (known mismatches listed), a wrong fin count, and the DRC deck on INVx1 |
+| 62       | LibreLane example of ASAP7 (8-bit counter at 1 GHz) with KLayout LVS of the final GDS and a negative LVS check                  |
+| 63       | pygmid lookup tables of the ASAP7 RVT devices from `techsweep_asap7.py`                                                        |
+| 64       | SAK commands with asap7: `sak-drc.sh` and `sak-lvs.sh` refuse Magic and run KLayout with `-k` (JSON results, a wrong fin count fails), layer names in `sak-gds-info.py` and `sak-render.py` |

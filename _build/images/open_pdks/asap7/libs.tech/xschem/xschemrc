@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2026 Harald Pretl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+#
+# xschem configuration for the ASAP7 7 nm FinFET predictive PDK.
+#
+# Symbols: asap7/{n,p}mos_{lvt,rvt,slvt,sram}.sym, subcircuit calls of the
+# PDK SPICE models with the parameters l and nfin. Testbenches for ngspice and
+# Xyce are in asap7_tests. ASAP7 is predictive and not manufacturable.
+
+set ASAP7_ROOT $env(PDK_ROOT)/asap7
+
+set XSCHEM_LIBRARY_PATH {}
+append XSCHEM_LIBRARY_PATH :${XSCHEM_SHAREDIR}/xschem_library/devices
+append XSCHEM_LIBRARY_PATH :${XSCHEM_SHAREDIR}/xschem_library
+append XSCHEM_LIBRARY_PATH :$ASAP7_ROOT/libs.tech/xschem
+append XSCHEM_LIBRARY_PATH :$USER_CONF_DIR/xschem_library
+
+array unset dircolor
+set dircolor(asap7$) blue
+set dircolor(asap7_tests$) blue
+set dircolor(xschem_library$) red
+set dircolor(devices$) red
+
+# Model libraries per simulator, used by the testbenches through tcleval()
+set ASAP7_NGSPICE_MODELS $ASAP7_ROOT/libs.tech/ngspice/models
+set ASAP7_XYCE_MODELS $ASAP7_ROOT/libs.tech/xyce/models
+set ASAP7_VACASK_MODELS $ASAP7_ROOT/libs.tech/vacask/models
+
+set netlist_dir $env(PWD)/simulations
+set netlist_type spice
+set spiceprefix 1

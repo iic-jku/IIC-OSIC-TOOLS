@@ -1,0 +1,78 @@
+# SPDX-FileCopyrightText: 2026 Harald Pretl
+# Johannes Kepler University, Department for Integrated Circuits
+# SPDX-License-Identifier: Apache-2.0
+#
+# LEF/DEF to GDS layer map for the ASAP7 PDK (KLayout .map format).
+# Layer numbers follow the ASAP7 standard-cell GDS: drawing on datatype 0,
+# pins and their names on datatype 251, obstructions on datatype 4.
+#
+#LEF/DEF name   Purpose                      GDS layer  GDS datatype
+
+V0             VIA,PIN,LEFPIN               18         0
+
+M1             NET,SPNET,PIN,LEFPIN,VIA     19         0
+M1             PIN,LEFPIN                   19         251
+M1             LEFOBS                       19         4
+NAME           M1/PIN                       19         251
+
+V1             VIA,PIN,LEFPIN               21         0
+
+M2             NET,SPNET,PIN,LEFPIN,VIA     20         0
+M2             PIN,LEFPIN                   20         251
+M2             LEFOBS                       20         4
+NAME           M2/PIN                       20         251
+
+V2             VIA,PIN,LEFPIN               25         0
+
+M3             NET,SPNET,PIN,LEFPIN,VIA     30         0
+M3             PIN,LEFPIN                   30         251
+M3             LEFOBS                       30         4
+NAME           M3/PIN                       30         251
+
+V3             VIA,PIN,LEFPIN               35         0
+
+M4             NET,SPNET,PIN,LEFPIN,VIA     40         0
+M4             PIN,LEFPIN                   40         251
+M4             LEFOBS                       40         4
+NAME           M4/PIN                       40         251
+
+V4             VIA,PIN,LEFPIN               45         0
+
+M5             NET,SPNET,PIN,LEFPIN,VIA     50         0
+M5             PIN,LEFPIN                   50         251
+M5             LEFOBS                       50         4
+NAME           M5/PIN                       50         251
+
+V5             VIA,PIN,LEFPIN               55         0
+
+M6             NET,SPNET,PIN,LEFPIN,VIA     60         0
+M6             PIN,LEFPIN                   60         251
+M6             LEFOBS                       60         4
+NAME           M6/PIN                       60         251
+
+V6             VIA,PIN,LEFPIN               65         0
+
+M7             NET,SPNET,PIN,LEFPIN,VIA     70         0
+M7             PIN,LEFPIN                   70         251
+M7             LEFOBS                       70         4
+NAME           M7/PIN                       70         251
+
+V7             VIA,PIN,LEFPIN               75         0
+
+M8             NET,SPNET,PIN,LEFPIN,VIA     80         0
+M8             PIN,LEFPIN                   80         251
+M8             LEFOBS                       80         4
+NAME           M8/PIN                       80         251
+
+V8             VIA,PIN,LEFPIN               85         0
+
+M9             NET,SPNET,PIN,LEFPIN,VIA     90         0
+M9             PIN,LEFPIN                   90         251
+M9             LEFOBS                       90         4
+NAME           M9/PIN                       90         251
+
+V9             VIA,PIN,LEFPIN               95         0
+
+Pad            NET,SPNET,PIN,LEFPIN,VIA     96         0
+
+DIEAREA        ALL                          100        0
