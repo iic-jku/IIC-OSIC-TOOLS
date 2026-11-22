@@ -19,8 +19,9 @@ git submodule update --init --recursive --filter=blob:none
 # test fc == EOF. char is unsigned on aarch64, so the test is always false
 # there and clang fails the build under the -Werror that .bazelrc sets for
 # openroad/ (src/ before upstream 37a84d0a3e). Widen fc to int, which also
-# makes EOF inside a comment terminate on aarch64. Not reported upstream yet,
-# drop once both files declare fc as int.
+# makes EOF inside a comment terminate on aarch64. Reported as
+# The-OpenROAD-Project/OpenROAD#12095, fixed by PR #12105, drop once the pinned
+# revision contains it (both files declare fc as int).
 for KEYWORDS in openroad/odb/src/def/def/def_keywords.cpp openroad/odb/src/lef/lef/lef_keywords.cpp; do
     sed -i 's/^  char fc;$/  int fc;/' "$KEYWORDS"
     grep -q '^  int fc;$' "$KEYWORDS" || { echo "[ERROR] char fc not found in $KEYWORDS, check whether the patch is still needed"; exit 1; }
