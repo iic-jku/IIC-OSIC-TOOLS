@@ -96,7 +96,7 @@
   commit: f1d021db79acbd644ebcc899247bec72d0f55f9d
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: a92ebd27dc3a36a8f0e7821c825fae15d9c6ab42
+  commit: 7b26270095b3c710bdbac50d09af1767e2265572
 - name: openroad-flow-scripts
   repo: https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
   commit: a9adcf481395d3b1355afda40df1c8bde10a0e40
@@ -149,7 +149,7 @@
   commit: 9c61d29846d8521d9487a57739330f9682d5b542
 - name: slang
   repo: https://github.com/MikePopoloski/slang.git
-  commit: c7df013307e104f7237c3e54b26b15d5e9bc24ec
+  commit: 87e38f8cc678c3d0a21a437b479e262c134b6bbe
 - name: slang-yosys-plugin
   repo: https://github.com/povik/yosys-slang.git
   commit: fc131711d4e88035f5af0a28fa25b6c7fae2380e
