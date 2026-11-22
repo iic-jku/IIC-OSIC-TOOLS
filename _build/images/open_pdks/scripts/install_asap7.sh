@@ -19,6 +19,13 @@
 # LVS deck, DEF layer map, LibreLane configuration, simulator setup files,
 # xschem symbols and pygmid scripts.
 #
+# ASAP7 defines FinFETs only. Metal resistors, a MOM capacitor and a thin-film
+# resistor are added here for analog design (asap7_passives.py): models,
+# KLayout layers, LVS and DRC rules. They are not part of ASAP7. The overlay
+# also has a KLayout PCell library with every device that has a model.
+# More gate lengths than the 20 nm of ASAP7 and 1.8 V IO FinFETs are added
+# as well (asap7_models.py, asap7_passives.py), with assumed parameters.
+#
 # The 6-track library asap7sc6t_26 is not installed.
 set -e
 set -o pipefail
@@ -121,10 +128,11 @@ echo "[INFO] Installing the KLayout files."
 KL="$PDK_DIR/libs.tech/klayout"
 mkdir -p "$KL/tech" "$KL/drc"
 cp klayout/asap7.lyp "$KL/tech/asap7.lyp"
+python3 "$PDK_SCRIPT_DIR/add_asap7_passive_layers.py" "$KL/tech/asap7.lyp"
 cp klayout/LICENSE "$KL/tech/LICENSE"
 cp klayout/drc/drc_ASAP7.lydrc "$KL/drc/asap7.lydrc"
 cp klayout/LICENSE "$KL/drc/LICENSE"
-python3 "$PDK_SCRIPT_DIR/fix_asap7_drc_deck.py" "$KL/drc/asap7.lydrc"
+python3 "$PDK_SCRIPT_DIR/fix_asap7_drc_deck.py" "$KL/drc/asap7.lydrc" "$KL/drc/asap7_passives.drc"
 
 # LibreLane: Yosys maps and RC data from ORFS
 LL="$PDK_DIR/libs.tech/librelane"
@@ -166,7 +174,8 @@ cd "$SRC_DIR"
 echo "[INFO] Checking the files the LibreLane configuration refers to and the license files."
 MISSING=0
 for f in "$REF/techlef/asap7_tech_1x_201209.lef" "$KL/tech/asap7.lyt" "$KL/tech/asap7.lyp" "$KL/tech/asap7.map" \
-	"$KL/drc/asap7.lydrc" "$KL/lvs/asap7.lvs" "$LL/common/tracks.info" \
+	"$KL/drc/asap7.lydrc" "$KL/lvs/asap7.lvs" "$KL/tech/asap7_passives.json" "$KL/python/asap7_pcells.py" "$KL/python/asap7_example.py" \
+	"$KL/pymacros/asap7_pcells.lym" "$LL/common/tracks.info" \
 	"$LL/common/rcx_patterns.rules" "$KL/tech/LICENSE" "$PDK_DIR/libs.tech/verilog-a/bsimcmg/ECL-2.0.txt"; do
 	if [ ! -f "$f" ]; then
 		echo "[ERROR] $f is missing."

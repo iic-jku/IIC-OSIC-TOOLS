@@ -7,12 +7,13 @@ v {xschem version=3.4.8RC file_version=1.3
 }
 G {}
 K {type=nmos
-format="@spiceprefix@name @pinlist @model l=@l nfin=@nfin"
-lvs_format="@spiceprefix@name @pinlist @model l=@l nfin=@nfin"
-spectre_format="@spiceprefix@name ( @pinlist ) @model l=@l nfin=@nfin"
+format="@spiceprefix@name @pinlist @model l=@l nfin=@nfin mm=@mm"
+lvs_format="@spiceprefix@name @pinlist @model l=@l nfin=@nfin mm=@mm"
+spectre_format="@spiceprefix@name ( @pinlist ) @model l=@l nfin=@nfin mm=@mm"
 template="name=M1
 l=20n
 nfin=1
+mm=0
 model=nmos_sram
 spiceprefix=X
 "

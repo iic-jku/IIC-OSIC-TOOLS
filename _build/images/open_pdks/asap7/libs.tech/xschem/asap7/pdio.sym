@@ -1,0 +1,34 @@
+v {xschem version=3.4.8RC file_version=1.3
+* SPDX-FileCopyrightText: 2026 Harald Pretl
+* Johannes Kepler University, Department for Integrated Circuits
+* SPDX-License-Identifier: Apache-2.0
+*
+* Junction diode, p+ active in the well: A is the p+ contact, K the well.
+* m strips of nfin fins. An IIC-OSIC-TOOLS addition with assumed parameters,
+* ASAP7 has no diode.
+}
+G {}
+K {type=diode
+format="@spiceprefix@name @@A @@K @model nfin=@nfin m=@m"
+lvs_format="@spiceprefix@name @@A @@K @model nfin=@nfin m=@m"
+spectre_format="@spiceprefix@name ( @@A @@K ) @model nfin=@nfin m=@m"
+template="name=D1
+nfin=4
+m=1
+model=pdio
+spiceprefix=X
+"
+}
+V {}
+S {}
+F {}
+E {}
+L 4 0 5 0 30 {}
+L 4 0 -30 0 -5 {}
+L 4 -10 5 10 5 {}
+B 5 -2.5 -32.5 2.5 -27.5 {name=A dir=inout}
+B 5 -2.5 27.5 2.5 32.5 {name=K dir=inout}
+P 4 4 -0 5 -10 -5 10 -5 0 5 {fill=true}
+T {@name} 15 -18.75 0 0 0.2 0.2 {}
+T {@model} 15 -6.25 0 0 0.2 0.2 {}
+T {nfin=@nfin m=@m} 15 6.25 0 0 0.2 0.2 {layer=13}

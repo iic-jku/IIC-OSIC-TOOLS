@@ -20,6 +20,11 @@ Every device is wrapped in a subcircuit named like the CDL model
 nfin and w. w is accepted for compatibility with the CDL netlists and
 ignored, the drawn width of a FinFET is nfin times the fin pitch.
 
+The passive devices of asap7_passives.py (metal resistors, MOM capacitor,
+thin-film resistor) are added to every section. Their parameters come from
+<libs.tech-dir>/librelane/common/rcx_patterns.rules, which has to exist, and
+are also written to <libs.tech-dir>/klayout/tech/asap7_passives.json.
+
 Usage: asap7_models.py <hspice-model-dir> <libs.tech-dir>
 """
 
@@ -27,11 +32,48 @@ import re
 import sys
 from pathlib import Path
 
+import asap7_passives
+
 CORNERS = {"tt": "7nm_TT_160803.pm", "ff": "7nm_FF_160803.pm", "ss": "7nm_SS_160803.pm"}
 DEVICES = [f"{t}mos_{vt}" for t in ("n", "p") for vt in ("lvt", "rvt", "slvt", "sram")]
 # Parameters BSIM-CMG 111.2.1 does not accept (see module docstring)
 DROP_OSDI = {"capmod", "coremod", "etaqm", "nseg", "version"}
 DEFAULT_L = "20n"
+
+# 1.8 V IO FinFETs, an IIC-OSIC-TOOLS addition: ASAP7 has core devices for
+# 0.7 V only. The cards are the RVT cards with a thick gate oxide:
+#   eot, toxp, toxg  3.2 nm oxide (assumed for 1.8 V), with the same 1.1 nm
+#                    between eot and the physical thickness as the core cards.
+#                    toxg sets the gate tunneling current, which is the
+#                    drain current at VGS = 0 if it stays at the thin oxide.
+#   phig             0.15 V towards a higher threshold
+#   ptwg             0: the core cards fit the saturation current at 0.7 V
+#                    with ptwg = 30, which cuts the current at 1.8 V to a sixth
+#   agidl, agisl     scaled down, the core values are for a thin oxide
+# With the minimum gate length of 80 nm this gives 0.91 and 0.81 mA/um at
+# 1.8 V (per um of fin perimeter, 70.5 nm per fin) at about 10 pA/um off
+# current. The targets are the 1.8 V thick-gate transistors of Intel's 22 nm
+# SoC process: 80 nm minimum gate length, 0.92 and 0.80 mA/um at 10 pA/um
+# (Jan et al., IEDM 2012, table 1). Not fitted to silicon of a 7 nm process.
+IO_L = "80n"
+# Effective lengths in um at the minimum gate length, l + xl - 2 * lint with
+# xl = 1 nm and lint = -2 nm of the cards
+CORE_LEFF = 0.025
+IO_LEFF = 0.085
+IO_DEVICES = {
+    "nmos_io18": ("nmos_rvt", {"phig": +0.15, "agidl": 6e-14, "agisl": 6e-14}),
+    "pmos_io18": ("pmos_rvt", {"phig": -0.15, "agidl": 3e-13, "agisl": 3e-13}),
+}
+IO_COMMON = {"eot": "3.2e-009", "toxp": "4.3e-009", "toxg": "4.3e-009", "ptwg": "0"}
+ALL_DEVICES = DEVICES + list(IO_DEVICES)
+# Threshold mismatch, switched on with mm=1: sigma(Vth) = AVT / sqrt(area), the
+# gate area being nfin * m * (2 * hfin + tfin) * l with the fin of the cards
+# (hfin 32 nm, tfin 6.5 nm). ASAP7 gives no variability data. 1.4 mV um is the
+# n-FinFET value measured on a 14 nm SOI process (IEDM 2013, 0.7 mV um for
+# p-FinFETs there) and is used for both polarities.
+AVT = 1.4e-9  # V m
+FIN_PERIMETER = 70.5e-9  # m
+DELVT = f"mm*{AVT:g}/sqrt(nfin*m*{FIN_PERIMETER:g}*l)*agauss(0,1,1)"
 
 HEADER = """{c} ASAP7 7 nm FinFET predictive PDK, BSIM-CMG models for {sim}
 {c}
@@ -46,8 +88,15 @@ HEADER = """{c} ASAP7 7 nm FinFET predictive PDK, BSIM-CMG models for {sim}
 {c} Devices (subcircuits, terminals d g s b):
 {c}   nmos_lvt nmos_rvt nmos_slvt nmos_sram
 {c}   pmos_lvt pmos_rvt pmos_slvt pmos_sram
-{c} Parameters: l (gate length, default {l}), nfin (fins, default 1),
-{c}   w (ignored, accepted for CDL compatibility)
+{c}   nmos_io18 pmos_io18: 1.8 V IO FinFETs with a thick gate oxide, l from
+{c}   80n (default), 160n or 240n. An IIC-OSIC-TOOLS addition derived from the RVT
+{c}   cards, not part of ASAP7 (see the PDK README).
+{c} Parameters: l (gate length, default {l}, the only length of ASAP7 and of
+{c}   the model fit. 24n, 28n, 36n, 60n and 80n can be drawn as well and are
+{c}   an extrapolation of the model), nfin (fins, default 1),
+{c}   w (ignored, accepted for CDL compatibility), m (multiplier),
+{c}   mm (1 adds threshold mismatch, sigma = 1.4 mV um / sqrt(gate area),
+{c}   an assumption: ASAP7 has no variability data)
 {c} Corners (library sections): tt ff ss
 """
 
@@ -73,7 +122,54 @@ def parse_cards(path):
     missing = [d for d in DEVICES if d not in models]
     if missing:
         sys.exit(f"[ERROR] {path}: no model card for {', '.join(missing)}")
+    for dev, (base, change) in IO_DEVICES.items():
+        models[dev] = (models[base][0], io_card(path, models[base][1], change))
+    for dev, (pol, params) in models.items():
+        if dev in ALL_DEVICES:
+            models[dev] = (pol, length_scaling(path, params, IO_LEFF if dev in IO_DEVICES else CORE_LEFF))
     return models
+
+
+def length_scaling(path, params, leff_um):
+    """Let the output conductance fall with the gate length.
+
+    The cards are fitted at one length and keep PCLM (channel length
+    modulation) and PDIBL2 (drain-induced barrier lowering in the output
+    resistance) constant, so the intrinsic gain stops rising beyond about 50 nm and
+    does not rise at all for the IO devices. Both are moved to the 1/Leff
+    term of the BSIM-CMG binning (P + LP / Leff, Leff in um), scaled so that
+    the value at the fitted length is unchanged. The device at the minimum
+    length is the same as before, a longer one gains about in proportion to
+    its length, which is what silicon does. An assumption, not a fit.
+    """
+    old = dict(params)
+    out = []
+    for key, value in params:
+        if key in ("pclm", "pdibl2"):
+            if "l" + key in old:
+                sys.exit(f"[ERROR] {path}: the card has l{key}, the length scaling would overwrite it")
+            out += [(key, "0"), ("l" + key, f"{float(value) * leff_um:g}")]
+        else:
+            out.append((key, value))
+    if sum(1 for k, _ in out if k in ("lpclm", "lpdibl2")) != 2:
+        sys.exit(f"[ERROR] {path}: no pclm and pdibl2 in the card")
+    return out
+
+
+def io_card(path, params, change):
+    """The card of an IO device: a core card with the thick-oxide changes."""
+    new = dict(IO_COMMON)
+    old = dict(params)
+    for key, value in change.items():
+        new[key] = f"{float(old[key]) + value:g}" if key == "phig" else f"{value:g}"
+    missing = [k for k in new if k not in old]
+    if missing:
+        sys.exit(f"[ERROR] {path}: the IO card needs {', '.join(missing)}, which the core card does not have")
+    return [(k, new.get(k, v)) for k, v in params]
+
+
+def default_l(dev):
+    return IO_L if dev in IO_DEVICES else DEFAULT_L
 
 
 def wrap(params, prefix, width=4):
@@ -89,51 +185,58 @@ def osdi_params(pol, params):
     return [("type", "1" if pol == "nmos" else "-1")] + kept
 
 
-def ngspice_lib(corners):
+def ngspice_lib(corners, par):
     out = HEADER.format(c="*", sim="ngspice (OSDI)", l=DEFAULT_L).splitlines()
+    out += asap7_passives.header(par, "*")
     out += ["*", "* Needs bsimcmg.osdi loaded, the PDK .spiceinit does that.", ""]
     for corner, models in corners.items():
         out += [f".lib {corner}", ""]
-        for dev in DEVICES:
+        for dev in ALL_DEVICES:
             pol, params = models[dev]
             out.append(f".model {dev}_bsimcmg bsimcmg_va")
             out += wrap(osdi_params(pol, params), "+ ")
             out.append("")
-        for dev in DEVICES:
+        # ngspice does not apply the multiplier of an X line to an OSDI device,
+        # so m is a parameter and handed to the device
+        for dev in ALL_DEVICES:
             out += [
-                f".subckt {dev} d g s b l={DEFAULT_L} nfin=1 w=0",
-                f"N1 d g s b {dev}_bsimcmg l={{l}} nfin={{nfin}}",
+                f".subckt {dev} d g s b l={default_l(dev)} nfin=1 w=0 m=1 mm=0",
+                f"N1 d g s b {dev}_bsimcmg l={{l}} nfin={{nfin}} m={{m}} delvtrand={{{DELVT}}}",
                 f".ends {dev}",
                 "",
             ]
+        out += asap7_passives.ngspice_section(par, corner)
         out += [f".endl {corner}", ""]
     return "\n".join(out)
 
 
-def xyce_lib(corners):
+def xyce_lib(corners, par):
     out = HEADER.format(c="*", sim="Xyce (built-in BSIM-CMG 107)", l=DEFAULT_L).splitlines()
+    out += asap7_passives.header(par, "*")
     out.append("")
     for corner, models in corners.items():
         out += [f".lib {corner}", ""]
-        for dev in DEVICES:
+        for dev in ALL_DEVICES:
             pol, params = models[dev]
             kept = [(k, v) for k, v in params if k != "level"]
             out.append(f".model {dev}_bsimcmg {pol} level=107")
             out += wrap(kept, "+ ")
             out.append("")
-        for dev in DEVICES:
+        for dev in ALL_DEVICES:
             out += [
-                f".subckt {dev} d g s b params: l={DEFAULT_L} nfin=1 w=0",
-                f"M1 d g s b {dev}_bsimcmg l={{l}} nfin={{nfin}}",
+                f".subckt {dev} d g s b params: l={default_l(dev)} nfin=1 w=0 mm=0",
+                f"M1 d g s b {dev}_bsimcmg l={{l}} nfin={{nfin}} delvtrand={{{DELVT.replace('nfin*m*', 'nfin*')}}}",
                 f".ends {dev}",
                 "",
             ]
+        out += asap7_passives.xyce_section(par, corner)
         out += [f".endl {corner}", ""]
     return "\n".join(out)
 
 
-def vacask_lib(corners):
+def vacask_lib(corners, par):
     out = HEADER.format(c="//", sim="VACASK (OSDI)", l=DEFAULT_L).splitlines()
+    out += asap7_passives.header(par, "//")
     out += [
         "//",
         "// Use: include \"asap7.lib\" section=tt",
@@ -142,19 +245,20 @@ def vacask_lib(corners):
     ]
     for corner, models in corners.items():
         out += [f"section {corner}", "", "load \"bsimcmg.osdi\"", ""]
-        for dev in DEVICES:
+        for dev in ALL_DEVICES:
             pol, params = models[dev]
             out.append(f"model {dev}_bsimcmg bsimcmg_va (")
             out += wrap(osdi_params(pol, params), "  ")
             out += [")", ""]
-        for dev in DEVICES:
+        for dev in ALL_DEVICES:
             out += [
                 f"subckt {dev}(d g s b)",
-                f"  parameters l={DEFAULT_L} nfin=1 w=0",
-                f"  n1 (d g s b) {dev}_bsimcmg l=l nfin=nfin",
+                f"  parameters l={default_l(dev)} nfin=1 w=0 m=1 mm=0",
+                f"  n1 (d g s b) {dev}_bsimcmg l=l nfin=nfin $mfactor=m delvtrand={DELVT}",
                 "ends",
                 "",
             ]
+        out += asap7_passives.vacask_section(par, corner)
         out += ["endsection", ""]
     # VACASK uses SI suffixes like SPICE, but "u" etc. are fine, keep as is
     return "\n".join(out)
@@ -166,7 +270,13 @@ def main():
     src = Path(sys.argv[1])
     dst = Path(sys.argv[2])
     corners = {c: parse_cards(src / f) for c, f in CORNERS.items()}
-    for sim, text in (("ngspice", ngspice_lib(corners)), ("xyce", xyce_lib(corners)), ("vacask", vacask_lib(corners))):
+    par = asap7_passives.parameters(dst / "librelane" / "common" / "rcx_patterns.rules")
+    par_file = dst / "klayout" / "tech" / "asap7_passives.json"
+    par_file.parent.mkdir(parents=True, exist_ok=True)
+    asap7_passives.write_json(par, par_file)
+    print(f"[INFO] Wrote {par_file}")
+    libs = (("ngspice", ngspice_lib(corners, par)), ("xyce", xyce_lib(corners, par)), ("vacask", vacask_lib(corners, par)))
+    for sim, text in libs:
         out = dst / sim / "models" / "asap7.lib"
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(text)

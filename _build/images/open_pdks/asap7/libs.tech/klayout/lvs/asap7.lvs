@@ -12,7 +12,8 @@
 #   klayout -b -r asap7.lvs -rd input=<layout.gds> -rd topcell=<cell> \
 #     -rd schematic=<netlist.cdl|.spice> [-rd report=<file.lvsdb>] \
 #     [-rd target_netlist=<extracted.cir>] [-rd threads=<n>] \
-#     [-rd blackbox_cells=<glob>[,<glob>...]|known|none]
+#     [-rd blackbox_cells=<glob>[,<glob>...]|known|none] [-rd body=true] \
+#     [-rd pex=<netlist.spice> [-rd pex_res=true]]
 #
 # The schematic may use M devices with the model names of the CDL
 # (nmos_rvt, ...) or X calls of the subcircuits of the PDK SPICE models.
@@ -30,13 +31,42 @@
 #   * FinFETs are extracted as 3-terminal MOS devices (D, G, S). ASAP7
 #     standard cells carry no well or substrate taps, so the body terminal
 #     of the schematic devices is dropped when the schematic is read.
+#     body=true compares the body as well, for analog layouts with taps:
+#     the body of an NMOS is the substrate (one net, contacted by p+ active
+#     outside the well), the body of a PMOS its well (contacted by n+ active
+#     in the well), and the substrate terminal of rtfr is compared too.
 #   * W is the active width across the gate, which is nfin times the fin
 #     pitch of 27 nm, so comparing W compares nfin. Parallel fingers are
 #     combined by summing W, as the CDL netlists use one device per stack.
 #   * The threshold flavor comes from the VT marker layers (SLVT 97/0,
-#     LVT 98/0, SRAMVT 110/0), no marker is RVT.
+#     LVT 98/0, SRAMVT 110/0), no marker is RVT. A channel under the thick
+#     gate oxide TG (123/0, an IIC-OSIC-TOOLS layer) is the 1.8 V IO FinFET
+#     {n,p}mos_io18.
+#   * pex=<file> writes a netlist for simulation after the compare: the
+#     devices as calls of the PDK models, plus the capacitance of the metal
+#     wires between the nets and to the substrate (pin VSUB). No wire
+#     resistance, no capacitance below M1. The values come from the OpenRCX
+#     rules of the digital flow and an assumed layer stack, see the PDK
+#     README. The layout is flattened for this, so use it on analog cells.
+#     pex_res=true adds the resistance of the metal wires and vias: a net
+#     becomes a resistor network between its pin and the contacts of its
+#     devices. Sheet and via resistances are the ones of the OpenRCX rules.
+#   * Junction devices (an IIC-OSIC-TOOLS addition): active without a gate
+#     under the marker DIODE (124/0) is the diode ndio (n+ in the substrate)
+#     or pdio (p+ in the well), under BJT (125/0) the emitter of the vertical
+#     PNP pnp. They compare by the active area.
+#   * Passive devices (an IIC-OSIC-TOOLS addition, ASAP7 defines none, the
+#     parameters are in ../tech/asap7_passives.json):
+#     rm<n>: metal M<n> under the marker RES_M<n> (120/<n>), compared by R.
+#     rtfr: TFR film (121/0) between two M1 contacts with V0, compared by R.
+#     Its substrate terminal is dropped like the body of the FinFETs.
+#     cmom_m<bot>m<top>: every pair of metal fingers at minimum spacing
+#     inside the marker MOMCAP (122/0) is one capacitor between the nets of
+#     the two fingers. Parallel capacitors are summed and compared by C, so
+#     a finger on the wrong net does not match.
 
 require "set"
+require "json"
 
 # ---------------------------------------------------------------------------
 # Options
@@ -64,12 +94,31 @@ if $target_netlist
 end
 
 threads(($threads || 4).to_i)
-deep
+# the parasitic capacitances are computed on the nets of the top cell
+$pex ? flat : deep
 verbose($verbose.to_s == "true")
 
+WITH_BODY = $body.to_s == "true"
 FIN_PITCH_UM = 0.027
-DEVICE_NAMES = ["nmos_lvt", "nmos_rvt", "nmos_slvt", "nmos_sram",
-                "pmos_lvt", "pmos_rvt", "pmos_slvt", "pmos_sram"]
+DEVICE_NAMES = ["nmos_lvt", "nmos_rvt", "nmos_slvt", "nmos_sram", "nmos_io18",
+                "pmos_lvt", "pmos_rvt", "pmos_slvt", "pmos_sram", "pmos_io18"]
+
+# Passive device parameters, shared with the models and the layout generator
+PASSIVES = JSON.parse(File.read(File.join(File.dirname(File.expand_path(__FILE__)), "..", "tech", "asap7_passives.json")))
+RM_NAMES = PASSIVES["metals"].keys.map { |n| "rm#{n}" }
+JUNCTION_NAMES = ["ndio", "pdio", "pnp"]
+
+# Capacitance in F of cmom_m<bot>m<top> with the footprint w x l (um), the
+# formula of the simulation models
+MOM_CAP = lambda do |bot, top, w, l|
+  (bot..top).sum do |n|
+    m = PASSIVES["metals"][n.to_s]
+    pitch = m["wmin"] + m["smin"]
+    across, along = m["dir"] == "H" ? [l, w] : [w, l]
+    nf = 2 * ((across - 2 * PASSIVES["mom_edge"] + m["smin"] + 1e-9) / (2 * pitch)).floor
+    m["cc"] * 1e-15 * along * [nf - 1, 0].max
+  end
+end
 
 # ---------------------------------------------------------------------------
 # Schematic reader: drop the body terminal of M devices, keep W and L in um
@@ -103,21 +152,80 @@ class ASAP7SpiceReader < RBA::NetlistSpiceReaderDelegate
 
   # X calls of the PDK device subcircuits (xschem netlists) become devices
   def wants_subcircuit(circuit_name)
-    DEVICE_NAMES.include?(circuit_name.downcase)
+    n = circuit_name.downcase
+    DEVICE_NAMES.include?(n) || RM_NAMES.include?(n) || JUNCTION_NAMES.include?(n) || n == "rtfr" ||
+      n =~ /\Acmom_m\dm\d\z/
   end
 
-  def element(circuit, el, name, model, value, nets, params)
-    if !["M", "X"].include?(el) || nets.size != 4 || !DEVICE_NAMES.include?(model.downcase)
-      return super
-    end
-    cls_name = model.upcase
+  def device_class(circuit, cls_name, template)
     cls = circuit.netlist.device_class_by_name(cls_name)
     if !cls
-      cls = RBA::DeviceClassMOS3Transistor::new
+      cls = template.new
       cls.name = cls_name
       circuit.netlist.add(cls)
     end
-    dev = circuit.create_device(cls, name)
+    cls
+  end
+
+  # ndio, pdio and pnp: the area is the active area of m strips of nfin fins
+  def junction(circuit, name, model, nets, params)
+    area = PASSIVES["junction"]["strip"] * PASSIVES["fin_pitch"] * (params["NFIN"] || 4).to_f * (params["M"] || 1).to_f
+    if model == "pnp"
+      dev = circuit.create_device(device_class(circuit, "PNP", RBA::DeviceClassBJT3Transistor), name)
+      dev.connect_terminal("C", nets[0])
+      dev.connect_terminal("B", nets[1])
+      dev.connect_terminal("E", nets[2])
+      dev.set_parameter("AE", area)
+    else
+      dev = circuit.create_device(device_class(circuit, model.upcase, RBA::DeviceClassDiode), name)
+      dev.connect_terminal("A", nets[0])
+      dev.connect_terminal("C", nets[1])
+      dev.set_parameter("A", area)
+    end
+    true
+  end
+
+  # rm<n>, rtfr and cmom_m<bot>m<top> with w and l in m
+  def passive(circuit, name, model, nets, params)
+    w = (params["W"] || 0.0).to_f * 1e6
+    l = (params["L"] || 0.0).to_f * 1e6
+    mult = (params["M"] || 1.0).to_f
+    if model =~ /\Acmom_m(\d)m(\d)\z/
+      dev = circuit.create_device(device_class(circuit, "CMOM", RBA::DeviceClassCapacitor), name)
+      dev.set_parameter("C", MOM_CAP.call($1.to_i, $2.to_i, w, l) * mult)
+    else
+      if model == "rtfr"
+        t = PASSIVES["tfr"]
+        r = (t["rsh"] * l + 2 * t["rend"]) / w
+      else
+        r = PASSIVES["metals"][model[2..]]["rsh"] * l / w
+      end
+      with_bulk = WITH_BODY && model == "rtfr"
+      cls = with_bulk ? RBA::DeviceClassResistorWithBulk : RBA::DeviceClassResistor
+      dev = circuit.create_device(device_class(circuit, model.upcase, cls), name)
+      dev.set_parameter("R", r / mult)
+      dev.connect_terminal("W", nets[2]) if with_bulk
+    end
+    dev.connect_terminal("A", nets[0])
+    dev.connect_terminal("B", nets[1])
+    true
+  end
+
+  def element(circuit, el, name, model, value, nets, params)
+    if el == "X" && JUNCTION_NAMES.include?(model.downcase) && nets.size == (model.casecmp?("pnp") ? 3 : 2)
+      return junction(circuit, name, model.downcase, nets, params)
+    end
+    # rtfr has the substrate as third terminal, which is not compared
+    if el == "X" && nets.size == (model.casecmp?("rtfr") ? 3 : 2) && wants_subcircuit(model) &&
+       !DEVICE_NAMES.include?(model.downcase)
+      return passive(circuit, name, model.downcase, nets, params)
+    end
+    if !["M", "X"].include?(el) || nets.size != 4 || !DEVICE_NAMES.include?(model.downcase)
+      return super
+    end
+    mos = WITH_BODY ? RBA::DeviceClassMOS4Transistor : RBA::DeviceClassMOS3Transistor
+    dev = circuit.create_device(device_class(circuit, model.upcase, mos), name)
+    dev.connect_terminal("B", nets[3]) if WITH_BODY
     dev.connect_terminal("D", nets[0])
     dev.connect_terminal("G", nets[1])
     dev.connect_terminal("S", nets[2])
@@ -125,7 +233,8 @@ class ASAP7SpiceReader < RBA::NetlistSpiceReaderDelegate
     nfin = params["NFIN"]
     # nfin wins over w, so a schematic that gives only nfin compares as well
     w = nfin.to_f * FIN_PITCH_UM * 1e-6 if nfin
-    dev.set_parameter("W", (w || 0.0).to_f * 1e6)
+    # m parallel devices compare like one device of m times the width
+    dev.set_parameter("W", (w || 0.0).to_f * 1e6 * (params["M"] || 1.0).to_f)
     dev.set_parameter("L", (params["L"] || 20e-9).to_f * 1e6)
     true
   end
@@ -145,6 +254,7 @@ schematic(schematic_file, RBA::NetlistSpiceReader::new(ASAP7SpiceReader::new(top
 # Layers (ASAP7 DRM layer table)
 # ---------------------------------------------------------------------------
 
+nwell   = input(1, 0)
 fin     = input(2, 0)
 gate    = input(7, 0)
 gcut    = input(10, 0)
@@ -175,6 +285,15 @@ end
 v9  = input(95, 0)
 pad = input(96, 0)
 
+# Passive device layers of IIC-OSIC-TOOLS
+tg     = input(*PASSIVES["tg_layer"])
+dio_mk = input(*PASSIVES["diode_layer"])
+bjt_mk = input(*PASSIVES["bjt_layer"])
+tfr    = input(*PASSIVES["tfr_layer"])
+momcap = input(*PASSIVES["momcap_layer"])
+resmk  = {}
+metals.each_key { |name| resmk[name] = input(PASSIVES["res_marker_layer"], name[1..].to_i) }
+
 # ---------------------------------------------------------------------------
 # Derived layers
 # ---------------------------------------------------------------------------
@@ -183,10 +302,23 @@ poly    = gate - gcut
 channel = poly & active
 sd      = active - poly
 
-nchan = channel & nselect
-pchan = channel & pselect
+# channels under the thick gate oxide TG are the IO FinFETs
+nchan = (channel & nselect) - tg
+pchan = (channel & pselect) - tg
 
 vt_any = slvt + lvt + sramvt
+
+# Body: the substrate is everything outside the wells and one net. Active
+# without a gate and with the implant of the body is a tap.
+psub = extent.sized(1.um) - nwell
+ptap = (sd & pselect) - nwell
+ntap = sd & nselect & nwell
+# Junction devices: active with the implant of a source or drain under a marker
+ndio_k = (sd & nselect & dio_mk) - nwell
+pdio_a = sd & pselect & nwell & dio_mk
+pnp_e  = sd & pselect & nwell & bjt_mk
+# the substrate also under the wells, the collector of the vertical PNP
+sub_all = extent.sized(1.um)
 
 devices = {
   "nmos_rvt"  => nchan - vt_any,
@@ -196,15 +328,102 @@ devices = {
   "pmos_rvt"  => pchan - vt_any,
   "pmos_lvt"  => pchan & lvt,
   "pmos_slvt" => pchan & slvt,
-  "pmos_sram" => pchan & sramvt
+  "pmos_sram" => pchan & sramvt,
+  "nmos_io18" => channel & nselect & tg,
+  "pmos_io18" => channel & pselect & tg
 }
+
+# Metal under a resistor marker is the resistor body, the rest is wire
+rm_body = {}
+wire    = {}
+metals.each_key do |name|
+  rm_body[name] = m[name] & resmk[name]
+  wire[name]    = m[name] - resmk[name]
+end
+
+# Thin-film resistor: the film under M1 is a contact, the film between two
+# contacts is the body
+tfr_head = tfr & m["M1"]
+tfr_body = (tfr - m["M1"]).interacting(tfr_head, 2, 2)
 
 # ---------------------------------------------------------------------------
 # Device extraction
 # ---------------------------------------------------------------------------
 
 devices.each do |name, g|
-  extract_devices(mos3(name), { "SD" => sd, "G" => g, "tS" => sd, "tD" => sd, "tG" => poly })
+  if WITH_BODY
+    body = name.start_with?("n") ? psub : nwell
+    extract_devices(mos4(name), { "SD" => sd, "G" => g, "W" => body, "tS" => sd, "tD" => sd, "tG" => poly, "tB" => body })
+  else
+    extract_devices(mos3(name), { "SD" => sd, "G" => g, "tS" => sd, "tD" => sd, "tG" => poly })
+  end
+end
+
+metals.each_key do |name|
+  n = name[1..]
+  extract_devices(resistor("RM#{n}", PASSIVES["metals"][n]["rsh"]), { "R" => rm_body[name], "C" => wire[name] })
+end
+if WITH_BODY
+  extract_devices(resistor_with_bulk("RTFR", PASSIVES["tfr"]["rsh"]),
+                  { "R" => tfr_body, "C" => tfr_head, "W" => psub, "tW" => psub })
+else
+  extract_devices(resistor("RTFR", PASSIVES["tfr"]["rsh"]), { "R" => tfr_body, "C" => tfr_head })
+end
+
+extract_devices(diode("NDIO"), { "P" => psub, "N" => ndio_k, "tA" => psub, "tC" => ndio_k })
+extract_devices(diode("PDIO"), { "P" => pdio_a, "N" => nwell, "tA" => pdio_a, "tC" => nwell })
+extract_devices(bjt3("PNP"), { "E" => pnp_e, "B" => nwell, "C" => sub_all, "tE" => pnp_e, "tB" => nwell, "tC" => sub_all })
+
+# One capacitor per gap between two fingers of a MOM capacitor. The gap is
+# the device, its two long edges are the terminals on the finger metal.
+class MOMGapExtractor < RBA::GenericDeviceExtractor
+
+  def initialize(name, farad_per_um)
+    self.name = name
+    @farad_per_um = farad_per_um
+  end
+
+  def setup
+    define_layer("G", "Gap between two fingers")
+    define_layer("M", "Finger metal")
+    register_device_class(RBA::DeviceClassCapacitor::new)
+  end
+
+  def get_connectivity(_layout, layers)
+    conn = RBA::Connectivity::new
+    conn.connect(layers[0], layers[0])
+    conn
+  end
+
+  def extract_devices(layer_geometry)
+    layer_geometry[0].merged.each do |gap|
+      b = gap.bbox
+      next if b.width == b.height
+      device = create_device
+      length = [b.width, b.height].max * dbu
+      device.set_parameter(RBA::DeviceClassCapacitor::PARAM_C, @farad_per_um * length)
+      if b.width > b.height
+        ta = RBA::Box::new(b.left, b.bottom - 1, b.right, b.bottom)
+        tb = RBA::Box::new(b.left, b.top, b.right, b.top + 1)
+      else
+        ta = RBA::Box::new(b.left - 1, b.bottom, b.left, b.top)
+        tb = RBA::Box::new(b.right, b.bottom, b.right + 1, b.top)
+      end
+      define_terminal(device, RBA::DeviceClassCapacitor::TERMINAL_A, 1, ta)
+      define_terminal(device, RBA::DeviceClassCapacitor::TERMINAL_B, 1, tb)
+    end
+  end
+
+end
+
+mom_gaps = []
+(PASSIVES["mom_layers"][0]..PASSIVES["mom_layers"][1]).each do |n|
+  name = "M#{n}"
+  par = PASSIVES["metals"][n.to_s]
+  fingers = wire[name] & momcap
+  gaps = fingers.space((par["smin"] + 0.001).um, projection).polygons & momcap
+  mom_gaps << gaps
+  extract_devices(MOMGapExtractor::new("CMOM", par["cc"] * 1e-15), { "G" => gaps, "M" => wire[name] })
 end
 
 # ---------------------------------------------------------------------------
@@ -212,26 +431,45 @@ end
 # ---------------------------------------------------------------------------
 
 connect(sd, lisd)
+# taps and junctions. Without body=true no FinFET has a body terminal, so the
+# substrate and well nets only carry the junction devices.
+connect(lisd, ptap)
+connect(ptap, psub)
+connect(lisd, ntap)
+connect(ntap, nwell)
+connect(lisd, ndio_k)
+connect(lisd, pdio_a)
+connect(lisd, pnp_e)
+connect(sub_all, psub)
 connect(poly, lig)
 connect(lisd, v0)
 connect(lig, v0)
 # LIG landing on LISD connects them directly (used e.g. in the flip-flops)
 connect(lig, lisd)
-connect(v0, m["M1"])
+connect(v0, wire["M1"])
+connect(tfr_head, v0)
 
 order = ["M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9"]
 order.each_cons(2) do |lo, hi|
-  connect(m[lo], via[hi])
-  connect(via[hi], m[hi])
+  connect(wire[lo], via[hi])
+  connect(via[hi], wire[hi])
 end
-connect(m["M9"], v9)
+connect(wire["M9"], v9)
 connect(v9, pad)
 
-order.each { |n| connect(m[n], lbl[n]) }
+order.each { |n| connect(wire[n], lbl[n]) }
 
 # ---------------------------------------------------------------------------
 # Netlist preparation and compare
 # ---------------------------------------------------------------------------
+
+# The contacted ends of a thin-film resistor add 2 * rend / W
+netlist.each_circuit do |c|
+  c.each_device do |d|
+    next unless d.device_class.name == "RTFR"
+    d.set_parameter("R", d.parameter("R") + 2 * PASSIVES["tfr"]["rend"] / d.parameter("W"))
+  end
+end
 
 netlist.make_top_level_pins
 netlist.combine_devices
@@ -245,6 +483,12 @@ devices.keys.each do |name|
   tolerance(name, "W", :relative => 0.01)
   tolerance(name, "L", :relative => 0.01)
 end
+(RM_NAMES + ["rtfr"]).each { |name| tolerance(name.upcase, "R", :relative => 0.01) }
+tolerance("CMOM", "C", :relative => 0.01)
+["NDIO", "PDIO"].each { |name| tolerance(name, "A", :relative => 0.01) }
+tolerance("PNP", "AE", :relative => 0.01)
+# the PNP compares by its emitter area only
+["PE", "AB", "PB", "AC", "PC", "NE"].each { |p| ignore_parameter("PNP", p) rescue nil }
 
 # Cells whose layout does not match their CDL in KLayout, for every threshold
 # flavor. Keep in sync with _tests/61/lvs_known_mismatch.txt of IIC-OSIC-TOOLS.
@@ -325,6 +569,289 @@ sch_pins.each do |sp|
 end
 
 matched = compare
+
+# ---------------------------------------------------------------------------
+# Netlist for simulation with parasitic capacitances (-rd pex=<file>)
+# ---------------------------------------------------------------------------
+
+# Writes the devices as calls of the PDK models
+class ASAP7SimWriter < RBA::NetlistSpiceWriterDelegate
+
+  def initialize(substrate, well)
+    super()
+    @substrate = substrate
+    @well = well
+  end
+
+  def write_header
+    emit_comment("Extracted by KLayout with the ASAP7 LVS deck, with wire capacitances")
+    emit_comment("Use with: .lib $PDK_ROOT/asap7/libs.tech/ngspice/models/asap7.lib tt")
+  end
+
+  def write_device_intro(_cls)
+  end
+
+  def net(dev, terminal)
+    n = dev.net_for_terminal(terminal)
+    n ? net_to_string(n) : nil
+  end
+
+  def write_device(dev)
+    cls = dev.device_class.name
+    id = dev.id.to_s
+    a, b = net(dev, "A"), net(dev, "B")
+    if DEVICE_NAMES.include?(cls)
+      body = net(dev, "B") if dev.device_class.is_a?(RBA::DeviceClassMOS4Transistor)
+      body ||= cls.start_with?("n") ? @substrate : @well
+      nfin = (dev.parameter("W") / FIN_PITCH_UM).round
+      emit_line("X#{id} #{net(dev, "D")} #{net(dev, "G")} #{net(dev, "S")} #{body} #{cls} " \
+                "l=#{(dev.parameter("L") * 1000).round}n nfin=#{nfin}")
+    elsif ["NDIO", "PDIO", "PNP"].include?(cls)
+      # one strip of one fin per unit of area
+      unit = PASSIVES["junction"]["strip"] * PASSIVES["fin_pitch"]
+      if cls == "PNP"
+        emit_line("X#{id} #{net(dev, "C")} #{net(dev, "B")} #{net(dev, "E")} pnp nfin=1 m=#{(dev.parameter("AE") / unit).round}")
+      else
+        emit_line("X#{id} #{a} #{net(dev, "C")} #{cls.downcase} nfin=1 m=#{(dev.parameter("A") / unit).round}")
+      end
+    elsif cls == "RTFR"
+      t = PASSIVES["tfr"]
+      w = dev.parameter("W")
+      l = (dev.parameter("R") * w - 2 * t["rend"]) / t["rsh"]
+      emit_line("X#{id} #{a} #{b} #{net(dev, "W") || @substrate} rtfr w=#{"%.6g" % w}u l=#{"%.6g" % l}u")
+    elsif cls =~ /\ARM(\d)\z/
+      w = dev.parameter("W")
+      l = dev.parameter("R") * w / PASSIVES["metals"][$1]["rsh"]
+      emit_line("X#{id} #{a} #{b} rm#{$1} w=#{"%.6g" % w}u l=#{"%.6g" % l}u")
+    elsif cls == "RWIRE"
+      emit_line("Rw#{id} #{a} #{b} #{"%.6g" % dev.parameter("R")}")
+    else
+      # CMOM and the wire capacitances
+      emit_line("C#{cls == "CPAR" ? "p" : ""}#{id} #{a} #{b} #{"%.6g" % dev.parameter("C")}")
+    end
+  end
+
+end
+
+if $pex
+  top = netlist.circuit_by_name(top_name)
+  dbu = source.layout.dbu
+  eps = 8.854e-18 * PASSIVES["pex_eps_r"]   # F/um
+  substrate = top.create_net("VSUB")
+  top.connect_pin(top.create_pin("VSUB"), substrate)
+  well = substrate
+  has_pmos = false
+  top.each_device { |d| has_pmos ||= d.device_class.name.start_with?("pmos") }
+  if !WITH_BODY && has_pmos
+    # without body=true the bodies are not extracted: all wells on one pin
+    well = top.create_net("VWELL")
+    top.connect_pin(top.create_pin("VWELL"), well)
+  end
+
+  # merged wire shapes per metal level and net
+  shapes = {}
+  order.each_with_index do |name, i|
+    shapes[i + 1] = []
+    top.each_net do |net|
+      # the substrate and well nets made above have no shapes
+      next if net.cluster_id == 0
+      r = l2n_data.shapes_of_net(net, wire[name].data, true)
+      shapes[i + 1] << [net, r.merged] unless r.is_empty?
+    end
+  end
+
+  # keyed by net names: two objects of one net do not compare equal
+  caps = Hash.new(0.0)
+  by_name = {}
+  add = lambda do |na, nb, c|
+    a, b = na.expanded_name, nb.expanded_name
+    next if a == b
+    by_name[a], by_name[b] = na, nb
+    caps[[a, b].sort] += c
+  end
+  shapes.each do |level, list|
+    par = PASSIVES["metals"][level.to_s]
+    table = par["cc_table"]
+    dmax = table.last[0]
+    list.each do |net, r|
+      # a wire without neighbors over the substrate, plus a plate for the width above the minimum
+      len = r.perimeter * dbu / 2
+      area = r.area * dbu * dbu
+      add.call(net, substrate, par["cg0"] * 1e-15 * len + [area - par["wmin"] * len, 0].max * eps / par["h"])
+    end
+    # between the wires of the layer. The fingers of a MOM capacitor are in cmom.
+    free = list.map { |net, r| [net, r - momcap.data] }
+    reach = (dmax / dbu).round
+    free.combination(2) do |(na, ra), (nb, rb)|
+      next if ra.is_empty? || rb.is_empty? || !ra.bbox.enlarged(reach, reach).touches?(rb.bbox)
+      ra.separation_check(rb, reach, false, RBA::Region::Projection, nil, nil, nil).each do |ep|
+        d = ep.distance * dbu
+        k = table.index { |row| row[0] >= d } || table.size - 1
+        cc = if k == 0
+               table[0][1] * table[0][0] / [d, dbu].max
+             else
+               (d0, c0), (d1, c1) = table[k - 1], table[k]
+               c0 + (c1 - c0) * (1 / d - 1 / d0) / (1 / d1 - 1 / d0)
+             end
+        add.call(na, nb, cc * 1e-15 * [ep.first.length, ep.second.length].min * dbu)
+      end
+    end
+    # plate between the wires of this layer and the next one
+    gap = par["t"]
+    (shapes[level + 1] || []).each do |nb, rb|
+      list.each do |na, ra|
+        next if !ra.bbox.touches?(rb.bbox)
+        add.call(na, nb, (ra & rb).area * dbu * dbu * eps / gap)
+      end
+    end
+  end
+
+  # pad plates: a parallel plate to the substrate, above M9 and its dielectric
+  m9 = PASSIVES["metals"]["9"]
+  top.each_net do |net|
+    next if net.cluster_id == 0
+    r = l2n_data.shapes_of_net(net, pad.data, true)
+    add.call(net, substrate, r.area * dbu * dbu * eps / (m9["h"] + 2 * m9["t"])) unless r.is_empty?
+  end
+
+  cpar = RBA::DeviceClassCapacitor::new
+  cpar.name = "CPAR"
+  netlist.add(cpar)
+  total = 0.0
+  caps.each do |(a, b), c|
+    next if c < 1e-20
+    dev = top.create_device(cpar)
+    dev.connect_terminal("A", by_name[a])
+    dev.connect_terminal("B", by_name[b])
+    dev.set_parameter("C", c)
+    total += c
+  end
+  # Wire resistance: every net with two or more ports (its pin and the
+  # contacts of its devices) becomes the resistor network of its metal wires
+  # and vias. The wire capacitances stay on the node of the pin.
+  n_res = 0
+  if $pex_res.to_s == "true"
+    l2n = l2n_data
+    tech = RBA::RExtractorTech::new
+    level_of = {}
+    (1..9).each do |n|
+      c = RBA::RExtractorTechConductor::new
+      c.layer = 2 * n
+      c.resistance = PASSIVES["metals"][n.to_s]["rsh"]
+      tech.add_conductor(c)
+      level_of[l2n.layer_of(wire["M#{n}"].data)] = n
+    end
+    (1..8).each do |n|
+      v = RBA::RExtractorTechVia::new
+      v.cut_layer = 2 * n + 1
+      v.bottom_conductor = 2 * n
+      v.top_conductor = 2 * n + 2
+      v.resistance = PASSIVES["via_ra"][n.to_s]
+      tech.add_via(v)
+    end
+    rex = RBA::RNetExtractor::new(dbu)
+    rwire = RBA::DeviceClassResistor::new
+    rwire.name = "RWIRE"
+    netlist.add(rwire)
+    # conductors below M1 that carry device terminals, and the metal next to a device on metal
+    below = [sd, lisd, poly, lig, tfr_head, ptap, ntap, ndio_k, pdio_a, pnp_e]
+    on_metal = RBA::Region::new
+    order.each { |name| on_metal += rm_body[name].data }
+    mom_gaps.each { |g| on_metal += g.data }
+    on_metal = on_metal.sized((0.002 / dbu).round)
+    # pin positions: the labels of the metal layers
+    pins = Hash.new { |h, k| h[k] = [] }
+    order.each_with_index do |name, i|
+      [251, 2].each do |dt|
+        li = source.layout.find_layer(metals[name][0], dt)
+        next unless li
+        source.layout.cell(top_name).each_shape(li) { |s| pins[s.text.string] << [2 * (i + 1), s.text.trans.disp] if s.is_text? }
+      end
+    end
+
+    todo = []
+    top.each_net { |net| todo << net if net.cluster_id != 0 }
+    todo.each do |net|
+      geo = {}
+      (1..9).each do |n|
+        r = l2n.shapes_of_net(net, wire["M#{n}"].data, true)
+        geo[2 * n] = r unless r.is_empty?
+        next if n == 9
+        r = l2n.shapes_of_net(net, via["M#{n + 1}"].data, true)
+        geo[2 * n + 1] = r unless r.is_empty?
+      end
+      next if geo.empty?
+      mol = RBA::Region::new
+      below.each { |l| mol += l2n.shapes_of_net(net, l.data, true) }
+      mol.merge
+      v0_net = l2n.shapes_of_net(net, v0.data, true)
+
+      # polygon ports per layer, and the device terminals on each of them
+      ports = Hash.new { |h, k| h[k] = [] }
+      index = {}
+      users = Hash.new { |h, k| h[k] = [] }
+      add_port = lambda do |layer, polygon, terminal|
+        key = [layer, polygon.bbox.to_s]
+        if !index[key]
+          index[key] = ports[layer].size
+          ports[layer] << polygon
+        end
+        users[terminal] << [layer, index[key]]
+      end
+      net.each_terminal do |t|
+        l2n.shapes_of_terminal(t).each do |lid, region|
+          level = level_of[lid]
+          if level
+            near = region & on_metal
+            (near.is_empty? ? region : near).merged.each { |p| add_port.call(2 * level, p, t) }
+          else
+            v0_net.interacting(mol.interacting(region)).each { |p| add_port.call(2, p, t) }
+          end
+        end
+      end
+      vertex = Hash.new { |h, k| h[k] = [] }
+      (pins[net.name] || []).each do |layer, point|
+        vertex[layer] << RBA::Point::new(point.x, point.y) if geo[layer] && vertex.empty?
+      end
+      next if ports.values.sum(&:size) + vertex.values.sum(&:size) < 2
+
+      # plain hashes: the ones above have a default block
+      network = rex.extract(tech, geo, Hash[vertex], Hash[ports])
+      # the node of the pin, or else the first node, keeps the net. Every other node is a new net.
+      node_net = {}
+      port_net = {}
+      nodes = []
+      network.each_node { |node| nodes << node }
+      main = nodes.find { |node| node.type == RBA::RNode::VertexPort } || nodes.first
+      nodes.each_with_index do |node, k|
+        nn = node.object_id == main.object_id ? net : top.create_net("#{net.expanded_name}.#{k}")
+        node_net[node.object_id] = nn
+        port_net[[node.layer, node.port_index]] = nn if node.type == RBA::RNode::PolygonPort
+      end
+      resistor = lambda do |na, nb, r|
+        dev = top.create_device(rwire)
+        dev.connect_terminal("A", na)
+        dev.connect_terminal("B", nb)
+        dev.set_parameter("R", r)
+        n_res += 1
+      end
+      network.each_element { |e| resistor.call(node_net[e.a.object_id], node_net[e.b.object_id], e.resistance) }
+      users.each do |t, list|
+        nets = list.map { |key| port_net[key] }.compact.uniq
+        next if nets.empty?
+        # the contacts of one terminal are one point: 1 mOhm between them
+        nets[1..].each { |other| resistor.call(nets[0], other, 1e-3) }
+        t.device.connect_terminal(t.terminal_id, nets[0])
+      end
+    end
+  end
+
+  writer = RBA::NetlistSpiceWriter::new(ASAP7SimWriter::new("VSUB", well.name))
+  writer.use_net_names = true
+  netlist.write($pex, writer)
+  puts "[INFO] Wrote #{$pex} with #{"%.4g" % (total * 1e15)} fF of wire capacitance" +
+       ($pex_res.to_s == "true" ? " and #{n_res} wire resistors" : "")
+end
 
 # Same lines as the IHP decks, which sak-lvs.sh and LibreLane look for
 if matched

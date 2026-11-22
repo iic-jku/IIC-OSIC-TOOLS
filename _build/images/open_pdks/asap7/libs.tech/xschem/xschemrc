@@ -5,8 +5,11 @@
 # xschem configuration for the ASAP7 7 nm FinFET predictive PDK.
 #
 # Symbols: asap7/{n,p}mos_{lvt,rvt,slvt,sram}.sym, subcircuit calls of the
-# PDK SPICE models with the parameters l and nfin. Testbenches for ngspice and
+# PDK SPICE models with the parameters l, nfin and mm (mismatch). Testbenches for ngspice and
 # Xyce are in asap7_tests. ASAP7 is predictive and not manufacturable.
+# rm, rtfr, cmom and {n,p}cap_* are passive devices, {n,p}mos_io18 are 1.8 V IO
+# FinFETs, ndio, pdio and pnp are junction devices: all added by IIC-OSIC-TOOLS,
+# ASAP7 defines none of them.
 
 set ASAP7_ROOT $env(PDK_ROOT)/asap7
 
