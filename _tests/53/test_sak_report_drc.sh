@@ -63,6 +63,17 @@ $D
 
 RPT
 grep -v 'COUNT\|divided' two.magic.drc.rpt > crashed.magic.drc.rpt
+# well-formed report database with an item without a category (loads, then fails in the reader)
+cat > broken.lyrdb <<RPT
+<?xml version="1.0" encoding="utf-8"?>
+<report-database>
+ <categories><category><name>A</name></category></categories>
+ <cells><cell><name>top</name></cell></cells>
+ <items>
+  <item><cell>top</cell><values><value>box: (0,0;1,1)</value></values></item>
+ </items>
+</report-database>
+RPT
 sleep 1
 touch newer.marker
 
@@ -98,7 +109,8 @@ check "clean.magic" 0 "d['total']==0" --json clean.magic.drc.rpt
 check "crashed.magic" 2 "d['status']=='error'" --json crashed.magic.drc.rpt
 check "two reports" 1 "d['total']==6 and len(d['reports'])==2" --json two.lyrdb two.magic.drc.rpt
 check "stale report" 2 "'older than' in d['error']" --json --newer-than newer.marker two.lyrdb
-check "no report" 3 "" --json
+check "no report" 3 "d['status']=='error' and d['schema']==1" --json
+check "unreadable content" 2 "d['status']=='error' and 'unexpected' in d['error']" --json broken.lyrdb
 
 # without --json: text naming the rule and its count
 TXT=$(sak-report.py two.lyrdb 2> /dev/null)

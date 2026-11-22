@@ -51,8 +51,9 @@ class InputError(Exception):
 class SakArgumentParser(argparse.ArgumentParser):
     """ArgumentParser with ``--json``/``--max`` and the usage exit code."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, tool: str | None = None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.tool = tool or self.prog
         self.add_argument("--json", action="store_true", dest="json",
                           help="print one JSON object instead of text")
         self.add_argument("--max", type=int, default=20, metavar="N",
@@ -61,6 +62,8 @@ class SakArgumentParser(argparse.ArgumentParser):
     def error(self, message: str) -> NoReturn:
         # argparse exits with 2, which is reserved for input errors here
         self.print_usage(sys.stderr)
+        if "--json" in sys.argv[1:]:
+            fail(self.tool, message, True, EXIT_USAGE)
         print(f"[ERROR] {message}", file=sys.stderr)
         sys.exit(EXIT_USAGE)
 
@@ -100,3 +103,15 @@ def fail(tool: str, message: str, as_json: bool, code: int = EXIT_INPUT,
 def cap(items: list, limit: int) -> list:
     """The first ``limit`` items, all of them for 0."""
     return list(items) if limit == 0 else list(items[:limit])
+
+
+def run(tool: str, main) -> None:
+    """Call ``main()``, turning an unexpected exception into exit code 2.
+
+    Without this a traceback ends with Python's exit code 1, which means
+    "findings" in this contract.
+    """
+    try:
+        main()
+    except Exception as exc:  # pylint: disable=broad-except
+        fail(tool, f"unexpected {type(exc).__name__}: {exc}", "--json" in sys.argv[1:])

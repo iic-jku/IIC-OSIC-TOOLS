@@ -196,7 +196,7 @@ def text_summary(reports: list, total: int) -> str:
 
 def main() -> None:
     parser = sak_json.SakArgumentParser(
-        prog="sak-report.py", description="Summarize DRC reports (KLayout lyrdb, Magic).")
+        prog="sak-report.py", tool=TOOL, description="Summarize DRC reports (KLayout lyrdb, Magic).")
     parser.add_argument("--newer-than", metavar="FILE",
                         help="fail if a report is older than FILE (stale report)")
     parser.add_argument("reports", nargs="+", metavar="report")
@@ -224,4 +224,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    sak_json.run(TOOL, main)
