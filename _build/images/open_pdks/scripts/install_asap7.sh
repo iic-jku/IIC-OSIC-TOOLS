@@ -118,6 +118,7 @@ echo "[INFO] Installing the KLayout files."
 KL="$PDK_DIR/libs.tech/klayout"
 mkdir -p "$KL/tech" "$KL/drc"
 cp "$ORFS_PLATFORM/KLayout/asap7.lyp" "$KL/tech/asap7.lyp"
+cp orfs/LICENSE_BUILD_RUN_SCRIPTS "$KL/tech/LICENSE.orfs"
 cp klayout/drc/drc_ASAP7.lydrc "$KL/drc/asap7.lydrc"
 cp klayout/LICENSE "$KL/drc/LICENSE"
 python3 "$PDK_SCRIPT_DIR/fix_asap7_drc_deck.py" "$KL/drc/asap7.lydrc"
@@ -159,11 +160,11 @@ cd "$SRC_DIR"
 } > "$PDK_DIR/SOURCES"
 
 # Every path the LibreLane configuration names has to exist
-echo "[INFO] Checking the files the LibreLane configuration refers to."
+echo "[INFO] Checking the files the LibreLane configuration refers to and the license files."
 MISSING=0
 for f in "$REF/techlef/asap7_tech_1x_201209.lef" "$KL/tech/asap7.lyt" "$KL/tech/asap7.lyp" "$KL/tech/asap7.map" \
 	"$KL/drc/asap7.lydrc" "$KL/lvs/asap7.lvs" "$LL/common/tracks.info" \
-	"$LL/common/rcx_patterns.rules"; do
+	"$LL/common/rcx_patterns.rules" "$KL/tech/LICENSE.orfs" "$PDK_DIR/libs.tech/verilog-a/bsimcmg/ECL-2.0.txt"; do
 	if [ ! -f "$f" ]; then
 		echo "[ERROR] $f is missing."
 		MISSING=1

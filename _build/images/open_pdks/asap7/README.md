@@ -4,6 +4,20 @@ ASAP7 is the 7 nm FinFET predictive PDK of Arizona State University and Arm Rese
 
 Upstream: <https://github.com/The-OpenROAD-Project/asap7>. The PDK and its libraries are BSD-3-Clause licensed (`LICENSE`, `libs.ref/asap7sc7p5t/LICENSE`). The Calibre DRC, LVS and PEX decks of ASAP7 are licensed for academic use only and may not be redistributed, so they are not included. `SOURCES` lists the revision of every source.
 
+## Licenses
+
+Everything in this directory may be redistributed. The files keep their upstream license:
+
+| Part | License | License file |
+|---|---|---|
+| Model cards, DRM, standard-cell LEF, Liberty, GDS, CDL, Verilog (ASU, `asap7_pdk_r1p7`, `asap7sc7p5t_28`) and the model libraries converted from the cards | BSD-3-Clause | `LICENSE`, `libs.ref/asap7sc7p5t/LICENSE` and `license/` |
+| Files written by OpenROAD-flow-scripts: KLayout `asap7.lyp`, Yosys maps, `setRC.tcl`, `rcx_patterns.rules` | BSD-3-Clause | `libs.tech/klayout/tech/LICENSE.orfs`, `libs.tech/librelane/common/LICENSE.orfs` |
+| KLayout DRC deck (ASAP7_for_KLayout) | BSD-2-Clause | `libs.tech/klayout/drc/LICENSE` |
+| BSIM-CMG 111.2.1 Verilog-A and the compiled `bsimcmg.osdi` (University of California, via VA-Models) | ECL-2.0 | `libs.tech/verilog-a/bsimcmg/ECL-2.0.txt`, `NOTICE` next to the OSDI objects |
+| Everything else (KLayout technology and LVS deck, LibreLane and simulator setup, xschem symbols, scripts) | Apache-2.0 | SPDX headers, IIC-OSIC-TOOLS |
+
+The ASAP7 Calibre decks are licensed for academic use only and may not be redistributed, so they are not included. The ASAP7 paper (Microelectronics Journal) is not included either.
+
 ## Contents
 
 | Path | Content | Source |
@@ -12,11 +26,11 @@ Upstream: <https://github.com/The-OpenROAD-Project/asap7>. The PDK and its libra
 | `libs.tech/hspice` | Original BSIM-CMG 107 model cards, corners TT, FF, SS | `asap7_pdk_r1p7` |
 | `libs.tech/ngspice`, `libs.tech/vacask` | Model library `models/asap7.lib` (sections `tt`, `ff`, `ss`) and BSIM-CMG 111.2.1 as `osdi/bsimcmg.osdi` | converted at install, VA-Models |
 | `libs.tech/xyce` | Model library `models/asap7.lib`, built-in BSIM-CMG 107 | converted at install |
-| `libs.tech/verilog-a/bsimcmg` | BSIM-CMG 111.2.1 Verilog-A source (ECL-2.0) | VA-Models |
+| `libs.tech/verilog-a/bsimcmg` | BSIM-CMG 111.2.1 Verilog-A source and ECL-2.0 text | VA-Models |
 | `libs.tech/klayout` | Technology (`tech/asap7.lyt`, `.lyp`, DEF layer map `.map`), DRC deck `drc/asap7.lydrc`, LVS deck `lvs/asap7.lvs` | local, ORFS, ASAP7_for_KLayout |
 | `libs.tech/librelane` | LibreLane PDK and standard-cell configuration, example design | local, after ORFS |
 | `libs.tech/xschem` | Symbols `asap7/{n,p}mos_{lvt,rvt,slvt,sram}.sym`, testbenches in `asap7_tests` | local |
-| `libs.tech/pygmid` | `techsweep_asap7.py`, gm/ID lookup tables for pygmid from ngspice | local |
+| `libs.tech/pygmid` | `techsweep_asap7.py`, gm/ID lookup tables for pygmid from ngspice in the `.mat` layout of the analog-circuit-design course | local |
 | `libs.doc` | Design rule manual `asap7_drm_201207a.pdf` | `asap7_pdk_r1p7` |
 
 ## Devices

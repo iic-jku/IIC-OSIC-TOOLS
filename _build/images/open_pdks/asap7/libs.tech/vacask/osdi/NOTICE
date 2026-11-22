@@ -1,0 +1,7 @@
+bsimcmg.osdi is compiled with OpenVAF from the BSIM-CMG 111.2.1 Verilog-A
+source in ../../verilog-a/bsimcmg (https://github.com/dwarning/VA-Models, revision in
+../../../SOURCES).
+
+BSIM-CMG: Copyright 2022 University of California. Licensed under the
+Educational Community License, Version 2.0 (ECL-2.0), see
+../../verilog-a/bsimcmg/ECL-2.0.txt.
