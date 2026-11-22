@@ -3,7 +3,7 @@
 # Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 #
-# Test if sak-report.py summarizes KLayout (lyrdb) and Magic DRC reports as JSON and text,
+# Test if sak-report.py summarizes KLayout (lyrdb), gdscheck (lyrdb) and Magic DRC reports as JSON and text,
 # and treats missing, truncated, crashed and stale reports as input errors.
 
 if [ -z "${RAND}" ]; then
@@ -17,6 +17,9 @@ ERROR=0
 WORKDIR=${RUNS_DIR}/${RAND}/53
 mkdir -p "$WORKDIR"
 cd "$WORKDIR" || exit 1
+
+# shellcheck source=/dev/null
+source sak-pdk-script.sh ihp-sg13g2 > pdk.log 2>&1
 
 # Build the input reports
 python3 - <<'PYEOF' || ERROR=1
@@ -77,12 +80,12 @@ RPT
 sleep 1
 touch newer.marker
 
-# check <name> <expected exit> <python assertion on d> <args...>
-check() {
+# run_check <name> <expected exit> <python assertion on d> <command...>
+run_check() {
     local name=$1 want=$2 assertion=$3
     shift 3
     local out rc
-    out=$(sak-report.py "$@" 2> "$WORKDIR/stderr.txt")
+    out=$("$@" 2> "$WORKDIR/stderr.txt")
     rc=$?
     if [ $rc -ne "$want" ]; then
         echo "[ERROR] $name: exit code $rc, expected $want"
@@ -98,19 +101,41 @@ check() {
     fi
 }
 
-check "two.lyrdb" 1 "d['status']=='findings' and d['total']==4 and d['schema']==1 and d['input'][0]['path'].endswith('two.lyrdb') and r['rules'][0]['rule']=='M1.b' and r['rules'][0]['count']==3 and r['rules'][0]['markers'][0]['bbox_um']==[0.0,0.0,0.05,1.0] and r['rules'][0]['description']=='Min. Metal1 space'" --json two.lyrdb
+# check <name> <expected exit> <python assertion on d> <sak-report.py args...>
+check() {
+    local name=$1 want=$2 assertion=$3
+    shift 3
+    run_check "$name" "$want" "$assertion" sak-report.py "$@"
+}
+
+check "two.lyrdb" 1 "d['status']=='findings' and d['total']==4 and d['schema']==1 and d['input'][0]['path'].endswith('two.lyrdb') and r['engine']=='klayout' and r['rules'][0]['rule']=='M1.b' and r['rules'][0]['count']==3 and r['rules'][0]['markers'][0]['bbox_um']==[0.0,0.0,0.05,1.0] and r['rules'][0]['description']=='Min. Metal1 space'" --json two.lyrdb
 check "clean.lyrdb" 0 "d['status']=='clean' and d['total']==0" --json clean.lyrdb
 check "big.lyrdb" 1 "r['rules'][0]['count']==5000 and len(r['rules'][0]['markers'])==20 and d['cap']==20" --json big.lyrdb
 check "big.lyrdb --max 0" 1 "len(r['rules'][0]['markers'])==5000" --json --max 0 big.lyrdb
 check "cut.lyrdb" 2 "d['status']=='error'" --json cut.lyrdb
 check "missing.lyrdb" 2 "d['status']=='error'" --json missing.lyrdb
-check "two.magic" 1 "r['format']=='magic' and d['total']==2" --json two.magic.drc.rpt
+check "two.magic" 1 "r['format']=='magic' and r['engine']=='magic' and d['total']==2" --json two.magic.drc.rpt
 check "clean.magic" 0 "d['total']==0" --json clean.magic.drc.rpt
 check "crashed.magic" 2 "d['status']=='error'" --json crashed.magic.drc.rpt
 check "two reports" 1 "d['total']==6 and len(d['reports'])==2" --json two.lyrdb two.magic.drc.rpt
 check "stale report" 2 "'older than' in d['error']" --json --newer-than newer.marker two.lyrdb
 check "no report" 3 "d['status']=='error' and d['schema']==1" --json
 check "unreadable content" 2 "d['status']=='error' and 'unexpected' in d['error']" --json broken.lyrdb
+
+# gdscheck is the third DRC engine of sak-drc.sh. Two Metal1 rectangles 0.05 um apart violate M1.b.
+python3 - <<'PYEOF' || ERROR=1
+import pya
+ly = pya.Layout()
+ly.dbu = 0.001
+top = ly.create_cell("gviol")
+m1 = ly.layer(8, 0)
+top.shapes(m1).insert(pya.DBox(0, 0, 1, 1))
+top.shapes(m1).insert(pya.DBox(1.05, 0, 2.05, 1))
+ly.write("gviol.gds")
+PYEOF
+run_check "sak-drc.sh --json -g" 1 "d['status']=='findings' and d['tool']=='sak-drc' and len(d['reports'])==1 and r['engine']=='gdscheck' and r['format']=='lyrdb' and d['total']>=1 and any('M1' in x['rule'] for x in r['rules'])" \
+    sak-drc.sh --json -g -w "$WORKDIR/g" "$WORKDIR/gviol.gds"
+check "gdscheck lyrdb" 1 "r['engine']=='gdscheck' and d['total']>=1" --json "$WORKDIR/g/gviol.gdscheck.drc/gviol.lyrdb"
 
 # without --json: text naming the rule and its count
 TXT=$(sak-report.py two.lyrdb 2> /dev/null)
