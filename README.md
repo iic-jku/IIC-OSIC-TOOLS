@@ -174,6 +174,18 @@ export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
 ```
 
+| ICsprout `ics55` (digital-only) |
+|---|
+
+```bash
+export PDK=ics55
+export PDKPATH=$PDK_ROOT/$PDK
+export STD_CELL_LIBRARY=ics55_LLSC_H7CR
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
+```
+
+`ics55` is the [ICsprout 55 nm open PDK](https://github.com/openecos-projects/icsprout55-pdk) (55LLULP 1P6M) for digital designs only: the v1.10 7-track standard cells `ics55_LLSC_H7CR` (RVT), `ics55_LLSC_H7CH` (HVT) and `ics55_LLSC_H7CL` (LVT), the IO library, a LibreLane configuration based on [ckdur/icsprout55-openpdk](https://github.com/ckdur/icsprout55-openpdk), the community KLayout DRC [ics55_klayout_drc](https://github.com/Ayoubbelguellaoui/ics55_klayout_drc) and a digital-only KLayout LVS (`sak-drc -k`, `sak-lvs -k`). ICsprout publishes no SPICE models and no extraction rules, and there is no Magic setup. Neither deck is foundry sign-off. The PDK is a preview release, limited to education and research tapeouts. Commercial mass production is prohibited. `$PDK_ROOT/ics55/README.md` lists the LibreLane settings a design needs.
+
 Probably the best way to switch between PDKs is to use the command `sak-pdk`. When called without arguments a list of installed PDKs is shown. To e.g. switch to IHP enter
 
 ```bash
@@ -221,6 +233,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [icestorm](https://github.com/YosysHQ/icestorm) bitstream tools for Lattice iCE40 FPGAs, providing `icepack` and `iceprog`
 - [ihp-sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130 nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
 - [ihp-sg13cmos5l](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130 nm CMOS PDK (M1-M4-TM1 metal stack), shipped in the same repository as `ihp-sg13g2`
+- [ics55](https://github.com/openecos-projects/icsprout55-pdk) ICsprout 55 nm open PDK (55LLULP 1P6M), digital-only, with the community KLayout DRC [ics55_klayout_drc](https://github.com/Ayoubbelguellaoui/ics55_klayout_drc) and LibreLane collateral of [icsprout55-openpdk](https://github.com/ckdur/icsprout55-openpdk)
 - [irsim](https://github.com/rtimothyedwards/irsim) switch-level digital simulator
 - [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
 - [kactus2](https://github.com/kactus2/kactus2dev) Kactus2 is a graphical editor for IP-XACT files, which are used to describe hardware components and their interfaces

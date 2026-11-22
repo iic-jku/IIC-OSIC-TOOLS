@@ -58,6 +58,8 @@ else
 		case "$PDK" in
 			gf180mcuC) export GF_PDK_OPTION="C" ;;
 			gf180mcuD) export GF_PDK_OPTION="D" ;;
+			# digital-only PDK without SPICE models
+			ics55) unset SPICE_USERINIT_DIR ;;
 		esac
 	else
 		echo "[ERROR] PDK directory $PDK_ROOT/$1 not found!"
@@ -83,6 +85,9 @@ else
 			gf180mcuC|gf180mcuD)
 				export STD_CELL_LIBRARY="gf180mcu_fd_sc_mcu7t5v0"
 				;;
+			ics55)
+				export STD_CELL_LIBRARY="ics55_LLSC_H7CR"
+				;;
 			*)
 				echo "[ERROR] No valid standard cell library selected!"
 				export STD_CELL_LIBRARY=""
@@ -95,7 +100,7 @@ else
 		echo "PDK=$PDK"
 		echo "PDKPATH=$PDKPATH"
 		echo "STD_CELL_LIBRARY=$STD_CELL_LIBRARY"	
-		echo "SPICE_USERINIT_DIR=$SPICE_USERINIT_DIR"
+		[ -n "$SPICE_USERINIT_DIR" ] && echo "SPICE_USERINIT_DIR=$SPICE_USERINIT_DIR"
 		echo "KLAYOUT_PATH=$KLAYOUT_PATH"
 		[ -n "$KLAYOUT_PYTHONPATH" ] && echo "KLAYOUT_PYTHONPATH=$KLAYOUT_PYTHONPATH"
 		[ -n "$GF_PDK_OPTION" ] && echo "GF_PDK_OPTION=$GF_PDK_OPTION"

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<technology>
+ <name>ics55</name>
+ <description>ICsprout 55nm 55LLULP 1P6M (ICS55, digital-only)</description>
+ <group/>
+ <dbu>0.001</dbu>
+ <base-path/>
+ <original-base-path/>
+ <layer-properties_file>ics55.lyp</layer-properties_file>
+ <add-other-layers>true</add-other-layers>
+ <reader-options>
+  <lefdef>
+   <read-all-layers>true</read-all-layers>
+   <produce-net-names>true</produce-net-names>
+   <net-property-name>#1</net-property-name>
+   <produce-pin-names>true</produce-pin-names>
+   <pin-property-name>#1</pin-property-name>
+   <produce-cell-outlines>true</produce-cell-outlines>
+   <cell-outline-layer>DIEAREA (351/12)</cell-outline-layer>
+   <produce-placement-blockages>false</produce-placement-blockages>
+   <produce-regions>false</produce-regions>
+   <produce-via-geometry>true</produce-via-geometry>
+   <produce-pins>true</produce-pins>
+   <produce-lef-pins>true</produce-lef-pins>
+   <produce-obstructions>true</produce-obstructions>
+   <produce-blockages>true</produce-blockages>
+   <produce-routing>true</produce-routing>
+   <produce-special-routing>true</produce-special-routing>
+   <produce-labels>true</produce-labels>
+   <map-file>ics55.map</map-file>
+   <lef-files>../../techlef/N551P6M_ecos.lef</lef-files>
+   <macro-resolution-mode>default</macro-resolution-mode>
+  </lefdef>
+ </reader-options>
+ <connectivity>
+  <connection>2/1,72/1,81/1</connection>
+  <connection>41/1,72/1,81/1</connection>
+  <connection>81/1,91/1,82/1</connection>
+  <connection>82/1,92/1,83/1</connection>
+  <connection>83/1,93/1,84/1</connection>
+  <connection>84/1,94/1,85/1</connection>
+  <connection>85/1,113/1,103/1</connection>
+  <connection>103/1,120/1,123/1</connection>
+ </connectivity>
+</technology>

@@ -28,6 +28,17 @@
 - name: icestorm
   repo: https://github.com/YosysHQ/icestorm.git
   commit: 00da9c3e6ceff056248e3451dd6fd3210d6ceec9
+- name: ics55_klayout_drc
+  repo: https://github.com/Ayoubbelguellaoui/ics55_klayout_drc.git
+  commit: e084bab316af8626f4ce48512106804142f12d94
+- name: ics55_openpdk
+  repo: https://github.com/ckdur/icsprout55-openpdk.git
+  commit: efc7dfd61023f27cd3778f0dd7b19b63aa7bb17e
+- name: ics55_pdk
+  repo: https://github.com/openecos-projects/icsprout55-pdk.git
+  commit: bedd656c89ae7c6938c8538e8d8e7b3f018c55a9
+  branch: ics55-v1
+  hold: the Liberty and GDS release assets are pinned by tag and SHA-256 in open_pdks/scripts/install_ics55.sh, bump together
 - name: irsim
   repo: https://github.com/rtimothyedwards/irsim.git
   commit: 037a1b97086ef8425bdd9379e38f6aada4f327e7

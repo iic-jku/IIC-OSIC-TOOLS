@@ -11,6 +11,7 @@ This document summarizes the most important changes of the individual releases o
 * [Adding] the UVM 2020-3.2 library for Verilator in `$UVM_HOME`
 * [Adding] `universal-ctags` for go-to-definition in editors
 * [Adding] the 3.3V standard-cell library [`gf180mcu_as_sc_mcu7t3v3`](https://github.com/AvalonSemiconductors/gf180mcu_as_sc_mcu7t3v3) of Avalon Semiconductors to `gf180mcuD`, with a LibreLane configuration (`STD_CELL_LIBRARY=gf180mcu_as_sc_mcu7t3v3`)
+* [Adding] the digital-only PDK `ics55`, the [ICsprout 55 nm open PDK](https://github.com/openecos-projects/icsprout55-pdk) with the 7-track standard cells in RVT, HVT and LVT, a LibreLane configuration, the community KLayout DRC and a digital-only KLayout LVS (no SPICE models, no sign-off, see `$PDK_ROOT/ics55/README.md`)
 * [Adding] `sak-report.py`, `sak-gds-info.py`, `sak-run-summary.py` and `sak-job.py`: DRC, LVS, layout and LibreLane run summaries and a job runner, each with `--json` for scripts and Makefiles
 * [Update] `sak-drc.sh`, `sak-lvs.sh` and `sak-render.py` take `--json`, and `sak-render.py --bbox` renders a region
 * [Update] `sak-drc.sh -g` runs `gdscheck` as a third DRC engine (`-s` selects a rule suite, `-D` single rule decks)

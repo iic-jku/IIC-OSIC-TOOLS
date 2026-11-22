@@ -303,6 +303,8 @@ elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13g2 PDK selected."
 elif echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13cmos5l PDK selected."
+elif echo "$PDK" | grep -q -i "^ics55"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] ics55 PDK selected."
 else
 	echo "[ERROR] The PDK $PDK is not yet supported!"
 	exit $ERR_PDK_NOT_SUPPORTED
@@ -381,10 +383,23 @@ if [ "$RUN_GDSCHECK" -eq 1 ]; then
 	esac
 fi
 
-# KLayout DRC is implemented for sky130/gf180mcu/ihp-sg13g2/ihp-sg13cmos5l and needs a GDS layout. In each unmet case skip KLayout: warn and continue if Magic DRC also runs, otherwise error out.
+# ics55 has no Magic technology, so Magic DRC is dropped when KLayout DRC also runs and is an error otherwise.
 # ----------------------------------------------------------------------------------------------
 
-if [ "$RUN_KLAYOUT" -eq 1 ] && ! echo "$PDK" | grep -q -i -E "sky130|gf180mcu|ihp-sg13g2|ihp-sg13cmos5l"; then
+if [ "$RUN_MAGIC" -eq 1 ] && echo "$PDK" | grep -q -i "^ics55"; then
+	if [ "$RUN_KLAYOUT" -eq 1 ]; then
+		echo "[WARNING] Magic DRC is not available for $PDK, running KLayout DRC only."
+		RUN_MAGIC=0
+	else
+		echo "[ERROR] Magic DRC is not available for $PDK, use -k for KLayout DRC!"
+		exit $ERR_PDK_NOT_SUPPORTED
+	fi
+fi
+
+# KLayout DRC is implemented for sky130/gf180mcu/ihp-sg13g2/ihp-sg13cmos5l/ics55 and needs a GDS layout. In each unmet case skip KLayout: warn and continue if Magic DRC also runs, otherwise error out.
+# ----------------------------------------------------------------------------------------------
+
+if [ "$RUN_KLAYOUT" -eq 1 ] && ! echo "$PDK" | grep -q -i -E "sky130|gf180mcu|ihp-sg13g2|ihp-sg13cmos5l|^ics55"; then
 	if [ "$RUN_MAGIC" -eq 1 ]; then
 		echo "[WARNING] KLayout DRC for $PDK not yet supported, running Magic DRC only."
 		RUN_KLAYOUT=0
@@ -481,7 +496,7 @@ fi
 # run dir holding the Magic DRC report, log, and generated extract script. It is wiped at the start of each Magic run.
 MAGIC_RUNDIR="$RESDIR/${CELL_NAME}.magic.drc"
 EXT_SCRIPT="$MAGIC_RUNDIR/drc_$CELL_NAME.tcl"
-# run dir holding the gf180mcu/ihp KLayout DRC report(s) (.lyrdb) and log, sky130 writes its reports directly into $RESDIR
+# run dir holding the gf180mcu/ihp/ics55 KLayout DRC report(s) (.lyrdb) and log, sky130 writes its reports directly into $RESDIR
 KLAYOUT_RUNDIR="$RESDIR/${CELL_NAME}.klayout.drc"
 # run dir holding the gdscheck DRC report (.lyrdb) and log
 GDSCHECK_RUNDIR="$RESDIR/${CELL_NAME}.gdscheck.drc"
@@ -810,6 +825,31 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			KLAYOUT_PARTS="all"
 			ihp_part all &
 		fi
+	elif echo "$PDK" | grep -q -i "^ics55"; then
+		# ics55 runs the community deck ics55_full_mask.drc directly (not foundry sign-off).
+		# precheck and macro: skip the chip-level density and chip-edge rules
+		# regular: all checks
+		case "$DRC_LEVEL" in
+			precheck|macro)	DRC_FLAGS="-rd density=false -rd chipedge=false" ;;
+			regular)	DRC_FLAGS="" ;;
+		esac
+		rm -rf "$KLAYOUT_RUNDIR"
+		mkdir -p "$KLAYOUT_RUNDIR"
+		KLAYOUT_PARTS="ics55"
+		# a single process, the deck also writes a JSON summary and a marker stream next to the report. The log ends with the KLayout exit status.
+		{
+			# shellcheck disable=SC2086
+			klayout -b \
+				-rd input="$CELL_LAY" \
+				-rd top="$CELL_NAME" \
+				-rd report="$KLAYOUT_RUNDIR/$CELL_NAME.lyrdb" \
+				-rd summary="$KLAYOUT_RUNDIR/$CELL_NAME.drc_summary.json" \
+				-rd violations="$KLAYOUT_RUNDIR/$CELL_NAME.drc_violations.jsonl" \
+				$DRC_FLAGS \
+				-r "$PDKPATH/libs.tech/klayout/drc/ics55_full_mask.drc" \
+				> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1
+			echo "[INFO] KLayout exit status: $?" >> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log"
+		} &
 	fi
 fi
 
@@ -1007,18 +1047,18 @@ $RESDIR/$CELL_NAME.klayout.drc.$_deck.xml"
 		fi
 	fi
 elif [ "$RUN_KLAYOUT" -eq 1 ]; then
-	# gf180mcu/ihp write their .lyrdb report(s) into the run dir of each part (main, all, and gf180 use $KLAYOUT_RUNDIR, the other parts a subfolder of it). No report means the part failed (a DRC run with violations still writes one).
+	# gf180mcu/ihp/ics55 write their .lyrdb report(s) into the run dir of each part (main, all, gf180 and ics55 use $KLAYOUT_RUNDIR, the other parts a subfolder of it). No report means the part failed (a DRC run with violations still writes one).
 	# run_drc.py exits 1 for violations and for a crash alike. A crashed deck leaves a Python traceback in its log, a crashed table job of --mp > 1 leaves "generated an exception" (run_drc.py then merges the remaining reports and reports success). A deck run directly with klayout -b ends its log with the KLayout exit status.
 	for _part in $KLAYOUT_PARTS; do
 		case "$_part" in
-			main|all|gf180)	_dir="$KLAYOUT_RUNDIR" ;;
+			main|all|gf180|ics55)	_dir="$KLAYOUT_RUNDIR" ;;
 			*)		_dir="$KLAYOUT_RUNDIR/$_part" ;;
 		esac
 		_log="$_dir/$CELL_NAME.drc.log"
 		_failed=0
 		find "$_dir" -maxdepth 1 -name '*.lyrdb' 2>/dev/null | grep -q . || _failed=1
 		case "$_part" in
-			gf180|maximal)	tail -n 1 "$_log" 2>/dev/null | grep -q "exit status: 0$" || _failed=1 ;;
+			gf180|maximal|ics55)	tail -n 1 "$_log" 2>/dev/null | grep -q "exit status: 0$" || _failed=1 ;;
 			*)		grep -q -E "Traceback|generated an exception" "$_log" 2>/dev/null && _failed=1 ;;
 		esac
 		if [ "$_failed" -eq 1 ]; then

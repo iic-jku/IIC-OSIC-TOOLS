@@ -295,6 +295,8 @@ elif echo "$PDK" | grep -q -i "ihp-sg13g2"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13g2 PDK selected."
 elif echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13cmos5l PDK selected."
+elif echo "$PDK" | grep -q -i "^ics55"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] ics55 PDK selected."
 else
 	echo "[ERROR] The PDK $PDK is not yet supported!"
 	exit $ERR_PDK_NOT_SUPPORTED
@@ -402,10 +404,23 @@ if [ "$VERILOG_MODE" -eq 0 ] && [ "$SPICE_MODE" -eq 0 ]; then
 	fi
 fi
 
-# KLayout LVS is implemented for sky130/gf180mcu/ihp-sg13g2/ihp-sg13cmos5l and needs a GDS layout and a schematic/CDL netlist (no Verilog). In each unmet case skip KLayout: warn and continue if Magic+Netgen also runs, otherwise error out.
+# ics55 has no Magic technology or Netgen setup, so Magic+Netgen LVS is dropped when KLayout LVS also runs and is an error otherwise.
 # ----------------------------------------------------------------------------------------------
 
-if [ "$RUN_KLAYOUT" -eq 1 ] && ! echo "$PDK" | grep -q -i -E "sky130|gf180mcu|ihp-sg13g2|ihp-sg13cmos5l"; then
+if [ "$RUN_MAGIC" -eq 1 ] && echo "$PDK" | grep -q -i "^ics55"; then
+	if [ "$RUN_KLAYOUT" -eq 1 ]; then
+		echo "[WARNING] Magic+Netgen LVS is not available for $PDK, running KLayout LVS only."
+		RUN_MAGIC=0
+	else
+		echo "[ERROR] Magic+Netgen LVS is not available for $PDK, use -k for KLayout LVS!"
+		exit $ERR_PDK_NOT_SUPPORTED
+	fi
+fi
+
+# KLayout LVS is implemented for sky130/gf180mcu/ihp-sg13g2/ihp-sg13cmos5l/ics55 and needs a GDS layout and a schematic/CDL netlist (no Verilog). In each unmet case skip KLayout: warn and continue if Magic+Netgen also runs, otherwise error out.
+# ----------------------------------------------------------------------------------------------
+
+if [ "$RUN_KLAYOUT" -eq 1 ] && ! echo "$PDK" | grep -q -i -E "sky130|gf180mcu|ihp-sg13g2|ihp-sg13cmos5l|^ics55"; then
 	if [ "$RUN_MAGIC" -eq 1 ]; then
 		echo "[WARNING] KLayout LVS for $PDK not yet supported, running Magic+Netgen LVS only."
 		RUN_KLAYOUT=0
@@ -746,7 +761,7 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	echo "[INFO] Run KLayout LVS..."
 	rm -rf "$KLAYOUT_RUNDIR"
 	mkdir -p "$KLAYOUT_RUNDIR"
-	# sky130 and gf180mcu run their LVS deck directly. The IHP PDKs use their run_lvs.py wrapper under klayout/tech/lvs.
+	# sky130, gf180mcu and ics55 run their LVS deck directly. The IHP PDKs use their run_lvs.py wrapper under klayout/tech/lvs.
 	if echo "$PDK" | grep -q -i "sky130"; then
 		# The sky130 run_lvs.py wrapper is not used because it resolves its deck as $PDK_ROOT/$PDK/sky130.lvs, which does not exist in this installation.
 		# convert_subckts and scale: xschem writes sky130 devices as subcircuit calls with W and L in micrometers, without both switches no device matches.
@@ -798,6 +813,16 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			--run_dir="$KLAYOUT_RUNDIR" \
 			--run_mode=deep \
 			--disable_tap_extraction \
+			> "$KLAYOUT_LOG" 2>&1
+	elif echo "$PDK" | grep -q -i "^ics55"; then
+		# digital-only deck written for the image, MOS devices are compared without bulk (see the deck header)
+		klayout -b -r "$PDKPATH/libs.tech/klayout/lvs/ics55.lvs" \
+			-rd input="$CELL_LAY" \
+			-rd topcell="$TOPCELL" \
+			-rd schematic="$NETLIST_KLAYOUT" \
+			-rd report="$KLAYOUT_RUNDIR/$FBASENAME.lvsdb" \
+			-rd target_netlist="$KLAYOUT_RUNDIR/${FBASENAME}_extracted.cir" \
+			-rd run_mode=deep \
 			> "$KLAYOUT_LOG" 2>&1
 	fi
 

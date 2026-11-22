@@ -101,3 +101,4 @@ Test 21 additionally runs its own (small) inner pool of simulation jobs; use `AC
 | 56       | `sak-gds-info.py` reports layers, bounding box, cell tree and labels of a layout and rejects missing files and ambiguous top cells |
 | 57       | `sak-job.py` runs commands detached, waits for them, reads their log, cancels them with their children and flags lost jobs      |
 | 58       | `sak-render.py` keeps its default output, renders a `--bbox` region and reports files, region and scale with `--json`          |
+| 59       | LibreLane with ics55 (counter), KLayout DRC with `sak-drc -k`, KLayout LVS with `sak-lvs -k` that matches the design and rejects a changed connection |
