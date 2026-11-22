@@ -181,11 +181,6 @@ def read_magic(path: str) -> dict:
     return {"format": "magic", "top_cell": top, "rules": rules}
 
 
-# KLayout (nightly image) aborts with exit code 134 in its memory management when a LayoutVsSchematic is freed, whether
-# at the end of the reader or at interpreter exit. The databases stay alive and main() leaves with os._exit.
-_KEEP_ALIVE = []
-
-
 def _get(obj, attr):
     """Attribute of a KLayout object, called if it is a method (the API differs between 'pya' and 'klayout.db')."""
     value = getattr(obj, attr)
@@ -207,7 +202,7 @@ def read_lvsdb(path: str) -> dict:
     if pya is None:
         raise sak_json.InputError("KLayout Python module not found (tried 'pya' and 'klayout.db')")
     lvs = pya.LayoutVsSchematic()
-    _KEEP_ALIVE.append(lvs)
+    sak_json.KEEP_ALIVE.append(lvs)  # see sak_json.KEEP_ALIVE
     try:
         lvs.read(path)
     except Exception as exc:
@@ -348,11 +343,7 @@ def main() -> None:
         body = {"kind": "lvs", "match": match, "cap": args.max, "reports": reports}
         sak_json.emit(TOOL, "clean" if match else "findings", inputs, body, as_json,
                       lvs_text_summary(reports, match))
-        code = sak_json.EXIT_OK if match else sak_json.EXIT_FINDINGS
-        # leave without teardown, see _KEEP_ALIVE
-        sys.stdout.flush()
-        sys.stderr.flush()
-        os._exit(code)
+        sys.exit(sak_json.EXIT_OK if match else sak_json.EXIT_FINDINGS)
 
     total = sum(r["total"] for r in reports)
     status = "clean" if total == 0 else "findings"

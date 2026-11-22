@@ -105,13 +105,41 @@ def cap(items: list, limit: int) -> list:
     return list(items) if limit == 0 else list(items[:limit])
 
 
+# Objects a script must not free before the process ends. While this list is not empty, run() ends the process with
+# os._exit after flushing, so no interpreter teardown (and no freeing of these objects) takes place on any exit path.
+# Used by sak-report.py for KLayout LVS databases: with KLayout 0.30.13 (nightly image of 2026-11-22), freeing a
+# LayoutVsSchematic after its cross reference was read aborts with "malloc_consolidate(): unaligned fastbin chunk
+# detected" and exit code 134. No upstream issue exists yet. Remove this when a KLayout release no longer aborts.
+KEEP_ALIVE: list = []
+
+
+def _exit_now(code) -> NoReturn:
+    """End the process with ``code`` without interpreter teardown (see ``KEEP_ALIVE``)."""
+    if code is None:
+        code = EXIT_OK
+    elif not isinstance(code, int):
+        print(code, file=sys.stderr)
+        code = EXIT_FINDINGS
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(code)
+
+
 def run(tool: str, main) -> None:
     """Call ``main()``, turning an unexpected exception into exit code 2.
 
     Without this a traceback ends with Python's exit code 1, which means
-    "findings" in this contract.
+    "findings" in this contract. If ``KEEP_ALIVE`` holds objects when the
+    script ends, whatever the exit code, the process leaves without teardown.
     """
     try:
-        main()
-    except Exception as exc:  # pylint: disable=broad-except
-        fail(tool, f"unexpected {type(exc).__name__}: {exc}", "--json" in sys.argv[1:])
+        try:
+            main()
+        except Exception as exc:  # pylint: disable=broad-except
+            fail(tool, f"unexpected {type(exc).__name__}: {exc}", "--json" in sys.argv[1:])
+    except SystemExit as exc:
+        if not KEEP_ALIVE:
+            raise
+        _exit_now(exc.code)
+    if KEEP_ALIVE:
+        _exit_now(EXIT_OK)
