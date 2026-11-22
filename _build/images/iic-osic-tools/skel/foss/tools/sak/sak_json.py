@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # ========================================================================
-# Shared JSON contract of the sak agent helper commands
+# Shared JSON contract of the SAK commands with JSON output
 #
 # SPDX-FileCopyrightText: 2026 Harald Pretl and Simon Dorrer
 # Johannes Kepler University, Department for Integrated Circuits
@@ -21,7 +21,7 @@
 # Imported by the sak-*.py helpers (not a command itself).
 # ========================================================================
 
-"""Shared contract of the sak agent helper commands.
+"""Shared contract of the SAK commands with JSON output.
 
 Every command prints either short text or, with ``--json``, exactly one JSON
 object on stdout (``schema`` 1, ``tool``, ``status``, ``input``, plus a
@@ -49,15 +49,27 @@ class InputError(Exception):
 
 
 class SakArgumentParser(argparse.ArgumentParser):
-    """ArgumentParser with ``--json``/``--max`` and the usage exit code."""
+    """ArgumentParser with ``--json``/``--max`` and the usage exit code.
+
+    Abbreviated long options are refused, so ``--js`` is not taken for ``--json``.
+    """
 
     def __init__(self, *args, tool: str | None = None, **kwargs):
+        kwargs.setdefault("allow_abbrev", False)
         super().__init__(*args, **kwargs)
         self.tool = tool or self.prog
         self.add_argument("--json", action="store_true", dest="json",
                           help="print one JSON object instead of text")
         self.add_argument("--max", type=int, default=20, metavar="N",
                           help="list at most N entries, 0 for all (default: 20)")
+
+    def parse_known_args(self, args=None, namespace=None):
+        parsed, rest = super().parse_known_args(args, namespace)
+        # a subcommand parser may suppress the default, then the value is missing
+        limit = getattr(parsed, "max", None)
+        if isinstance(limit, int) and limit < 0:
+            self.error("--max must not be negative")
+        return parsed, rest
 
     def error(self, message: str) -> NoReturn:
         # argparse exits with 2, which is reserved for input errors here
@@ -91,10 +103,10 @@ def emit(tool: str, status: str, inputs: list, body: dict,
 
 def fail(tool: str, message: str, as_json: bool, code: int = EXIT_INPUT,
          extra: dict | None = None) -> NoReturn:
-    """Report an error (JSON object on stdout with ``--json``) and exit."""
+    """Report an error (JSON object on stdout with ``--json``, with ``error`` and ``exit_code``) and exit."""
     if as_json:
         obj = {"schema": SCHEMA, "tool": tool, "status": "error",
-               "error": message, "input": [], **(extra or {})}
+               "error": message, "exit_code": code, "input": [], **(extra or {})}
         print(json.dumps(obj))
     print(f"[ERROR] {message}", file=sys.stderr)
     sys.exit(code)

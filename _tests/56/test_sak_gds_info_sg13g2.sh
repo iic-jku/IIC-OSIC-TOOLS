@@ -78,6 +78,16 @@ check "missing file" 2 "d['status']=='error'" --json missing.gds
 check "gzip input" 0 "d['bbox_um']==[0.0,0.0,10.0,5.0] and L[(8,0)]['shapes']==6" --json top.gds.gz
 check "depth 0" 0 "d['cells']['children']==[]" --json --depth 0 top.gds
 check "max 0" 0 "d['cap']==0" --json --max 0 top.gds
+check "negative max" 3 "d['status']=='error' and d['exit_code']==3" --json --max -1 top.gds
+check "bbox nan" 3 "d['status']=='error'" --json --bbox=0,0,nan,1 top.gds
+check "bbox inf" 3 "d['status']=='error'" --json --bbox=0,0,inf,1 top.gds
+
+# a KLayout module that cannot be imported gives the error object too
+mkdir -p nokl/klayout
+echo 'raise ImportError("hidden by the test")' > nokl/pya.py
+cp nokl/pya.py nokl/klayout/db.py
+touch nokl/klayout/__init__.py
+PYTHONPATH="$WORKDIR/nokl:$PYTHONPATH" check "no KLayout module" 2 "d['status']=='error' and 'KLayout' in d['error']" --json top.gds
 
 # without --json: text, no JSON
 TXT=$(sak-gds-info.py top.gds 2> /dev/null)

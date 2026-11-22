@@ -43,6 +43,7 @@ Exit codes: 0 success, 2 layout missing or unreadable, 3 wrong usage
 (including a layout with several top cells and no ``-c``).
 """
 
+import math
 import os
 import sys
 
@@ -61,8 +62,8 @@ except ImportError:
     try:
         import klayout.db as pya
     except ImportError:
-        print("[ERROR] KLayout Python module not found (tried 'pya' and 'klayout.db')!", file=sys.stderr)
-        sys.exit(sak_json.EXIT_INPUT)
+        sak_json.fail(TOOL, "KLayout Python module not found (tried 'pya' and 'klayout.db')",
+                      "--json" in sys.argv[1:])
 
 
 def um(value: float) -> float:
@@ -76,10 +77,12 @@ def box_um(box) -> list:
 
 
 def parse_region(text: str):
-    """A DBox from 'x1,y1,x2,y2' in um, None if the text is malformed."""
+    """A DBox from 'x1,y1,x2,y2' in um, None if the text is malformed or holds nan or inf."""
     try:
         x1, y1, x2, y2 = (float(v) for v in text.split(","))
     except ValueError:
+        return None
+    if not all(math.isfinite(v) for v in (x1, y1, x2, y2)):
         return None
     return pya.DBox(min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2))
 
@@ -230,9 +233,9 @@ def main() -> None:
     if args.bbox:
         region = parse_region(args.bbox)
         if region is None:
-            parser.error("--bbox needs four numbers: x1,y1,x2,y2")
-    if args.max < 0 or args.depth < 0:
-        parser.error("--max and --depth must not be negative")
+            parser.error("--bbox needs four finite numbers: x1,y1,x2,y2")
+    if args.depth < 0:
+        parser.error("--depth must not be negative")
     parts = [args.layers, args.cells, args.labels]
     if not any(parts):
         parts = [True, True, True]
