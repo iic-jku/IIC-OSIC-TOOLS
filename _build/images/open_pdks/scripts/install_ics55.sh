@@ -130,10 +130,8 @@ convert_cdl "$IO_SRC/cdl/ICSIOA_N55_3P3.cdl" "$IO_DST/cdl/ICSIOA_N55_3P3.cdl" \
 cp "$IO_SRC"/liberty/*.lib "$IO_DST/lib/"
 tar -xjf "$WORK_DIR/assets/${IO_LIB}_gds.tar.bz2" -C "$IO_DST"
 
-# Compress the Liberty files. Unlike gzip_liberty.sh, which keeps the .lib
-# files for older user flows of the other PDKs, ICS55 is new and ships the
-# compressed files only (about 1.7 GB uncompressed). Every tool in the image
-# that reads Liberty takes .lib.gz.
+# Compress the Liberty files (about 1.7 GB uncompressed). Every tool in the
+# image that reads Liberty takes .lib.gz.
 echo "[INFO] Compressing the Liberty files."
 find "$PDK_DIR/libs.ref" -name "*.lib" -type f -exec gzip -f {} +
 

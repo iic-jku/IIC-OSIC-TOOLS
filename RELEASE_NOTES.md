@@ -28,6 +28,7 @@ This document summarizes the most important changes of the individual releases o
 * [Update] various tool and Python package version bumps
 * [Changing] FasterCap's corrected dielectric and conductor calculations can change results, refinement and convergence decisions, including compared with `6.3.0`
 * [Changing] FasterCap exits with 75 when GMRES does not converge and with 65 on NaN or infinite entries (was 0), and `kpex` stops on both
+* [Changing] the uncompressed Liberty `.lib` files in `libs.ref` of all PDKs are removed to save space, only the gzipped `.lib.gz` files ship (announced in 2026.08), so flows and scripts that name a `.lib` path need `.lib.gz`
 * [Changing] IHP's LibMan is now DOOR and starts as `door`, `libman` still works
 * [Changing] `start_x.sh` adds `--net=host` with SSH X11 forwarding (`ssh -X`), and keeps the Xauthority file out of `/tmp` with Docker installed as a snap
 * [Changing] the `.sh` start scripts announce the image copy of the first rootless Podman start, which takes minutes

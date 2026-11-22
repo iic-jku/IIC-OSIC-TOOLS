@@ -224,8 +224,8 @@ python3 "$PDK_SCRIPT_DIR/fix_librelane_pad_libs.py" "$PDK_ROOT/$PDK" sg13cmos5l_
 
 # gzip Liberty (.lib) files. The SRAM and thick-oxide standard-cell Liberty
 # files are symlinks into the SG13G2 PDK and are already compressed by
-# install_ihp.sh; gzip_liberty.sh leaves those links alone and only rewrites
-# the references to them.
+# install_ihp.sh. gzip_liberty.sh replaces each of those .lib links with a .lib.gz
+# link and rewrites the references to them.
 bash "$PDK_SCRIPT_DIR/gzip_liberty.sh" "$PDK_ROOT/$PDK"
 
 # CMOS5L is largely symlinks into SG13G2, so a rename on the SG13G2 side silently
