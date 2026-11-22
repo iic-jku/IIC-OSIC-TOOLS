@@ -315,12 +315,13 @@ The SAK commands in `$TOOLS/sak` that summarize results can print one JSON objec
 - `sak-render.py`: `--json` lists the written images, and `--bbox=<x1,y1,x2,y2>` renders a region given in um.
 
 Without `--json` the commands print a short text. With `--json` stdout holds exactly one JSON object and all other messages go to stderr, also on errors. The object has the fields `schema`, `tool`, `input` (path and modification time of every input) and `status`, and paths are given as on the command line.
-The exit codes are `0` for clean, `1` for findings, `2` for input that is missing, unreadable or truncated, and `3` for wrong usage. `sak-job.py` adds `4` for a job that is still running, so `sak-job.py wait <id> && next-step` never goes on after a timeout.
-Lists are capped at 20 entries, `--max <n>` changes the cap (`0` for no cap), and the object states `cap` and the full count. `sak-report.py --newer-than <file>` exits with `2` for a report older than `<file>` instead of reporting a stale result.
+The exit codes of `sak-report.py`, `sak-gds-info.py`, `sak-run-summary.py` and `sak-job.py` are `0` for clean, `1` for findings, `2` for input that is missing, unreadable, truncated or stale, and `3` for wrong usage. `sak-job.py` adds `4` for a job that is still running, so `sak-job.py wait <id> && next-step` never goes on after a timeout.
+`sak-drc.sh`, `sak-lvs.sh` and `sak-render.py` keep their own exit codes with `--json`, and the `status` field of the JSON object carries the verdict (an error object of `sak-drc.sh` and `sak-lvs.sh` also has `exit_code`).
+Commands that list items cap the lists at 20 entries, `--max <n>` changes the cap (`0` for no cap), and the object states `cap` and the full count. `sak-report.py --newer-than <file>` exits with `2` for a report older than `<file>` instead of reporting a stale result.
 
 ```bash
 sak-drc.sh --json -m inverter                  # DRC with Magic, JSON result on stdout
-sak-report.py --json --max 0 drc/inverter.lyrdb
+sak-report.py --json --max 0 inverter.klayout.drc/*.lyrdb
 sak-job.py start -n drc -- sak-drc.sh -k inverter
 sak-job.py wait <id> --timeout 600
 ```
