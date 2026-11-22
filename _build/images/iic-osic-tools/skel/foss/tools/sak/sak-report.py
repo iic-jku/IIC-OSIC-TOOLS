@@ -18,7 +18,7 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-report.py [--json] [--max <n>] [--newer-than <file>] <report>...
+# Usage: sak-report.py [--json] [--tool <name>] [--max <n>] [--newer-than <file>] <report>...
 #
 # This script uses KLayout (https://www.klayout.de).
 # ========================================================================
@@ -47,7 +47,20 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import sak_json  # noqa: E402
 
-TOOL = "sak-report"
+
+
+def tool_from_argv() -> str:
+    """The value of --tool on the command line, read before argparse runs so that every error object carries it."""
+    argv = sys.argv[1:]
+    for i, arg in enumerate(argv):
+        if arg == "--tool" and i + 1 < len(argv):
+            return argv[i + 1]
+        if arg.startswith("--tool="):
+            return arg[len("--tool="):]
+    return "sak-report"
+
+
+TOOL = tool_from_argv()
 
 # KLayout provides the same API as the module 'pya' (the name used inside
 # KLayout itself) as 'klayout.db', and the report database as 'klayout.rdb'.
@@ -140,7 +153,11 @@ def read_lyrdb(path: str) -> dict:
         rule = rules.get(name)
         if rule is None:
             rule = rules[name] = {"rule": name, "description": cat.description,
-                                  "count": 0, "markers": []}
+                                  "count": 0, "waived": 0, "markers": []}
+        # gdscheck tags the violations the PDK waives in qualified cells (IHP SRAM, gf180mcu IO) and so does KLayout's report database API
+        if "waived" in item.tags_str.split(","):
+            rule["waived"] += 1
+            continue
         bbox = None
         for value in item.each_value():
             bbox = value_bbox(value)
@@ -178,7 +195,7 @@ def read_magic(path: str) -> dict:
             i += 1
             continue
         if i + 1 < len(lines) and DASHES.match(lines[i + 1]):
-            rule = {"rule": line.strip(), "description": line.strip(), "count": 0, "markers": []}
+            rule = {"rule": line.strip(), "description": line.strip(), "count": 0, "waived": 0, "markers": []}
             i += 2
             while i < len(lines) and not DASHES.match(lines[i]):
                 m = MARKER.match(lines[i])
@@ -300,7 +317,7 @@ def summarize(path: str, limit: int) -> dict:
     for rule in rules:
         rule["markers"] = sak_json.cap(rule["markers"], limit)
     return {"path": path, "engine": engine, "format": rep["format"], "top_cell": rep["top_cell"],
-            "total": sum(r["count"] for r in rules), "rules": rules}
+            "total": sum(r["count"] for r in rules), "waived": sum(r["waived"] for r in rules), "rules": rules}
 
 
 def lvs_text_summary(reports: list, match: bool) -> str:
@@ -319,8 +336,10 @@ def lvs_text_summary(reports: list, match: bool) -> str:
     return "\n".join(out)
 
 
-def text_summary(reports: list, total: int) -> str:
+def text_summary(reports: list, total: int, waived: int) -> str:
     out = [f"{total} DRC violation(s) in {len(reports)} report(s)"]
+    if waived:
+        out.append(f"{waived} waived violation(s) not counted")
     for rep in reports:
         out.append(f"{rep['path']} ({rep['engine']} {rep['format']}, top cell {rep['top_cell']}): {rep['total']}")
         for rule in rep["rules"]:
@@ -331,6 +350,8 @@ def text_summary(reports: list, total: int) -> str:
 def main() -> None:
     parser = sak_json.SakArgumentParser(
         prog="sak-report.py", tool=TOOL, description="Summarize DRC reports (KLayout lyrdb, Magic) or LVS reports (KLayout lvsdb, Netgen).")
+    parser.add_argument("--tool", default="sak-report", metavar="NAME",
+                        help="value of the tool field of the result (for wrapper scripts)")
     parser.add_argument("--newer-than", metavar="FILE",
                         help="fail if a report is older than FILE (stale report)")
     parser.add_argument("reports", nargs="+", metavar="report")
@@ -362,9 +383,10 @@ def main() -> None:
         sys.exit(sak_json.EXIT_OK if match else sak_json.EXIT_FINDINGS)
 
     total = sum(r["total"] for r in reports)
+    waived = sum(r["waived"] for r in reports)
     status = "clean" if total == 0 else "findings"
-    body = {"kind": "drc", "total": total, "cap": args.max, "reports": reports}
-    sak_json.emit(TOOL, status, inputs, body, as_json, text_summary(reports, total))
+    body = {"kind": "drc", "total": total, "waived": waived, "cap": args.max, "reports": reports}
+    sak_json.emit(TOOL, status, inputs, body, as_json, text_summary(reports, total, waived))
     sys.exit(sak_json.EXIT_OK if total == 0 else sak_json.EXIT_FINDINGS)
 
 

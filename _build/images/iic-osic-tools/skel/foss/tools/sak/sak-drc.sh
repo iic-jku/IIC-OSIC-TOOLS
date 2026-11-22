@@ -82,15 +82,14 @@ json_result() {
 	set -- $JSON_REPORTS
 	IFS=$_ifs
 	set +f
-	_json=$(sak-report.py --json --newer-than "$_layout" "$@")
+	_json=$(sak-report.py --json --tool sak-drc --newer-than "$_layout" "$@")
 	_rc=$?
 	# 0 and 1 are the verdict of sak-report.py, anything else means it could not read a report (its message is on stderr)
 	if [ "$_rc" -gt 1 ] || [ -z "$_json" ]; then
 		echo "[ERROR] sak-report.py could not summarize the reports!"
 		exit $ERR_NO_OUTPUT
 	fi
-	# the object of sak-report.py starts with its schema and tool fields
-	printf '%s\n' "$_json" | sed 's/^{"schema": 1, "tool": "sak-report"/{"schema": 1, "tool": "sak-drc"/' >&3
+	printf '%s\n' "$_json" >&3
 	JSON_DONE=1
 }
 

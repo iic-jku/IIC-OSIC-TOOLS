@@ -39,6 +39,23 @@ def make(path, cats):
 make("two.lyrdb", [("M1.b", "Min. Metal1 space", 3), ("M2.a", "Min. Metal2 width", 1)])
 make("clean.lyrdb", [("M1.b", "Min. Metal1 space", 0)])
 make("big.lyrdb", [("M1.b", "Min. Metal1 space", 5000)])
+
+def make_waived(path, cats):
+    # cats: (name, normal items, waived items), the waived tag is the one gdscheck writes
+    rdb = pya.ReportDatabase("test")
+    cell = rdb.create_cell("top")
+    waived = rdb.tag_id("waived")
+    for name, normal, waivedn in cats:
+        cat = rdb.create_category(name)
+        for i in range(normal + waivedn):
+            item = rdb.create_item(cell.rdb_id(), cat.rdb_id())
+            item.add_value(pya.DBox(0 + i, 0, 0.05 + i, 1.0))
+            if i >= normal:
+                item.add_tag(waived)
+    rdb.save(path)
+
+make_waived("waived.lyrdb", [("A", 2, 1), ("B", 0, 1)])
+make_waived("waived_only.lyrdb", [("A", 0, 2)])
 with open("two.lyrdb", "rb") as f:
     data = f.read(300)
 with open("cut.lyrdb", "wb") as f:
@@ -121,6 +138,12 @@ check "two reports" 1 "d['total']==6 and len(d['reports'])==2" --json two.lyrdb 
 check "stale report" 2 "'older than' in d['error']" --json --newer-than newer.marker two.lyrdb
 check "no report" 3 "d['status']=='error' and d['schema']==1" --json
 check "unreadable content" 2 "d['status']=='error' and 'unexpected' in d['error']" --json broken.lyrdb
+
+check "waived items" 1 "d['status']=='findings' and d['total']==2 and d['waived']==2 and r['total']==2 and r['waived']==2 and r['rules'][0]['rule']=='A' and r['rules'][0]['count']==2 and r['rules'][0]['waived']==1 and len(r['rules'][0]['markers'])==2 and r['rules'][1]['rule']=='B' and r['rules'][1]['count']==0 and r['rules'][1]['waived']==1 and r['rules'][1]['markers']==[]" --json waived.lyrdb
+check "waived items only" 0 "d['status']=='clean' and d['total']==0 and d['waived']>0" --json waived_only.lyrdb
+check "no waivers" 1 "d['waived']==0 and r['waived']==0 and r['rules'][0]['waived']==0" --json two.lyrdb
+check "tool option" 0 "d['tool']=='sak-drc'" --json --tool sak-drc clean.lyrdb
+check "tool option on error" 2 "d['tool']=='sak-drc' and d['status']=='error'" --json --tool sak-drc missing.lyrdb
 
 # gdscheck is the third DRC engine of sak-drc.sh. Two Metal1 rectangles 0.05 um apart violate M1.b.
 python3 - <<'PYEOF' || ERROR=1
