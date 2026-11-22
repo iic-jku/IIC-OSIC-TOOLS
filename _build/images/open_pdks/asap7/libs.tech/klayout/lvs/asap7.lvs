@@ -292,31 +292,46 @@ devices.keys.each do |name|
   ["AS", "AD", "PS", "PD"].each { |p| ignore_parameter(name, p) rescue nil }
 end
 
-matched = compare
-
 # KLayout pairs the pins of the top circuit by connectivity, not by name, so
-# two swapped ports still match. Require equal names, except within a group
-# of equivalent inputs of the cell under test.
-if matched
-  base = top_name.sub(/_ASAP7_75t_[A-Z]+\z/i, "")
-  equivalent = (EQUIVALENT_INPUTS.find { |c, _| c.casecmp?(base) } || [nil, []])[1].map(&:upcase)
-  xref = lvs_data.xref
-  xref.each_circuit_pair do |cp|
-    next unless cp.first && cp.second && cp.first.name.casecmp?(top_name)
-    xref.each_pin_pair(cp) do |pp|
-      next unless pp.first && pp.second
-      lay = pp.first.expanded_name.upcase
-      sch = pp.second.expanded_name.upcase
-      next if lay == sch || (equivalent.include?(lay) && equivalent.include?(sch))
-      puts "[ERROR] Layout pin #{pp.first.expanded_name} matches schematic pin #{pp.second.expanded_name}"
-      matched = false
+# two swapped ports would still match. Every top-level pin name that layout
+# and schematic share is tied to the same net with same_nets!, so a swap
+# fails the compare and shows in the report, except within a group of
+# equivalent inputs of the cell under test.
+def subckt_pins(file, name)
+  pins = nil
+  File.foreach(file) do |line|
+    if pins
+      break unless line.start_with?("+")
+      pins += line[1..].split
+    elsif line =~ /\A\.subckt\s+(\S+)\s*(.*)/i && $1.casecmp?(name)
+      pins = $2.split
     end
   end
+  (pins || []).reject { |p| p.include?("=") }
 end
 
+base = top_name.sub(/_ASAP7_75t_[A-Z]+\z/i, "")
+equivalent = (EQUIVALENT_INPUTS.find { |c, _| c.casecmp?(base) } || [nil, []])[1].map(&:upcase)
+sch_pins = subckt_pins(schematic_file, top_name)
+lay_top = netlist.circuit_by_name(top_name)
+lay_pins = []
+lay_top.each_pin { |p| lay_pins << p.name if p.name && !p.name.empty? } if lay_top
+sch_pins.each do |sp|
+  next if equivalent.include?(sp.upcase)
+  lp = lay_pins.find { |n| n.casecmp?(sp) }
+  # the SPICE reader upper-cases the schematic names, the lookup is case sensitive,
+  # so layout and schematic circuit and net are named separately
+  same_nets!(top_name, lp, top_name.upcase, sp.upcase) if lp
+end
+
+matched = compare
+
+# Same lines as the IHP decks, which sak-lvs.sh and LibreLane look for
 if matched
   puts "[INFO] LVS of #{top_name}: netlists match"
+  puts "INFO : Congratulations! Netlists match."
 else
   puts "[ERROR] LVS of #{top_name}: netlists do not match"
+  puts "ERROR : Netlists don't match"
 end
 $lvs_result = matched

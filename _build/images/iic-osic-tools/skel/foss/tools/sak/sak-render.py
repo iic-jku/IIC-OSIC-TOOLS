@@ -44,6 +44,7 @@ the IIC-OSIC-TOOLS container):
     ihp-sg13cmos5l  (aliases sg13cmos5l, cmos5l)
     gf180mcuD       (aliases gf180mcu, gf180)
     sky130A         (alias sky130)
+    asap7           (alias asap7sc7p5t)
 
 By default all physical mask layers of the technology are rendered:
 wells, implants, active, poly, contacts, the full metal/via stack, MIM
@@ -324,6 +325,48 @@ TECHS = {
             ("met3fill",          34, 28, ("filler",),  False, ()),
             ("met4fill",          51, 28, ("filler",),  False, ()),
             ("met5fill",          59, 28, ("filler",),  False, ()),
+        ),
+    },
+    # asap7 numbers from the ASAP7 DRM layer table, the .lyp is the one of
+    # ASAP7_for_KLayout. LIG, LISD and V0 are the middle-of-line local
+    # interconnect and its via.
+    "asap7": {
+        "aliases": ("asap7sc7p5t",),
+        "lyp": ("libs.tech", "klayout", "tech", "asap7.lyp"),
+        "layers": (
+            ("NWell",       1,  0, ("well",),    True,  ()),
+            ("Fin",         2,  0, ("active",),  True,  ()),
+            ("Active",     11,  0, ("active",),  True,  ()),
+            ("NSelect",    12,  0, ("implant",), True,  ()),
+            ("PSelect",    13,  0, ("implant",), True,  ()),
+            ("SLVT",       97,  0, ("implant",), False, ()),
+            ("LVT",        98,  0, ("implant",), False, ()),
+            ("SRAMVT",    110,  0, ("implant",), False, ()),
+            ("Gate",        7,  0, ("poly",),    True,  ("poly",)),
+            ("GCut",       10,  0, ("poly",),    True,  ()),
+            ("SDT",        88,  0, ("cont",),    True,  ()),
+            ("LISD",       17,  0, ("cont",),    True,  ()),
+            ("LIG",        16,  0, ("cont",),    True,  ()),
+            ("V0",         18,  0, ("via",),     True,  ()),
+            ("M1",         19,  0, ("metal",),   True,  ("metal1",)),
+            ("V1",         21,  0, ("via",),     True,  ("via1",)),
+            ("M2",         20,  0, ("metal",),   True,  ("metal2",)),
+            ("V2",         25,  0, ("via",),     True,  ("via2",)),
+            ("M3",         30,  0, ("metal",),   True,  ("metal3",)),
+            ("V3",         35,  0, ("via",),     True,  ("via3",)),
+            ("M4",         40,  0, ("metal",),   True,  ("metal4",)),
+            ("V4",         45,  0, ("via",),     True,  ("via4",)),
+            ("M5",         50,  0, ("metal",),   True,  ("metal5",)),
+            ("V5",         55,  0, ("via",),     True,  ("via5",)),
+            ("M6",         60,  0, ("metal",),   True,  ("metal6",)),
+            ("V6",         65,  0, ("via",),     True,  ("via6",)),
+            ("M7",         70,  0, ("metal",),   True,  ("metal7",)),
+            ("V7",         75,  0, ("via",),     True,  ("via7",)),
+            ("M8",         80,  0, ("metal",),   True,  ("metal8",)),
+            ("V8",         85,  0, ("via",),     True,  ("via8",)),
+            ("M9",         90,  0, ("metal",),   True,  ("metal9",)),
+            ("V9",         95,  0, ("via",),     True,  ("via9",)),
+            ("Pad",        96,  0, ("pad",),     True,  ()),
         ),
     },
 }

@@ -10,9 +10,10 @@
 # Sources, each at a pinned revision (ARGs in the Dockerfile):
 #   asap7_pdk_r1p7        HSPICE BSIM-CMG model cards, design rule manual
 #   asap7sc7p5t_28        7.5-track standard cells: CDL and Verilog
-#   OpenROAD-flow-scripts platform asap7: LEF, NLDM Liberty, GDS, KLayout
-#                         layer properties, OpenROAD and Yosys helper files
-#   ASAP7_for_KLayout     KLayout DRC deck written from the DRM
+#   OpenROAD-flow-scripts platform asap7: LEF, NLDM Liberty, GDS, Yosys
+#                         maps and RC data
+#   ASAP7_for_KLayout     KLayout layer properties and DRC deck written from
+#                         the DRM
 #   VA-Models             BSIM-CMG 111.2.1 Verilog-A for ngspice and VACASK
 # The local overlay in images/open_pdks/asap7 adds the KLayout technology,
 # LVS deck, DEF layer map, LibreLane configuration, simulator setup files,
@@ -67,7 +68,7 @@ clone_pinned "$ASAP7_PDK_R1P7_REPO_URL" "$ASAP7_PDK_R1P7_REPO_COMMIT" pdk \
 clone_pinned "$ASAP7SC7P5T_28_REPO_URL" "$ASAP7SC7P5T_28_REPO_COMMIT" scl \
 	/LICENSE /license/ /CDL/LVS/ /Verilog/
 clone_pinned "$OPENROAD_FLOW_SCRIPTS_REPO_URL" "$OPENROAD_FLOW_SCRIPTS_REPO_COMMIT" orfs \
-	/LICENSE_BUILD_RUN_SCRIPTS /flow/platforms/asap7/KLayout/ /flow/platforms/asap7/lef/ /flow/platforms/asap7/gds/ \
+	/LICENSE_BUILD_RUN_SCRIPTS /flow/platforms/asap7/lef/ /flow/platforms/asap7/gds/ \
 	"/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_*_nldm_2*" /flow/platforms/asap7/yoSys/ \
 	/flow/platforms/asap7/rcx_patterns.rules /flow/platforms/asap7/setRC.tcl
 clone_pinned "$ASAP7_FOR_KLAYOUT_REPO_URL" "$ASAP7_FOR_KLAYOUT_REPO_COMMIT" klayout
@@ -113,12 +114,14 @@ if [ "$LIB_COUNT" -ne 60 ]; then
 	exit 1
 fi
 
-# KLayout: layer properties from ORFS, DRC deck from ASAP7_for_KLayout
+# KLayout: layer properties and DRC deck from ASAP7_for_KLayout. Its .lyp is
+# used rather than the one of ORFS, whose near-white colors without fill are
+# hardly visible on a light background.
 echo "[INFO] Installing the KLayout files."
 KL="$PDK_DIR/libs.tech/klayout"
 mkdir -p "$KL/tech" "$KL/drc"
-cp "$ORFS_PLATFORM/KLayout/asap7.lyp" "$KL/tech/asap7.lyp"
-cp orfs/LICENSE_BUILD_RUN_SCRIPTS "$KL/tech/LICENSE.orfs"
+cp klayout/asap7.lyp "$KL/tech/asap7.lyp"
+cp klayout/LICENSE "$KL/tech/LICENSE"
 cp klayout/drc/drc_ASAP7.lydrc "$KL/drc/asap7.lydrc"
 cp klayout/LICENSE "$KL/drc/LICENSE"
 python3 "$PDK_SCRIPT_DIR/fix_asap7_drc_deck.py" "$KL/drc/asap7.lydrc"
@@ -164,7 +167,7 @@ echo "[INFO] Checking the files the LibreLane configuration refers to and the li
 MISSING=0
 for f in "$REF/techlef/asap7_tech_1x_201209.lef" "$KL/tech/asap7.lyt" "$KL/tech/asap7.lyp" "$KL/tech/asap7.map" \
 	"$KL/drc/asap7.lydrc" "$KL/lvs/asap7.lvs" "$LL/common/tracks.info" \
-	"$LL/common/rcx_patterns.rules" "$KL/tech/LICENSE.orfs" "$PDK_DIR/libs.tech/verilog-a/bsimcmg/ECL-2.0.txt"; do
+	"$LL/common/rcx_patterns.rules" "$KL/tech/LICENSE" "$PDK_DIR/libs.tech/verilog-a/bsimcmg/ECL-2.0.txt"; do
 	if [ ! -f "$f" ]; then
 		echo "[ERROR] $f is missing."
 		MISSING=1

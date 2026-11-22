@@ -132,7 +132,7 @@ if [ $# -eq 0 ]; then
 	echo "       .mag.gz|.gds|.gds.gz|.klay.gds). When no <cellname> is specified use -s,"
 	echo "       -l, and -c to point to the corresponding files and name the topcell."
 	echo
-	echo "       -m Run Magic+Netgen LVS (default)"
+	echo "       -m Run Magic+Netgen LVS (default, asap7 has no Magic technology and runs KLayout LVS instead)"
 	echo "       -k Run KLayout LVS"
 	echo "       -b Run Magic+Netgen and KLayout LVS"
 	echo "       -s Use this <schematic> (xschem .sch schematic, SPICE/CDL netlist, or Verilog netlist)"
@@ -297,9 +297,18 @@ elif echo "$PDK" | grep -q -i "ihp-sg13cmos5l"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] ihp-sg13cmos5l PDK selected."
 elif echo "$PDK" | grep -q -i "^ics55"; then
 	[ $DEBUG -eq 1 ] && echo "[INFO] ics55 PDK selected."
+elif echo "$PDK" | grep -q -i "asap7"; then
+	[ $DEBUG -eq 1 ] && echo "[INFO] asap7 PDK selected."
 else
 	echo "[ERROR] The PDK $PDK is not yet supported!"
 	exit $ERR_PDK_NOT_SUPPORTED
+fi
+
+# asap7 has no Magic technology, so a Magic+Netgen LVS request runs KLayout LVS instead
+if echo "$PDK" | grep -q -i "asap7" && [ "$RUN_MAGIC" -eq 1 ]; then
+	echo "[WARNING] There is no Magic+Netgen LVS for $PDK, running KLayout LVS instead."
+	RUN_MAGIC=0
+	RUN_KLAYOUT=1
 fi
 
 # check if files exist, look into usual directories
@@ -417,10 +426,10 @@ if [ "$RUN_MAGIC" -eq 1 ] && echo "$PDK" | grep -q -i "^ics55"; then
 	fi
 fi
 
-# KLayout LVS is implemented for sky130/gf180mcu/ihp-sg13g2/ihp-sg13cmos5l/ics55 and needs a GDS layout and a schematic/CDL netlist (no Verilog). In each unmet case skip KLayout: warn and continue if Magic+Netgen also runs, otherwise error out.
+# KLayout LVS is implemented for sky130/gf180mcu/ihp-sg13g2/ihp-sg13cmos5l/ics55/asap7 and needs a GDS layout and a schematic/CDL netlist (no Verilog). In each unmet case skip KLayout: warn and continue if Magic+Netgen also runs, otherwise error out.
 # ----------------------------------------------------------------------------------------------
 
-if [ "$RUN_KLAYOUT" -eq 1 ] && ! echo "$PDK" | grep -q -i -E "sky130|gf180mcu|ihp-sg13g2|ihp-sg13cmos5l|^ics55"; then
+if [ "$RUN_KLAYOUT" -eq 1 ] && ! echo "$PDK" | grep -q -i -E "sky130|gf180mcu|ihp-sg13g2|ihp-sg13cmos5l|^ics55|asap7"; then
 	if [ "$RUN_MAGIC" -eq 1 ]; then
 		echo "[WARNING] KLayout LVS for $PDK not yet supported, running Magic+Netgen LVS only."
 		RUN_KLAYOUT=0
@@ -585,6 +594,15 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 
 		# if the CDL netlist instantiates standard cells (any cell defined in the library netlist), append the library so KLayout can resolve them
 		STD_CELL_CDL="$PDK_ROOT/$PDK/libs.ref/$STD_CELL_LIBRARY/cdl/$STD_CELL_LIBRARY.cdl"
+		# asap7 keeps the CDL of every threshold flavor in libs.ref/asap7sc7p5t, one file per flavor
+		if echo "$PDK" | grep -q -i "asap7"; then
+			case "$STD_CELL_LIBRARY" in
+				*_lvt)	_vt=L ;;
+				*_slvt)	_vt=SL ;;
+				*)	_vt=R ;;
+			esac
+			STD_CELL_CDL="$PDK_ROOT/$PDK/libs.ref/asap7sc7p5t/cdl/asap7sc7p5t_28_${_vt}.cdl"
+		fi
 		if [ -f "$STD_CELL_CDL" ] && grep -iE '^\.subckt[[:space:]]' "$STD_CELL_CDL" | awk '{print $2}' | grep -qiwFf - "$NETLIST_KLAYOUT"; then
 			# remove the .end, append the standard cell library, add the .end again
 			sed -i '/\.end\b/Id' "$NETLIST_KLAYOUT"
@@ -761,7 +779,7 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	echo "[INFO] Run KLayout LVS..."
 	rm -rf "$KLAYOUT_RUNDIR"
 	mkdir -p "$KLAYOUT_RUNDIR"
-	# sky130, gf180mcu and ics55 run their LVS deck directly. The IHP PDKs use their run_lvs.py wrapper under klayout/tech/lvs.
+	# sky130, gf180mcu, ics55 and asap7 run their LVS deck directly. The IHP PDKs use their run_lvs.py wrapper under klayout/tech/lvs.
 	if echo "$PDK" | grep -q -i "sky130"; then
 		# The sky130 run_lvs.py wrapper is not used because it resolves its deck as $PDK_ROOT/$PDK/sky130.lvs, which does not exist in this installation.
 		# convert_subckts and scale: xschem writes sky130 devices as subcircuit calls with W and L in micrometers, without both switches no device matches.
@@ -802,6 +820,16 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			-rd spice_net_names=true \
 			-rd spice_comments=false \
 			-rd check_ports=false \
+			> "$KLAYOUT_LOG" 2>&1
+	elif echo "$PDK" | grep -q -i "asap7"; then
+		# The asap7 deck compares the standard cells inside a design at transistor level, except those whose layout does
+		# not reduce to their CDL in KLayout, which it compares as black boxes (KNOWN_MISMATCH in the deck).
+		klayout -b -r "$PDKPATH/libs.tech/klayout/lvs/asap7.lvs" \
+			-rd input="$CELL_LAY" \
+			-rd topcell="$TOPCELL" \
+			-rd schematic="$NETLIST_KLAYOUT" \
+			-rd report="$KLAYOUT_RUNDIR/$FBASENAME.lvsdb" \
+			-rd target_netlist="$KLAYOUT_RUNDIR/${FBASENAME}_extracted.cir" \
 			> "$KLAYOUT_LOG" 2>&1
 	elif echo "$PDK" | grep -q -i -E "ihp-sg13g2|ihp-sg13cmos5l"; then
 		# the ihp-sg13g2 and ihp-sg13cmos5l wrappers share the same CLI.
