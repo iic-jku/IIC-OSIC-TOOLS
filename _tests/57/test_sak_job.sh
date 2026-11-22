@@ -56,9 +56,9 @@ check() {
 id_of() { printf '%s' "$OUT" | python3 -c "import json,sys; print(json.load(sys.stdin)['id'])"; }
 
 # 1: success with output
-check "start hello" 0 "d['state']=='running'" start -- sh -c 'echo hello; sleep 2'
+check "start hello" 0 "d['state']=='running' and d['status']=='running'" start -- sh -c 'echo hello; sleep 2'
 ID1=$(id_of)
-check "wait hello" 0 "d['state']=='done' and d['rc']==0 and d['log_tail']==['hello'] and d['elapsed_s']>=2 and d['end'] is not None" wait "$ID1" --timeout 30
+check "wait hello" 0 "d['state']=='done' and d['status']=='ok' and d['rc']==0 and d['log_tail']==['hello'] and d['elapsed_s']>=2 and d['end'] is not None" wait "$ID1" --timeout 30
 check "status hello" 0 "d['state']=='done'" status "$ID1"
 if [ "$(sak-job.py -w "$WORKDIR" tail "$ID1" -n 1 2> /dev/null)" != "hello" ]; then
     echo "[ERROR] tail -n 1 of the first job did not print hello"
@@ -69,15 +69,15 @@ check "tail json" 0 "d['lines']==['hello']" tail "$ID1"
 # 2: failure
 check "start false" 0 "" start -- false
 ID2=$(id_of)
-check "wait false" 1 "d['state']=='failed' and d['rc']==1" wait "$ID2" --timeout 30
+check "wait false" 1 "d['state']=='failed' and d['status']=='failed' and d['rc']==1" wait "$ID2" --timeout 30
 
 # 3: running, timeout, cancel
 check "start sleep" 0 "" start -- sleep 300
 ID3=$(id_of)
-check "wait timeout" 4 "d['state']=='running' and d['end'] is None" wait "$ID3" --timeout 1
+check "wait timeout" 4 "d['state']=='running' and d['status']=='running' and d['end'] is None" wait "$ID3" --timeout 1
 check "status running" 4 "d['state']=='running'" status "$ID3"
-check "cancel" 0 "d['state']=='cancelled'" cancel "$ID3"
-check "status cancelled" 1 "d['state']=='cancelled'" status "$ID3"
+check "cancel" 0 "d['state']=='cancelled' and d['status']=='failed'" cancel "$ID3"
+check "status cancelled" 1 "d['state']=='cancelled' and d['status']=='failed'" status "$ID3"
 
 # 4: cancel takes the children along
 check "start children" 0 "" start -- sh -c 'sleep 300 & sleep 300'
@@ -113,7 +113,7 @@ check "wait named" 0 "d['state']=='done'" wait "$ID6" --timeout 30
 
 # 7: unknown ID
 for sub in status wait tail cancel; do
-    check "$sub unknown id" 2 "d['status']=='error'" $sub nope
+    check "$sub unknown id" 2 "d['status']=='error' and d['exit_code']==2 and d['error']" $sub nope
 done
 
 # 8: list
@@ -130,7 +130,7 @@ check "wait detached" 0 "d['state']=='done' and d['elapsed_s']>=3" wait "$ID7" -
 # 11: a job folder with a pid file but neither rc nor a held lock
 mkdir -p "$WORKDIR/.sak-jobs/lostjob-20260101-000000-0000"
 echo 4194300 > "$WORKDIR/.sak-jobs/lostjob-20260101-000000-0000/pid"
-check "lost" 2 "d['state']=='lost'" status lostjob-20260101-000000-0000
+check "lost" 2 "d['state']=='lost' and d['status']=='error' and d['exit_code']==2 and d['error']" status lostjob-20260101-000000-0000
 
 # 12: cancel of a command that ignores SIGTERM (SIGKILL path), a concurrent wait must never see "lost"
 check "start ignoring term" 0 "" start -- sh -c 'trap "" TERM; sleep 300'

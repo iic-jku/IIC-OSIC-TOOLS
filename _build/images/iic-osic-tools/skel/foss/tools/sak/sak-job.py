@@ -37,7 +37,10 @@ of the command), ``lock`` (held by the supervisor for its whole life), ``start``
 searched: ``rc`` and the lock decide the state.
 
 States: ``running``, ``done`` (rc 0), ``failed`` (rc not 0), ``cancelled`` and
-``lost`` (no ``rc`` and no supervisor holding the lock).
+``lost`` (no ``rc`` and no supervisor holding the lock). The ``status`` field
+of the JSON object is ``ok`` for ``done``, ``running`` for ``running``,
+``failed`` for ``failed`` and ``cancelled``, and ``error`` for ``lost`` and an
+unknown ID, while ``state`` keeps the precise state.
 
 Exit codes: 0 for ``done`` and for a ``start``, ``tail``, ``list`` or ``cancel``
 that worked. 1 for ``failed`` and ``cancelled``. 2 for an unknown ID and for
@@ -211,6 +214,16 @@ class Job:
 EXIT_OF_STATE = {"done": sak_json.EXIT_OK, "failed": sak_json.EXIT_FINDINGS,
                  "cancelled": sak_json.EXIT_FINDINGS, "lost": sak_json.EXIT_INPUT,
                  "running": EXIT_RUNNING}
+STATUS_OF_STATE = {"done": "ok", "running": "running", "failed": "failed", "cancelled": "failed", "lost": "error"}
+
+
+def emit_job(job: Job, body: dict, as_json: bool, code: int) -> None:
+    """Print the result of ``job`` with the status of its state. A lost job is an error object with ``exit_code``."""
+    status = STATUS_OF_STATE[body["state"]]
+    if status == "error":
+        body = {**body, "error": f"job {job.id} is lost: it has no rc and no supervisor holds its lock",
+                "exit_code": code}
+    sak_json.emit(TOOL, status, [sak_json.input_entry(job.dir)], body, as_json, text_of(body))
 
 
 def text_of(body: dict) -> str:
@@ -228,10 +241,9 @@ def text_of(body: dict) -> str:
 def report(job: Job, as_json: bool) -> None:
     """Print the state of ``job`` and exit with the code of that state."""
     body = job.result(True)
-    inputs = [sak_json.input_entry(job.dir)]
-    sak_json.emit(TOOL, "ok" if body["state"] in ("done", "running") else body["state"],
-                  inputs, body, as_json, text_of(body))
-    sys.exit(EXIT_OF_STATE[body["state"]])
+    code = EXIT_OF_STATE[body["state"]]
+    emit_job(job, body, as_json, code)
+    sys.exit(code)
 
 
 def find_job(args) -> Job:
@@ -274,7 +286,7 @@ def cmd_start(args) -> None:
             sak_json.fail(TOOL, f"supervisor of {job.id} did not start", args.json, sak_json.EXIT_INPUT)
         time.sleep(0.02)
     body = job.result(True)
-    sak_json.emit(TOOL, "ok", [sak_json.input_entry(job.dir)], body, args.json, job.id)
+    sak_json.emit(TOOL, "running", [sak_json.input_entry(job.dir)], body, args.json, job.id)
     sys.exit(sak_json.EXIT_OK)
 
 
@@ -342,9 +354,10 @@ def cmd_cancel(args) -> None:
         if read_text(os.path.join(job.dir, "rc")) is None:
             write_atomic(os.path.join(job.dir, "rc"), CANCELLED + "\n")
     body = job.result(True)
-    sak_json.emit(TOOL, "ok", [sak_json.input_entry(job.dir)], body, args.json, text_of(body))
     # a cancel that worked exits 0, a job that was lost or had failed before keeps its own code
-    sys.exit(sak_json.EXIT_OK if body["state"] in ("cancelled", "done") else EXIT_OF_STATE[body["state"]])
+    code = sak_json.EXIT_OK if body["state"] in ("cancelled", "done") else EXIT_OF_STATE[body["state"]]
+    emit_job(job, body, args.json, code)
+    sys.exit(code)
 
 
 def cmd_list(args) -> None:
