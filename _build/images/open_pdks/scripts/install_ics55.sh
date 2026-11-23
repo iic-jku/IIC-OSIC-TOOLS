@@ -111,8 +111,10 @@ for lib in $STD_LIBS; do
 		cp -r "$STD_SRC/$lib/$view" "$dst/"
 	done
 	convert_cdl "$STD_SRC/$lib/cdl/$lib.cdl" "$dst/cdl/$lib.cdl"
-	tar -xjf "$WORK_DIR/assets/${lib}_liberty.tar.bz2" -C "$dst"
-	tar -xjf "$WORK_DIR/assets/${lib}_gds.tar.bz2" -C "$dst"
+	# The release archives store UID 417800042, which root tar keeps and rootless
+	# podman cannot map on pull.
+	tar --no-same-owner -xjf "$WORK_DIR/assets/${lib}_liberty.tar.bz2" -C "$dst"
+	tar --no-same-owner -xjf "$WORK_DIR/assets/${lib}_gds.tar.bz2" -C "$dst"
 	mv "$dst/liberty" "$dst/lib"
 done
 
@@ -128,7 +130,7 @@ done
 convert_cdl "$IO_SRC/cdl/ICSIOA_N55_3P3.cdl" "$IO_DST/cdl/ICSIOA_N55_3P3.cdl" \
 	--lef "$IO_SRC/lef/ICSIOA_N55_3P3_1P6M1TM_ecos.lef"
 cp "$IO_SRC"/liberty/*.lib "$IO_DST/lib/"
-tar -xjf "$WORK_DIR/assets/${IO_LIB}_gds.tar.bz2" -C "$IO_DST"
+tar --no-same-owner -xjf "$WORK_DIR/assets/${IO_LIB}_gds.tar.bz2" -C "$IO_DST"
 
 # Compress the Liberty files (about 1.7 GB uncompressed). Every tool in the
 # image that reads Liberty takes .lib.gz.
