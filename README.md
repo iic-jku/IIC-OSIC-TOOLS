@@ -145,6 +145,8 @@ export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
 
 Next to the two 5V libraries `gf180mcu_fd_sc_mcu7t5v0` and `gf180mcu_fd_sc_mcu9t5v0`, `gf180mcuD` ships the 3.3V 7-track standard-cell library [`gf180mcu_as_sc_mcu7t3v3`](https://github.com/AvalonSemiconductors/gf180mcu_as_sc_mcu7t3v3) of Avalon Semiconductors, with a LibreLane configuration. Select it with `export STD_CELL_LIBRARY=gf180mcu_as_sc_mcu7t3v3` or `sak-pdk gf180mcuD gf180mcu_as_sc_mcu7t3v3`. Its Liberty files cover the corners `tt_025C_3v30`, `ss_125C_3v00` and `ff_n40C_3v60`.
 
+`gf180mcuD` also ships the rest of the 3.3V set of the wafer.space template: the split-voltage IO library `gf180mcu_ocd_io`, whose core supply pads (`vdd`, `vss`) are separate from the IO supply pads (`dvdd`, `dvss`), selected in LibreLane with `--pad gf180mcu_ocd_io`, and the 3.3V SRAM `gf180mcu_ocd_ip_sram` (64x8, 256x8, 512x8 and 1024x8, Liberty at the same three corners). The SRAM's Verilog models are still copies of `gf180mcu_fd_ip_sram` with timing not yet revised for 3.3V, as their headers say.
+
 | IHP Microelectronics `ihp-sg13g2` |
 |---|
 

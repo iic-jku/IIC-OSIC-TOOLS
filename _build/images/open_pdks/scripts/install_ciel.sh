@@ -144,10 +144,14 @@ fi
 ######################
 
 echo "[INFO] Installing GF180 PDK."
-# ciel's default set has only the 5V standard cells, add the 3.3V ones of Avalon.
+# ciel's default set has only the 5V libraries. Add the 3.3V set of the wafer.space template: the Avalon standard cells, the split-voltage IO and the SRAM.
 # An explicit -l replaces the default set, so "default" is listed as well.
-ciel enable "${OPEN_PDKS_REPO_COMMIT}" --pdk-family gf180mcu \
-	-l default -l gf180mcu_as_sc_mcu7t3v3
+GF180_EXTRA_LIBS="gf180mcu_as_sc_mcu7t3v3 gf180mcu_ocd_io gf180mcu_ocd_ip_sram"
+GF180_LIB_ARGS=(-l default)
+for lib in $GF180_EXTRA_LIBS; do
+	GF180_LIB_ARGS+=(-l "$lib")
+done
+ciel enable "${OPEN_PDKS_REPO_COMMIT}" --pdk-family gf180mcu "${GF180_LIB_ARGS[@]}"
 
 # Remove gf180mcuA, gf180mcuB and gf180mcuC for size reasons
 rm -rf "$PDK_ROOT"/ciel/gf180mcu/versions/*/gf180mcuA
@@ -162,10 +166,12 @@ if [ ! -d "$PDK_ROOT/gf180mcuD" ]; then
 	exit 1
 fi
 
-if [ ! -d "$PDK_ROOT/gf180mcuD/libs.ref/gf180mcu_as_sc_mcu7t3v3" ]; then
-	echo "[ERROR] gf180mcu_as_sc_mcu7t3v3 not found after ciel enable!"
-	exit 1
-fi
+for lib in $GF180_EXTRA_LIBS; do
+	if [ ! -d "$PDK_ROOT/gf180mcuD/libs.ref/$lib" ]; then
+		echo "[ERROR] $lib not found after ciel enable!"
+		exit 1
+	fi
+done
 
 if [ -d "$PDK_ROOT/gf180mcuD" ]; then
 	# gzip Liberty (.lib) files
