@@ -77,11 +77,14 @@ echo "[INFO] Full build logs: ${BAKE_LOG_DIR}/bake-<arch>.log"
 
 # Summary of the plain progress output: a line when a RUN step starts and
 # when it ends, nothing for cached steps, plus the errors. A step header
-# is buffered until its next line shows whether the step is CACHED.
+# is buffered until its next line shows whether the step is CACHED. A cache
+# ref that does not exist yet (first build of an arch, a GCed cache) is only
+# a warning in BuildKit, so it is left out.
 summarize() {
 	awk -v arch="$1" '
 	function out(msg) { printf "[%s %s] %s\n", arch, strftime("%H:%M:%S"), msg; fflush() }
 	function short(t) { return length(t) > 110 ? substr(t, 1, 107) "..." : t }
+	/failed to configure registry cache importer/ { next }
 	/^#[0-9]+ \[/ {
 		id = $1; t = substr($0, length(id) + 2)
 		if (t ~ /\] RUN / && !(id in hdr)) { hdr[id] = short(t); started[id] = 0 }
@@ -89,7 +92,7 @@ summarize() {
 	}
 	/^#[0-9]+ / {
 		id = $1
-		if (!(id in hdr)) { if ($2 == "ERROR:") out("ERROR " substr($0, length(id) + 2)); next }
+		if (!(id in hdr)) { if ($2 == "ERROR:") out(substr($0, length(id) + 2)); next }
 		if ($2 == "CACHED") { delete hdr[id]; next }
 		if ($2 == "...") next
 		if ($2 == "DONE") { out("done " $3 "  " hdr[id]); delete hdr[id]; next }
