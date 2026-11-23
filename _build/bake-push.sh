@@ -37,10 +37,10 @@
 set -e
 set -o pipefail
 
-# Colors on a terminal only (and not with NO_COLOR): white for info, red for
-# errors, green for a finished step
+# Colors on a terminal only (and not with NO_COLOR): white for info, dark
+# blue for a started step, green for a finished step, red for errors
 if [ -t 1 ] && [ -z "${NO_COLOR}" ]; then
-	C_INFO=$'\e[97m' C_ERR=$'\e[91m' C_OK=$'\e[92m' C_RST=$'\e[0m'
+	C_INFO=$'\e[97m' C_START=$'\e[34m' C_ERR=$'\e[91m' C_OK=$'\e[92m' C_RST=$'\e[0m'
 fi
 info() { echo "${C_INFO}[INFO] $*${C_RST}"; }
 error() { echo "${C_ERR}[ERROR] $*${C_RST}"; }
@@ -89,7 +89,7 @@ info "Full build logs: ${BAKE_LOG_DIR}/bake-<arch>.log"
 # ref that does not exist yet (first build of an arch, a GCed cache) is only
 # a warning in BuildKit, so it is left out.
 summarize() {
-	awk -v arch="$1" -v ci="${C_INFO}" -v ce="${C_ERR}" -v co="${C_OK}" -v cr="${C_RST}" '
+	awk -v arch="$1" -v cs="${C_START}" -v ce="${C_ERR}" -v co="${C_OK}" -v cr="${C_RST}" '
 	function out(msg, c) { printf "%s[%s %s] %s%s\n", c, arch, strftime("%H:%M:%S"), msg, cr; fflush() }
 	function short(t) { return length(t) > 110 ? substr(t, 1, 107) "..." : t }
 	/failed to configure registry cache importer/ { next }
@@ -105,7 +105,7 @@ summarize() {
 		if ($2 == "...") next
 		if ($2 == "DONE") { out("done " $3 "  " hdr[id], co); delete hdr[id]; next }
 		if ($2 == "ERROR:") { out("FAILED " hdr[id], ce); out(substr($0, length(id) + 2), ce); delete hdr[id]; next }
-		if (!started[id]) { out("start  " hdr[id], ci); started[id] = 1 }
+		if (!started[id]) { out("start  " hdr[id], cs); started[id] = 1 }
 		next
 	}
 	/^ERROR:|^error:/ { out($0, ce) }
