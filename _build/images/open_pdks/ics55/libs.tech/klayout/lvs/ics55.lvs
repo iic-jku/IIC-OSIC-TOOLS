@@ -2,20 +2,22 @@
 # Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 #
-# Digital-only KLayout LVS of ICS55 (55LLULP 1P6M, 1.2 V core and 3.3 V IO
-# MOS devices). Written for IIC-OSIC-TOOLS (issue 464), not foundry sign-off.
+# Digital-only KLayout LVS of ICS55 (55LLULP 1P6M, 1.2 V core MOS devices).
+# Written for IIC-OSIC-TOOLS (issue 464), not foundry sign-off. All cells of
+# the v2 libraries ICsprout55_SC9T_BASIC_{SVT,HVT,LVT} match their CDL.
 #
 # Layer numbers and the device recognition follow the vendor Calibre runset
 # (pv/LVS/ICsprout_CalLVS_55LLULP1233_REV1_0_OS.lvs of icsprout55-pdk) for
 # the default stack (TOTALMETAL 6, single thick top metal T4M2, RDL).
 #
-# Not covered: resistors, diodes, BJTs, varactors, MoM capacitors, SRAM, native
-# 2.5 V devices and ULVT. Their gates are left unextracted, so a design using
-# them fails LVS rather than passing silently.
+# Not covered: resistors, diodes, BJTs, varactors, MoM capacitors, SRAM, ULVT
+# and the 2.5 V devices of the v2 IO library (nm2p5_lp, nmod3p3_lp and their
+# p-type twins). Their gates are left unextracted, so a design using them fails
+# LVS rather than passing silently. IO pads have to be black boxes.
 #
 # MOS devices are compared as three-terminal devices. The vendor CDLs tie the
-# bulk of every cell to VDD/VSS, while the cell layouts have no well or
-# substrate tie (the FILLTAP cells provide them), so a bulk comparison cannot
+# bulk of every cell to VNW/VPW, while the cell layouts have no well or
+# substrate tie (the TAPX1 cells provide them), so a bulk comparison cannot
 # match on a cell level. Well and substrate ties are therefore not checked.
 #
 # Usage:

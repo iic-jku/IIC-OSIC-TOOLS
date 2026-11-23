@@ -32,7 +32,7 @@ find "$DIR" -maxdepth 1 -type f -exec cp {} "$WORKDIR" \;
 cd "$WORKDIR" || fail "cannot enter $WORKDIR"
 
 # shellcheck source=/dev/null
-source sak-pdk-script.sh ics55 ics55_LLSC_H7CR > /dev/null
+source sak-pdk-script.sh ics55 ICsprout55_SC9T_BASIC_SVT > /dev/null
 [ "$PDK" = "ics55" ] || fail "sak-pdk did not select ics55"
 
 # The config removes the Magic, Netgen and SPEF steps, which ics55 cannot run.
@@ -56,7 +56,7 @@ DRC_RC=$?
 [ "$DRC_RC" -le 1 ] || fail "sak-drc exited with $DRC_RC"
 
 # CDL of the routed design, with the standard-cell CDL appended
-CELL_CDL="$PDKPATH/libs.ref/$STD_CELL_LIBRARY/cdl/$STD_CELL_LIBRARY.cdl"
+CELL_CDL="$PDKPATH/libs.ref/$STD_CELL_LIBRARY/cdl/ICsprout55_9TSVT_basic.cdl"
 printf 'read_db %s\nwrite_cdl -masters %s %s\n' "$FINAL/odb/counter.odb" "$CELL_CDL" "$WORKDIR/counter_top.cdl" > "$WORKDIR/write_cdl.tcl"
 openroad -exit -no_init "$WORKDIR/write_cdl.tcl" > "$WORKDIR/write_cdl.log" 2>&1 || fail "OpenROAD write_cdl failed"
 cat "$WORKDIR/counter_top.cdl" "$CELL_CDL" > "$WORKDIR/counter.cdl"
@@ -65,7 +65,7 @@ sak-lvs.sh -k -w "$WORKDIR/lvs" -s "$WORKDIR/counter.cdl" -l "$WORKDIR/counter.g
     || fail "KLayout LVS does not match"
 
 # Swap the two inputs of the first AND2 instance, which LVS has to catch.
-awk '!done && /^X.* AND2X[0-9P]*H7R$/ { t = $2; $2 = $3; $3 = t; done = 1 } { print }' \
+awk '!done && /^X.* AND2X[0-9P]*_9TSVT$/ { t = $2; $2 = $3; $3 = t; done = 1 } { print }' \
     "$WORKDIR/counter.cdl" > "$WORKDIR/counter_bad.cdl"
 cmp -s "$WORKDIR/counter.cdl" "$WORKDIR/counter_bad.cdl" && fail "no AND2 instance to change for the negative check"
 sak-lvs.sh -k -w "$WORKDIR/lvs_bad" -s "$WORKDIR/counter_bad.cdl" -l "$WORKDIR/counter.gds" -c counter > "$WORKDIR/sak-lvs-bad.log" 2>&1

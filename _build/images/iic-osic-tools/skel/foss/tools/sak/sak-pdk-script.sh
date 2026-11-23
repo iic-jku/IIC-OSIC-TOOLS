@@ -86,7 +86,7 @@ else
 				export STD_CELL_LIBRARY="gf180mcu_fd_sc_mcu7t5v0"
 				;;
 			ics55)
-				export STD_CELL_LIBRARY="ics55_LLSC_H7CR"
+				export STD_CELL_LIBRARY="ICsprout55_SC9T_BASIC_SVT"
 				;;
 			asap7)
 				export STD_CELL_LIBRARY="asap7sc7p5t"

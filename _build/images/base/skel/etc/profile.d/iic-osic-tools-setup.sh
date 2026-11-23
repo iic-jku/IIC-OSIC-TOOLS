@@ -121,7 +121,7 @@ if [ -z "${FOSS_INIT_DONE+x}" ]; then
             ihp-sg13g2)           STD_CELL_LIBRARY="sg13g2_stdcell" ;;
             ihp-sg13cmos5l)       STD_CELL_LIBRARY="sg13cmos5l_stdcell" ;;
             gf180mcuC|gf180mcuD)  STD_CELL_LIBRARY="gf180mcu_fd_sc_mcu7t5v0" ;;
-            ics55)                STD_CELL_LIBRARY="ics55_LLSC_H7CR" ;;
+            ics55)                STD_CELL_LIBRARY="ICsprout55_SC9T_BASIC_SVT" ;;
             asap7)                STD_CELL_LIBRARY="asap7sc7p5t" ;;
             *)
                 [ -z "${IIC_OSIC_TOOLS_QUIET}" ] && \
