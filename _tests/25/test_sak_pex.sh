@@ -130,6 +130,10 @@ check "ihp: -c 0.01 run"                   0 "$SAK" -c 0.01 -w "$W" "$D/$CELL.gd
 check "ihp: -c 0.01 gives the default"     0 bash -c "grep -q '^C0 ' '$NL' && tail -n +2 '$NL' | cmp -s - '$W/default_body.spice'"
 check "ihp: -c 1000 run"                   0 "$SAK" -c 1000 -w "$W" "$D/$CELL.gds"
 check "ihp: -c 1000 drops all capacitors"  0 bash -c "head -1 '$NL' | grep -q '(cthresh=1000 fF)$' && grep -q '^X0 ' '$NL' && ! grep -q '^C' '$NL'"
+# a word as threshold also drops every capacitor in Magic, so 0.1 fF has to keep some and drop some
+check "ihp: -c 0.1 run"                    0 "$SAK" -c 0.1 -w "$W" "$D/$CELL.gds"
+check "ihp: -c 0.1 keeps C >= 0.1 fF only" 0 bash -c "n=\$(grep -c '^C' '$NL'); [ \$n -gt 0 ] && [ \$n -lt \$(grep -c '^C' '$W/default_body.spice') ] && awk '/^C/ { v = \$4; sub(/f\$/, \"\", v); if (v + 0 < 0.1) bad = 1 } END { exit bad }' '$NL'"
+check "ihp: -c 0 run"                      0 "$SAK" -c 0 -w "$W" "$D/$CELL.gds"
 check "ihp: -m 3 -c 0.5 run"               0 "$SAK" -m 3 -c 0.5 -w "$W" "$D/$CELL.gds"
 check "ihp: -m 3 header notes both"        0 bash -c "head -1 '$NL' | grep -q '(cthresh=0.5 fF, extresist threshold=10000 mOhm, minres=1000 mOhm, mindelay=1 ps)$'"
 
@@ -181,6 +185,7 @@ check "guard: -y negative"                 4 "$SAK" -y -1 -w "$W" "$D/$CELL.gds"
 check "guard: -c not a number"             4 "$SAK" -c abc -w "$W" "$D/$CELL.gds"
 check "guard: -c negative"                 4 "$SAK" -c -1 -w "$W" "$D/$CELL.gds"
 check "guard: -c two decimal points"       4 "$SAK" -c 0.0.1 -w "$W" "$D/$CELL.gds"
+check "guard: -c decimal point only"       4 "$SAK" -c . -w "$W" "$D/$CELL.gds"
 check "guard: -c empty"                    4 "$SAK" -c "" -w "$W" "$D/$CELL.gds"
 check "guard: unknown layout file format"  7 "$SAK" -w "$W" "$W/bad.xyz"
 check "guard: GDS top cell mismatch"       1 "$SAK" -w "$W" "$D/${CELL}_wrongtop.gds"

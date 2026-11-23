@@ -5,7 +5,7 @@
 - PEX on a standard cell inverter in all supported PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l)
 - all PEX modes: `-m 1` (C-decoupled), `-m 2` (C-coupled, default), `-m 3` (full-RC) incl. the `-t`/`-r`/`-y` extresist overrides (verified via the netlist header)
 - subcircuit handling: `-s 0` (wrapper stripped, devices preserved), `-n` (subcircuit renamed), and both combined
-- capacitance threshold `-c`: an explicit `-c 0.01` gives the default netlist, `-c 1000` drops every capacitor of the inverter, and the value is noted in the header in `-m 2` and `-m 3`
+- capacitance threshold `-c`: an explicit `-c 0.01` gives the default netlist, `-c 1000` drops every capacitor of the inverter, `-c 0.1` keeps some and only those of at least 0.1 fF, `-c 0` runs, and the value is noted in the header in `-m 2` and `-m 3`
 - input variants: `.mag`/`.gds`/`.klay.gds` layouts, gzipped layouts (created at runtime), positional auto-derive (resolved against the current dir), multi-level `-w` work dirs, `-d` debug
 - netlist and cleanup checks: header present, devices/parasitics present, no `.ext`/`.tmp`/temp-dir/Tcl-script leftovers, magic log written
 - guard checks: every invalid combination (out-of-range or non-integer `-m`/`-s`/`-t`/`-y`, a `-c` that is no non-negative decimal number, unknown layout format, GDS top cell name mismatch, missing files, unset PDK variables, unsupported PDK, missing tools) must exit with its documented error code

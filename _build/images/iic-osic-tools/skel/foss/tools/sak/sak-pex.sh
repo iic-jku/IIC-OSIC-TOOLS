@@ -26,7 +26,7 @@
 #        -s  Subcircuit definition (1 = include [default], 0 = no subcircuit)
 #        -n  Name of PEX subcircuit (default: <cellname>)
 #        -w  Use <workdir> to store result files (default: current dir)
-#        -c  Magic only: capacitance threshold in fF, smaller capacitors are left out of the netlist (default: 0.01 = 10 aF)
+#        -c  Magic only: capacitance threshold in fF, smaller capacitors are left out of the netlist (default: 0.01 = 10 aF, Magic writes capacitors below 0.001 as 0)
 #        -t  Magic, full-RC only: extresist threshold in mOhm (default: 10000 = 10 Ohm)
 #        -r  Magic, full-RC only: extresist minres in mOhm (default: 1000 = 1 Ohm)
 #        -y  Magic, full-RC only: extresist mindelay in ps (default: 1, 0 = gate by resistance)
@@ -64,7 +64,7 @@ if [ $# -eq 0 ]; then
 	echo "       -s Subcircuit definition in PEX netlist (1 = include subcircuit definition [default], 0 = no subcircuit)"
 	echo "       -n Name of PEX subcircuit (default is <cellname>)"
 	echo "       -w Use <workdir> to store result files (default current dir)"
-	echo "       -c Magic only: capacitance threshold in fF, smaller capacitors are left out of the netlist (default 0.01 = 10 aF)"
+	echo "       -c Magic only: capacitance threshold in fF, smaller capacitors are left out of the netlist (default 0.01 = 10 aF, Magic writes capacitors below 0.001 as 0)"
 	echo "       -t Magic, full-RC only: extresist threshold in mOhm (default 10000 = 10 Ohm)"
 	echo "       -r Magic, full-RC only: extresist minres in mOhm (default 1000 = 1 Ohm)"
 	echo "       -y Magic, full-RC only: extresist mindelay in ps (default 1, 0 = gate by resistance instead of delay)"
@@ -223,10 +223,10 @@ done
 # check that the capacitance threshold is a non-negative decimal number
 # ---------------------------------------------------------------------
 
-# Magic accepts anything here without an error: a word drops every capacitor, a negative value adds 0 F ones
+# Magic takes any string here without an error, and a word drops every capacitor
 case "$EXT_CTHRESH" in
 	''|.|*[!0-9.]*|*.*.*)
-		echo "[ERROR] Capacitance threshold must be a non-negative decimal number in fF!"
+		echo "[ERROR] Capacitance threshold must be a non-negative decimal number in fF (e.g. 0.01)!"
 		exit $ERR_WRONG_MODE ;;
 esac
 
