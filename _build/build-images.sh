@@ -59,12 +59,12 @@ IFS=',' read -ra P_TAGS <<< "$DOCKER_TAGS"
 # Process set prefixes:
 IFS=',' read -ra P_PREFIXES <<< "$DOCKER_PREFIXES"
 
-SET_TAGS_CMD=""
+FINAL_TAGS=""
 for i in "${P_TAGS[@]}"; do
     for j in "${P_PREFIXES[@]}"; do
         echo "[INFO] Processing Tag \"$i\" with Prefix \"$j\""
 		#SET_TAGS_CMD="${SET_TAGS_CMD} --set image-full.tags+='${j}/${DOCKER_IMAGE}:${i}' --set image-analog.tags+='${j}/${DOCKER_IMAGE}:${i}-analog' --set image-digital.tags+='${j}/${DOCKER_IMAGE}:${i}-digital' --set image-riscv.tags+='${j}/${DOCKER_IMAGE}:${i}-riscv'"
-		SET_TAGS_CMD="${SET_TAGS_CMD} --set image-full.tags=${j}/${DOCKER_IMAGE}:${i}"
+		FINAL_TAGS="${FINAL_TAGS:+${FINAL_TAGS},}${j}/${DOCKER_IMAGE}:${i}"
     done
 done
 
@@ -76,4 +76,7 @@ done
 # e.g. to re-tag or re-push without touching the tools -- run this script with
 # DEPS_FROM_TARGETS=0.
 #shellcheck disable=SC2086
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --set image-full.args.CONTAINER_TAG="${CONTAINER_TAG}" ${SET_TAGS_CMD} --push images
+# bake-push.sh builds each arch on its own (separate registry cache per arch)
+# and merges the final image into the FINAL_TAGS
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+BUILDER_NAME="${BUILDER_NAME}" FINAL_TAGS="${FINAL_TAGS}" "${SCRIPT_DIR}/bake-push.sh" --set image-full.args.CONTAINER_TAG="${CONTAINER_TAG}" images

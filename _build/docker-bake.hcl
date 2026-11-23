@@ -42,6 +42,15 @@ variable "CACHE_EXPORT" {
   default = "1"
 }
 
+# A registry cache export holds one platform only: with one builder node per
+# platform, the nodes overwrite each other's cache-<target> manifest. So
+# bake-push.sh runs one bake per platform with IMAGE=<image>-<arch>, which
+# gives every arch its own images and cache manifests, and then merges the
+# images into multi-arch tags of MERGED_IMAGE. Empty for a direct bake.
+variable "MERGED_IMAGE" {
+  default = ""
+}
+
 variable "PLATFORMS" {
   default = "linux/amd64,linux/arm64"
 }
@@ -78,12 +87,16 @@ function "tooldep" {
 # Cache import: the dedicated cache manifest first, with the image's own inline
 # cache as a fallback so the first build after switching over is not a full
 # rebuild (and so a target stays warm even if its cache manifest is GCed).
+# With MERGED_IMAGE set, the inline cache of the merged multi-arch image is a
+# further fallback (it holds one cache per platform).
 function "cache_from" {
   params = [key, legacy]
-  result = [
+  result = concat([
     "type=registry,ref=${REGISTRY}/${IMAGE}:cache-${key}",
     "type=registry,ref=${REGISTRY}/${IMAGE}:${legacy}",
-  ]
+  ], MERGED_IMAGE == "" ? [] : [
+    "type=registry,ref=${REGISTRY}/${MERGED_IMAGE}:${legacy}",
+  ])
 }
 
 function "tool_cache_from" {

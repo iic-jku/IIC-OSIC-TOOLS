@@ -2,28 +2,42 @@
 # Johannes Kepler University, Department for Integrated Circuits
 # SPDX-License-Identifier: Apache-2.0
 
+# Read only when the builder is created: after a change, run builder-clear.sh
+# and builder-create.sh (this drops the local cache once).
+#
+# GC sizes use the reservedSpace, maxUsedSpace and minFreeSpace keys of
+# BuildKit v0.17 and later. The old keepBytes maps to reservedSpace alone, with
+# no upper bound, so every GC run pruned a node down to 51 GB, less than one
+# full build. maxUsedSpace leaves room for several builds per node.
+
 [worker.oci]
   # limit the number of parallel build steps that can run at the same time
   max-parallelism = 6
   gc = true
-  gckeepstorage = 60000
+  # Build context uploads, RUN --mount=type=cache and git checkouts: 4 weeks
   [[worker.oci.gcpolicy]]
     all = false
-    keepBytes = 40960000000
-    # keep the cache for 4 weeks
-    keepDuration = 2419200
     filters = [ "type==source.local", "type==exec.cachemount", "type==source.git.checkout"]
+    keepDuration = "672h"
+    reservedSpace = "20GB"
+    maxUsedSpace = "60GB"
+  # Layers unused for 12 weeks
   [[worker.oci.gcpolicy]]
     all = false
-    # keep for 4*3 weeks
-    keepDuration = 7257600
-    keepBytes = 51200000000
+    keepDuration = "2016h"
+    reservedSpace = "200GB"
+    maxUsedSpace = "400GB"
+    minFreeSpace = "10%"
   [[worker.oci.gcpolicy]]
     all = false
-    keepBytes = 51200000000
+    reservedSpace = "200GB"
+    maxUsedSpace = "400GB"
+    minFreeSpace = "10%"
   [[worker.oci.gcpolicy]]
     all = true
-    keepBytes = 51200000000
+    reservedSpace = "200GB"
+    maxUsedSpace = "400GB"
+    minFreeSpace = "10%"
 
 [registry."registry.iic.jku.at:5000"]
   http = true

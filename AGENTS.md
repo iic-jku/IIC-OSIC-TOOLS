@@ -44,6 +44,7 @@ DRY_RUN=1 ./build-all.sh   # print the commands, run nothing (works on every bui
 - The defaults point at the maintainers' own infrastructure: a registry (`REGISTRY` in `docker-bake.hcl`, `DOCKER_PREFIXES` in `build-all.sh` and `build-images.sh`) and two SSH build hosts (`BUILDER_STRS` in `builder-create.sh`). Without access, point these at your own builder and a registry you can push to, and set `CACHE_EXPORT=0`.
 - The platform list has two names: `DOCKER_PLATFORMS` for `builder-create.sh` and `builder-clear.sh`, `PLATFORMS` for bake.
 - `build-base.sh`, `build-base-dev.sh`, `build-tools.sh` and `build-target.sh` push their result unless `DOCKER_LOAD` is set, which switches them to `--load`. `build-images.sh` and `build-all.sh` always push. `NO_CACHE=1` adds `--no-cache` to `build-target.sh`.
+- A push goes through `bake-push.sh`: one bake per platform into `<image>-<arch>` (so each arch keeps its own `cache-<target>` manifest), then `imagetools create` merges the tags into `<image>:<tag>`. Builder GC is set in `buildkitd.toml` and applies only after `builder-clear.sh` and `builder-create.sh`.
 - `DRY_RUN` and `DOCKER_LOAD` act on any value, so `DRY_RUN=0` is still a dry run. Unset them instead.
 - Build order comes from the named contexts in `docker-bake.hcl`, not from the `tools-level-*` groups (kept for staged builds only). When a tool image gains or loses a `FROM ${TOOL_IMAGE_*}` or `COPY --from` on another tool image, update the `contexts` (`tooldep("<tool>")`) and `args` of its bake target in the same change.
 

@@ -68,6 +68,8 @@ DOCKER_PREFIXES="hpretl,registry.iic.jku.at:5000" DOCKER_TAGS="latest" ./build-i
 
 Use `DRY_RUN=1` on any of them to print the commands without executing them.
 
+When pushing (the default), the scripts call `bake-push.sh`. It runs one bake per platform in parallel, each on the builder node of its platform, which pushes its images and cache to `<registry>/<image>-<arch>` (e.g. `iic-osic-tools-amd64:tool-xschem-latest`). After both succeed, it merges each tag with `docker buildx imagetools create` into the multi-arch `<registry>/<image>:<tag>`, and the final image into every tag built from `DOCKER_PREFIXES` and `DOCKER_TAGS`. With `DOCKER_LOAD` set, the scripts run a single bake with `--load` as before.
+
 ##### Build variables
 
 These are read from the environment by `docker buildx bake`:
@@ -79,6 +81,7 @@ These are read from the environment by `docker buildx bake`:
 | `REGISTRY` | `registry.iic.jku.at:5000` | Registry used for the intermediate and cache images. |
 | `IMAGE` | `iic-osic-tools` | Repository name used for the intermediate and cache images. |
 | `PLATFORMS` | `linux/amd64,linux/arm64` | Target platforms. |
+| `MERGED_IMAGE` | empty | Set by `bake-push.sh` to the multi-arch repository name. Adds the inline cache of the merged images as a further `cache-from` fallback. |
 
 ##### Build cache
 
@@ -91,6 +94,18 @@ to a slower build instead of a failed one.
 
 The `cache-*` tags can be dropped at any time to reclaim registry space; the next
 build then falls back to the inline caches.
+
+A registry cache export holds one platform only. In a multi-platform bake on a builder with one node per platform, both nodes write `cache-<target>` to the same ref and the platform that finishes last overwrites the other. This is why `bake-push.sh` builds each arch into its own repository, so `<image>-amd64:cache-<target>` and `<image>-arm64:cache-<target>` stay separate.
+
+Each builder node also keeps a local cache, which serves most rebuilds. Its garbage collection is set in `buildkitd.toml` (`reservedSpace`, `maxUsedSpace`, `minFreeSpace`, BuildKit v0.17 or later). The file is read only when the builder is created, so after a change run `./builder-clear.sh` and `./builder-create.sh`, which drops the local cache once. Check the active policy and the usage of a node with:
+
+```bash
+docker exec buildx_buildkit_tools-builder-${USER}0 buildctl debug workers -v
+```
+
+```bash
+docker buildx du --builder tools-builder-$USER
+```
 
 To test locally stored images, the following command can be used:
 

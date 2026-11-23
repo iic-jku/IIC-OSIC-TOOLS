@@ -57,4 +57,10 @@ if [ -n "${NO_CACHE}" ]; then
 fi
 
 #shellcheck disable=SC2086
-${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} ${load_or_push} ${no_cache} ${BUILD_TARGET}
+# --push goes through bake-push.sh, which keeps a registry cache per arch
+if [ "${load_or_push}" = "--load" ]; then
+	${ECHO_IF_DRY_RUN} docker buildx bake --builder ${BUILDER_NAME} --load ${no_cache} ${BUILD_TARGET}
+else
+	SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+	BUILDER_NAME="${BUILDER_NAME}" "${SCRIPT_DIR}/bake-push.sh" ${no_cache} ${BUILD_TARGET}
+fi
