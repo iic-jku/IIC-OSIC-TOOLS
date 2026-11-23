@@ -27,7 +27,7 @@
   commit: dc6d965225c9f5ed2a6faefb7ea30665429060fe
 - name: ghdl
   repo: https://github.com/ghdl/ghdl.git
-  commit: 35e7e4fba2d7e77a1bec8a544b1eed29467b2e39
+  commit: ae12eeebc23e7c210b6a2fd638e86eda096f7fb0
 - name: ghdl-yosys-plugin
   repo: https://github.com/ghdl/ghdl-yosys-plugin.git
   commit: c21051d6e5a18b70d0ef7ce398758d7fbec5068e
@@ -62,7 +62,7 @@
   commit: 38a26b8daac08f581c79a154d3eb817432248d48
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
-  commit: v0.30.13
+  commit: v0.30.14
 - name: kqcircuits
   repo: https://github.com/iqm-finland/KQCircuits.git
   commit: b3ed0cebfe5d5922f3484aabd32aed452b8433ea
@@ -99,7 +99,7 @@
   commit: 7b26270095b3c710bdbac50d09af1767e2265572
 - name: openroad-flow-scripts
   repo: https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
-  commit: a9adcf481395d3b1355afda40df1c8bde10a0e40
+  commit: 82ac25be57125cc724388ef89f01ce65f9ba3dcc
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: c4d317e4fa2398b9880920a1411c20258a2175a9
