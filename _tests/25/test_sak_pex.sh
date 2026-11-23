@@ -8,7 +8,7 @@
 # Runs PEX on a standard cell inverter in all supported PDKs (sky130A,
 # gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l), covers all PEX modes (C-decoupled,
 # C-coupled, full-RC incl. the -t/-r/-y extresist overrides), the subcircuit
-# handling (-s/-n), the input variants (.mag/.gds/.klay.gds, gzipped layouts,
+# handling (-s/-n), the capacitance threshold (-c), the input variants (.mag/.gds/.klay.gds, gzipped layouts,
 # positional auto-derive), the kpex 2.5D engine (-k, with -S/-R/-g), and checks
 # that invalid combinations are caught with the documented exit codes. Netlist
 # content is verified where deterministic (header, subcircuit wrapper, devices).
@@ -123,6 +123,16 @@ check "ihp: custom extresist in header"    0 bash -c "head -1 '$NL' | grep -q 't
 check "ihp: repeated flag, last wins"      0 "$SAK" -m 1 -m 2 -w "$W" "$D/$CELL.gds"
 check "ihp: last-wins header notes m=2"    0 bash -c "head -1 '$NL' | grep -q 'with m=2'"
 
+# capacitance threshold (-c): an explicit 0.01 fF gives the default netlist, 1000 fF drops every capacitor of the inverter
+check "ihp: default run for -c"            0 "$SAK" -w "$W" "$D/$CELL.gds"
+check "ihp: default header notes cthresh"  0 bash -c "head -1 '$NL' | grep -q 'with m=2 and s=1 (cthresh=0.01 fF)$' && tail -n +2 '$NL' > '$W/default_body.spice'"
+check "ihp: -c 0.01 run"                   0 "$SAK" -c 0.01 -w "$W" "$D/$CELL.gds"
+check "ihp: -c 0.01 gives the default"     0 bash -c "grep -q '^C0 ' '$NL' && tail -n +2 '$NL' | cmp -s - '$W/default_body.spice'"
+check "ihp: -c 1000 run"                   0 "$SAK" -c 1000 -w "$W" "$D/$CELL.gds"
+check "ihp: -c 1000 drops all capacitors"  0 bash -c "head -1 '$NL' | grep -q '(cthresh=1000 fF)$' && grep -q '^X0 ' '$NL' && ! grep -q '^C' '$NL'"
+check "ihp: -m 3 -c 0.5 run"               0 "$SAK" -m 3 -c 0.5 -w "$W" "$D/$CELL.gds"
+check "ihp: -m 3 header notes both"        0 bash -c "head -1 '$NL' | grep -q '(cthresh=0.5 fF, extresist threshold=10000 mOhm, minres=1000 mOhm, mindelay=1 ps)$'"
+
 # subcircuit handling
 check "ihp: -s 0 run"                      0 "$SAK" -s 0 -w "$W" "$D/$CELL.gds"
 check "ihp: -s 0 strips .subckt/.ends"     0 bash -c "! grep -qiE '^\.(subckt|ends)' '$NL'"
@@ -168,6 +178,10 @@ check "guard: -m not an integer"           4 "$SAK" -m abc -w "$W" "$D/$CELL.gds
 check "guard: -s 2 out of range"           4 "$SAK" -s 2 -w "$W" "$D/$CELL.gds"
 check "guard: -t not an integer"           4 "$SAK" -t abc -w "$W" "$D/$CELL.gds"
 check "guard: -y negative"                 4 "$SAK" -y -1 -w "$W" "$D/$CELL.gds"
+check "guard: -c not a number"             4 "$SAK" -c abc -w "$W" "$D/$CELL.gds"
+check "guard: -c negative"                 4 "$SAK" -c -1 -w "$W" "$D/$CELL.gds"
+check "guard: -c two decimal points"       4 "$SAK" -c 0.0.1 -w "$W" "$D/$CELL.gds"
+check "guard: -c empty"                    4 "$SAK" -c "" -w "$W" "$D/$CELL.gds"
 check "guard: unknown layout file format"  7 "$SAK" -w "$W" "$W/bad.xyz"
 check "guard: GDS top cell mismatch"       1 "$SAK" -w "$W" "$D/${CELL}_wrongtop.gds"
 check "guard: PDK_ROOT not set"            8 env PDK_ROOT= "$SAK" -w "$W" "$D/$CELL.gds"
@@ -334,6 +348,7 @@ check "kpex ihp: nested netlist written"      0 bash -c "grep -q 'created by KLa
 # guard checks
 check "kpex guard: MAG input"                 7 "$SAK" -k -w "$W" "$D/$CELL.mag"
 check "kpex guard: -t with -k"                4 "$SAK" -k -t 5000 -w "$W" "$D/$CELL.gds"
+check "kpex guard: -c with -k"                4 "$SAK" -k -c 0.1 -w "$W" "$D/$CELL.gds"
 check "kpex guard: -S without -k"             4 "$SAK" -S "$CDL" -w "$W" "$D/$CELL.gds"
 check "kpex guard: -g without -k"             4 "$SAK" -g VSS -w "$W" "$D/$CELL.gds"
 check "kpex guard: -R unknown reduction"      4 "$SAK" -k -m 3 -R fast -w "$W" "$D/$CELL.gds"

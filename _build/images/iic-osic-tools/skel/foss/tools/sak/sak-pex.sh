@@ -19,13 +19,14 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # Usage: sak-pex.sh [-d] [-k] [-m <mode>] [-s <mode>] [-n <subcktname>] [-w <workdir>]
-#                   [-t <threshold>] [-r <minres>] [-y <mindelay>]
+#                   [-c <cthresh>] [-t <threshold>] [-r <minres>] [-y <mindelay>]
 #                   [-S <schematic>] [-R <reduction>] [-g <net>] <cellname>
 #        -k  Use the kpex 2.5D engine (KLayout-PEX) instead of Magic
 #        -m  Select PEX mode (1 = C-decoupled, 2 = C-coupled [default], 3 = full-RC)
 #        -s  Subcircuit definition (1 = include [default], 0 = no subcircuit)
 #        -n  Name of PEX subcircuit (default: <cellname>)
 #        -w  Use <workdir> to store result files (default: current dir)
+#        -c  Magic only: capacitance threshold in fF, smaller capacitors are left out of the netlist (default: 0.01 = 10 aF)
 #        -t  Magic, full-RC only: extresist threshold in mOhm (default: 10000 = 10 Ohm)
 #        -r  Magic, full-RC only: extresist minres in mOhm (default: 1000 = 1 Ohm)
 #        -y  Magic, full-RC only: extresist mindelay in ps (default: 1, 0 = gate by resistance)
@@ -55,7 +56,7 @@ if [ $# -eq 0 ]; then
 	echo "PEX script using Magic or the kpex 2.5D engine (ICD@JKU)"
 	echo
 	echo "Usage: $0 [-d] [-k] [-m <mode>] [-s <mode>] [-n <subcktname>] [-w <workdir>]"
-	echo "       [-t <threshold>] [-r <minres>] [-y <mindelay>]"
+	echo "       [-c <cthresh>] [-t <threshold>] [-r <minres>] [-y <mindelay>]"
 	echo "       [-S <schematic>] [-R <reduction>] [-g <net>] <cellname>"
 	echo
 	echo "       -k Use the kpex 2.5D engine (KLayout-PEX) instead of Magic"
@@ -63,6 +64,7 @@ if [ $# -eq 0 ]; then
 	echo "       -s Subcircuit definition in PEX netlist (1 = include subcircuit definition [default], 0 = no subcircuit)"
 	echo "       -n Name of PEX subcircuit (default is <cellname>)"
 	echo "       -w Use <workdir> to store result files (default current dir)"
+	echo "       -c Magic only: capacitance threshold in fF, smaller capacitors are left out of the netlist (default 0.01 = 10 aF)"
 	echo "       -t Magic, full-RC only: extresist threshold in mOhm (default 10000 = 10 Ohm)"
 	echo "       -r Magic, full-RC only: extresist minres in mOhm (default 1000 = 1 Ohm)"
 	echo "       -y Magic, full-RC only: extresist mindelay in ps (default 1, 0 = gate by resistance instead of delay)"
@@ -87,6 +89,9 @@ EXT_MODE=2
 SUBCIRCUIT=1
 CELL_NAME_SET=0
 
+# fF: capacitors below this are left out of the netlist (Magic, all modes)
+EXT_CTHRESH=0.01
+
 # full-RC (extresist) defaults, matching Magic's own defaults
 EXT_THRESHOLD=10000	# mOhm: coarse end-to-end resistance gating extraction
 EXT_MINRES=1000		# mOhm: resistors below this are merged (simplification)
@@ -105,7 +110,7 @@ KPEX_ONLY_FLAGS=""
 # check flags
 # -----------
 
-while getopts "m:s:n:w:t:r:y:dkS:R:g:" flag; do
+while getopts "m:s:n:w:c:t:r:y:dkS:R:g:" flag; do
 	case $flag in
 		k)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -k is set."
@@ -144,6 +149,11 @@ while getopts "m:s:n:w:t:r:y:dkS:R:g:" flag; do
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -w is set to <$OPTARG>."
 			# -m so a not-yet-existing (multi-level) workdir still resolves. It is created below.
 			RESDIR=$(realpath -m "$OPTARG")
+			;;
+		c)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -c is set to <$OPTARG>."
+			EXT_CTHRESH=${OPTARG}
+			MAGIC_ONLY_FLAGS="$MAGIC_ONLY_FLAGS -c"
 			;;
 		t)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -t is set to <$OPTARG>."
@@ -209,6 +219,16 @@ for _ext_par in "threshold:$EXT_THRESHOLD" "minres:$EXT_MINRES" "mindelay:$EXT_M
 		exit $ERR_WRONG_MODE
 	fi
 done
+
+# check that the capacitance threshold is a non-negative decimal number
+# ---------------------------------------------------------------------
+
+# Magic accepts anything here without an error: a word drops every capacitor, a negative value adds 0 F ones
+case "$EXT_CTHRESH" in
+	''|.|*[!0-9.]*|*.*.*)
+		echo "[ERROR] Capacitance threshold must be a non-negative decimal number in fF!"
+		exit $ERR_WRONG_MODE ;;
+esac
 
 # check that the flags fit the engine and the kpex reduction is valid
 # --------------------------------------------------------------------
@@ -630,7 +650,7 @@ if [ "$EXT_MODE" -eq 3 ]; then
 fi
 
 {
-	echo "ext2spice cthresh 0.01"
+	echo "ext2spice cthresh $EXT_CTHRESH"
 	echo "ext2spice -p $RESDIR -o $NETLIST_PEX.tmp"
 	echo "quit -noprompt"
 } >> "$EXT_SCRIPT"
@@ -672,8 +692,9 @@ fi
 
 # prepend a header with the run settings, this becomes the final netlist
 DATE=$(date)
-HEADER="* PEX produced on $DATE using $0 with m=$EXT_MODE and s=$SUBCIRCUIT"
-[ "$EXT_MODE" -eq 3 ] && HEADER="$HEADER (extresist threshold=$EXT_THRESHOLD mOhm, minres=$EXT_MINRES mOhm, mindelay=$EXT_MINDELAY ps)"
+HEADER="* PEX produced on $DATE using $0 with m=$EXT_MODE and s=$SUBCIRCUIT (cthresh=$EXT_CTHRESH fF"
+[ "$EXT_MODE" -eq 3 ] && HEADER="$HEADER, extresist threshold=$EXT_THRESHOLD mOhm, minres=$EXT_MINRES mOhm, mindelay=$EXT_MINDELAY ps"
+HEADER="$HEADER)"
 {
 	echo "$HEADER"
 	cat "$NETLIST_PEX.tmp"
