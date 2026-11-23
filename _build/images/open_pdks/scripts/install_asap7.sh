@@ -113,6 +113,11 @@ for f in "AO_*_211120" "INVBUF_*_220122" "OA_*_211120" "SEQ_*_220123" "SIMPLE_*_
 	# shellcheck disable=SC2086 # $f is a glob
 	cp "$ORFS_PLATFORM"/lib/NLDM/asap7sc7p5t_$f.lib* "$REF/lib/"
 done
+# The files ORFS ships gzipped are recompressed at -9 as well.
+find "$REF/lib" -name "*.lib.gz" -type f | while read -r lib_gz; do
+	gzip -dc "$lib_gz" | gzip -9 > "$lib_gz.tmp"
+	mv "$lib_gz.tmp" "$lib_gz"
+done
 find "$REF/lib" -name "*.lib" -type f -exec gzip -9 -f {} +
 LIB_COUNT=$(find "$REF/lib" -name "*.lib.gz" | wc -l)
 # 5 groups (AO, INVBUF, OA, SEQ, SIMPLE) x 4 VTs x 3 corners

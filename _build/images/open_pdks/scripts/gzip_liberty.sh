@@ -26,7 +26,14 @@ if [ -z "$PDK_DIR" ] || [ ! -d "$PDK_DIR/libs.ref" ]; then
 fi
 
 echo "[INFO] Compressing Liberty files in $PDK_DIR/libs.ref."
-find "$PDK_DIR/libs.ref" -name "*.lib" -type f -exec gzip -f {} +
+# -9: the files are compressed once at build time, so the slower compression
+# costs little and saves image size. Liberty files that the PDK already ships
+# gzipped are recompressed at the same level.
+find "$PDK_DIR/libs.ref" -name "*.lib.gz" -type f | while read -r lib_gz; do
+	gzip -dc "$lib_gz" | gzip -9 > "$lib_gz.tmp"
+	mv "$lib_gz.tmp" "$lib_gz"
+done
+find "$PDK_DIR/libs.ref" -name "*.lib" -type f -exec gzip -9 -f {} +
 
 # A PDK can borrow a Liberty file from another one through a *renamed* symlink
 # -- ihp-sg13cmos5l/libs.ref/sg13cmos5l_stdcell_hv/lib/*.lib points at the
