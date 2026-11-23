@@ -6,9 +6,10 @@
 # and builder-create.sh (this drops the local cache once).
 #
 # GC sizes use the reservedSpace, maxUsedSpace and minFreeSpace keys of
-# BuildKit v0.17 and later. The old keepBytes maps to reservedSpace alone, with
-# no upper bound, so every GC run pruned a node down to 51 GB, less than one
-# full build. maxUsedSpace leaves room for several builds per node.
+# BuildKit v0.17 and later (keepBytes and gckeepstorage are deprecated aliases
+# of the reserved size). A rule with only that size prunes down to it, so the
+# old 51 GB pruned every node below one full build. One full build left about
+# 115 GB of cache per node (2026-11-23), so maxUsedSpace is about 3.5 times that.
 
 [worker.oci]
   # limit the number of parallel build steps that can run at the same time

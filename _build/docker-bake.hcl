@@ -111,7 +111,7 @@ function "cache_to" {
   params = [key]
   result = CACHE_EXPORT == "1" ? [
     "type=inline",
-    "type=registry,ref=${REGISTRY}/${IMAGE}:cache-${key},mode=max,compression=zstd,ignore-error=true",
+    "type=registry,ref=${REGISTRY}/${IMAGE}:cache-${key},mode=max,ignore-error=true",
   ] : ["type=inline"]
 }
 
