@@ -135,9 +135,8 @@ mkdir -p "$HOST_RUNDIR"
 # sky130A. Standalone its `make regression` takes about twice as long as that
 # of 26 (18 min against 10 min on 8 cores; not measured under contention), so
 # it is queued before 26.
-# Test 49 runs the checks of the VLSI design course, seven LibreLane flows
-# among them. It took 5414 s on 2026.10 on 14 cores with other jobs running,
-# in the range of 28, so it is queued right after it.
+# Test 49 runs the checks of the VLSI design course in their short regression mode, three LibreLane flows among them, while the full mode with seven flows runs in the course's own CI.
+# On 64 cores the short mode took 958 s against 2025 s for the full one, which had run longer than 28 in the nightly, so 49 stays right after 28 until a nightly measures the short mode.
 # Test 53 runs the LibreLane flow of 04 with the 3.3V standard cells, so it is queued right after it.
 # Test 59 (LibreLane, DRC and LVS with ics55) took 3.3 min standalone, so it is queued after 53.
 # Test 23 takes about 3 min standalone (not measured under contention), so it
