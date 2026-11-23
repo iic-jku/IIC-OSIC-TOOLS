@@ -22,6 +22,7 @@ This document summarizes the most important changes of the individual releases o
 * [Update] `sak-drc.sh -g` runs `gdscheck` as a third DRC engine (`-s` selects a rule suite, `-D` single rule decks)
 * [Update] `sak-drc.sh -j <n>` limits the number of KLayout DRC processes (default `min(4, nproc)`), and a crashed rule deck exits with 7
 * [Update] `sak-pex.sh -k` extracts with the `kpex` 2.5D engine instead of Magic, with the new options `-S` (schematic for the device check), `-R` (full-RC reduction) and `-g` (substrate tie net)
+* [Update] `sak-pex.sh -c <fF>` sets the capacitance threshold of the Magic engine, below which a parasitic capacitor is left out of the netlist (default `0.01`, the 10 aF it used before)
 * [Update] `klayout-pex` `0.11.1` (was `0.6.8`), with non-rectangular capacitance extraction, updated PDK coefficients and `kpex calibrate`
 * [Update] `kpex` retains unmapped LVS devices in netlists with `--unmapped-devices keep`, with simulation models supplied separately
 * [Update] FasterCap `6.4.0` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS acceleration and full-precision JSON reports (`--report`)

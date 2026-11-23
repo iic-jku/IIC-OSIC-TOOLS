@@ -5,9 +5,10 @@
 - PEX on a standard cell inverter in all supported PDKs (sky130A, gf180mcuD, ihp-sg13g2, ihp-sg13cmos5l)
 - all PEX modes: `-m 1` (C-decoupled), `-m 2` (C-coupled, default), `-m 3` (full-RC) incl. the `-t`/`-r`/`-y` extresist overrides (verified via the netlist header)
 - subcircuit handling: `-s 0` (wrapper stripped, devices preserved), `-n` (subcircuit renamed), and both combined
+- capacitance threshold `-c`: an explicit `-c 0.01` gives the default netlist, `-c 1000` drops every capacitor of the inverter, `-c 0.1` keeps some and only those of at least 0.1 fF, `-c 0` runs, and the value is noted in the header in `-m 2` and `-m 3`
 - input variants: `.mag`/`.gds`/`.klay.gds` layouts, gzipped layouts (created at runtime), positional auto-derive (resolved against the current dir), multi-level `-w` work dirs, `-d` debug
 - netlist and cleanup checks: header present, devices/parasitics present, no `.ext`/`.tmp`/temp-dir/Tcl-script leftovers, magic log written
-- guard checks: every invalid combination (out-of-range or non-integer `-m`/`-s`/`-t`/`-y`, unknown layout format, GDS top cell name mismatch, missing files, unset PDK variables, unsupported PDK, missing tools) must exit with its documented error code
+- guard checks: every invalid combination (out-of-range or non-integer `-m`/`-s`/`-t`/`-y`, a `-c` that is no non-negative decimal number, unknown layout format, GDS top cell name mismatch, missing files, unset PDK variables, unsupported PDK, missing tools) must exit with its documented error code
 - the kpex 2.5D engine (`-k`) in all four PDKs: `-m 1`, `-m 2` and `-m 3` (kpex `--mode C`, `CC` and `RC`) with the `-R` reductions, `-n` and `-s 0`, the full-RC check against a schematic (`-S`, which passes with the stdcell CDL and fails on a wrong NMOS width), the substrate tie (`-g`), `.gds.gz` and `.klay.gds` input, the run directory that only a failed run keeps, and the guards of the engine (`.mag` input, a Magic flag with `-k`, a kpex flag without it, an unknown reduction, a missing schematic, a tie net that is no port, after which kpex's netlist stays in `<cell>.pex.spice.tmp`, a tie net that is the substrate port itself, a missing cell, a PDK kpex does not know, kpex missing)
 
 Set `SAK_PEX=<path>` to test a not-yet-installed version of the script.
