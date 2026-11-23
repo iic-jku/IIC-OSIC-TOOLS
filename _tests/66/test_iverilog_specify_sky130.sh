@@ -8,9 +8,8 @@
 # gate-level simulation does.
 #
 # The cell declares $setuphold and $recrem with timestamp/timecheck
-# conditions, which upstream iverilog rejects under -gspecify.
-# images/iverilog/patches/timing-check-delayed-signals.patch makes them a
-# warning, this test fails without it.
+# conditions, which iverilog rejected under -gspecify until PR 1883
+# (steveicarus/iverilog#1871). Since then they are a warning.
 
 if [ -z "${RAND}" ]; then
     RAND=$(hexdump -v -e '/1 "%02x"' -n4 < /dev/urandom)
