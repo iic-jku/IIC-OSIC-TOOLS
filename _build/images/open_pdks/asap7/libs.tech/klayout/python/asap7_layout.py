@@ -12,7 +12,7 @@ match the parameters w and l of the models. The pins are labeled.
       between two dummy gates, after the transistors of the standard cells.
       --lg is the gate length in nm (20, 24, 28, 36, 60 or 80, the gates
       keep their spacing of 34 nm). --vt 18 is the 1.8 V IO FinFET
-      {n,p}mos_18 (--lg 80, 160 or 240, gate spacing 100 nm).
+      {n,p}mos18_rvt (--lg 80, 160 or 240, gate spacing 100 nm).
       All gates are tied on M1 (pin G). With --strap the sources and the
       drains are tied on M2 (pins S and D), otherwise every source and
       drain ends on its own M1 strip. --cap ties all of them to one pin B,

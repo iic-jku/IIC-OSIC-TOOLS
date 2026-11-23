@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """KLayout PCell library ASAP7: one PCell per device with a simulation model.
 
-  nmos, pmos   FinFET {n,p}mos_{lvt,rvt,slvt,sram} and the IO FinFET {n,p}mos_18
+  nmos, pmos   FinFET {n,p}mos_{lvt,rvt,slvt,sram} and the IO FinFET {n,p}mos18_rvt
   ncap, pcap   MOS capacitor of the symbols ncap_* and pcap_*
   ptap, ntap   substrate contact for NMOS rows, well contact for PMOS rows
                (no model: the body of a FinFET is a terminal of its model)
@@ -65,7 +65,9 @@ class MOS(DevicePCell):
             self.param("strap", self.TypeBoolean, "Tie sources and drains on M2", default=False)
 
     def display_text_impl(self):
-        return f"{self.kind}{'cap' if self.cap else 'mos'}_{self.vt} l={self.l}n nfin={self.nfin} m={self.nf}"
+        # vt "18" is the IO FinFET {n,p}mos18_rvt
+        name = f"{self.kind}{'cap' if self.cap else 'mos'}" + ("18_rvt" if self.vt == "18" else f"_{self.vt}")
+        return f"{name} l={self.l}n nfin={self.nfin} m={self.nf}"
 
     def coerce_parameters_impl(self):
         self.nfin = max(1, self.nfin)

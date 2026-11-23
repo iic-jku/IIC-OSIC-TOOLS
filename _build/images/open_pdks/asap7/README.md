@@ -29,7 +29,7 @@ The ASAP7 Calibre decks are licensed for academic use only and may not be redist
 | `libs.tech/verilog-a/bsimcmg` | BSIM-CMG 111.2.1 Verilog-A source and ECL-2.0 text | VA-Models |
 | `libs.tech/klayout` | Technology (`tech/asap7.lyt`, `.lyp`, DEF layer map `.map`), DRC deck `drc/asap7.lydrc`, LVS deck `lvs/asap7.lvs`, passive device parameters `tech/asap7_passives.json`, PCell library `python/asap7_pcells.py` (registered by `pymacros/asap7_pcells.lym`), layout generator `python/asap7_layout.py`, routed example `python/asap7_example.py` | local, ASAP7_for_KLayout |
 | `libs.tech/librelane` | LibreLane PDK and standard-cell configuration, example design | local, after ORFS |
-| `libs.tech/xschem` | Symbols `asap7/{n,p}mos_{lvt,rvt,slvt,sram}.sym`, `{n,p}mos_18.sym`, `ndio.sym`, `pdio.sym`, `pnp.sym`, `{n,p}cap_{lvt,rvt,slvt,sram}.sym`, `rm.sym`, `rtfr.sym`, `cmom.sym`, testbenches in `asap7_tests` | local |
+| `libs.tech/xschem` | Symbols `asap7/{n,p}mos_{lvt,rvt,slvt,sram}.sym`, `{n,p}mos18_rvt.sym`, `ndio.sym`, `pdio.sym`, `pnp.sym`, `{n,p}cap_{lvt,rvt,slvt,sram}.sym`, `rm.sym`, `rtfr.sym`, `cmom.sym`, testbenches in `asap7_tests` | local |
 | `libs.tech/pygmid` | `techsweep_asap7.py`, gm/ID lookup tables for pygmid from ngspice in the `.mat` layout of the analog-circuit-design course | local |
 | `libs.doc` | Design rule manual `asap7_drm_201207a.pdf` | `asap7_pdk_r1p7` |
 
@@ -49,11 +49,11 @@ ASAP7 draws every gate at 20 nm, and the model cards are fitted at that length o
 
 ### IO FinFETs
 
-ASAP7 has core devices for 0.7 V only and no IO library. `nmos_18` and `pmos_18` are 1.8 V FinFETs with a thick gate oxide, **added by IIC-OSIC-TOOLS**: same terminals and parameters as the core devices, `l` of **80 (default), 160 or 240 nm**, a gate spacing of 100 nm, and the new layer `TG` (GDS 123/0) over the device.
+ASAP7 has core devices for 0.7 V only and no IO library. `nmos18_rvt` and `pmos18_rvt` are 1.8 V FinFETs with a thick gate oxide, **added by IIC-OSIC-TOOLS**: same terminals and parameters as the core devices, `l` of **80 (default), 160 or 240 nm**, a gate spacing of 100 nm, and the new layer `TG` (GDS 123/0) over the device.
 
 * The targets are the 1.8 V thick-gate transistors of the Intel 22 nm SoC process (Jan et al., IEDM 2012, table 1): 80 nm minimum gate length on a 180 nm gate pitch, 0.92 and 0.80 mA/µm at 1.8 V and 10 pA/µm off current. The models give 0.91 and 0.81 mA/µm (per µm of fin perimeter, 70.5 nm per fin) at about 10 pA/µm, with a threshold of 0.45 V.
 * The cards are the RVT cards with a 3.2 nm oxide (`eot`, `toxp`, `toxg`), the work function shifted by 0.15 V, `ptwg` set to 0 (the core fit of the saturation current at 0.7 V cuts the current at 1.8 V to a sixth) and a smaller gate-induced drain leakage. They are not fitted to silicon of a 7 nm process.
-* 160 nm is the longest 22FFL gate, 240 nm stays below the longest published FinFET gate found (280 nm, the 3.3 V minimum of the 22 nm process). The gain of `nmos_18` at VGS = VDS = 0.9 V is 34, 60 and 86 at 80, 160 and 240 nm, the PMOS reaches 16 to 28.
+* 160 nm is the longest 22FFL gate, 240 nm stays below the longest published FinFET gate found (280 nm, the 3.3 V minimum of the 22 nm process). The gain of `nmos18_rvt` at VGS = VDS = 0.9 V is 34, 60 and 86 at 80, 160 and 240 nm, the PMOS reaches 16 to 28.
 * There are no IO cells. A plain pad plate is among the PCells.
 
 ### Junction diodes and vertical PNP
@@ -123,7 +123,7 @@ Every device with a model has a PCell in the KLayout library `ASAP7`, which KLay
 
 | PCell | Device | Parameters |
 |---|---|---|
-| `nmos`, `pmos` | `{n,p}mos_{lvt,rvt,slvt,sram}`, `{n,p}mos_18` | `vt`, `l`, `nfin`, `nf` (fingers, the `m` of the model), `strap` |
+| `nmos`, `pmos` | `{n,p}mos_{lvt,rvt,slvt,sram}`, `{n,p}mos18_rvt` | `vt`, `l`, `nfin`, `nf` (fingers, the `m` of the model), `strap` |
 | `ncap`, `pcap` | MOS capacitor (`ncap_*`, `pcap_*` symbols) | `vt`, `l`, `nfin`, `nf` |
 | `ptap`, `ntap` | substrate contact for NMOS rows, well contact for PMOS rows | `nfin` |
 | `ndio`, `pdio`, `pnp` | junction diodes and vertical PNP, drawn with their body taps | `nfin`, `m` |
@@ -141,7 +141,7 @@ Every device with a model has a PCell in the KLayout library `ASAP7`, which KLay
 ```bash
 python3 $PDK_ROOT/asap7/libs.tech/klayout/python/asap7_layout.py mos --type n --vt rvt --nfin 3 --nf 2 --strap -o nmos.gds
 python3 $PDK_ROOT/asap7/libs.tech/klayout/python/asap7_layout.py mos --type n --nfin 3 --tap -o ptap.gds
-python3 $PDK_ROOT/asap7/libs.tech/klayout/python/asap7_layout.py mos --type p --vt 18 --lg 160 --nfin 4 --nf 2 -o pmos_18.gds
+python3 $PDK_ROOT/asap7/libs.tech/klayout/python/asap7_layout.py mos --type p --vt 18 --lg 160 --nfin 4 --nf 2 -o pmos18_rvt.gds
 python3 $PDK_ROOT/asap7/libs.tech/klayout/python/asap7_layout.py pnp --nfin 4 -m 8 -o pnp.gds
 python3 $PDK_ROOT/asap7/libs.tech/klayout/python/asap7_layout.py rm -n 2 -w 0.018 -l 1.8 -o rm2.gds
 python3 $PDK_ROOT/asap7/libs.tech/klayout/python/asap7_layout.py rtfr -w 0.108 -l 1 -o rtfr.gds
