@@ -70,6 +70,8 @@ Use `DRY_RUN=1` on any of them to print the commands without executing them.
 
 When pushing (the default), the scripts call `bake-push.sh`. It runs one bake per platform in parallel, each on the builder node of its platform, which pushes its images and cache to `<registry>/<image>-<arch>` (e.g. `iic-osic-tools-amd64:tool-xschem-latest`). After both succeed, it merges each tag with `docker buildx imagetools create` into the multi-arch `<registry>/<image>:<tag>`, and the final image into every tag built from `DOCKER_PREFIXES` and `DOCKER_TAGS`. With `DOCKER_LOAD` set, the scripts run a single bake with `--load` as before.
 
+The console shows a summary per arch: a timestamped line when a `RUN` step starts and when it ends, nothing for cached steps, and the errors. The full output of each bake goes to `bake-<arch>.log` in `BAKE_LOG_DIR` (default `/tmp/iic-osic-tools-build/<date-time>`), and a failed build prints the last 40 lines of its log. `BAKE_VERBOSE=1` prints the full output instead.
+
 ##### Build variables
 
 These are read from the environment by `docker buildx bake`:

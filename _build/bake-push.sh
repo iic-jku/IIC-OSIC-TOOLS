@@ -31,7 +31,8 @@
 # Environment: BUILDER_NAME, PLATFORMS (default linux/amd64,linux/arm64),
 # REGISTRY and IMAGE (defaults as in docker-bake.hcl), FINAL_TAGS (comma
 # separated full refs for image-full, required when image-full is built),
-# DRY_RUN.
+# BAKE_LOG_DIR (where the full build logs go), BAKE_VERBOSE (any value prints
+# the full build output instead of the summary), DRY_RUN.
 
 set -e
 set -o pipefail
@@ -70,6 +71,36 @@ if [ "$BUILDS_FULL" = 1 ] && [ -z "${FINAL_TAGS}" ]; then
 fi
 echo "[INFO] Building ${TARGETS[*]} for ${ARCHS[*]}"
 
+BAKE_LOG_DIR="${BAKE_LOG_DIR:-${TMPDIR:-/tmp}/iic-osic-tools-build/$(date +%Y%m%d-%H%M%S)}"
+mkdir -p "${BAKE_LOG_DIR}"
+echo "[INFO] Full build logs: ${BAKE_LOG_DIR}/bake-<arch>.log"
+
+# Summary of the plain progress output: a line when a RUN step starts and
+# when it ends, nothing for cached steps, plus the errors. A step header
+# is buffered until its next line shows whether the step is CACHED.
+summarize() {
+	awk -v arch="$1" '
+	function out(msg) { printf "[%s %s] %s\n", arch, strftime("%H:%M:%S"), msg; fflush() }
+	function short(t) { return length(t) > 110 ? substr(t, 1, 107) "..." : t }
+	/^#[0-9]+ \[/ {
+		id = $1; t = substr($0, length(id) + 2)
+		if (t ~ /\] RUN / && !(id in hdr)) { hdr[id] = short(t); started[id] = 0 }
+		next
+	}
+	/^#[0-9]+ / {
+		id = $1
+		if (!(id in hdr)) { if ($2 == "ERROR:") out("ERROR " substr($0, length(id) + 2)); next }
+		if ($2 == "CACHED") { delete hdr[id]; next }
+		if ($2 == "...") next
+		if ($2 == "DONE") { out("done " $3 "  " hdr[id]); delete hdr[id]; next }
+		if ($2 == "ERROR:") { out("FAILED " hdr[id]); out(substr($0, length(id) + 2)); delete hdr[id]; next }
+		if (!started[id]) { out("start  " hdr[id]); started[id] = 1 }
+		next
+	}
+	/^ERROR:|^error:/ { out($0) }
+	'
+}
+
 # One bake per platform, in parallel. Each runs on the builder node of its
 # platform. image-full has no default tag, so it gets a per-arch "latest".
 PIDS=()
@@ -81,7 +112,14 @@ for i in "${!ARCHS[@]}"; do
 	fi
 	(
 		export IMAGE="${IMAGE}-${a}" PLATFORMS="${P_PLATS[i]}"
-		${ECHO_IF_DRY_RUN} docker buildx bake --builder "${BUILDER_NAME}" --push "${FULL_TAG_ARG[@]}" "$@" 2>&1 | sed -u "s/^/[${a}] /"
+		log="${BAKE_LOG_DIR}/bake-${a}.log"
+		if [ -n "${DRY_RUN}" ] || [ -n "${BAKE_VERBOSE}" ]; then
+			${ECHO_IF_DRY_RUN} docker buildx bake --builder "${BUILDER_NAME}" --progress=plain --push "${FULL_TAG_ARG[@]}" "$@" 2>&1 | tee "$log" | sed -u "s/^/[${a}] /"
+		elif ! docker buildx bake --builder "${BUILDER_NAME}" --progress=plain --push "${FULL_TAG_ARG[@]}" "$@" 2>&1 | tee "$log" | summarize "$a"; then
+			echo "[ERROR] The ${a} build failed. Last lines of ${log}:"
+			tail -n 40 "$log" | sed "s/^/[${a}] /"
+			exit 1
+		fi
 	) &
 	PIDS+=($!)
 done
@@ -101,7 +139,12 @@ merge() {
 		srcs+=("${REGISTRY}/${IMAGE}-${a}:${tag}")
 	done
 	echo "[INFO] Merging ${dest}"
-	${ECHO_IF_DRY_RUN} docker buildx imagetools create --builder "${BUILDER_NAME}" --tag "${dest}" "${srcs[@]}"
+	if [ -n "${DRY_RUN}" ]; then
+		echo "$ docker buildx imagetools create --builder ${BUILDER_NAME} --tag ${dest} ${srcs[*]}"
+	elif ! docker buildx imagetools create --builder "${BUILDER_NAME}" --tag "${dest}" "${srcs[@]}" >> "${BAKE_LOG_DIR}/merge.log" 2>&1; then
+		echo "[ERROR] Merging ${dest} failed, see ${BAKE_LOG_DIR}/merge.log"
+		exit 1
+	fi
 }
 for t in "${TARGETS[@]}"; do
 	if [ "$t" = "image-full" ]; then
