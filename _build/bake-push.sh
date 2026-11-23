@@ -37,8 +37,16 @@
 set -e
 set -o pipefail
 
+# Colors on a terminal only (and not with NO_COLOR): white for info, red for
+# errors, green for a finished step
+if [ -t 1 ] && [ -z "${NO_COLOR}" ]; then
+	C_INFO=$'\e[97m' C_ERR=$'\e[91m' C_OK=$'\e[92m' C_RST=$'\e[0m'
+fi
+info() { echo "${C_INFO}[INFO] $*${C_RST}"; }
+error() { echo "${C_ERR}[ERROR] $*${C_RST}"; }
+
 if [ $# -eq 0 ]; then
-	echo "[ERROR] No target specified. Usage: $0 [bake options] <target|group>..."
+	error "No target specified. Usage: $0 [bake options] <target|group>..."
 	exit 1
 fi
 
@@ -66,14 +74,14 @@ for t in "${TARGETS[@]}"; do
 	[ "$t" = "image-full" ] && BUILDS_FULL=1
 done
 if [ "$BUILDS_FULL" = 1 ] && [ -z "${FINAL_TAGS}" ]; then
-	echo "[ERROR] image-full is built, but FINAL_TAGS is not set."
+	error "image-full is built, but FINAL_TAGS is not set."
 	exit 1
 fi
-echo "[INFO] Building ${TARGETS[*]} for ${ARCHS[*]}"
+info "Building ${TARGETS[*]} for ${ARCHS[*]}"
 
 BAKE_LOG_DIR="${BAKE_LOG_DIR:-${TMPDIR:-/tmp}/iic-osic-tools-build/$(date +%Y%m%d-%H%M%S)}"
 mkdir -p "${BAKE_LOG_DIR}"
-echo "[INFO] Full build logs: ${BAKE_LOG_DIR}/bake-<arch>.log"
+info "Full build logs: ${BAKE_LOG_DIR}/bake-<arch>.log"
 
 # Summary of the plain progress output: a line when a RUN step starts and
 # when it ends, nothing for cached steps, plus the errors. A step header
@@ -81,8 +89,8 @@ echo "[INFO] Full build logs: ${BAKE_LOG_DIR}/bake-<arch>.log"
 # ref that does not exist yet (first build of an arch, a GCed cache) is only
 # a warning in BuildKit, so it is left out.
 summarize() {
-	awk -v arch="$1" '
-	function out(msg) { printf "[%s %s] %s\n", arch, strftime("%H:%M:%S"), msg; fflush() }
+	awk -v arch="$1" -v ci="${C_INFO}" -v ce="${C_ERR}" -v co="${C_OK}" -v cr="${C_RST}" '
+	function out(msg, c) { printf "%s[%s %s] %s%s\n", c, arch, strftime("%H:%M:%S"), msg, cr; fflush() }
 	function short(t) { return length(t) > 110 ? substr(t, 1, 107) "..." : t }
 	/failed to configure registry cache importer/ { next }
 	/^#[0-9]+ \[/ {
@@ -92,15 +100,15 @@ summarize() {
 	}
 	/^#[0-9]+ / {
 		id = $1
-		if (!(id in hdr)) { if ($2 == "ERROR:") out(substr($0, length(id) + 2)); next }
+		if (!(id in hdr)) { if ($2 == "ERROR:") out(substr($0, length(id) + 2), ce); next }
 		if ($2 == "CACHED") { delete hdr[id]; next }
 		if ($2 == "...") next
-		if ($2 == "DONE") { out("done " $3 "  " hdr[id]); delete hdr[id]; next }
-		if ($2 == "ERROR:") { out("FAILED " hdr[id]); out(substr($0, length(id) + 2)); delete hdr[id]; next }
-		if (!started[id]) { out("start  " hdr[id]); started[id] = 1 }
+		if ($2 == "DONE") { out("done " $3 "  " hdr[id], co); delete hdr[id]; next }
+		if ($2 == "ERROR:") { out("FAILED " hdr[id], ce); out(substr($0, length(id) + 2), ce); delete hdr[id]; next }
+		if (!started[id]) { out("start  " hdr[id], ci); started[id] = 1 }
 		next
 	}
-	/^ERROR:|^error:/ { out($0) }
+	/^ERROR:|^error:/ { out($0, ce) }
 	'
 }
 
@@ -119,7 +127,7 @@ for i in "${!ARCHS[@]}"; do
 		if [ -n "${DRY_RUN}" ] || [ -n "${BAKE_VERBOSE}" ]; then
 			${ECHO_IF_DRY_RUN} docker buildx bake --builder "${BUILDER_NAME}" --progress=plain --push "${FULL_TAG_ARG[@]}" "$@" 2>&1 | tee "$log" | sed -u "s/^/[${a}] /"
 		elif ! docker buildx bake --builder "${BUILDER_NAME}" --progress=plain --push "${FULL_TAG_ARG[@]}" "$@" 2>&1 | tee "$log" | summarize "$a"; then
-			echo "[ERROR] The ${a} build failed. Last lines of ${log}:"
+			error "The ${a} build failed. Last lines of ${log}:"
 			tail -n 40 "$log" | sed "s/^/[${a}] /"
 			exit 1
 		fi
@@ -131,7 +139,7 @@ for pid in "${PIDS[@]}"; do
 	wait "$pid" || FAILED=1
 done
 if [ "$FAILED" = 1 ]; then
-	echo "[ERROR] The build failed for at least one platform, not merging the images."
+	error "The build failed for at least one platform, not merging the images."
 	exit 1
 fi
 
@@ -141,11 +149,11 @@ merge() {
 	for a in "${ARCHS[@]}"; do
 		srcs+=("${REGISTRY}/${IMAGE}-${a}:${tag}")
 	done
-	echo "[INFO] Merging ${dest}"
+	info "Merging ${dest}"
 	if [ -n "${DRY_RUN}" ]; then
 		echo "$ docker buildx imagetools create --builder ${BUILDER_NAME} --tag ${dest} ${srcs[*]}"
 	elif ! docker buildx imagetools create --builder "${BUILDER_NAME}" --tag "${dest}" "${srcs[@]}" >> "${BAKE_LOG_DIR}/merge.log" 2>&1; then
-		echo "[ERROR] Merging ${dest} failed, see ${BAKE_LOG_DIR}/merge.log"
+		error "Merging ${dest} failed, see ${BAKE_LOG_DIR}/merge.log"
 		exit 1
 	fi
 }
@@ -162,4 +170,4 @@ for t in "${TARGETS[@]}"; do
 		merge "${REGISTRY}/${IMAGE}:${tag}" "${tag}"
 	done
 done
-echo "[INFO] Done."
+echo "${C_OK}[INFO] Done.${C_RST}"
