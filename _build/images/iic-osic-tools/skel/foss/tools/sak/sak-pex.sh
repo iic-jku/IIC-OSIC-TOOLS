@@ -21,7 +21,7 @@
 # Usage: sak-pex.sh [-d] [-k] [-m <mode>] [-s <mode>] [-n <subcktname>] [-w <workdir>]
 #                   [-c <cthresh>] [-t <threshold>] [-r <minres>] [-y <mindelay>]
 #                   [-S <schematic>] [-R <reduction>] [-g <net>] <cellname>
-#        -k  Use the kpex 2.5D engine (KLayout-PEX) instead of Magic
+#        -k  Use the KPEX 2.5D engine instead of Magic
 #        -m  Select PEX mode (1 = C-decoupled, 2 = C-coupled [default], 3 = full-RC)
 #        -s  Subcircuit definition (1 = include [default], 0 = no subcircuit)
 #        -n  Name of PEX subcircuit (default: <cellname>)
@@ -59,7 +59,7 @@ if [ $# -eq 0 ]; then
 	echo "       [-c <cthresh>] [-t <threshold>] [-r <minres>] [-y <mindelay>]"
 	echo "       [-S <schematic>] [-R <reduction>] [-g <net>] <cellname>"
 	echo
-	echo "       -k Use the kpex 2.5D engine (KLayout-PEX) instead of Magic"
+	echo "       -k Use the KPEX 2.5D engine instead of Magic"
 	echo "       -m Select PEX mode (1 = C-decoupled, 2 = C-coupled [default], 3 = full-RC)"
 	echo "       -s Subcircuit definition in PEX netlist (1 = include subcircuit definition [default], 0 = no subcircuit)"
 	echo "       -n Name of PEX subcircuit (default is <cellname>)"
