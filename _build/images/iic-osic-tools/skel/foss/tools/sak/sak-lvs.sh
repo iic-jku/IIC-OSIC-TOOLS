@@ -18,10 +18,14 @@
 # limitations under the License.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Usage: sak-lvs.sh [--json] [-d] [-m|-k|-b] [-w <workdir>] [-s <schematic> -l <layout> -c <cellname> | <cellname>]
+# Usage: sak-lvs.sh [--json] [-d] [-m|-k|-b] [-H] [-F <cells>] [-J <nets>]... [-W] [-w <workdir>] [-s <schematic> -l <layout> -c <cellname> | <cellname>]
 #        -m  Run Magic+Netgen LVS (default)
 #        -k  Run KLayout LVS
 #        -b  Run Magic+Netgen and KLayout LVS
+#        -H  Magic+Netgen: extract the layout hierarchically, so that Netgen compares cell by cell (a chip)
+#        -F  Magic+Netgen: comma-separated GDS cells that Magic reads flat into their parents
+#        -J  KLayout: comma-separated nets that the netlist joins into its first one, can be repeated
+#        -W  KLayout: the layout top cell is a wrapper without labels around the design (a fill wrapper)
 #        -s  Use this <schematic> (xschem .sch schematic, SPICE/CDL netlist, or Verilog netlist)
 #        -l  Use this <layout> view
 #        -c  Name of <topcell>
@@ -125,7 +129,7 @@ if [ $# -eq 0 ]; then
 	echo
 	echo "LVS script for Magic+Netgen and KLayout (ICD@JKU)"
 	echo
-	echo "Usage: $0 [--json] [-d] [-m|-k|-b] [-w <workdir>] [-s <schematic>|<netlist> -l <layout> -c <cellname> | <cellname>]"
+	echo "Usage: $0 [--json] [-d] [-m|-k|-b] [-H] [-F <cells>] [-J <nets>]... [-W] [-w <workdir>] [-s <schematic>|<netlist> -l <layout> -c <cellname> | <cellname>]"
 	echo
 	echo "       Specify <cellname> to use for schematic and layout, resolved against the"
 	echo "       current dir using default name prefixes (.sch|.spice|.spc|.cdl|.v|.mag|"
@@ -135,6 +139,13 @@ if [ $# -eq 0 ]; then
 	echo "       -m Run Magic+Netgen LVS (default, not for ics55 and asap7, which have no Magic technology)"
 	echo "       -k Run KLayout LVS"
 	echo "       -b Run Magic+Netgen and KLayout LVS"
+	echo "       -H Magic+Netgen: extract the layout hierarchically, so that Netgen compares cell by cell"
+	echo "       -F Magic+Netgen: comma-separated GDS <cells> that Magic reads flat into their parents, for cells"
+	echo "          that take an implant or well from outside (the flat mode alone does not fix those)"
+	echo "       -J KLayout: comma-separated <nets> that the netlist joins into its first one (repeatable),"
+	echo "          their port mismatch on the layout net that carries all their labels is accepted"
+	echo "       -W KLayout: the layout top cell is a wrapper without labels around the design, the port"
+	echo "          mismatches of its unnamed nets and of pad nets named <instance>.<label> are accepted"
 	echo "       -s Use this <schematic> (xschem .sch schematic, SPICE/CDL netlist, or Verilog netlist)"
 	echo "       -l Use this <layout> view"
 	echo "       -c Name of <topcell>"
@@ -153,14 +164,37 @@ RESDIR=$PWD
 CELLS_GIVEN=0
 RUN_MAGIC=1
 RUN_KLAYOUT=0
+# -H, -F, -J and -W, see the usage
+HIER=0
+FLAT_CELLS=""
+JOINS=""
+WRAPPER=0
 # format of a directly provided netlist (via -s or auto-derive): "spice" (Magic+Netgen) or "cdl" (KLayout). Stays empty for a .sch schematic, which is netlisted per engine on the fly.
 NETLIST_FORMAT=""
 
 # check flags
 # -----------
 
-while getopts "mkbs:l:w:c:d" flag; do
+while getopts "mkbs:l:w:c:dHF:J:W" flag; do
 	case $flag in
+		H)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -H is set."
+			HIER=1
+			;;
+		F)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -F is set to <$OPTARG>."
+			FLAT_CELLS=$OPTARG
+			;;
+		J)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -J is set to <$OPTARG>."
+			# one group per line
+			JOINS="${JOINS:+$JOINS
+}$OPTARG"
+			;;
+		W)
+			[ $DEBUG -eq 1 ] && echo "[INFO] flag -W is set."
+			WRAPPER=1
+			;;
 		m)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -m is set."
 			RUN_MAGIC=1
@@ -473,6 +507,22 @@ if [ "$SPICE_MODE" -eq 1 ] && [ "$NETLIST_FORMAT" = "cdl" ] && [ "$RUN_MAGIC" -e
 	fi
 fi
 
+# -H and -F shape the Magic extraction, -J and -W the KLayout verdict, so each needs its engine, and -F a GDS layout
+# ----------------------------------------------------------------------------------------------
+
+if { [ "$HIER" -eq 1 ] || [ -n "$FLAT_CELLS" ]; } && [ "$RUN_MAGIC" -eq 0 ]; then
+	echo "[ERROR] -H and -F apply to Magic+Netgen LVS, which does not run!"
+	exit $ERR_NO_PARAM
+fi
+if { [ -n "$JOINS" ] || [ "$WRAPPER" -eq 1 ]; } && [ "$RUN_KLAYOUT" -eq 0 ]; then
+	echo "[ERROR] -J and -W apply to KLayout LVS, which does not run!"
+	exit $ERR_NO_PARAM
+fi
+if [ -n "$FLAT_CELLS" ] && [ "$GDS_MODE" -eq 0 ]; then
+	echo "[ERROR] -F needs a GDS layout (got <$CELL_LAY>)!"
+	exit $ERR_UNKNOWN_FILE
+fi
+
 # define useful variables
 # -----------------------
 
@@ -633,6 +683,17 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 			echo "load ${CELL_LAY}"
 		} >> "$EXT_SCRIPT"
 	else
+		# -F: Magic sets the device types of a cell when it reads the cell, so a cell that takes an implant or well from its parent or a neighbour extracts wrong.
+		# The flatten below comes after the read and does not help, gds flatglob reads the cell flat into its parents.
+		# Each name is Tcl source in the script, so it is braced (gds flatglob takes a glob pattern), and the shell must not expand the pattern either.
+		set -f
+		_ifs=$IFS
+		IFS=,
+		for _cell in $FLAT_CELLS; do
+			[ -n "$_cell" ] && printf 'gds flatglob {%s}\n' "$_cell" >> "$EXT_SCRIPT"
+		done
+		IFS=$_ifs
+		set +f
 		# we read a .gds/.gds.gz view. Magic loads the cell named $TOPCELL. If the GDS has no such top cell it would silently load an empty cell and produce a bogus LVS. So check for it first and, if missing, write the found top cells to a marker and quit before extracting.
 		{
 			echo "gds read $CELL_LAY"
@@ -653,7 +714,8 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 	# We flatten into a uniquely-named cell (${TOPCELL}_flat) to avoid the "flatten <cell> into <cell>" infinite-loop crash noted in that issue.
 	# Note 2: This assumes the loaded top cell is named exactly "$TOPCELL". When using -l/-c with a layout whose internal cellname differs, the delete/rename below would not match that cell.
 	# Note 3: The flatten is skipped in Verilog mode to preserve hierarchical standard-cell matching: a full flatten would force netgen to flatten the schematic side too, which is slow on large digital designs and loses subcell error localization.
-	if [ "$VERILOG_MODE" -eq 0 ]; then
+	# Note 4: -H skips it as well. Netgen then compares cell by cell, which a chip of several hundred thousand devices needs to finish.
+	if [ "$VERILOG_MODE" -eq 0 ] && [ "$HIER" -eq 0 ]; then
 		{
 			echo "flatten ${TOPCELL}_flat"
 			echo "load ${TOPCELL}_flat"
@@ -669,9 +731,15 @@ if [ "$RUN_MAGIC" -eq 1 ]; then
 		echo "extract no coupling"
 		echo "extract no resistance"
 		echo "extract no length"
+	} >> "$EXT_SCRIPT"
+	# -H: labels that repeat on separate nets of a cell get unique names, except the ports of the top cell (several pads of one supply), as LibreLane's MAGIC_EXT_UNIQUE does
+	[ "$HIER" -eq 1 ] && echo "extract unique notopports" >> "$EXT_SCRIPT"
+	{
 		echo "extract all"
 		echo "ext2spice lvs"
 	} >> "$EXT_SCRIPT"
+	# -H: the top cell as a .subckt also when it has no ports (a fill wrapper). Otherwise ext2spice writes it as bare top-level statements, and Netgen names it after a cell inside it.
+	[ "$HIER" -eq 1 ] && echo "ext2spice subcircuit top on" >> "$EXT_SCRIPT"
 
 	if [ "$VERILOG_MODE" -eq 1 ]; then
 		# this is needed for the LVS in netgen because the standard cells
@@ -768,6 +836,72 @@ fi
 # KLayout LVS (per PDK deck or run_lvs.py wrapper)
 # ============================================================================
 
+# Verdict of the KLayout report <$1> for -J and -W, read from its cross-reference section (the short format the decks write).
+# Every circuit pair has to match, and every error that KLayout records inside a pair (it still counts the pair as matched) has to be a port mismatch that -J or -W accepts.
+# Prints what fails and returns 1 if anything does.
+klayout_xref_verdict() {
+	python3 - "$1" "$WRAPPER" "$JOINS" <<'PYEOF'
+import re
+import sys
+
+path, wrapper = sys.argv[1], sys.argv[2] == "1"
+joins = [[n.strip().upper() for n in g.split(",")] for g in sys.argv[3].splitlines() if g.strip()]
+
+
+def accepted(msg):
+    m = re.match(r"Port mismatch '([^']*)' vs\. '([^']*)'$", msg)
+    if not m:
+        return None
+    lay, ref = m.group(1).split(","), m.group(2).upper()
+    if wrapper:
+        # KLayout flattens the design into the wrapper: inner nets get no name, pad nets <instance>.<label>
+        lay = [re.sub(r"^\$\d+\.", "", n) for n in lay]
+        named = [n for n in lay if not re.fullmatch(r"\$I?\d+", n)]
+        if not named:
+            return "unnamed nets inside the wrapper"
+        if all(n.upper() == ref for n in named):
+            return "pad nets the wrapper names <instance>.<label>, with the label of the netlist"
+        lay = named
+    for group in joins:
+        if {n.upper() for n in lay} == set(group) and ref == group[0]:
+            return "nets joined by -J " + ",".join(group)
+    return None
+
+
+status = {"1": "Match", "W": "MatchWithWarning", "0": "NoMatch", "X": "Mismatch", "S": "Skipped"}
+bad, ok, pairs, circuit, xref = [], {}, 0, None, False
+with open(path, encoding="utf-8", errors="replace") as fh:
+    for ln in fh:
+        if ln.startswith("Z("):
+            xref = True
+        elif xref and re.match(r"\s*M\(E\b", ln):
+            e = re.search(r"B\('((?:[^'\\]|\\.)*)'\)", ln)
+            msg = re.sub(r"\\(.)", r"\1", e.group(1)) if e else ln.strip()
+            why = accepted(msg) if e else None
+            if why:
+                ok[why] = ok.get(why, 0) + 1
+            else:
+                bad.append("%s: %s" % (circuit, msg))
+        elif xref:
+            m = re.match(r" X\((\(\)|\S+) (\(\)|\S+) (\S)", ln)
+            if m:
+                circuit, pairs = m.group(1), pairs + 1
+                st = status.get(m.group(3), m.group(3))
+                if st not in ("Match", "MatchWithWarning"):
+                    bad.append("%s / %s: %s" % (m.group(1), m.group(2), st))
+if not pairs:
+    print("[ERROR] No circuit pairs found in <%s>!" % path)
+    sys.exit(1)
+for why, n in sorted(ok.items()):
+    print("[INFO] KLayout: %d accepted port mismatches, %s." % (n, why))
+for b in bad[:40]:
+    print("[INFO] KLayout: not matched: " + b)
+if len(bad) > 40:
+    print("[INFO] KLayout: and %d more, see the report." % (len(bad) - 40))
+sys.exit(1 if bad else 0)
+PYEOF
+}
+
 KLAYOUT_OK=1
 if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	echo "[INFO] Run KLayout LVS..."
@@ -856,8 +990,22 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 	fi
 	JSON_REPORTS="$JSON_REPORTS
 $(find "$KLAYOUT_RUNDIR" -name '*.lvsdb' | sort)"
-	# the KLayout LVS decks print this exact line on a match (same string the IHP wrapper parses)
-	grep -r -q "Congratulations! Netlists match." "$KLAYOUT_RUNDIR" || KLAYOUT_OK=0
+	if [ -z "$JOINS" ] && [ "$WRAPPER" -eq 0 ]; then
+		# the KLayout LVS decks print this exact line on a match (same string the IHP wrapper parses)
+		grep -r -q "Congratulations! Netlists match." "$KLAYOUT_RUNDIR" || KLAYOUT_OK=0
+	else
+		# -J and -W: the deck fails the comparison on the port mismatches they accept, so the verdict comes from the report itself
+		_lvsdbs=$(find "$KLAYOUT_RUNDIR" -name '*.lvsdb' | sort)
+		set -f
+		_ifs=$IFS
+		IFS='
+'
+		for _lvsdb in $_lvsdbs; do
+			klayout_xref_verdict "$_lvsdb" || KLAYOUT_OK=0
+		done
+		IFS=$_ifs
+		set +f
+	fi
 fi
 
 # the decompressed layout is no longer needed after extraction

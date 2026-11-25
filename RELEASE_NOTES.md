@@ -2,6 +2,11 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2026.12
+
+* [Update] `sak-lvs.sh -H` extracts the layout hierarchically for Magic+Netgen, so that Netgen compares a chip cell by cell, and writes a top cell without ports (a fill wrapper) as a subcircuit. `-F <cells>` reads cells flat that take an implant or well from their parent or a neighbour, which the flat mode alone does not fix
+* [Update] `sak-lvs.sh -J <nets>` and `-W` take the KLayout verdict from the report and accept the port mismatches of nets the netlist joins (core and IO ground) and of a top cell without labels around the design (a fill wrapper), which the decks count as a failed comparison
+
 ## 2026.11
 
 * [Adding] [`prep-ic`](https://github.com/iic-jku/prep-ic), a GUI and Python API to plan the pad ring, pinout and early floorplan of an IC

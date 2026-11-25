@@ -243,6 +243,34 @@ mutate rewire "$D/invchain.v" "$W6/rewired/invchain.v" 's/\.A(n1)/.A(A)/' &&
 check "ihp: -m SPICE + hierarchical GDS"    0 "$SAK" -m -s "$D/invchain.spice" -l "$D/invchain.gds" -c invchain -w "$W6"
 check "ihp: -k CDL + hierarchical GDS"      0 "$SAK" -k -s "$D/invchain.cdl"   -l "$D/invchain.gds" -c invchain -w "$W6"
 
+# -H: Magic keeps the hierarchy, Netgen compares cell by cell
+check "ihp: -m -H SPICE + hierarchical GDS" 0 "$SAK" -m -H -s "$D/invchain.spice" -l "$D/invchain.gds" -c invchain -w "$W6/hier"
+mutate swap "$D/invchain.spice" "$W6/hier_swap.spice" &&
+    check "ihp: -m -H with drain and gate swapped" 1 "$SAK" -m -H -s "$W6/hier_swap.spice" -l "$D/invchain.gds" -c invchain -w "$W6/hier_swap"
+# -F: the pSD implant of the inverters sits in the top cell. Magic sets the device types per cell while it reads the GDS,
+# so the inverter extracts wrong hierarchically and also in the flat mode, unless -F reads it flat. KLayout needs nothing.
+mutate rename "$D/invchain.spice" "$W6/invchain_psd.spice" 's/^\.subckt invchain /.subckt invchain_psd /' &&
+mutate rename "$D/invchain.cdl" "$W6/invchain_psd.cdl" 's/^\.SUBCKT invchain /.SUBCKT invchain_psd /' && {
+    check "ihp: -m -H implant in the parent fails"  1 "$SAK" -m -H -s "$W6/invchain_psd.spice" -l "$D/invchain_psd.gds" -c invchain_psd -w "$W6/psd_h"
+    check "ihp: -m implant in the parent fails"     1 "$SAK" -m    -s "$W6/invchain_psd.spice" -l "$D/invchain_psd.gds" -c invchain_psd -w "$W6/psd_f"
+    check "ihp: -m -H -F implant in the parent"     0 "$SAK" -m -H -F inv_psd -s "$W6/invchain_psd.spice" -l "$D/invchain_psd.gds" -c invchain_psd -w "$W6/psd_hf"
+    check "ihp: -m -F implant in the parent"        0 "$SAK" -m -F inv_psd    -s "$W6/invchain_psd.spice" -l "$D/invchain_psd.gds" -c invchain_psd -w "$W6/psd_ff"
+    check "ihp: -k implant in the parent"           0 "$SAK" -k -s "$W6/invchain_psd.cdl" -l "$D/invchain_psd.gds" -c invchain_psd -w "$W6/psd_k"
+}
+# -J: the VSS strap carries a second label VSS2, the netlist has one port VSS
+mutate rename "$D/invchain.cdl" "$W6/invchain_joined.cdl" 's/^\.SUBCKT invchain /.SUBCKT invchain_joined /' && {
+    check "ihp: -k joined labels fail without -J"   1 "$SAK" -k -s "$W6/invchain_joined.cdl" -l "$D/invchain_joined.gds" -c invchain_joined -w "$W6/join"
+    check "ihp: -k -J VSS,VSS2"                     0 "$SAK" -k -J VSS,VSS2 -s "$W6/invchain_joined.cdl" -l "$D/invchain_joined.gds" -c invchain_joined -w "$W6/join_ok"
+    check "ihp: -k -J names the netlist net first"  1 "$SAK" -k -J VSS2,VSS -s "$W6/invchain_joined.cdl" -l "$D/invchain_joined.gds" -c invchain_joined -w "$W6/join_order"
+}
+# -W: invchain one level down in a top cell without labels, the netlist is the chain under the wrapper's name
+mutate rename "$D/invchain.cdl" "$W6/invchain_wrap.cdl" 's/^\.SUBCKT invchain A Y VDD VSS$/.SUBCKT invchain_wrap/; /PININFO/d' &&
+mutate swapnames "$W6/invchain_wrap.cdl" "$W6/invchain_wrap_swap.cdl" 's/ A / Y_tmp /g; s/ Y / A /g; s/ Y_tmp / Y /g' && {
+    check "ihp: -k wrapper fails without -W"        1 "$SAK" -k -s "$W6/invchain_wrap.cdl" -l "$D/invchain_wrap.gds" -c invchain_wrap -w "$W6/wrap"
+    check "ihp: -k -W wrapper"                      0 "$SAK" -k -W -s "$W6/invchain_wrap.cdl" -l "$D/invchain_wrap.gds" -c invchain_wrap -w "$W6/wrap_ok"
+    check "ihp: -k -W with two pad names swapped"   1 "$SAK" -k -W -s "$W6/invchain_wrap_swap.cdl" -l "$D/invchain_wrap.gds" -c invchain_wrap -w "$W6/wrap_swap"
+}
+
 # verdict: a stand-in for netgen writes a given report, for results an inverter cannot provoke
 W7=$WORKDIR/ihp_verdict
 mkdir -p "$W7/bin"

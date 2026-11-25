@@ -6,6 +6,8 @@
 - input variants: SPICE and CDL netlists, `.gds`/`.mag`/`.klay.gds` layouts, gzipped layouts, positional auto-derive (resolved against the current dir), multi-level `-w` work dirs, `-d` debug
 - xschem schematic (`inv.sch`) in every PDK with `-b`: the schematic is netlisted once per engine and both engines run. With the NMOS width doubled in the schematic, each engine has to fail. In the IHP PDKs this is the path on which the symbols write the Monte Carlo switch `mm_ok=1` into the SPICE netlist, in sky130A the path with subcircuit calls and W and L in micrometers
 - Verilog netlist with a hierarchical layout of two standard cells (ihp-sg13g2), and the same layout against netlists on transistor level
+- `-H` on that layout, with a correct netlist and with drain and gate swapped. `-F` on a copy whose inverters take their pSD implant from the top cell: Magic extracts them wrong with `-H` and also in the flat mode, and right with `-F`. KLayout needs nothing
+- `-J` on a copy with a second label `VSS2` on the VSS strap (fails without `-J`, passes with `-J VSS,VSS2`, fails with `-J VSS2,VSS`), and `-W` on the chain inside a top cell without labels (fails without `-W`, passes with it, fails with two pad names swapped in the netlist)
 - engine selection: `-b` fallback behavior, last-flag-wins
 - error classes: a netlist with one deliberate error must fail with exit 1 (see below)
 - verdict: every result Netgen can write after `Final result:` is judged correctly, only `Circuits match uniquely.` without property errors is a pass
@@ -54,8 +56,9 @@ PDKs (`libs.ref/<stdcell-lib>/{gds,cdl,spice}`):
 - `inv.gds` (every PDK): `<cell>.gds` with the top cell renamed to `inv`. A schematic named like a standard cell would get the standard cell library appended to its netlist
 - `invchain.gds` (ihp-sg13g2): two `sg13g2_inv_1` instances in series, connected with a Metal1 strap, with the pins labelled in the top cell
 - `invchain.v`, `invchain.spice`, `invchain.cdl` (ihp-sg13g2): the netlists for `invchain.gds`, on standard cell level (Verilog) and on transistor level
+- `invchain_psd.gds`, `invchain_joined.gds`, `invchain_wrap.gds` (ihp-sg13g2): `invchain` with the pSD implant of the inverters in the top cell, with a second label `VSS2` on the VSS strap, and one level down in a top cell without labels. Their netlists are written at runtime from `invchain.spice` and `invchain.cdl`
 
-`make_layouts.py` writes `inv.gds` and `invchain.gds` from the `<cell>.gds` files: `python3 make_layouts.py . <output dir>`.
+`make_layouts.py` writes `inv.gds` and the `invchain*.gds` files from the `<cell>.gds` files: `python3 make_layouts.py . <output dir>`.
 
 ## Known issues
 
