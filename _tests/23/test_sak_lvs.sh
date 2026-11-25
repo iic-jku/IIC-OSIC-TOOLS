@@ -262,6 +262,7 @@ mutate rename "$D/invchain.cdl" "$W6/invchain_joined.cdl" 's/^\.SUBCKT invchain 
     check "ihp: -k joined labels fail without -J"   1 "$SAK" -k -s "$W6/invchain_joined.cdl" -l "$D/invchain_joined.gds" -c invchain_joined -w "$W6/join"
     check "ihp: -k -J VSS,VSS2"                     0 "$SAK" -k -J VSS,VSS2 -s "$W6/invchain_joined.cdl" -l "$D/invchain_joined.gds" -c invchain_joined -w "$W6/join_ok"
     check "ihp: -k -J names the netlist net first"  1 "$SAK" -k -J VSS2,VSS -s "$W6/invchain_joined.cdl" -l "$D/invchain_joined.gds" -c invchain_joined -w "$W6/join_order"
+    check "ihp: -k a repeated -J reads every group" 0 "$SAK" -k -J A,B -J VSS,VSS2 -s "$W6/invchain_joined.cdl" -l "$D/invchain_joined.gds" -c invchain_joined -w "$W6/join_two"
 }
 # -W: invchain one level down in a top cell without labels, the netlist is the chain under the wrapper's name
 mutate rename "$D/invchain.cdl" "$W6/invchain_wrap.cdl" 's/^\.SUBCKT invchain A Y VDD VSS$/.SUBCKT invchain_wrap/; /PININFO/d' &&
@@ -269,7 +270,6 @@ mutate swapnames "$W6/invchain_wrap.cdl" "$W6/invchain_wrap_swap.cdl" 's/ A / Y_
     check "ihp: -k wrapper fails without -W"        1 "$SAK" -k -s "$W6/invchain_wrap.cdl" -l "$D/invchain_wrap.gds" -c invchain_wrap -w "$W6/wrap"
     check "ihp: -k -W wrapper"                      0 "$SAK" -k -W -s "$W6/invchain_wrap.cdl" -l "$D/invchain_wrap.gds" -c invchain_wrap -w "$W6/wrap_ok"
     check "ihp: -k -W with two pad names swapped"   1 "$SAK" -k -W -s "$W6/invchain_wrap_swap.cdl" -l "$D/invchain_wrap.gds" -c invchain_wrap -w "$W6/wrap_swap"
-    check "ihp: -k -W with a repeated -J"           0 "$SAK" -k -W -J VSS,VSS2 -J A,B -s "$W6/invchain_wrap.cdl" -l "$D/invchain_wrap.gds" -c invchain_wrap -w "$W6/wrap_j"
 }
 # -H writes a top cell without ports as a subcircuit, so Netgen finds the wrapper by its name
 { cat "$D/invchain.spice"; printf '.subckt invchain_wrap\nXchain A Y VDD VSS invchain\n.ends\n'; } > "$W6/invchain_wrap.spice"
@@ -277,15 +277,17 @@ check "ihp: -m -H wrapper without ports"            0 "$SAK" -m -H -s "$W6/invch
 # the blind spot of -W: a pad without its label is an unnamed net inside the wrapper and passes, the design cell on its own fails
 mutate rename "$D/invchain.cdl" "$W6/invchain_wrap_nolabel.cdl" 's/^\.SUBCKT invchain A Y VDD VSS$/.SUBCKT invchain_wrap_nolabel/; /PININFO/d' &&
 mutate rename "$D/invchain.cdl" "$W6/invchain_nolabel.cdl" 's/^\.SUBCKT invchain /.SUBCKT invchain_nolabel /' && {
-    check "ihp: -k -W passes a missing pad label"   0 "$SAK" -k -W -s "$W6/invchain_wrap_nolabel.cdl" -l "$D/invchain_wrap_nolabel.gds" -c invchain_wrap_nolabel -w "$W6/nolabel_w"
+    check "ihp: -k -W passes a missing pad label with a warning" 0 bash -c "'$SAK' -k -W -s '$W6/invchain_wrap_nolabel.cdl' -l '$D/invchain_wrap_nolabel.gds' -c invchain_wrap_nolabel -w '$W6/nolabel_w' > '$W6/nolabel_w.log' 2>&1 && grep -q 'pad without its label' '$W6/nolabel_w.log'"
     check "ihp: -k design cell without its label"   1 "$SAK" -k -s "$W6/invchain_nolabel.cdl" -l "$D/invchain_wrap_nolabel.gds" -c invchain_nolabel -w "$W6/nolabel_c"
 }
 # guards of the new options, and -b dropping the engine of an option
 check "guard: -H without Magic"                     3 "$SAK" -k -H -s "$D/invchain.cdl" -l "$D/invchain.gds" -c invchain -w "$W6/g"
 check "guard: -J without KLayout"                   3 "$SAK" -m -J VSS,VSS2 -s "$D/invchain.spice" -l "$D/invchain.gds" -c invchain -w "$W6/g"
 check "guard: -J with one net"                      3 "$SAK" -k -J VSS -s "$D/invchain.cdl" -l "$D/invchain.gds" -c invchain -w "$W6/g"
+check "guard: -J with an empty name"                3 "$SAK" -k -J VSS, -s "$D/invchain.cdl" -l "$D/invchain.gds" -c invchain -w "$W6/g"
 check "guard: empty -F"                             3 "$SAK" -m -F "" -s "$D/invchain.spice" -l "$D/invchain.gds" -c invchain -w "$W6/g"
 check "guard: -F name with a blank"                 3 "$SAK" -m -F "inv_psd, x" -s "$D/invchain.spice" -l "$D/invchain.gds" -c invchain -w "$W6/g"
+check "guard: -F name with a backslash"             3 "$SAK" -m -F 'inv_psd\' -s "$D/invchain.spice" -l "$D/invchain.gds" -c invchain -w "$W6/g"
 check "guard: -F pattern matches the top cell"      3 "$SAK" -m -F "invchain*" -s "$D/invchain.spice" -l "$D/invchain.gds" -c invchain -w "$W6/g"
 check "guard: -F with a MAG layout"                 7 "$SAK" -m -F x -s "$D/$CELL.spice" -l "$D/$CELL.mag" -c "$CELL" -w "$W6/g"
 check "ihp: -b CDL drops Magic and ignores -H"      0 "$SAK" -b -H -s "$D/invchain.cdl" -l "$D/invchain.gds" -c invchain -w "$W6/b_h"

@@ -194,6 +194,9 @@ while getopts "mkbs:l:w:c:dHF:J:W" flag; do
 		J)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -J is set to <$OPTARG>."
 			case "$OPTARG" in
+				,*|*,|*,,*|*" "*)
+					echo "[ERROR] -J takes comma-separated net names without blanks or empty names, got <$OPTARG>!"
+					exit $ERR_NO_PARAM ;;
 				*,*) ;;
 				*)
 					echo "[ERROR] -J needs at least two comma-separated net names, got <$OPTARG>!"
@@ -549,7 +552,7 @@ if [ -n "$FLAT_CELLS" ] && [ "$GDS_MODE" -eq 0 ]; then
 	echo "[ERROR] -F needs a GDS layout (got <$CELL_LAY>)!"
 	exit $ERR_UNKNOWN_FILE
 fi
-# Each -F name goes braced into the Magic Tcl script, so it may hold no brace or blank, and as for sak-drc.sh -f no negated set [!...], which Magic reads as a plain list of characters.
+# Each -F name goes braced into the Magic Tcl script, so it may hold no brace, backslash or blank, and as for sak-drc.sh -f no negated set [!...], which Magic reads as a plain list of characters.
 # A pattern that matches the top cell would flatten it away and leave an empty cell to extract.
 if [ -n "$FLAT_CELLS" ]; then
 	set -f
@@ -557,8 +560,8 @@ if [ -n "$FLAT_CELLS" ]; then
 	IFS=,
 	for _cell in $FLAT_CELLS; do
 		case "$_cell" in
-			""|*" "*|*"	"*|*\{*|*\}*|*\[!*)
-				echo "[ERROR] -F takes comma-separated cell names or glob patterns without blanks, braces or a negated set [!...], got <$_cell>!"
+			""|*" "*|*"	"*|*\{*|*\}*|*\\*|*\[!*)
+				echo "[ERROR] -F takes comma-separated cell names or glob patterns without blanks, braces, backslashes or a negated set [!...], got <$_cell>!"
 				exit $ERR_NO_PARAM ;;
 		esac
 		# shellcheck disable=SC2254
