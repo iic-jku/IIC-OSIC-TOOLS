@@ -9,5 +9,9 @@ FROM ${BASE_IMAGE_BUILD} AS openroad
 ARG OPENROAD_REPO_URL="https://github.com/The-OpenROAD-Project/OpenROAD.git"
 ARG OPENROAD_REPO_COMMIT="7b26270095b3c710bdbac50d09af1767e2265572"
 ARG OPENROAD_NAME="openroad"
+# The Bazel disk cache lives in a cache mount, outside the image layers, so a
+# rebuild after a bump only compiles what changed. The nightly workflow carries
+# the mount from one run to the next (tools/bazel_disk_cache.sh).
 RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
+    --mount=type=cache,id=bazel-disk-cache-openroad,target=/bazel-disk-cache,sharing=shared \
     bash /images/openroad/scripts/install.sh

@@ -72,6 +72,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Bazel builds (openroad) keep their disk cache in a cache mount, which
+      # this step loads from GHCR into the fresh builder. Does nothing for
+      # other targets, and a missing or broken cache only costs build time.
+      - name: Load the Bazel disk cache
+        continue-on-error: true
+        working-directory: _build
+        env:
+          TARGET: ${{ matrix.target }}
+          IMAGE: iic-osic-tools-nightly-${{ matrix.arch }}
+        run: |
+          export REGISTRY="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}"
+          tools/bazel_disk_cache.sh seed "$TARGET"
+
       - name: Build and push ${{ matrix.target }}
         working-directory: _build
         env:
@@ -93,6 +106,17 @@ jobs:
                    --set "image-full.args.CONTAINER_TAG=nightly")
           fi
           docker buildx bake "${args[@]}" "$TARGET" 2>&1 | tee "$RUNNER_TEMP/bake.log"
+
+      - name: Save the Bazel disk cache
+        continue-on-error: true
+        working-directory: _build
+        env:
+          TARGET: ${{ matrix.target }}
+          IMAGE: iic-osic-tools-nightly-${{ matrix.arch }}
+          BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
+        run: |
+          export REGISTRY="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}"
+          tools/bazel_disk_cache.sh save "$TARGET" "$RUNNER_TEMP/bake.log"
 
       - name: Write failure summary
         if: failure()

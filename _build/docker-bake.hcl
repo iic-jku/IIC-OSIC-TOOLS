@@ -36,7 +36,9 @@ variable "DEPS_FROM_TARGETS" {
 }
 
 # "1" (default) exports a dedicated mode=max registry cache per target, which
-# also covers intermediate stages and RUN --mount=type=cache mounts.
+# also covers intermediate stages. The contents of RUN --mount=type=cache
+# mounts are never exported (the nightly workflow carries the Bazel disk cache
+# of openroad with tools/bazel_disk_cache.sh instead).
 # Set to "0" when building without write access to the cache registry.
 variable "CACHE_EXPORT" {
   default = "1"

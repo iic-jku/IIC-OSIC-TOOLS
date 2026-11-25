@@ -30,6 +30,10 @@ done
 # Same flags as upstream etc/Build.sh: --config=release stamps the real
 # `git describe` version and includes --config=opt (-O3, ThinLTO).
 BAZEL_ARGS=("--jobs=$(nproc)" "--config=release" "--//:platform=gui")
+# Disk cache in the cache mount of the Dockerfile (overrides the
+# ~/.cache/bazel-disk-cache of .bazelrc, which is removed below)
+DISK_CACHE=/bazel-disk-cache
+BAZEL_ARGS+=("--disk_cache=$DISK_CACHE")
 # On aarch64, qt-bazel links the real system X11/xcb/xkbcommon libraries
 # instead of interface stubs. These need newer glibc symbol versions (e.g.
 # __isoc23_strtol@GLIBC_2.38) than the toolchain's glibc 2.28 link stubs
@@ -56,6 +60,14 @@ echo "$ORFS_COMMIT" > "${TOOLS}/${OPENROAD_NAME}/ORFS_COMMIT"
 
 # Drop the Bazel output base and caches (many GB), they are build-time only
 bazelisk shutdown
+# Bazel sets the mtime of a disk cache entry when it writes or hits it, so
+# entries untouched for a week belong to no recent revision. Keeps the cache
+# that the nightly workflow uploads at about the size of one build.
+if [ -d "$DISK_CACHE" ]; then
+    find "$DISK_CACHE" -mindepth 1 -type f -mtime +7 -delete
+    find "$DISK_CACHE" -mindepth 1 -type d -empty -delete
+    echo "[INFO] Bazel disk cache: $(du -sh "$DISK_CACHE" | cut -f1)"
+fi
 rm -rf "${HOME}/.cache/bazel" "${HOME}/.cache/bazel-disk-cache" "${HOME}/.cache/bazel-repository-cache" "${HOME}/.cache/bazelisk"
 
 echo "${OPENROAD_NAME} ${OPENROAD_REPO_COMMIT}" > "${TOOLS}/${OPENROAD_NAME}/SOURCES"
