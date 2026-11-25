@@ -51,10 +51,11 @@ set ::env(PRIMARY_GDSII_STREAMOUT_TOOL) "klayout"
 set ::env(KLAYOUT_TECH) "$::env(PDK_ROOT)/$::env(PDK)/libs.tech/klayout/tech/ics55.lyt"
 set ::env(KLAYOUT_PROPERTIES) "$::env(PDK_ROOT)/$::env(PDK)/libs.tech/klayout/tech/ics55.lyp"
 set ::env(KLAYOUT_DEF_LAYER_MAP) "$::env(PDK_ROOT)/$::env(PDK)/libs.tech/klayout/tech/ics55.map"
-# Community deck, not foundry sign-off. Density and chip-edge rules only make
-# sense on a full chip, so they are off for blocks.
-set ::env(KLAYOUT_DRC_RUNSET) "$::env(PDK_ROOT)/$::env(PDK)/libs.tech/klayout/drc/ics55_full_mask.drc"
-set ::env(KLAYOUT_DRC_DEFINES) [dict create density false chipedge false]
+# Deck translated from the vendor Calibre deck by icsprout55-openpdk, not
+# foundry sign-off. Density and chip-edge rules only make sense on a full chip,
+# so they are off for blocks.
+set ::env(KLAYOUT_DRC_RUNSET) "$::env(PDK_ROOT)/$::env(PDK)/libs.tech/klayout/drc/ics55.drc"
+set ::env(KLAYOUT_DRC_DEFINES) [dict create DENSITY_RULES NO CHIPEDGE_CHECK NO]
 
 set scl_dir "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY)"
 set io_dir "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(PAD_CELL_LIBRARY)"

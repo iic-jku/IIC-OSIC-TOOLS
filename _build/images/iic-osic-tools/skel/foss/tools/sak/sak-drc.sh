@@ -845,27 +845,26 @@ if [ "$RUN_KLAYOUT" -eq 1 ]; then
 			ihp_part all &
 		fi
 	elif echo "$PDK" | grep -q -i "^ics55"; then
-		# ics55 runs the community deck ics55_full_mask.drc directly (not foundry sign-off).
+		# ics55 runs ics55.drc of icsprout55-openpdk, translated from the vendor Calibre deck (not foundry sign-off).
 		# precheck and macro: skip the chip-level density and chip-edge rules
 		# regular: all checks
 		case "$DRC_LEVEL" in
-			precheck|macro)	DRC_FLAGS="-rd density=false -rd chipedge=false" ;;
+			precheck|macro)	DRC_FLAGS="-rd DENSITY_RULES=NO -rd CHIPEDGE_CHECK=NO" ;;
 			regular)	DRC_FLAGS="" ;;
 		esac
 		rm -rf "$KLAYOUT_RUNDIR"
 		mkdir -p "$KLAYOUT_RUNDIR"
 		KLAYOUT_PARTS="ics55"
-		# a single process, the deck also writes a JSON summary and a marker stream next to the report. The log ends with the KLayout exit status.
+		# a single process with -j threads. The log ends with the KLayout exit status.
 		{
 			# shellcheck disable=SC2086
 			klayout -b \
 				-rd input="$CELL_LAY" \
-				-rd top="$CELL_NAME" \
+				-rd topcell="$CELL_NAME" \
 				-rd report="$KLAYOUT_RUNDIR/$CELL_NAME.lyrdb" \
-				-rd summary="$KLAYOUT_RUNDIR/$CELL_NAME.drc_summary.json" \
-				-rd violations="$KLAYOUT_RUNDIR/$CELL_NAME.drc_violations.jsonl" \
+				-rd threads="$JOBS" \
 				$DRC_FLAGS \
-				-r "$PDKPATH/libs.tech/klayout/drc/ics55_full_mask.drc" \
+				-r "$PDKPATH/libs.tech/klayout/drc/ics55.drc" \
 				> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log" 2>&1
 			echo "[INFO] KLayout exit status: $?" >> "$KLAYOUT_RUNDIR/$CELL_NAME.drc.log"
 		} &

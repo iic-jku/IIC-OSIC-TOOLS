@@ -43,13 +43,13 @@ grep -q "ERROR" "$LOG" && fail "ERROR in the stdout log"
 grep -q "Traceback (most recent call last)" "$STDERR_LOG" && fail "Python traceback in the stderr log"
 FINAL=$(find "$WORKDIR/runs" -maxdepth 2 -type d -name final -print -quit 2>/dev/null)
 [ -n "$FINAL" ] && [ -f "$FINAL/metrics.json" ] || fail "the flow produced no final/metrics.json"
-# KLayout.DRC ran with the community deck and wrote a report (it finds
+# KLayout.DRC ran with ics55.drc and wrote a report (it finds
 # violations, which the config does not treat as an error).
 find "$WORKDIR/runs" -path "*klayout-drc/reports/drc.klayout.lyrdb" | grep -q . || fail "no KLayout DRC report of the flow"
 
 cp "$FINAL/gds/counter.gds" "$WORKDIR/counter.gds"
 
-# sak-drc runs the community deck directly.
+# sak-drc runs ics55.drc directly.
 sak-drc.sh -k -w "$WORKDIR/drc" counter > "$WORKDIR/sak-drc.log" 2>&1
 DRC_RC=$?
 # 0 is clean, 1 are violations, everything else is a failed run

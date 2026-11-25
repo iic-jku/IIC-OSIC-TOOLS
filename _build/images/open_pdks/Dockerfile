@@ -28,8 +28,6 @@ RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
 # Declared here so a bump of these rebuilds only the ICS55 and later layers
 ARG ICS55_PDK_REPO_URL="https://github.com/openecos-projects/icsprout55-pdk.git"
 ARG ICS55_PDK_REPO_COMMIT="10054695f86cf26a96ea8aba69f7ec414afde593"
-ARG ICS55_KLAYOUT_DRC_REPO_URL="https://github.com/Ayoubbelguellaoui/ics55_klayout_drc.git"
-ARG ICS55_KLAYOUT_DRC_REPO_COMMIT="e084bab316af8626f4ce48512106804142f12d94"
 ARG ICS55_OPENPDK_REPO_URL="https://github.com/ckdur/icsprout55-openpdk.git"
 ARG ICS55_OPENPDK_REPO_COMMIT="efc7dfd61023f27cd3778f0dd7b19b63aa7bb17e"
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \

@@ -186,7 +186,7 @@ export STD_CELL_LIBRARY=ICsprout55_SC9T_BASIC_SVT
 export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
 ```
 
-`ics55` is the [ICsprout 55 nm open PDK](https://github.com/openecos-projects/icsprout55-pdk) (55LLULP 1P6M) for digital designs only, in its v2 data set (1.2 V core, 2.5 V IO), which ICsprout requires from the next shuttle on: the 9-track standard cells `ICsprout55_SC9T_BASIC_SVT` (default), `ICsprout55_SC9T_BASIC_HVT` and `ICsprout55_SC9T_BASIC_LVT`, the GPIO library `ICsprout_55LLULP1225_IO_0901`, a LibreLane configuration, the community KLayout DRC [ics55_klayout_drc](https://github.com/Ayoubbelguellaoui/ics55_klayout_drc) and a digital-only KLayout LVS (`sak-drc -k`, `sak-lvs -k`). ICsprout publishes no SPICE models and no extraction rules, and there is no Magic setup. Neither deck is foundry sign-off. The PDK is a preview release, limited to education and research tapeouts. Commercial mass production is prohibited. `$PDK_ROOT/ics55/README.md` lists the LibreLane settings a design needs.
+`ics55` is the [ICsprout 55 nm open PDK](https://github.com/openecos-projects/icsprout55-pdk) (55LLULP 1P6M) for digital designs only, in its v2 data set (1.2 V core, 2.5 V IO), which ICsprout requires from the next shuttle on: the 9-track standard cells `ICsprout55_SC9T_BASIC_SVT` (default), `ICsprout55_SC9T_BASIC_HVT` and `ICsprout55_SC9T_BASIC_LVT`, the GPIO library `ICsprout_55LLULP1225_IO_0901`, a LibreLane configuration, the KLayout DRC and antenna decks of [icsprout55-openpdk](https://github.com/ckdur/icsprout55-openpdk) (translated from the vendor Calibre decks) and a digital-only KLayout LVS (`sak-drc -k`, `sak-lvs -k`). ICsprout publishes no SPICE models and no extraction rules, and there is no Magic setup. Neither deck is foundry sign-off. The PDK is a preview release, limited to education and research tapeouts. Commercial mass production is prohibited. `$PDK_ROOT/ics55/README.md` lists the LibreLane settings a design needs.
 
 | ASU and Arm Research `asap7` (predictive, not manufacturable) |
 |---|
@@ -259,7 +259,7 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [icestorm](https://github.com/YosysHQ/icestorm) bitstream tools for Lattice iCE40 FPGAs, providing `icepack` and `iceprog`
 - [ihp-sg13g2](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130 nm SiGe:C BiCMOS PDK (partial PDK, not fully supported yet; `xschem` and `ngspice` simulation works incl. PSP MOSFET model)
 - [ihp-sg13cmos5l](https://github.com/IHP-GmbH/IHP-Open-PDK) IHP Microelectronics 130 nm CMOS PDK (M1-M4-TM1 metal stack), shipped in the same repository as `ihp-sg13g2`
-- [ics55](https://github.com/openecos-projects/icsprout55-pdk) ICsprout 55 nm open PDK (55LLULP 1P6M, v2 with 9-track cells and 2.5 V IO), digital-only, with the community KLayout DRC [ics55_klayout_drc](https://github.com/Ayoubbelguellaoui/ics55_klayout_drc) and a LibreLane configuration
+- [ics55](https://github.com/openecos-projects/icsprout55-pdk) ICsprout 55 nm open PDK (55LLULP 1P6M, v2 with 9-track cells and 2.5 V IO), digital-only, with the KLayout DRC of [icsprout55-openpdk](https://github.com/ckdur/icsprout55-openpdk) and a LibreLane configuration
 - [irsim](https://github.com/rtimothyedwards/irsim) switch-level digital simulator
 - [iverilog](https://github.com/steveicarus/iverilog) Verilog simulator
 - [kactus2](https://github.com/kactus2/kactus2dev) Kactus2 is a graphical editor for IP-XACT files, which are used to describe hardware components and their interfaces

@@ -13,12 +13,12 @@ ICsprout releases this PDK as a preview. It is not fully silicon- or reliability
 - Tech LEF (`libs.tech/techlef`) and the vendor layer map (`libs.tech/icsprout55.layermap`).
 - LibreLane configuration (`libs.tech/librelane`), written for this image. It agrees with the 9-track configuration of <https://github.com/ckdur/icsprout55-openpdk>.
 - KLayout technology `ics55` (`libs.tech/klayout/tech`).
-- KLayout DRC (`libs.tech/klayout/drc`) from <https://github.com/Ayoubbelguellaoui/ics55_klayout_drc>.
+- KLayout DRC and antenna decks (`libs.tech/klayout/drc/ics55.drc`, `ics55_antenna.drc`) and the layer properties `ics55.lyp` from <https://github.com/ckdur/icsprout55-openpdk>. The decks are translated from the vendor Calibre decks.
 - KLayout LVS (`libs.tech/klayout/lvs/ics55.lvs`), digital-only.
 
 ## What is missing
 
-- **No sign-off.** The KLayout DRC is a community deck and the KLayout LVS was written for this image. Neither is a foundry deck.
+- **No sign-off.** The KLayout DRC is a translation of the vendor Calibre deck and the KLayout LVS was written for this image. Neither is a foundry deck.
 - **No SPICE models.** ICsprout does not publish them (<https://github.com/openecos-projects/icsprout55-pdk/issues/1>), so there is no analog flow and no ngspice or xschem setup.
 - **No RC extraction rules.** OpenROAD estimates parasitics from the wire capacitances of the tech LEF.
 - **No Magic or Netgen setup.**
@@ -41,12 +41,12 @@ klayout -b -r $PDKPATH/libs.tech/klayout/lvs/ics55.lvs -rd input=design.gds -rd 
 ## KLayout DRC
 
 ```bash
-klayout -b -r $PDKPATH/libs.tech/klayout/drc/ics55_full_mask.drc -rd input=design.gds -rd top=design -rd report=drc.lyrdb
+klayout -b -r $PDKPATH/libs.tech/klayout/drc/ics55.drc -rd input=design.gds -rd topcell=design -rd report=drc.lyrdb
 ```
 
-`sak-drc -k` runs the same deck. `-rd density=false -rd chipedge=false` turns off the full-chip rules for a block.
+`sak-drc -k` runs the same deck. `-rd DENSITY_RULES=NO -rd CHIPEDGE_CHECK=NO` turns off the full-chip rules for a block, as `sak-drc -l macro` (the default) and the LibreLane configuration do. `-rd threads=N` sets the KLayout threads. The antenna rules are in the separate deck `ics55_antenna.drc`, which takes the same options and is not run by `sak-drc` or LibreLane.
 
-The deck reports violations on a routed LibreLane block. Most of them are the via enclosure rules `VIA1.EN.2` to `VIA3.EN.2`, which the deck checks on all four sides, while the vendor Calibre rule asks for the enclosure on two opposite sides only. The standard cells themselves add `NP.EN.3` and others.
+The deck reports violations on a routed LibreLane block, because the vendor tech LEF the router reads does not hold every rule of the Calibre deck. On the counter of test 59 these are the spacing rules `V1_S_3` (V1 to V1 of different nets), `M2_S_5` and `MET1_S_5` (dense line ends) and `V4_S_2` (via arrays).
 
 ## LibreLane
 

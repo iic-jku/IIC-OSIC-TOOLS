@@ -13,9 +13,11 @@
 #   tag ICS55_PDK_ASSET_TAG, checked against the SHA-256 lists of the pinned
 #   commit. ICsprout accepts only v2 layouts from the shuttle after 2026-11, so
 #   the v1 branch ics55-v1 (7 tracks, 3.3 V IO) is not installed.
-# - Ayoubbelguellaoui/ics55_klayout_drc: the community KLayout DRC deck
-#   (unofficial, not foundry sign-off).
-# - ckdur/icsprout55-openpdk: only the DEF to GDS layer map.
+# - ckdur/icsprout55-openpdk: the DEF to GDS layer map, the KLayout layer
+#   properties and the KLayout DRC and antenna decks, which are translated from
+#   the vendor Calibre decks (unofficial, not foundry sign-off). They replace
+#   the community deck of Ayoubbelguellaoui/ics55_klayout_drc, whose repository
+#   was removed from GitHub (issue 475).
 #
 # The LibreLane configuration, the KLayout technology and the digital LVS deck
 # are kept in this repository (images/open_pdks/ics55).
@@ -35,8 +37,6 @@ PDK_DIR="$PDK_ROOT/$PDK"
 ICS55_PDK_REPO_URL="${ICS55_PDK_REPO_URL:-https://github.com/openecos-projects/icsprout55-pdk.git}"
 ICS55_PDK_REPO_COMMIT="${ICS55_PDK_REPO_COMMIT:-10054695f86cf26a96ea8aba69f7ec414afde593}"
 ICS55_PDK_ASSET_TAG="${ICS55_PDK_ASSET_TAG:-v2-2026.10.28}"
-ICS55_KLAYOUT_DRC_REPO_URL="${ICS55_KLAYOUT_DRC_REPO_URL:-https://github.com/Ayoubbelguellaoui/ics55_klayout_drc.git}"
-ICS55_KLAYOUT_DRC_REPO_COMMIT="${ICS55_KLAYOUT_DRC_REPO_COMMIT:-e084bab316af8626f4ce48512106804142f12d94}"
 ICS55_OPENPDK_REPO_URL="${ICS55_OPENPDK_REPO_URL:-https://github.com/ckdur/icsprout55-openpdk.git}"
 ICS55_OPENPDK_REPO_COMMIT="${ICS55_OPENPDK_REPO_COMMIT:-efc7dfd61023f27cd3778f0dd7b19b63aa7bb17e}"
 
@@ -68,9 +68,9 @@ echo "[INFO] Fetching the ICS55 PDK sources."
 # The submodules (PLL, DDR PHY) are not needed, so they are not initialized.
 clone_pinned "$ICS55_PDK_REPO_URL" "$ICS55_PDK_REPO_COMMIT" "$WORK_DIR/icsprout55-pdk" \
 	"/IP/" "/prtech/" "/techfile/" "/LICENSE" "/VERSION" "/release-assets.sha256" "/release-files.sha256" "!*.pdf"
-clone_pinned "$ICS55_KLAYOUT_DRC_REPO_URL" "$ICS55_KLAYOUT_DRC_REPO_COMMIT" "$WORK_DIR/ics55_klayout_drc"
 clone_pinned "$ICS55_OPENPDK_REPO_URL" "$ICS55_OPENPDK_REPO_COMMIT" "$WORK_DIR/icsprout55-openpdk" \
-	"/LICENSE" "/icsprout55/libs.tech/klayout/tech/ics55.map"
+	"/LICENSE" "/icsprout55/libs.tech/klayout/tech/ics55.map" "/icsprout55/libs.tech/klayout/tech/ics55.lyp" \
+	"/icsprout55/libs.tech/klayout/tech/ics55.drc" "/icsprout55/libs.tech/klayout/tech/ics55_antenna.drc"
 
 SRC="$WORK_DIR/icsprout55-pdk"
 if [ "$(cat "$SRC/VERSION")" != "ics55-v2" ]; then
@@ -170,15 +170,19 @@ find "$PDK_DIR/libs.ref" -name "*.lib" -type f -exec gzip -9 -f {} +
 
 # Technology: tech LEF and layer map from the vendor, KLayout technology,
 # LibreLane configuration and digital LVS from this repository, DEF to GDS
-# map from the port.
+# map, layer properties and DRC decks from the port.
 echo "[INFO] Installing the KLayout and LibreLane collateral."
 mkdir -p "$PDK_DIR/libs.tech/techlef" "$PDK_DIR/libs.tech/klayout/tech"
 cp "$SRC"/prtech/techLEF/*.lef "$PDK_DIR/libs.tech/techlef/"
 cp "$SRC/techfile/icsprout55.layermap" "$PDK_DIR/libs.tech/"
 cp -r "$PDK_FILES_DIR/libs.tech/." "$PDK_DIR/libs.tech/"
 cp "$PDK_FILES_DIR/README.md" "$PDK_DIR/README.md"
-cp "$WORK_DIR/icsprout55-openpdk/icsprout55/libs.tech/klayout/tech/ics55.map" "$PDK_DIR/libs.tech/klayout/tech/"
+PORT_TECH="$WORK_DIR/icsprout55-openpdk/icsprout55/libs.tech/klayout/tech"
+cp "$PORT_TECH/ics55.map" "$PORT_TECH/ics55.lyp" "$PDK_DIR/libs.tech/klayout/tech/"
 cp "$WORK_DIR/icsprout55-openpdk/LICENSE" "$PDK_DIR/libs.tech/klayout/tech/LICENSE.icsprout55-openpdk"
+mkdir -p "$PDK_DIR/libs.tech/klayout/drc"
+cp "$PORT_TECH/ics55.drc" "$PORT_TECH/ics55_antenna.drc" "$PDK_DIR/libs.tech/klayout/drc/"
+cp "$WORK_DIR/icsprout55-openpdk/LICENSE" "$PDK_DIR/libs.tech/klayout/drc/LICENSE"
 
 # The synthesis maps and cell lists of this repository name the SVT cells. The
 # HVT and LVT libraries have the same cells and pins, only the suffix differs.
@@ -189,21 +193,10 @@ for vt in HVT LVT; do
 	done
 done
 
-# Community KLayout DRC deck. Its generated .lyp is the layer properties of the
-# technology (same layer map). The .lyt and .lm of the repo are not used: the
-# technology file is kept in this repository.
-DRC_SRC="$WORK_DIR/ics55_klayout_drc"
-mkdir -p "$PDK_DIR/libs.tech/klayout/drc"
-cp "$DRC_SRC"/klayout/drc/*.rb "$DRC_SRC"/klayout/drc/*.drc "$DRC_SRC/klayout/drc/RULE_INDEX.md" \
-	"$PDK_DIR/libs.tech/klayout/drc/"
-cp "$DRC_SRC/LICENSE" "$PDK_DIR/libs.tech/klayout/drc/LICENSE"
-cp "$DRC_SRC/klayout/tech/icsprout55.lyp" "$PDK_DIR/libs.tech/klayout/tech/ics55.lyp"
-
 cp "$SRC/LICENSE" "$PDK_DIR/LICENSE"
 {
 	echo "ICS55 open PDK v2 (digital-only), installed by IIC-OSIC-TOOLS"
 	echo "icsprout55-pdk $ICS55_PDK_REPO_URL $ICS55_PDK_REPO_COMMIT (release assets $ICS55_PDK_ASSET_TAG)"
-	echo "ics55_klayout_drc $ICS55_KLAYOUT_DRC_REPO_URL $ICS55_KLAYOUT_DRC_REPO_COMMIT"
 	echo "icsprout55-openpdk $ICS55_OPENPDK_REPO_URL $ICS55_OPENPDK_REPO_COMMIT"
 } > "$PDK_DIR/SOURCES"
 
