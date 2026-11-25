@@ -154,7 +154,7 @@ def parse_subckt_from_lines(
     """Extract the subcircuit name and pin list from the first .subckt in lines.
 
     SPICE cards are case-insensitive and netlisters disagree: xschem and
-    Magic write ``.subckt``, KLayout-PEX writes ``.SUBCKT``. The card is
+    Magic write ``.subckt``, KPEX writes ``.SUBCKT``. The card is
     therefore matched case-insensitively and its original spelling is
     returned so the rewritten header keeps the file's own style.
 

@@ -38,13 +38,13 @@ import snp2le.app  # noqa: E402,F401
 
 # Discover and load every shipped exporter through KPEX, so an installed wheel
 # with a missing entry point or incompatible plugin API fails this image test.
-from klayout_pex.pex25d.exporters import exporter_registry
+from kpex.pex25d.exporters import exporter_registry
 
 registry = exporter_registry()
 for name in ("elmer", "gmsh", "kqcircuits", "palace"):
-    provider = f"klayout-pex-plugin-{name}"
-    matching = [info for info in registry.exporters
-                if info.name == name and info.distribution == provider]
-    assert len(matching) == 1, f"Expected one {provider} exporter, got {matching}"
+    provider = f"kpex-plugin-{name}"
+    matching = [info for info in registry.exporters if info.name == name]
+    assert len(matching) == 1, f"Expected one {name} exporter, got {matching}"
+    assert matching[0].distribution == provider, matching[0]
     exporter = registry.load(matching[0].qualified_name)
     assert callable(exporter.export), f"{provider} has no export method"

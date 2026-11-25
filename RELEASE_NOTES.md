@@ -6,7 +6,7 @@ This document summarizes the most important changes of the individual releases o
 
 * [Adding] [`prep-ic`](https://github.com/iic-jku/prep-ic), a GUI and Python API to plan the pad ring, pinout and early floorplan of an IC
 * [Adding] `KQCircuits` for standalone layout generation and simulation input export
-* [Adding] `klayout-pex-plugin-kqcircuits` `0.1.1`, a development scaffold that does not translate scenes yet
+* [Adding] `kpex-plugin-kqcircuits` `0.3.0`, a development scaffold that does not translate scenes yet
 * [Adding] KLayout plugin [`klayout_em_export`](https://github.com/VolkerMuehlhaus/klayout_em_export) (menu `EM`), which sets up a Palace or openEMS simulation of a layout region
 * [Adding] the UVM 2020-3.2 library for Verilator in `$UVM_HOME`
 * [Adding] `universal-ctags` for go-to-definition in editors
@@ -23,7 +23,8 @@ This document summarizes the most important changes of the individual releases o
 * [Update] `sak-drc.sh -j <n>` limits the number of KLayout DRC processes (default `min(4, nproc)`), and a crashed rule deck exits with 7
 * [Update] `sak-pex.sh -k` extracts with the `kpex` 2.5D engine instead of Magic, with the new options `-S` (schematic for the device check), `-R` (full-RC reduction) and `-g` (substrate tie net)
 * [Update] `sak-pex.sh -c <fF>` sets the capacitance threshold of the Magic engine, below which a parasitic capacitor is left out of the netlist (default `0.01`, the 10 aF it used before)
-* [Update] `klayout-pex` `0.11.1` (was `0.6.8`), with non-rectangular capacitance extraction, updated PDK coefficients and `kpex calibrate`
+* [Update] `kpex` `0.12.0` (was `klayout-pex` `0.6.8`), with non-rectangular capacitance extraction, updated PDK coefficients and `kpex calibrate`
+* [Changing] The Gmsh, Elmer, Palace and KQCircuits exporter packages now ship as `kpex-plugin-*` `0.3.0`
 * [Update] `kpex` retains unmapped LVS devices in netlists with `--unmapped-devices keep`, with simulation models supplied separately
 * [Update] FasterCap `6.4.0` (was `6.0.7`) from the [IIC-JKU fork](https://github.com/iic-jku/FasterCap), with BLAS acceleration and full-precision JSON reports (`--report`)
 * [Update] `yosys` `0.71` with `eqy`, `sby`, `mcy` and the GHDL and Slang plugins, which no longer drops a unary operator in front of a size cast

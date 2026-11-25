@@ -265,8 +265,8 @@ Below is a list of the current tools/PDKs already installed and ready to use:
 - [kactus2](https://github.com/kactus2/kactus2dev) Kactus2 is a graphical editor for IP-XACT files, which are used to describe hardware components and their interfaces
 - [kepler-formal](https://github.com/keplertech/kepler-formal) logic equivalence checking (LEC) tool for `openroad`
 - [klayout](https://github.com/KLayout/klayout) layout viewer and editor for GDS and OASIS, with packages: [klive](https://github.com/KLayout/klive), [xsection](https://github.com/KLayout/xsection), [klayout_em_export](https://github.com/VolkerMuehlhaus/klayout_em_export) to set up `palace` and `openems` EM simulations from a layout, and [klayout-productivity-suite](https://github.com/iic-jku/klayout-productivity-suite) with various iic-jku KLayout plugins
-- [klayout-pex](https://iic-jku.github.io/klayout-pex-website/) parasitic resistance and capacitance extraction, with `gmsh`, `elmer` and `palace` exporter plugins
-- [klayout-pex-plugin-kqcircuits](https://github.com/iic-jku/klayout-pex-plugin-kqcircuits) development scaffold for a KQCircuits exporter, without export support yet
+- [KPEX](https://iic-jku.github.io/kpex-website/) parasitic resistance and capacitance extraction, with `gmsh`, `elmer` and `palace` exporter plugins
+- [kpex-plugin-kqcircuits](https://github.com/iic-jku/kpex-plugin-kqcircuits) development scaffold for a KQCircuits exporter, without export support yet
 - [KQCircuits](https://github.com/iqm-finland/KQCircuits) standalone quantum-circuit layout generation and simulation input export, including simulation and mask examples
 - [lctime](https://codeberg.org/librecell/lctime) Characterization kit for CMOS cells
 - [librelane](https://github.com/librelane/librelane) successor of OpenLane(2), RTL2GDS flow scripts
