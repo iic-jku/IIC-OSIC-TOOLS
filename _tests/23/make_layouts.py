@@ -4,6 +4,7 @@
 #   ihp-sg13g2/invchain_psd.gds    invchain with the pSD implant of the inverters drawn in the top cell (for -F)
 #   ihp-sg13g2/invchain_joined.gds invchain with a second label VSS2 on the VSS strap (for -J)
 #   ihp-sg13g2/invchain_wrap.gds   invchain inside a top cell without labels (for -W)
+#   ihp-sg13g2/invchain_wrap_nolabel.gds the same with the label of pin A missing (the blind spot of -W)
 # usage: python3 make_layouts.py <dir with the test 23 data> <output dir>
 import sys, os
 import klayout.db as kdb
@@ -70,3 +71,14 @@ chain = invchain(ly, inv, 'invchain')
 wrap = ly.create_cell('invchain_wrap')
 wrap.insert(kdb.CellInstArray(chain.cell_index(), kdb.Trans(0, 0)))
 ly.write(os.path.join(out, 'ihp-sg13g2', 'invchain_wrap.gds'))
+
+# invchain_wrap_nolabel: the same with the label of pin A missing in the chain cell invchain_nolabel
+ly, inv = read_inv()
+chain = invchain(ly, inv, 'invchain_nolabel')
+texts = chain.shapes(ly.layer(8, 25))
+label = [s for s in texts.each() if s.is_text() and s.text.string == 'A']
+assert len(label) == 1
+texts.erase(label[0])
+wrap = ly.create_cell('invchain_wrap_nolabel')
+wrap.insert(kdb.CellInstArray(chain.cell_index(), kdb.Trans(0, 0)))
+ly.write(os.path.join(out, 'ihp-sg13g2', 'invchain_wrap_nolabel.gds'))

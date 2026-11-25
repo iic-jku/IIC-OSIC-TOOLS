@@ -269,7 +269,26 @@ mutate swapnames "$W6/invchain_wrap.cdl" "$W6/invchain_wrap_swap.cdl" 's/ A / Y_
     check "ihp: -k wrapper fails without -W"        1 "$SAK" -k -s "$W6/invchain_wrap.cdl" -l "$D/invchain_wrap.gds" -c invchain_wrap -w "$W6/wrap"
     check "ihp: -k -W wrapper"                      0 "$SAK" -k -W -s "$W6/invchain_wrap.cdl" -l "$D/invchain_wrap.gds" -c invchain_wrap -w "$W6/wrap_ok"
     check "ihp: -k -W with two pad names swapped"   1 "$SAK" -k -W -s "$W6/invchain_wrap_swap.cdl" -l "$D/invchain_wrap.gds" -c invchain_wrap -w "$W6/wrap_swap"
+    check "ihp: -k -W with a repeated -J"           0 "$SAK" -k -W -J VSS,VSS2 -J A,B -s "$W6/invchain_wrap.cdl" -l "$D/invchain_wrap.gds" -c invchain_wrap -w "$W6/wrap_j"
 }
+# -H writes a top cell without ports as a subcircuit, so Netgen finds the wrapper by its name
+{ cat "$D/invchain.spice"; printf '.subckt invchain_wrap\nXchain A Y VDD VSS invchain\n.ends\n'; } > "$W6/invchain_wrap.spice"
+check "ihp: -m -H wrapper without ports"            0 "$SAK" -m -H -s "$W6/invchain_wrap.spice" -l "$D/invchain_wrap.gds" -c invchain_wrap -w "$W6/wrap_m"
+# the blind spot of -W: a pad without its label is an unnamed net inside the wrapper and passes, the design cell on its own fails
+mutate rename "$D/invchain.cdl" "$W6/invchain_wrap_nolabel.cdl" 's/^\.SUBCKT invchain A Y VDD VSS$/.SUBCKT invchain_wrap_nolabel/; /PININFO/d' &&
+mutate rename "$D/invchain.cdl" "$W6/invchain_nolabel.cdl" 's/^\.SUBCKT invchain /.SUBCKT invchain_nolabel /' && {
+    check "ihp: -k -W passes a missing pad label"   0 "$SAK" -k -W -s "$W6/invchain_wrap_nolabel.cdl" -l "$D/invchain_wrap_nolabel.gds" -c invchain_wrap_nolabel -w "$W6/nolabel_w"
+    check "ihp: -k design cell without its label"   1 "$SAK" -k -s "$W6/invchain_nolabel.cdl" -l "$D/invchain_wrap_nolabel.gds" -c invchain_nolabel -w "$W6/nolabel_c"
+}
+# guards of the new options, and -b dropping the engine of an option
+check "guard: -H without Magic"                     3 "$SAK" -k -H -s "$D/invchain.cdl" -l "$D/invchain.gds" -c invchain -w "$W6/g"
+check "guard: -J without KLayout"                   3 "$SAK" -m -J VSS,VSS2 -s "$D/invchain.spice" -l "$D/invchain.gds" -c invchain -w "$W6/g"
+check "guard: -J with one net"                      3 "$SAK" -k -J VSS -s "$D/invchain.cdl" -l "$D/invchain.gds" -c invchain -w "$W6/g"
+check "guard: empty -F"                             3 "$SAK" -m -F "" -s "$D/invchain.spice" -l "$D/invchain.gds" -c invchain -w "$W6/g"
+check "guard: -F name with a blank"                 3 "$SAK" -m -F "inv_psd, x" -s "$D/invchain.spice" -l "$D/invchain.gds" -c invchain -w "$W6/g"
+check "guard: -F pattern matches the top cell"      3 "$SAK" -m -F "invchain*" -s "$D/invchain.spice" -l "$D/invchain.gds" -c invchain -w "$W6/g"
+check "guard: -F with a MAG layout"                 7 "$SAK" -m -F x -s "$D/$CELL.spice" -l "$D/$CELL.mag" -c "$CELL" -w "$W6/g"
+check "ihp: -b CDL drops Magic and ignores -H"      0 "$SAK" -b -H -s "$D/invchain.cdl" -l "$D/invchain.gds" -c invchain -w "$W6/b_h"
 
 # verdict: a stand-in for netgen writes a given report, for results an inverter cannot provoke
 W7=$WORKDIR/ihp_verdict

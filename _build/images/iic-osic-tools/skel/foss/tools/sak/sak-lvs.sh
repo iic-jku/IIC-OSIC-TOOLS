@@ -25,7 +25,7 @@
 #        -H  Magic+Netgen: extract the layout hierarchically, so that Netgen compares cell by cell (a chip)
 #        -F  Magic+Netgen: comma-separated GDS cells that Magic reads flat into their parents
 #        -J  KLayout: comma-separated nets that the netlist joins into its first one, can be repeated
-#        -W  KLayout: the layout top cell is a wrapper without labels around the design (a fill wrapper)
+#        -W  KLayout: the layout top cell is a wrapper without labels around the design (a fill wrapper), a missing pad label passes, so check the design cell too
 #        -s  Use this <schematic> (xschem .sch schematic, SPICE/CDL netlist, or Verilog netlist)
 #        -l  Use this <layout> view
 #        -c  Name of <topcell>
@@ -145,7 +145,9 @@ if [ $# -eq 0 ]; then
 	echo "       -J KLayout: comma-separated <nets> that the netlist joins into its first one (repeatable),"
 	echo "          their port mismatch on the layout net that carries all their labels is accepted"
 	echo "       -W KLayout: the layout top cell is a wrapper without labels around the design, the port"
-	echo "          mismatches of its unnamed nets and of pad nets named <instance>.<label> are accepted"
+	echo "          mismatches of its unnamed nets and of pad nets named <instance>.<label> are accepted."
+	echo "          A pad without its label looks like an unnamed net, so check the design cell itself too"
+	echo "       -H, -F, -J and -W of an engine that -b drops are ignored with a warning"
 	echo "       -s Use this <schematic> (xschem .sch schematic, SPICE/CDL netlist, or Verilog netlist)"
 	echo "       -l Use this <layout> view"
 	echo "       -c Name of <topcell>"
@@ -183,10 +185,20 @@ while getopts "mkbs:l:w:c:dHF:J:W" flag; do
 			;;
 		F)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -F is set to <$OPTARG>."
+			if [ -z "$OPTARG" ]; then
+				echo "[ERROR] -F needs at least one cell name!"
+				exit $ERR_NO_PARAM
+			fi
 			FLAT_CELLS=$OPTARG
 			;;
 		J)
 			[ $DEBUG -eq 1 ] && echo "[INFO] flag -J is set to <$OPTARG>."
+			case "$OPTARG" in
+				*,*) ;;
+				*)
+					echo "[ERROR] -J needs at least two comma-separated net names, got <$OPTARG>!"
+					exit $ERR_NO_PARAM ;;
+			esac
 			# one group per line
 			JOINS="${JOINS:+$JOINS
 }$OPTARG"
@@ -279,6 +291,9 @@ while getopts "mkbs:l:w:c:dHF:J:W" flag; do
     esac
 done
 shift $((OPTIND-1))
+# the engines asked for, before the checks below drop one: -H, -F, -J and -W of a dropped engine are ignored with a warning, as -b does
+REQ_MAGIC=$RUN_MAGIC
+REQ_KLAYOUT=$RUN_KLAYOUT
 
 # check if all 3 parameters -s -l and -c are specified
 # ----------------------------------------------------
@@ -511,16 +526,50 @@ fi
 # ----------------------------------------------------------------------------------------------
 
 if { [ "$HIER" -eq 1 ] || [ -n "$FLAT_CELLS" ]; } && [ "$RUN_MAGIC" -eq 0 ]; then
-	echo "[ERROR] -H and -F apply to Magic+Netgen LVS, which does not run!"
-	exit $ERR_NO_PARAM
+	if [ "$REQ_MAGIC" -eq 1 ]; then
+		echo "[WARNING] -H and -F apply to Magic+Netgen LVS, which does not run, so they are ignored."
+		HIER=0
+		FLAT_CELLS=""
+	else
+		echo "[ERROR] -H and -F apply to Magic+Netgen LVS, which does not run!"
+		exit $ERR_NO_PARAM
+	fi
 fi
 if { [ -n "$JOINS" ] || [ "$WRAPPER" -eq 1 ]; } && [ "$RUN_KLAYOUT" -eq 0 ]; then
-	echo "[ERROR] -J and -W apply to KLayout LVS, which does not run!"
-	exit $ERR_NO_PARAM
+	if [ "$REQ_KLAYOUT" -eq 1 ]; then
+		echo "[WARNING] -J and -W apply to KLayout LVS, which does not run, so they are ignored."
+		JOINS=""
+		WRAPPER=0
+	else
+		echo "[ERROR] -J and -W apply to KLayout LVS, which does not run!"
+		exit $ERR_NO_PARAM
+	fi
 fi
 if [ -n "$FLAT_CELLS" ] && [ "$GDS_MODE" -eq 0 ]; then
 	echo "[ERROR] -F needs a GDS layout (got <$CELL_LAY>)!"
 	exit $ERR_UNKNOWN_FILE
+fi
+# Each -F name goes braced into the Magic Tcl script, so it may hold no brace or blank, and as for sak-drc.sh -f no negated set [!...], which Magic reads as a plain list of characters.
+# A pattern that matches the top cell would flatten it away and leave an empty cell to extract.
+if [ -n "$FLAT_CELLS" ]; then
+	set -f
+	_ifs=$IFS
+	IFS=,
+	for _cell in $FLAT_CELLS; do
+		case "$_cell" in
+			""|*" "*|*"	"*|*\{*|*\}*|*\[!*)
+				echo "[ERROR] -F takes comma-separated cell names or glob patterns without blanks, braces or a negated set [!...], got <$_cell>!"
+				exit $ERR_NO_PARAM ;;
+		esac
+		# shellcheck disable=SC2254
+		case "$TOPCELL" in
+			$_cell)
+				echo "[ERROR] The -F pattern <$_cell> matches the top cell <$TOPCELL>: Magic would flatten it away! Use a pattern that matches subcells only."
+				exit $ERR_NO_PARAM ;;
+		esac
+	done
+	IFS=$_ifs
+	set +f
 fi
 
 # define useful variables
@@ -854,8 +903,8 @@ def accepted(msg):
         return None
     lay, ref = m.group(1).split(","), m.group(2).upper()
     if wrapper:
-        # KLayout flattens the design into the wrapper: inner nets get no name, pad nets <instance>.<label>
-        lay = [re.sub(r"^\$\d+\.", "", n) for n in lay]
+        # KLayout flattens the design into the wrapper: inner nets get no name, pad nets <instance>.<label>, one prefix per level
+        lay = [re.sub(r"^(\$\d+\.)+", "", n) for n in lay]
         named = [n for n in lay if not re.fullmatch(r"\$I?\d+", n)]
         if not named:
             return "unnamed nets inside the wrapper"
@@ -889,11 +938,16 @@ with open(path, encoding="utf-8", errors="replace") as fh:
                 st = status.get(m.group(3), m.group(3))
                 if st not in ("Match", "MatchWithWarning"):
                     bad.append("%s / %s: %s" % (m.group(1), m.group(2), st))
+            elif ln.startswith(" X("):
+                circuit, pairs = None, pairs + 1
+                bad.append("unparsed circuit pair %s" % ln.strip())
 if not pairs:
     print("[ERROR] No circuit pairs found in <%s>!" % path)
     sys.exit(1)
 for why, n in sorted(ok.items()):
     print("[INFO] KLayout: %d accepted port mismatches, %s." % (n, why))
+if "unnamed nets inside the wrapper" in ok:
+    print("[WARNING] KLayout: with -W a pad without its label looks like an unnamed net inside the wrapper. Run the design cell itself without -W to check the labels.")
 for b in bad[:40]:
     print("[INFO] KLayout: not matched: " + b)
 if len(bad) > 40:

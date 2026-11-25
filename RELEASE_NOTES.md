@@ -4,8 +4,8 @@ This document summarizes the most important changes of the individual releases o
 
 ## 2026.12
 
-* [Update] `sak-lvs.sh -H` extracts the layout hierarchically for Magic+Netgen, so that Netgen compares a chip cell by cell, and writes a top cell without ports (a fill wrapper) as a subcircuit. `-F <cells>` reads cells flat that take an implant or well from their parent or a neighbour, which the flat mode alone does not fix
-* [Update] `sak-lvs.sh -J <nets>` and `-W` take the KLayout verdict from the report and accept the port mismatches of nets the netlist joins (core and IO ground) and of a top cell without labels around the design (a fill wrapper), which the decks count as a failed comparison
+* [Update] `sak-lvs.sh -H` compares a chip hierarchically with Magic+Netgen, `-F <cells>` reads cells flat that take an implant from outside
+* [Update] `sak-lvs.sh -J <nets>` and `-W` accept the port mismatches of joined nets and of a fill wrapper without labels in the KLayout verdict
 
 ## 2026.11
 
