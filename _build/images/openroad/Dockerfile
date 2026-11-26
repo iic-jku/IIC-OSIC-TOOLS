@@ -7,7 +7,7 @@
 ARG BASE_IMAGE_BUILD="registry.iic.jku.at:5000/iic-osic-tools:base-dev"
 FROM ${BASE_IMAGE_BUILD} AS openroad
 ARG OPENROAD_REPO_URL="https://github.com/The-OpenROAD-Project/OpenROAD.git"
-ARG OPENROAD_REPO_COMMIT="7b26270095b3c710bdbac50d09af1767e2265572"
+ARG OPENROAD_REPO_COMMIT="9a6ae2e63d27b768cc9c090e42a367dd00677b54"
 ARG OPENROAD_NAME="openroad"
 # The Bazel disk cache lives in a cache mount, outside the image layers, so a
 # rebuild after a bump only compiles what changed. The nightly workflow carries
