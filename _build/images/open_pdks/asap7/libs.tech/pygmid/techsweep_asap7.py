@@ -137,7 +137,7 @@ def pdk_info(pdk):
     if sources.exists():
         for line in sources.read_text().splitlines():
             name, _, rev = line.partition(" ")
-            if name in ("asap7_pdk_r1p7", "VA-Models"):
+            if name in ("asap7_pdk_r1p7", "CMC.jl"):
                 parts.append(f"{name} {rev[:8]}")
     ver = subprocess.run(["ngspice", "-v"], capture_output=True, text=True).stdout
     for line in ver.splitlines():
@@ -190,7 +190,7 @@ def main():
                 print(f"[INFO] {args.device} L={length} um VSB={vsb} V done")
 
     dic = {
-        "INFO": f"ASAP7 {args.device}, 7nm FinFET predictive (not manufacturable), BSIM-CMG 111.2.1; {pdk_info(pdk)}",
+        "INFO": f"ASAP7 {args.device}, 7nm FinFET predictive (not manufacturable), BSIM-CMG 107.0.0; {pdk_info(pdk)}",
         "CORNER": args.corner.upper(),
         "TEMP": args.temp + 273.15,
         "VGS": vgs,

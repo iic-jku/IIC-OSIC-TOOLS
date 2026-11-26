@@ -14,7 +14,7 @@
 #                         maps and RC data
 #   ASAP7_for_KLayout     KLayout layer properties and DRC deck written from
 #                         the DRM
-#   VA-Models             BSIM-CMG 111.2.1 Verilog-A for ngspice and VACASK
+#   CMC.jl                BSIM-CMG 107.0.0 Verilog-A for ngspice and VACASK
 # The local overlay in images/open_pdks/asap7 adds the KLayout technology,
 # LVS deck, DEF layer map, LibreLane configuration, simulator setup files,
 # xschem symbols and pygmid scripts.
@@ -44,7 +44,7 @@ if [ -z "$PDK_ROOT" ]; then
 fi
 for v in ASAP7_PDK_R1P7_REPO_URL ASAP7_PDK_R1P7_REPO_COMMIT ASAP7SC7P5T_28_REPO_URL ASAP7SC7P5T_28_REPO_COMMIT \
 	OPENROAD_FLOW_SCRIPTS_REPO_URL OPENROAD_FLOW_SCRIPTS_REPO_COMMIT ASAP7_FOR_KLAYOUT_REPO_URL \
-	ASAP7_FOR_KLAYOUT_REPO_COMMIT VA_MODELS_REPO_URL VA_MODELS_REPO_COMMIT; do
+	ASAP7_FOR_KLAYOUT_REPO_COMMIT CMC_JL_REPO_URL CMC_JL_REPO_COMMIT; do
 	if [ -z "${!v}" ]; then
 		echo "[ERROR] $v is not set."
 		exit 1
@@ -79,7 +79,7 @@ clone_pinned "$OPENROAD_FLOW_SCRIPTS_REPO_URL" "$OPENROAD_FLOW_SCRIPTS_REPO_COMM
 	"/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_*_nldm_2*" /flow/platforms/asap7/yoSys/ \
 	/flow/platforms/asap7/rcx_patterns.rules /flow/platforms/asap7/setRC.tcl
 clone_pinned "$ASAP7_FOR_KLAYOUT_REPO_URL" "$ASAP7_FOR_KLAYOUT_REPO_COMMIT" klayout
-clone_pinned "$VA_MODELS_REPO_URL" "$VA_MODELS_REPO_COMMIT" va-models /code/bsimcmg/vacode/
+clone_pinned "$CMC_JL_REPO_URL" "$CMC_JL_REPO_COMMIT" cmc /LICENSE /cmc_models/bsimcmg107/
 ORFS_PLATFORM="$SRC_DIR/orfs/flow/platforms/asap7"
 
 # Local overlay first, the upstream files below go next to it
@@ -154,16 +154,19 @@ mkdir -p "$PDK_DIR/libs.tech/hspice"
 cp pdk/models/hspice/7nm_??_160803.pm "$PDK_DIR/libs.tech/hspice/"
 python3 "$PDK_SCRIPT_DIR/asap7_models.py" pdk/models/hspice "$PDK_DIR/libs.tech"
 
-# BSIM-CMG 111.2.1 for ngspice and VACASK, generic target so the object runs on
-# any host CPU. Built from the pinned VA-Models revision rather than reusing
-# the copy the ngspice image builds from the VA-Models head.
-echo "[INFO] Compiling BSIM-CMG for ngspice and VACASK."
+# BSIM-CMG 107.0.0 for ngspice and VACASK, the version the ASAP7 cards are
+# written for and the one Xyce has built in. Generic target so the object runs
+# on any host CPU. fix_bsimcmg107_va.py makes the source loadable through OSDI
+# and switches on its operating-point outputs, the currents stay as they are.
+echo "[INFO] Compiling BSIM-CMG 107 for ngspice and VACASK."
 mkdir -p "$PDK_DIR/libs.tech/ngspice/osdi" "$PDK_DIR/libs.tech/vacask/osdi"
-cd "$SRC_DIR/va-models/code/bsimcmg/vacode"
+cd "$SRC_DIR/cmc/cmc_models/bsimcmg107"
+python3 "$PDK_SCRIPT_DIR/fix_bsimcmg107_va.py" bsimcmg_body.include
 "$TOOLS/openvaf/bin/openvaf" --target_cpu generic bsimcmg.va -o "$PDK_DIR/libs.tech/ngspice/osdi/bsimcmg.osdi"
 cp "$PDK_DIR/libs.tech/ngspice/osdi/bsimcmg.osdi" "$PDK_DIR/libs.tech/vacask/osdi/bsimcmg.osdi"
 mkdir -p "$PDK_DIR/libs.tech/verilog-a/bsimcmg"
-cp ./*.va ./*.include ./*.vams LICENSE.txt "$PDK_DIR/libs.tech/verilog-a/bsimcmg/"
+cp ./*.va ./*.include "$PDK_DIR/libs.tech/verilog-a/bsimcmg/"
+cp "$SRC_DIR/cmc/LICENSE" "$PDK_DIR/libs.tech/verilog-a/bsimcmg/LICENSE.CMC.jl"
 cd "$SRC_DIR"
 
 # Record the source revisions
@@ -172,7 +175,7 @@ cd "$SRC_DIR"
 	echo "asap7sc7p5t_28 $ASAP7SC7P5T_28_REPO_COMMIT"
 	echo "OpenROAD-flow-scripts $OPENROAD_FLOW_SCRIPTS_REPO_COMMIT"
 	echo "ASAP7_for_KLayout $ASAP7_FOR_KLAYOUT_REPO_COMMIT"
-	echo "VA-Models $VA_MODELS_REPO_COMMIT"
+	echo "CMC.jl $CMC_JL_REPO_COMMIT"
 } > "$PDK_DIR/SOURCES"
 
 # Every path the LibreLane configuration names has to exist
@@ -181,7 +184,7 @@ MISSING=0
 for f in "$REF/techlef/asap7_tech_1x_201209.lef" "$KL/tech/asap7.lyt" "$KL/tech/asap7.lyp" "$KL/tech/asap7.map" \
 	"$KL/drc/asap7.lydrc" "$KL/lvs/asap7.lvs" "$KL/tech/asap7_passives.json" "$KL/python/asap7_pcells.py" "$KL/python/asap7_example.py" \
 	"$KL/pymacros/asap7_pcells.lym" "$LL/common/tracks.info" \
-	"$LL/common/rcx_patterns.rules" "$KL/tech/LICENSE" "$PDK_DIR/libs.tech/verilog-a/bsimcmg/ECL-2.0.txt"; do
+	"$LL/common/rcx_patterns.rules" "$KL/tech/LICENSE" "$PDK_DIR/libs.tech/verilog-a/bsimcmg/LICENSE.CMC.jl"; do
 	if [ ! -f "$f" ]; then
 		echo "[ERROR] $f is missing."
 		MISSING=1

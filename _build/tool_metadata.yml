@@ -10,6 +10,9 @@
 - name: bender
   repo: https://github.com/pulp-platform/bender.git
   commit: e80020910fc91fd223dd64a240fd3bd5fb607b9d
+- name: cmc-jl
+  repo: https://github.com/CedarEDA/CMC.jl.git
+  commit: 548cc7aec3fabcc6765b38eaa8ecef1b2630607a
 - name: covered
   repo: https://github.com/iic-jku/verilog-covered.git
   commit: 19d30fc942642b14dc24e95331cd4777c8dcbad9
@@ -170,9 +173,6 @@
 - name: uv
   repo: https://github.com/astral-sh/uv.git
   commit: 0.13.9
-- name: va-models
-  repo: https://github.com/dwarning/VA-Models.git
-  commit: f04299a330591a591f309f4be1e208f83883ba2a
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
   commit: 2a432c7ce8f1ace6a709c6090dcd3efa7e9a9491

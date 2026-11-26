@@ -8,5 +8,5 @@ setcs sourcepath = ( $sourcepath $PDK_ROOT/asap7/libs.tech/ngspice/models )
 
 set num_threads=4
 
-* BSIM-CMG 111.2.1 compiled from Verilog-A
+* BSIM-CMG 107.0.0 compiled from Verilog-A
 osdi '$PDK_ROOT/asap7/libs.tech/ngspice/osdi/bsimcmg.osdi'
