@@ -1,7 +1,11 @@
-bsimcmg.osdi is compiled with OpenVAF from the BSIM-CMG 111.2.1 Verilog-A
-source in ../../verilog-a/bsimcmg (https://github.com/dwarning/VA-Models, revision in
-../../../SOURCES).
+bsimcmg.osdi is compiled with OpenVAF from the BSIM-CMG 107.0.0 Verilog-A
+source in ../../verilog-a/bsimcmg (https://github.com/CedarEDA/CMC.jl,
+cmc_models/bsimcmg107, revision in ../../../SOURCES), after the edits of
+fix_bsimcmg107_va.py in IIC-OSIC-TOOLS.
 
-BSIM-CMG: Copyright 2022 University of California. Licensed under the
-Educational Community License, Version 2.0 (ECL-2.0), see
-../../verilog-a/bsimcmg/ECL-2.0.txt.
+BSIM-CMG: Copyright 2012 Regents of the University of California. All rights
+reserved. Developed by the BSIM group of the University of California,
+Berkeley. Distributed under the license terms in the header of
+../../verilog-a/bsimcmg/bsimcmg_main.va: no charge for the University of
+California code itself, acknowledgment of the University of California, and
+the copyright notice kept. CMC.jl repackaging: ../../verilog-a/bsimcmg/LICENSE.CMC.jl.

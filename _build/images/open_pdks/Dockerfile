@@ -46,7 +46,7 @@ ARG OPENROAD_FLOW_SCRIPTS_REPO_URL="https://github.com/The-OpenROAD-Project/Open
 ARG OPENROAD_FLOW_SCRIPTS_REPO_COMMIT="82ac25be57125cc724388ef89f01ce65f9ba3dcc"
 ARG ASAP7_FOR_KLAYOUT_REPO_URL="https://github.com/laurentc2/ASAP7_for_KLayout.git"
 ARG ASAP7_FOR_KLAYOUT_REPO_COMMIT="ef77f080381cab3993428492a3dcb41044c3f518"
-ARG VA_MODELS_REPO_URL="https://github.com/dwarning/VA-Models.git"
-ARG VA_MODELS_REPO_COMMIT="f04299a330591a591f309f4be1e208f83883ba2a"
+ARG CMC_JL_REPO_URL="https://github.com/CedarEDA/CMC.jl.git"
+ARG CMC_JL_REPO_COMMIT="548cc7aec3fabcc6765b38eaa8ecef1b2630607a"
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_asap7.sh

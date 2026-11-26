@@ -9,11 +9,11 @@ version 107), one file per corner. This script reads them and writes one
 library per simulator, each with the sections tt, ff and ss:
 
 * Xyce has BSIM-CMG 107 built in (level 107), so its cards stay as they are.
-* ngspice and VACASK load BSIM-CMG 111.2.1 as an OSDI object compiled from
-  Verilog-A. That version no longer knows CAPMOD, COREMOD, ETAQM, NSEG and
-  VERSION, so these are dropped (CAPMOD, COREMOD and NSEG are at their only
-  remaining behavior in the cards, ETAQM is a 107-only quantum-mechanical
-  charge-centroid fit).
+* ngspice and VACASK load BSIM-CMG 107.0.0 as an OSDI object compiled from
+  Verilog-A (install_asap7.sh), so they run the same cards. The model is
+  named bsimcmg and takes the polarity from DEVTYPE (1 n, 0 p) instead of
+  the type of the .model line. VERSION is not a parameter of the Verilog-A
+  source and is dropped.
 
 Every device is wrapped in a subcircuit named like the CDL model
 (nmos_rvt, pmos_lvt, ...) with the terminals d g s b and the parameters l,
@@ -36,8 +36,6 @@ import asap7_passives
 
 CORNERS = {"tt": "7nm_TT_160803.pm", "ff": "7nm_FF_160803.pm", "ss": "7nm_SS_160803.pm"}
 DEVICES = [f"{t}mos_{vt}" for t in ("n", "p") for vt in ("lvt", "rvt", "slvt", "sram")]
-# Parameters BSIM-CMG 111.2.1 does not accept (see module docstring)
-DROP_OSDI = {"capmod", "coremod", "etaqm", "nseg", "version"}
 DEFAULT_L = "20n"
 
 # 1.8 V IO FinFETs, an IIC-OSIC-TOOLS addition: ASAP7 has core devices for
@@ -181,8 +179,8 @@ def wrap(params, prefix, width=4):
 
 
 def osdi_params(pol, params):
-    kept = [(k, v) for k, v in params if k not in DROP_OSDI and k != "level"]
-    return [("type", "1" if pol == "nmos" else "-1")] + kept
+    kept = [(k, v) for k, v in params if k not in ("level", "version")]
+    return [("devtype", "1" if pol == "nmos" else "0")] + kept
 
 
 def ngspice_lib(corners, par):
@@ -193,7 +191,7 @@ def ngspice_lib(corners, par):
         out += [f".lib {corner}", ""]
         for dev in ALL_DEVICES:
             pol, params = models[dev]
-            out.append(f".model {dev}_bsimcmg bsimcmg_va")
+            out.append(f".model {dev}_bsimcmg bsimcmg")
             out += wrap(osdi_params(pol, params), "+ ")
             out.append("")
         # ngspice does not apply the multiplier of an X line to an OSDI device,
@@ -247,7 +245,7 @@ def vacask_lib(corners, par):
         out += [f"section {corner}", "", "load \"bsimcmg.osdi\"", ""]
         for dev in ALL_DEVICES:
             pol, params = models[dev]
-            out.append(f"model {dev}_bsimcmg bsimcmg_va (")
+            out.append(f"model {dev}_bsimcmg bsimcmg (")
             out += wrap(osdi_params(pol, params), "  ")
             out += [")", ""]
         for dev in ALL_DEVICES:

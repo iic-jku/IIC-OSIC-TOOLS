@@ -9,10 +9,10 @@
 #
 # * Xyce runs the cards natively (BSIM-CMG 107), so it has to hit the paper
 #   Idsat within 2 %.
-# * ngspice and VACASK load BSIM-CMG 111.2.1 as OSDI, which drops five
-#   107-only parameters. They read 2 % to 8 % low on Idsat (10 % allowed) and
-#   up to 45 % low on Ioff (factor 2 allowed), and have to agree with each
-#   other within 0.5 %, since they run the same model object.
+# * ngspice and VACASK load BSIM-CMG 107 as OSDI and run the same cards, so
+#   they have to agree with Xyce within 0.5 % on Idsat and within 2 % on Ioff.
+#   Ioff may differ by 0.1 pA more: the pmos_sram Ioff of 4 pA is close to
+#   the default ngspice abstol of 1 pA.
 # * The xschem inverter testbenches for ngspice and Xyce netlist and simulate,
 #   and so does the VACASK example, all with the switching point between
 #   0.30 V and 0.40 V.
@@ -144,15 +144,10 @@ for i, d in enumerate(devs):
     if abs(ion["xyce"] / idsat - 1) > 0.02:
         errors.append(f"{d}: Xyce Idsat {ion['xyce']:.2f} uA off the paper's {idsat} uA by more than 2 %")
     for s in ("ngspice", "vacask"):
-        if abs(ion[s] / idsat - 1) > 0.10:
-            errors.append(f"{d}: {s} Idsat {ion[s]:.2f} uA off the paper's {idsat} uA by more than 10 %")
-        # 0.001 nA and 0.004 nA in the paper are rounded to the last digit
-        if ioff >= 0.01 and not 0.5 <= iof[s] / ioff <= 2.0:
-            errors.append(f"{d}: {s} Ioff {iof[s]:.3f} nA not within a factor 2 of the paper's {ioff} nA")
-    for p in ("on", "off"):
-        a, b = res["ngspice"][p][i], res["vacask"][p][i]
-        if abs(a / b - 1) > 0.005:
-            errors.append(f"{d}: ngspice and VACASK differ by more than 0.5 % ({p}: {a:.4e} A vs {b:.4e} A)")
+        if abs(ion[s] / ion["xyce"] - 1) > 0.005:
+            errors.append(f"{d}: {s} Idsat {ion[s]:.3f} uA differs from Xyce ({ion['xyce']:.3f} uA) by more than 0.5 %")
+        if abs(iof[s] - iof["xyce"]) > 0.02 * iof["xyce"] + 1e-4:
+            errors.append(f"{d}: {s} Ioff {iof[s]:.4f} nA differs from Xyce ({iof['xyce']:.4f} nA) by more than 2 %")
 for e in errors:
     print(f"[ERROR] {e}")
 print("RESULT", "FAIL" if errors else "PASS")

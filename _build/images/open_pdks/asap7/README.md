@@ -13,7 +13,7 @@ Everything in this directory may be redistributed. The files keep their upstream
 | Model cards, DRM, standard-cell LEF, Liberty, GDS, CDL, Verilog (ASU, `asap7_pdk_r1p7`, `asap7sc7p5t_28`) and the model libraries converted from the cards | BSD-3-Clause | `LICENSE`, `libs.ref/asap7sc7p5t/LICENSE` and `license/` |
 | Files written by OpenROAD-flow-scripts: Yosys maps, `setRC.tcl`, `rcx_patterns.rules` | BSD-3-Clause | `libs.tech/librelane/common/LICENSE.orfs` |
 | KLayout layer properties and DRC deck (ASAP7_for_KLayout) | BSD-2-Clause | `libs.tech/klayout/tech/LICENSE`, `libs.tech/klayout/drc/LICENSE` |
-| BSIM-CMG 111.2.1 Verilog-A and the compiled `bsimcmg.osdi` (University of California, via VA-Models) | ECL-2.0 | `libs.tech/verilog-a/bsimcmg/ECL-2.0.txt`, `NOTICE` next to the OSDI objects |
+| BSIM-CMG 107.0.0 Verilog-A and the compiled `bsimcmg.osdi` (University of California, via CMC.jl) | BSIM license of the University of California: free redistribution and modification, no charge for the code itself, acknowledgment of the University of California | header of `libs.tech/verilog-a/bsimcmg/bsimcmg_main.va`, `LICENSE.CMC.jl`, `NOTICE` next to the OSDI objects |
 | Everything else (KLayout technology and LVS deck, LibreLane and simulator setup, xschem symbols, scripts) | Apache-2.0 | SPDX headers, IIC-OSIC-TOOLS |
 
 The ASAP7 Calibre decks are licensed for academic use only and may not be redistributed, so they are not included. The ASAP7 paper (Microelectronics Journal) is not included either.
@@ -24,9 +24,9 @@ The ASAP7 Calibre decks are licensed for academic use only and may not be redist
 |---|---|---|
 | `libs.ref/asap7sc7p5t` | 7.5-track standard cells, RVT, LVT, SLVT and SRAM flavors: LEF (1x), tech LEF, GDS, NLDM Liberty (gzipped), CDL, Verilog | `asap7sc7p5t_28`, OpenROAD-flow-scripts platform `asap7` |
 | `libs.tech/hspice` | Original BSIM-CMG 107 model cards, corners TT, FF, SS | `asap7_pdk_r1p7` |
-| `libs.tech/ngspice`, `libs.tech/vacask` | Model library `models/asap7.lib` (sections `tt`, `ff`, `ss`) and BSIM-CMG 111.2.1 as `osdi/bsimcmg.osdi` | converted at install, VA-Models |
+| `libs.tech/ngspice`, `libs.tech/vacask` | Model library `models/asap7.lib` (sections `tt`, `ff`, `ss`) and BSIM-CMG 107.0.0 as `osdi/bsimcmg.osdi` | converted at install, CMC.jl |
 | `libs.tech/xyce` | Model library `models/asap7.lib`, built-in BSIM-CMG 107 | converted at install |
-| `libs.tech/verilog-a/bsimcmg` | BSIM-CMG 111.2.1 Verilog-A source and ECL-2.0 text | VA-Models |
+| `libs.tech/verilog-a/bsimcmg` | BSIM-CMG 107.0.0 Verilog-A source as compiled (patched by `fix_bsimcmg107_va.py`) | CMC.jl |
 | `libs.tech/klayout` | Technology (`tech/asap7.lyt`, `.lyp`, DEF layer map `.map`), DRC deck `drc/asap7.lydrc`, LVS deck `lvs/asap7.lvs`, passive device parameters `tech/asap7_passives.json`, PCell library `python/asap7_pcells.py` (registered by `pymacros/asap7_pcells.lym`), layout generator `python/asap7_layout.py`, routed example `python/asap7_example.py` | local, ASAP7_for_KLayout |
 | `libs.tech/librelane` | LibreLane PDK and standard-cell configuration, example design | local, after ORFS |
 | `libs.tech/xschem` | Symbols `asap7/{n,p}mos_{lvt,rvt,slvt,sram}.sym`, `{n,p}mos18_rvt.sym`, `ndio.sym`, `pdio.sym`, `pnp.sym`, `{n,p}cap_{lvt,rvt,slvt,sram}.sym`, `rm.sym`, `rtfr.sym`, `cmom.sym`, testbenches in `asap7_tests` | local |
@@ -76,7 +76,7 @@ ASAP7 has no diode and no bipolar transistor. `ndio`, `pdio` and `pnp` are **add
 X1 d g s b nmos_rvt l=20n nfin=3
 ```
 
-Xyce runs the original cards with its built-in BSIM-CMG 107 and reproduces the per-fin Idsat of the ASAP7 paper (Clark et al., Microelectronics Journal 53, 2016, tables 3 and 4). ngspice and VACASK load BSIM-CMG 111.2.1, which drops the 107-only parameters CAPMOD, COREMOD, ETAQM, NSEG and VERSION. They agree with each other and read 2 % to 8 % lower Idsat and up to 45 % lower Ioff for LVT and SLVT devices than Xyce and the paper.
+Xyce runs the original cards with its built-in BSIM-CMG 107 and reproduces the per-fin Idsat of the ASAP7 paper (Clark et al., Microelectronics Journal 53, 2016, tables 3 and 4). ngspice and VACASK load the same BSIM-CMG 107.0.0, compiled with OpenVAF, and run the same cards. They match Xyce within 0.5 % on Idsat and 2 % on Ioff. The Verilog-A source gets three edits before compiling (`fix_bsimcmg107_va.py`), none of which changes the currents or charges: the geometry parameters (`l`, `nfin`, ...) become instance parameters, the lower bound of EOTACC accepts the `eotacc = 1e-10` of the cards, and the operating-point outputs (`gm`, `gds`, `cgg`, ...) that the source has commented out are switched on.
 
 ## Passive devices
 
