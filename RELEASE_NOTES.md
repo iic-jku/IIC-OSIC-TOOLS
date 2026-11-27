@@ -2,6 +2,11 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2026.12
+
+* [Update] `sak-lvs.sh -H` compares a chip hierarchically with Magic+Netgen, `-F <cells>` reads cells flat that take an implant from outside
+* [Update] `sak-lvs.sh -J <nets>` and `-W` accept the port mismatches of joined nets and of a fill wrapper without labels in the KLayout verdict
+
 ## 2026.11
 
 * [Adding] [`prep-ic`](https://github.com/iic-jku/prep-ic), a GUI and Python API to plan the pad ring, pinout and early floorplan of an IC
