@@ -13,7 +13,7 @@ FROM ${TOOL_IMAGE_XYCE} AS xyce
 
 FROM ${TOOL_IMAGE_OSIC_MULTITOOL} AS open_pdks
 ARG VACASK_REPO_URL="https://codeberg.org/arpadbuermen/VACASK.git"
-ARG VACASK_REPO_COMMIT="2a432c7ce8f1ace6a709c6090dcd3efa7e9a9491"
+ARG VACASK_REPO_COMMIT="4dca7cb7d7fc72184c566f58ad8b2debb8e188c4"
 ARG VACASK_NAME="vacask"
 ARG EZ130_URL="https://iis-people.ee.ethz.ch/~iisdatasets/iip/ezlib/ihp130_8t/v1p1/ez130_8t_v1p1.zip"
 ARG EZ130_MIRROR_URL="https://github.com/osic-tools/ez130-mirror/releases/download/v1p1/ez130_8t_v1p1.zip"
@@ -29,7 +29,7 @@ RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
 ARG ICS55_PDK_REPO_URL="https://github.com/openecos-projects/icsprout55-pdk.git"
 ARG ICS55_PDK_REPO_COMMIT="10054695f86cf26a96ea8aba69f7ec414afde593"
 ARG ICS55_OPENPDK_REPO_URL="https://github.com/ckdur/icsprout55-openpdk.git"
-ARG ICS55_OPENPDK_REPO_COMMIT="efc7dfd61023f27cd3778f0dd7b19b63aa7bb17e"
+ARG ICS55_OPENPDK_REPO_COMMIT="526344acd86757325a4a15a7a44a964fd6df06a5"
 RUN --mount=type=bind,source=images/open_pdks,target=/images/open_pdks \
     bash /images/open_pdks/scripts/install_ics55.sh
 # Set by docker-bake.hcl, declared here so a new value rebuilds only the IHP layers
@@ -43,7 +43,7 @@ ARG ASAP7_PDK_R1P7_REPO_COMMIT="58d72c9d291e186a77468586ab0c43d8a21eda6a"
 ARG ASAP7SC7P5T_28_REPO_URL="https://github.com/The-OpenROAD-Project/asap7sc7p5t_28.git"
 ARG ASAP7SC7P5T_28_REPO_COMMIT="97f13d43256d3c43e76688d90e6d4f708669351c"
 ARG OPENROAD_FLOW_SCRIPTS_REPO_URL="https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git"
-ARG OPENROAD_FLOW_SCRIPTS_REPO_COMMIT="7aee0ab06c2d77b794ed8ae8f21883af676ce8d0"
+ARG OPENROAD_FLOW_SCRIPTS_REPO_COMMIT="8ba54e723175036fbe1a3541c7a1141cfc4f83b9"
 ARG ASAP7_FOR_KLAYOUT_REPO_URL="https://github.com/laurentc2/ASAP7_for_KLayout.git"
 ARG ASAP7_FOR_KLAYOUT_REPO_COMMIT="ef77f080381cab3993428492a3dcb41044c3f518"
 ARG CMC_JL_REPO_URL="https://github.com/CedarEDA/CMC.jl.git"

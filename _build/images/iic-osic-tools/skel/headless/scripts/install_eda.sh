@@ -76,7 +76,7 @@ pip3 install $PIP_FLAGS \
 	klayout-vector-file-export-cli==0.5 \
 	lctime==0.0.26 \
 	librelane==3.1.0.dev6 \
-	najaeda==0.8.2 \
+	najaeda==0.8.3 \
 	prep-ic==0.2.2 \
 	pygmid==1.2.12 \
 	pyrtl==1.0.3 \

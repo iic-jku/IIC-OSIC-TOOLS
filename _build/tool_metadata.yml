@@ -21,7 +21,7 @@
   commit: 23c3867bb9c227ec395e2812b318379ffb9a0df9
 - name: door
   repo: https://github.com/IHP-GmbH/Door.git
-  commit: 102f605665bbc7e289a5cfdfbb36c5838b9b4b2e
+  commit: 8b0e8c66feef960b0782991ef7c2f768dcf63d5d
 - name: gaw3-xschem
   repo: https://github.com/StefanSchippers/xschem-gaw.git
   commit: 731be0d9c99e33d66ab6ba074fcf598c940fa02d
@@ -42,7 +42,7 @@
   commit: 00da9c3e6ceff056248e3451dd6fd3210d6ceec9
 - name: ics55_openpdk
   repo: https://github.com/ckdur/icsprout55-openpdk.git
-  commit: efc7dfd61023f27cd3778f0dd7b19b63aa7bb17e
+  commit: 526344acd86757325a4a15a7a44a964fd6df06a5
 - name: ics55_pdk
   repo: https://github.com/openecos-projects/icsprout55-pdk.git
   commit: 10054695f86cf26a96ea8aba69f7ec414afde593
@@ -58,7 +58,7 @@
   commit: v3.14.2
 - name: kepler-formal
   repo: https://github.com/keplertech/kepler-formal.git
-  commit: ae3b53892cedfddcd56d0dd0dc70c98c38075e95
+  commit: 3f1648b8981367ab5656c1d3a287421596e8c606
 - name: klayout
   repo: https://github.com/KLayout/klayout.git
   commit: v0.30.14-1
@@ -73,7 +73,7 @@
   commit: 1.5.334
 - name: nextpnr
   repo: https://github.com/YosysHQ/nextpnr.git
-  commit: c54af70bc479eebfbf3df546eb86a4b8f694bc20
+  commit: b4faf9346aa464207c5f522d591a2dd9b4ee1d7c
 - name: ngspice
   repo: https://github.com/danchitnis/ngspice-sf-mirror.git
   commit: ngspice-47
@@ -95,10 +95,10 @@
   commit: f1d021db79acbd644ebcc899247bec72d0f55f9d
 - name: openroad
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
-  commit: 9a6ae2e63d27b768cc9c090e42a367dd00677b54
+  commit: ae3cadce9bc13e3b2999ae9e3f1b1a17df3012f0
 - name: openroad-flow-scripts
   repo: https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
-  commit: 7aee0ab06c2d77b794ed8ae8f21883af676ce8d0
+  commit: 8ba54e723175036fbe1a3541c7a1141cfc4f83b9
 - name: openroad-librelane
   repo: https://github.com/The-OpenROAD-Project/OpenROAD.git
   commit: c4d317e4fa2398b9880920a1411c20258a2175a9
@@ -175,7 +175,7 @@
   commit: 0.13.10
 - name: vacask
   repo: https://codeberg.org/arpadbuermen/VACASK.git
-  commit: 2a432c7ce8f1ace6a709c6090dcd3efa7e9a9491
+  commit: 4dca7cb7d7fc72184c566f58ad8b2debb8e188c4
 - name: verilator
   repo: https://github.com/verilator/verilator.git
   commit: v5.054
