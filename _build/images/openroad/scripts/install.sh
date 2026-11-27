@@ -48,7 +48,23 @@ if [ "$(arch)" == "aarch64" ]; then
     BAZEL_ARGS+=("--per_file_copt=qsimd\.cpp@-include,stdlib.h")
     BAZEL_ARGS+=("--host_per_file_copt=qsimd\.cpp@-include,stdlib.h")
 fi
-bazelisk build "${BAZEL_ARGS[@]}" //:openroad //openroad/sta:opensta
+BAZEL_TARGETS=(//:openroad //openroad/sta:opensta)
+# Fetch the external repositories before the build, with retries. Bazel retries
+# its own HTTP downloads, but for a git_override (qt-bazel) it only runs three
+# `git fetch` variants back to back, so a GitHub error lasting a few seconds
+# failed the whole build (nightly 2026-11-27, arm64, issue #483). Fetched
+# repositories are kept, a retry resumes.
+FETCH_TRIES=4
+for TRY in $(seq "$FETCH_TRIES"); do
+    bazelisk fetch "${BAZEL_ARGS[@]}" "${BAZEL_TARGETS[@]}" //:install && break
+    if [ "$TRY" -eq "$FETCH_TRIES" ]; then
+        echo "[ERROR] Bazel fetch failed $FETCH_TRIES times"
+        exit 1
+    fi
+    echo "[WARNING] Bazel fetch failed (try $TRY of $FETCH_TRIES), retrying in $((TRY * 30)) s"
+    sleep $((TRY * 30))
+done
+bazelisk build "${BAZEL_ARGS[@]}" "${BAZEL_TARGETS[@]}"
 bazelisk run "${BAZEL_ARGS[@]}" //:install -- "${TOOLS}/${OPENROAD_NAME}"
 # //:install only ships openroad; add the standalone OpenSTA binary as the
 # CMake build did (used as OPENSTA_EXE by ORFS)
