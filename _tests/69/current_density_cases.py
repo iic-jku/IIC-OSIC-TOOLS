@@ -165,6 +165,21 @@ def two_stripes(ly, c):
     label(c, ly, M2_TEXT, "S", 0.5, 4.5)
 
 
+def split_pin(ly, c):
+    """A macro with two VDD pin stripes that the chip joins only to the first, the second is fed inside the macro."""
+    mac = ly.create_cell("sp")
+    for x in (0, 8):
+        box(mac, ly, M2, x, 0, x + 2, 10)
+        box(mac, ly, M2_PIN, x, 0, x + 2, 10)
+        label(mac, ly, M2_TEXT, "VDD", x + 1, 5)
+    c.insert(pya.DCellInstArray(mac.cell_index(), pya.DTrans(pya.DVector(20, 0))))
+    box(c, ly, M2, 0, 4, 21, 5)
+    label(c, ly, M2_TEXT, "S", 0.5, 4.5)
+
+
+TOOL_NAME = "sak-current-density"
+
+
 def run(args):
     proc = subprocess.run(["sak-current-density.py", *args], capture_output=True, text=True, check=False)
     try:
@@ -317,6 +332,36 @@ def main():
     write_macro(mac_gds, extra=True)
     code, body, err = run(["check", *common, "-b", os.path.join(out, "macro.yaml"), os.path.join(out, "macro.gds")])
     chk.expect(code == 2 and "stale" in body.get("error", ""), f"stale view: exit {code}, {body.get('error')}")
+    # a view written for the changed macro does not fit the chip, which still holds the old copy
+    code, body, err = run(["view", "--json", "-t", "ihp-sg13g2", "-o", mac_view, "--gds", mac_gds, "--state", "active",
+                           "--source", "test", "--current", "VDD=2"])
+    code, body, err = run(["check", *common, "-b", os.path.join(out, "macro.yaml"), os.path.join(out, "macro.gds")])
+    chk.expect(code == 2 and "another version" in body.get("error", ""),
+               f"chip with an old copy of the macro: exit {code}, {body.get('error')}")
+    write_macro(mac_gds)
+    code, body, err = run(["view", "--json", "-t", "ihp-sg13g2", "-o", mac_view, "--gds", mac_gds, "--state", "active",
+                           "--source", "test", "--current", "VDD=2"])
+    # --json before the subcommand, a budget net without a load, and a load current that is no number
+    code, body, err = run(["--json", "check", "-t", "ihp-sg13g2", "-w", out, "-b", os.path.join(out, "macro.yaml"),
+                           os.path.join(out, "macro.gds")])
+    chk.expect(code == 1 and body.get("tool") == TOOL_NAME, f"--json before check: exit {code}, {err.strip()[:80]}")
+    body = check_case("no_load", strip(0.5), "nets:\n  S:\n    sources: [S]\n", 0, "no load")
+    chk.expect(any("no load" in w for w in body.get("warnings", [])), f"no_load: warnings {body.get('warnings')}")
+    body = check_case("not_number", strip(0.5), ONE_LOAD % "lots", 2)
+    chk.expect("not a number" in body.get("error", ""), f"not_number: {body.get('error')}")
+    # a pin whose second shape the chip leaves unconnected: that part is fed by the macro and drops out
+    sp_gds = os.path.join(out, "sp_macro.gds")
+    sp_view = os.path.join(out, "sp_current.yaml")
+    layout = pya.Layout()
+    layout.dbu = 0.001
+    split_pin(layout, layout.create_cell("unused"))
+    layout.delete_cell(layout.cell("unused").cell_index())
+    layout.write(sp_gds)
+    run(["view", "-t", "ihp-sg13g2", "-o", sp_view, "--gds", sp_gds, "--state", "active", "--source", "test",
+         "--current", "VDD=1"])
+    body = check_case("split_pin", split_pin, "views:\n  - {view: sp_current.yaml, state: active}\n"
+                      "nets:\n  S:\n    sources: [S]\n", 0, "pass", "screen")
+    chk.expect(len(body.get("nets", [])) == 1, f"split_pin: {len(body.get('nets', []))} nets checked, want 1")
 
     # a macro checked on its own: VDD (1 mA on 0.3 um) stays unresolved, VSS (0.1 mA) passes at the floor, and OUT,
     # which carries no pin current but reaches a diffusion, is bounded by the macro's whole 1 mA and stays unresolved

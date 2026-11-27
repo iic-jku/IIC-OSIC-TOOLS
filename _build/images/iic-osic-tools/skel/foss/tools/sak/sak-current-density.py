@@ -45,8 +45,9 @@ three stages:
      or source labels at 0 V, loads where they enter). The current summed over
      each wire cross-section is held against the limit for its width, and the
      worst single cut of each cut array against the limit per cut. Contacts and
-     the device layers (diffusion, poly) are not in the solve, the floor and the
-     screen check the contacts.
+     the device layers (diffusion, poly) are not in the solve: the floor and the
+     screen check the contacts, and a solved net counts the contacts its screen
+     could not clear in a note.
 
 A macro checked on its own knows the currents of its pins, not of its devices.
 A net that reaches a diffusion or a resistor or inductor body can carry up to
@@ -363,8 +364,8 @@ def check_views_against_chip(ext, views: list) -> list[str]:
     for view in views:
         cell = ext.layout.cell(view["cell"])
         if cell is None:
-            warnings.append(f"view {view['path']}: no cell {view['cell']} in the layout")
-            continue
+            # a renamed copy (KLayout writes cell$1 on a clash) would drop the macro's current unnoticed
+            raise BudgetError(f"view {view['path']}: no cell {view['cell']} in the layout")
         macro_layout = sak_netgraph.read_layout(view["gds"])
         macro = sak_netgraph.pick_top(macro_layout, view["cell"], view["gds"])
         if flat_digest(ext.layout, cell, layers) != flat_digest(macro_layout, macro, layers):
@@ -377,6 +378,7 @@ def build_budget_cases(ext, budget: dict, views: list) -> tuple[list, list, list
     """Cases from a budget: the nets named in it and the nets the views' pins reach. Also the pad nets left out."""
     cases = {}
     warnings = []
+    split_pins = []  # pins whose shapes land on nets the chip metal does not join
     by_label = nets_by_label(ext)
     inst_pins = instance_pins(ext)
 
@@ -388,7 +390,7 @@ def build_budget_cases(ext, budget: dict, views: list) -> tuple[list, list, list
     for view in views:
         instances = [k for k, (name, _t) in enumerate(ext.bb_instances) if name == view["cell"]]
         if not instances:
-            warnings.append(f"view {view['path']}: no instance of {view['cell']} in the layout")
+            raise BudgetError(f"view {view['path']}: no instance of {view['cell']} in the layout")
         for k in instances:
             for pin, ma in view["pins"].items():
                 indexes = [p for p in inst_pins[k].get(pin, []) if ext.pins[p][4] >= 0]
@@ -398,20 +400,14 @@ def build_budget_cases(ext, budget: dict, views: list) -> tuple[list, list, list
                 by_net = defaultdict(list)
                 for p in indexes:
                     by_net[ext.node_net[ext.pins[p][4]]].append(p)
-                if len(by_net) > 1:
-                    # joined inside the macro but not by the chip metal: a part without a pad is fed by the macro
-                    # itself and carries no chip current, every part with a pad may take the whole current
-                    fed = {k: g for k, g in by_net.items() if ext.nets[k].pads}
-                    if fed:
-                        by_net = fed
-                    if len(by_net) > 1:
-                        warnings.append(f"view {view['path']}: the shapes of pin {pin} of {view['cell']} land on "
-                                        f"{len(by_net)} nets with pads that the chip metal does not join, each "
-                                        f"gets the whole current")
+                parts = []
                 for k_net, group in by_net.items():
-                    case_of(ext.nets[k_net]).injections.append(Injection(
-                        "ideal", -ma, ext.pins[group[0]][4], f"{view['cell']}/{pin}", view["source"],
-                        polys=[(ext.pins[p][4], ext.pins[p][3]) for p in group]))
+                    inj = Injection("ideal", -ma, ext.pins[group[0]][4], f"{view['cell']}/{pin}", view["source"],
+                                    polys=[(ext.pins[p][4], ext.pins[p][3]) for p in group])
+                    case_of(ext.nets[k_net]).injections.append(inj)
+                    parts.append((k_net, inj))
+                if len(parts) > 1:
+                    split_pins.append((f"pin {pin} of {view['cell']}", parts))
 
     nets_spec = budget.get("nets") or {}
     check_keys("budget nets", nets_spec, set(map(str, nets_spec)))
@@ -440,6 +436,21 @@ def build_budget_cases(ext, budget: dict, views: list) -> tuple[list, list, list
     for case in cases.values():
         if not case.sources:
             default_sources(ext, case)
+    # a part of a pin on a net without a source is fed by the macro itself and carries no chip current, every part
+    # on a net with a source may take the whole current
+    for what, parts in split_pins:
+        fed = [(k, inj) for k, inj in parts if cases[k].sources]
+        if not fed:
+            continue
+        for k, inj in parts:
+            if not cases[k].sources:
+                cases[k].injections.remove(inj)
+        if len(fed) > 1:
+            warnings.append(f"{what} lands on {len(fed)} nets with a source that the chip metal does not join, "
+                            f"each gets the whole current")
+    for k in [k for k, case in cases.items() if not case.injections and not case.sources]:
+        del cases[k]
+    for case in cases.values():
         if not case.injections:
             warnings.append(f"net {case.net.name}: the budget names it but gives it no load")
     budgeted = set(cases)
@@ -583,7 +594,7 @@ def screen(ext, case, current_ma: float) -> list[dict]:
     for c in case.net.cuts:
         spec = ext.cut_specs[ext.cut_spec[c]]
         if spec.get("imax") and ext.cut_neq[c] * spec["imax"] < current_ma:
-            failures.append({"element": f"one {spec['name']}", "box": ext.cut_poly[c].bbox()})
+            failures.append({"element": f"one {spec['name']}", "box": ext.cut_poly[c].bbox(), "cut": c})
     return failures
 
 
@@ -651,6 +662,7 @@ class Mesh:
         self.ext = ext
         self.case = case
         self.nodes = [n for n in case.net.nodes if ext.conductors[ext.node_cond[n]].get("rs")]
+        self.node_set = set(self.nodes)
         if not self.nodes:
             raise BudgetError(f"net {case.net.name}: no metal with a sheet resistance to solve")
         conds = sorted({ext.node_cond[n] for n in self.nodes})
@@ -698,6 +710,12 @@ class Mesh:
                     first += c1 - c0
         self.count = first
         self.s = {k: np.array(v) for k, v in cols.items()}
+
+    def solves_cut(self, c: int) -> bool:
+        """Whether the solve holds cut c, a cut between two conductors with a sheet resistance."""
+        ext = self.ext
+        return bool(ext.cut_specs[ext.cut_spec[c]].get("r")) and ext.cut_lower[c] in self.node_set and \
+            ext.cut_upper[c] in self.node_set
 
     def piece(self, s: int, col: int) -> int:
         return int(self.s["first"][s] + col - self.s["c0"][s])
@@ -913,7 +931,7 @@ class Mesh:
         groups = []
         for inj in case.injections:
             if inj.kind == "point":
-                pix = self.piece_at(inj.node, *inj.point) if inj.node in self.nodes else -1
+                pix = self.piece_at(inj.node, *inj.point) if inj.node in self.node_set else -1
                 if pix < 0:
                     raise BudgetError(f"net {case.net.name}: load {inj.what} is on no metal of the solve")
                 inject[pix] += inj.ma
@@ -921,7 +939,7 @@ class Mesh:
                 continue
             idx_all, w_all = [], []
             for node, poly in inj.polys:
-                if node in self.nodes:
+                if node in self.node_set:
                     idx, w = self.pieces_under(node, poly)
                     idx_all.append(idx)
                     w_all.append(w)
@@ -938,7 +956,7 @@ class Mesh:
             groups.append((inj, idx))
         fixed = np.zeros(self.count, dtype=bool)
         for node, region, point, name in case.sources:
-            if node not in self.nodes:
+            if node not in self.node_set:
                 continue
             if region is not None:
                 idx, _w = self.pieces_under(node, region)
@@ -1042,17 +1060,32 @@ class Mesh:
         if not len(vpair):
             return []
         s_, ext = self.s, self.ext
-        cur = np.bincount(vpair, weights=np.abs(current), minlength=len(pairs))
-        width = np.bincount(vpair, weights=vlen, minlength=len(pairs))
+        # pairs on one pixel line whose overlaps touch are one cross-section (the decomposition splits side by side)
+        label = np.arange(len(pairs))
+        by_line = defaultdict(list)
+        for k, (sa, _sb, o1, o2, y) in enumerate(pairs):
+            by_line[(int(s_["node"][sa]), int(y))].append((o1, o2, k))
+        for members in by_line.values():
+            members.sort()
+            for (_a1, a2, ka), (b1, _b2, kb) in zip(members, members[1:]):
+                if b1 - a2 <= 1:
+                    label[kb] = label[ka]
+        sec = label[vpair]
+        cur = np.bincount(sec, weights=np.abs(current), minlength=len(pairs))
+        width = np.bincount(sec, weights=vlen, minlength=len(pairs))
+        span = {}
+        for k, (sa, sb, o1, o2, y) in enumerate(pairs):
+            lo, hi, slanted = span.get(label[k], (o1, o2, False))
+            span[label[k]] = (min(lo, o1), max(hi, o2), slanted or bool(s_["slanted"][sa] or s_["slanted"][sb]))
         rows = []
         for k in np.nonzero(cur > 0)[0]:
-            sa, sb, o1, o2, y = pairs[k]
+            sa, _sb, _o1, _o2, y = pairs[k]
             ci = ext.node_cond[int(s_["node"][sa])]
             if not ext.conductors[ci].get("limit"):
                 continue
+            lo, hi, slanted = span[k]
             p = int(s_["pix"][sa])
-            box = pya.Box(int(o1), int(y) - p // 4, int(math.ceil(o2)), int(y) + p // 4)
-            slanted = bool(s_["slanted"][sa] or s_["slanted"][sb])
+            box = pya.Box(int(lo), int(y) - p // 4, int(math.ceil(hi)), int(y) + p // 4)
             rows.append(self._section_row(ci, float(cur[k]), float(width[k]), slanted, box) | {"dir": 1})
         return rows
 
@@ -1109,6 +1142,10 @@ def judge(ext, case, floor: float, pixel_um: float, max_nodes: int) -> None:
         return
     mesh = Mesh(ext, case, pixel_um, max_nodes)
     case.rows = mesh.solve()
+    unjudged = [f for f in failures if f.get("cut") is not None and not mesh.solves_cut(f["cut"])]
+    if unjudged:
+        case.notes.append(f"{len(unjudged)} cuts to device layers (contacts) fail the screen and are not in the "
+                          f"solve, so they are not judged")
     case.stage = f"solve ({mesh.pixel_um:.3f} um pixels, {mesh.nodes_solved} nodes)"
     worst = max((r["ratio"] for r in case.rows), default=0.0)
     case.status = "fail" if worst > 1.0 else "pass"
@@ -1187,10 +1224,14 @@ def report(ext, cases, header, floor, warn, left_out, warnings, limit) -> list[s
     return lines
 
 
+MARKERS_PER_NET = 100  # per net and category, the worst first, so a screen that cannot clear does not bloat the file
+
+
 def write_markers(path, ext, cases, warn) -> None:
     markers = sak_netgraph.Markers(TOOL, ext.top.name, ext.dbu)
     for case in cases:
-        for r in case.rows:
+        count = defaultdict(int)
+        for r in sorted(case.rows, key=lambda r: -(r["ratio"] or 0)):
             if r["ratio"] is None:
                 category = "unresolved (screen fails)"
             elif r["ratio"] > 1.0:
@@ -1198,6 +1239,9 @@ def write_markers(path, ext, cases, warn) -> None:
             elif r["ratio"] > warn:
                 category = f"between {warn} and 1 of the limit"
             else:
+                continue
+            count[category] += 1
+            if count[category] > MARKERS_PER_NET:
                 continue
             text = (f"net {case.net.name}, {r['layer'] or r['element']}, I {fmt(r['current_ma'], 4)} mA, "
                     f"limit {fmt(r['limit_ma'], 4)} mA, ratio {fmt(r['ratio'], 2)}")
