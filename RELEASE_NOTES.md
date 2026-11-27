@@ -2,6 +2,11 @@
 
 This document summarizes the most important changes of the individual releases of the `IIC-OSIC-TOOLS` Docker container.
 
+## 2026.12
+
+* [Adding] `sak-via-redundancy.py`, which reports the single vias and contacts whose failure opens a net, each with a room test for a second cut (`ihp-sg13g2` and `ihp-sg13cmos5l`)
+* [Adding] `sak-current-density.py`, which checks the DC current of every wire and via against the limits of the process specification, from the current budget of a chip or the current view of a macro, and writes current views (`ihp-sg13g2` and `ihp-sg13cmos5l`)
+
 ## 2026.11
 
 * [Adding] [`prep-ic`](https://github.com/iic-jku/prep-ic), a GUI and Python API to plan the pad ring, pinout and early floorplan of an IC
